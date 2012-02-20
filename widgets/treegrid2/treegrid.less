@@ -1,0 +1,20 @@
+@import '../../css/globallib.less';
+
+.tree.grid table tbody    td .expand,
+.tree.grid table tbody tr td .expand {
+  width: 30px;
+  /* display: inline-block; */
+  border: 0;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+  color: @color;
+  cursor: default;
+}
+
+.tree.grid table tbody tr td .expand.parent {
+  cursor: pointer;
+}

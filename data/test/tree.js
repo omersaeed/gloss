@@ -1,0 +1,331 @@
+/*global test, asyncTest, ok, equal, deepEqual, start, module */
+require([
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
+    'api/v1/recordseries',
+    'vendor/gloss/data/tree',
+    'vendor/gloss/data/mock',
+    'vendor/gloss/data/model',
+    'text!util/test/hierarchy_test_fixtures.json',
+    'text!api/v1/test/fixtures/recordseries_tree.json'
+], function($, _, t, RecordSeries, Tree, Mock, model, fixturesJSON,
+    recordseries_tree) {
+
+    var recordseries = _.map(JSON.parse(recordseries_tree), function(item) {
+            return item[1];
+        }),
+        setup = function() {
+            this.manager = model.Manager(RecordSeries);
+            this.tree = Tree({
+                resource: RecordSeries,
+                query: { file_plan_id: 1 },
+                manager: this.manager
+            });
+        },
+        levelCheck = function(tree) {
+            var level = function(node) {
+                var level = 0, cur = node.par;
+                while (cur !== tree.root) {
+                    cur = cur.par;
+                    level++;
+                }
+                return level;
+            };
+            t.dfs(tree.root.children, function() {
+                equal(this.level, level(this));
+            });
+        },
+        expandSeveralNodes = function(tree) {
+            var dfd = $.Deferred();
+            tree.load().done(function(root) {
+                $.when(
+                    root.children[0].load(),
+                    root.children[3].load(),
+                    _.last(root.children).load()
+                ).done(function() {
+                    $.when(
+                        find(tree, 'second from under alpha').load(),
+                        find(tree, 'blah blah').load(),
+                        find(tree, 2).load(),
+                        find(tree, 177).load(),
+                        find(tree, '.git').load()
+                    ).done(function() {
+                        $.when(
+                            find(tree, 'alpha boo').load(),
+                            find(tree, 'alpha too').load()
+                        ).done(function() {
+                            dfd.resolve();
+                        });
+                    });
+                });
+            });
+            return dfd;
+        },
+        structure = function(tree) {
+            var out = [], indent = 0;
+            t.dfs(tree.root.children, function() {
+                out.push(
+                    Array(this.level+1).join('    '),
+                    this.model.id,
+                    ': ',
+                    this.model.name,
+                    '\n'
+                );
+            });
+            return out.join('');
+        },
+        find = function(tree, id) {
+            return t.find(tree.root, function() {
+                return this.model[_.isString(id)? 'name' : 'id'] === id;
+            });
+        };
+
+    Mock(RecordSeries, recordseries_tree);
+
+    module('tree', {setup: setup});
+
+    asyncTest('load full tree recursively', function() {
+        var tree = Tree({
+            resource: RecordSeries,
+            query: {
+                file_plan_id: 1,
+                recursive: true
+            }
+        });
+        tree.load().done(function(root) {
+            var result = [];
+            ok(root === tree.root);
+            t.dfs(root.children, function() { result.push(this.model); });
+            _.each(recordseries, function(rs, i) {
+                equal(rs.id, result[i].id);
+            });
+            equal(result.length, recordseries.length);
+            levelCheck(tree);
+            start();
+        });
+    });
+
+    asyncTest('load tree incrementally', function() {
+        var tree = this.tree;
+        tree.load().done(function(root) {
+            var count = 0;
+            t.dfs(root.children, function() { count += 1; });
+            equal(count, 6);
+            equal(root.children.length, _.reduce(recordseries, function(count, rs) {
+                return count + (rs.parent_id == root.model.id? 1 : 0);
+            }, 0));
+            _.each(root.children, function(node) {
+                ok(node.children == null);
+            });
+
+            root.children[0].load().done(function(firstChild) {
+                var count = 0;
+                t.dfs(firstChild.children, function() { count += 1; });
+                equal(count, 5);
+                equal(firstChild.children.length, _.reduce(recordseries, function(count, rs) {
+                    return count + (rs.parent_id == firstChild.model.id? 1 : 0);
+                }, 0));
+                _.each(firstChild.children, function(node) {
+                    ok(node.children == null);
+                });
+
+                firstChild.load().done(function(firstChild) {
+                    levelCheck(tree);
+                    start();
+                });
+            });
+        });
+    });
+
+    asyncTest('reloading nodes doesnt break anything', function() {
+        var tree = this.tree;
+        tree.load().done(function(root) {
+            root.children[0].load().done(function(firstChild) {
+                var loadWasCalledAgain = false;
+                firstChild.collection.__load__ = firstChild.collection.load;
+                firstChild.collection.load = function() {
+                    loadWasCalledAgain = true;
+                    firstChild.collection.__load__.apply(firstChild, arguments);
+                };
+                firstChild.load().done(function() {
+                    var count = 0;
+                    equal(loadWasCalledAgain, false);
+                    t.dfs(firstChild.children, function() { count++; });
+                    equal(count, 5);
+                    firstChild.set('query', {recursive: true});
+                    firstChild.load().done(function() {
+                        var count = 0;
+                        equal(loadWasCalledAgain, false);
+                        t.dfs(firstChild.children, function() { count++; });
+                        equal(count, 53);
+                        start();
+                    });
+                });
+            });
+        });
+    });
+
+    module('moving a node', {setup: setup});
+
+    asyncTest('down', function() {
+        var tree = this.tree,
+            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something\n    512: blah blah\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 8);
+            equal(structure(tree), inital);
+            node.moveTo(node.par, node.index() + 1).done(function() {
+                equal(structure(tree), after);
+                start();
+            });
+        });
+    });
+
+    asyncTest('up', function() {
+        var tree = this.tree,
+            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    511: something else\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 2);
+            equal(structure(tree), inital);
+            node.moveTo(node.par, node.index() - 1).done(function() {
+                equal(structure(tree), after);
+                start();
+            });
+        });
+    });
+
+    asyncTest('left', function() {
+        var tree = this.tree,
+            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something\n    8: second from under alpha\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n    53: first\n    65: second\n    82: third\n    9: alpha boo\n        10: first\n        20: second\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 9),
+                newParent = find(tree, 52);
+            equal(structure(tree), inital);
+            node.moveTo(newParent).done(function() {
+                equal(structure(tree), after);
+                start();
+            });
+        });
+    });
+
+    asyncTest('right', function() {
+        var tree = this.tree,
+            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n                176: delta\n                    177: first\n                        178: alpha\n                        202: beta\n                        205: gamma\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 176),
+                newParent = find(tree, 4);
+            equal(structure(tree), inital);
+            node.moveTo(newParent, 0).done(function() {
+                equal(structure(tree), after);
+                start();
+            });
+        });
+    });
+
+    asyncTest('moving the last child from parent makes parent a leaf node', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var node1 = find(tree, 9),
+                node2 = find(tree, 506),
+                newParent = find(tree, 169),
+                origParent = node1.par;
+            $.when(
+                node1.moveTo(newParent),
+                node2.moveTo(newParent)
+            ).done(function() {
+                equal(origParent.model.isparent, false);
+                equal(origParent.children, undefined);
+                equal(origParent._loaded, true);
+                equal(origParent._loadedRecursive, true);
+                start();
+            });
+        });
+    });
+
+    asyncTest('promote into leaf node turns leaf to parent', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 8932),
+                newParent = find(tree, 4);
+            node.moveTo(newParent).done(function() {
+                equal(newParent.model.isparent, true);
+                equal(newParent.children.length, 1);
+                start();
+            });
+        });
+    });
+
+    module('add/remove', {setup: setup});
+
+    asyncTest('removeChild works', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var removedIds = [],
+                node = find(tree, 9),
+                origParent = node.par,
+                origChildrenLength = origParent.children.length;
+            t.dfs(node, function() { removedIds.push(this.model.id); });
+            node.remove();
+            equal(origParent.children.length, origChildrenLength-1);
+            ok(origParent._removedChildren);
+            ok(origParent._removedChildren[0] === node);
+            equal(origParent._removedChildren.length, 1);
+            t.dfs(tree.root, function() {
+                equal(_.indexOf(removedIds, this.model.id), -1);
+            });
+            start();
+        });
+    });
+
+    asyncTest('remove last child changes isparent to false', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 177),
+                origParent = node.par;
+            origParent.removeChild(node);
+            equal(origParent.model.isparent, false);
+            ok(origParent._removedChildren);
+            ok(origParent._removedChildren[0] === node);
+            equal(origParent._removedChildren.length, 1);
+            start();
+        });
+    });
+
+    asyncTest('add node to tree', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var newNode, newName =  'something very unique',
+                model = RecordSeries({name: newName}),
+                newParent = find(tree, 8);
+            newParent.add(model).done(function() {
+                newNode = _.find(newParent.children, function(c) {
+                    return c.model === model;
+                });
+                ok(newNode);
+                ok(newNode === _.last(newParent.children));
+                equal(newNode.model.parent_id, newParent.model.id);
+                equal(newNode.model.name, newName);
+                start();
+            });
+        });
+    });
+
+    asyncTest('node changes from leaf to parent when child added', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var newNode, newName =  'something very unique',
+                model = RecordSeries({name: newName}),
+                newParent = find(tree, 4);
+            equal(newParent.model.isparent, false);
+            newParent.add(model).done(function() {
+                equal(newParent.model.isparent, true);
+                start();
+            });
+        });
+    });
+
+});

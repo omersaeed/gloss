@@ -1,0 +1,33 @@
+.selectionlist {
+  overflow: hidden;
+  position: relative;
+}
+
+.selectionlist .widget-loading {
+  left: 6px;
+  position: absolute;
+  top: 6px;
+}
+
+.selectionlist .pager-container {
+  position: relative;
+}
+
+.selectionlist .pager {
+  margin: 0;
+  overflow-y: scroll;
+  padding: 0;
+  position: relative;
+}
+
+.selectionlist .pager li {
+  list-style: none;
+}
+
+.selectionlist .controls li {
+  display: inline;
+}
+
+.selectionlist .controls button {
+  position: relative;
+}

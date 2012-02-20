@@ -1,0 +1,49 @@
+@import '../../css/globallib.less';
+
+@standard-row-height: 28px;
+@row-background-color: white;
+@odd-row-background-color: @body-background;
+
+.grid table {
+  display: table;
+}
+
+.grid table tbody {
+  display: table-row-group;
+}
+
+.grid table tbody tr {
+  height: 2em;
+  background-color: @row-background-color;
+  display: table-row;
+}
+
+.grid table tbody tr:nth-child(odd) {
+  background-color: @odd-row-background-color;
+}
+
+.grid table tbody td {
+  vertical-align: middle;
+  display: table-cell;
+}
+
+.grid table tbody form td {
+  display: inline-block;
+}
+
+.grid-table-tbody-td-button {
+  height: 16px;
+  padding: 1px 10px;
+}
+
+.grid table tbody td button {
+  .grid-table-tbody-td-button
+}
+
+.grid.standard table {
+  width: 100%;
+}
+
+.grid.standard table tbody tr {
+  height: @standard-row-height;
+}

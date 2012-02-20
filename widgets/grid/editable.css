@@ -1,0 +1,58 @@
+.grid table {
+  display: table;
+}
+.grid table tbody {
+  display: table-row-group;
+}
+.grid table tbody tr {
+  height: 2em;
+  background-color: white;
+  display: table-row;
+}
+.grid table tbody tr:nth-child(odd) {
+  background-color: #f6f6f6;
+}
+.grid table tbody td {
+  vertical-align: middle;
+  display: table-cell;
+}
+.grid table tbody form td {
+  display: inline-block;
+}
+.grid-table-tbody-td-button {
+  height: 16px;
+  padding: 1px 10px;
+}
+.grid table tbody td button {
+  height: 16px;
+  padding: 1px 10px;
+}
+.grid.standard table {
+  width: 100%;
+}
+.grid.standard table tbody tr {
+  height: 28px;
+}
+.grid-editable {
+  position: absolute;
+  height: 28px;
+  background-color: white;
+}
+.grid-editable.odd {
+  background-color: #f6f6f6;
+}
+.grid-editable .hide-me {
+  position: absolute;
+  left: -10000px;
+  top: -10000px;
+}
+.grid-editable > div {
+  display: inline-block;
+  line-height: 28px;
+  width: 10px;
+  overflow: hidden;
+}
+.grid-editable button {
+  height: 16px;
+  padding: 1px 10px;
+}

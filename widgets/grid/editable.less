@@ -1,0 +1,27 @@
+@import 'grid.less';
+
+.grid-editable {
+  position: absolute;
+  height: @standard-row-height;
+  background-color: @row-background-color;
+}
+
+.grid-editable.odd {
+  background-color: @odd-row-background-color;
+}
+
+.grid-editable .hide-me {
+  position: absolute;
+  left: -10000px;
+  top: -10000px;
+}
+
+.grid-editable > div {
+  display: inline-block;
+  line-height: @standard-row-height;
+  width: 10px;
+  overflow: hidden;
+}
+.grid-editable button {
+  .grid-table-tbody-td-button
+}
