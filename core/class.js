@@ -36,14 +36,14 @@ define([], function() {
                 })(name, value);
             }
             if(value !== undefined) {
-                if(name === '__mixin__') {
-                    value(base, prototype, namespace);
-                } else if(name === 'afterInit') {
+                // if(name === '__mixin__') {
+                //     value(base, prototype, namespace);
+                if(name === 'afterInit') {
                     if(!prototype.afterInit) {
                         prototype.afterInit = [];
                     }
                     prototype.afterInit.push(value);
-                } else {
+                } else if(name !== '__mixin__') {
                     prototype[name] = value;
                 }
             }
@@ -52,18 +52,21 @@ define([], function() {
 
     var Class = function() {};
     var extend = function(namespace, options) {
-        var base = this.prototype;
+        var i, mixins, mixin, base = this.prototype;
         if(!options) {
             options = {};
+        }
+        if(options.mixins) {
+            mixins = options.mixins;
         }
             
         inheriting = true;
         var prototype = new this();
         inheriting = false;
 
-        if(options.mixins) {
-            for(var i = options.mixins.length - 1; i >= 0; i--) {
-                inject(base, prototype, options.mixins[i]);
+        if(mixins) {
+            for(i = mixins.length - 1; i >= 0; i--) {
+                inject(base, prototype, mixins[i]);
             }
         }
         inject(base, prototype, namespace);
@@ -96,6 +99,14 @@ define([], function() {
         
         if(prototype.__new__) {
             prototype.__new__(constructor, this, prototype);
+        }
+        if(mixins) {
+            for(i = mixins.length - 1; i >= 0; i--) {
+                mixin = mixins[i];
+                if (mixin.__mixin__) {
+                    mixin.__mixin__.call(this, base, prototype, mixin);
+                }
+            }
         }
         return constructor;
     };
