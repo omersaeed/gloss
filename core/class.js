@@ -38,6 +38,11 @@ define([], function() {
             if(value !== undefined) {
                 if(name === '__mixin__') {
                     value(base, prototype, namespace);
+                } else if(name === 'afterInit') {
+                    if(!prototype.afterInit) {
+                        prototype.afterInit = [];
+                    }
+                    prototype.afterInit.push(value);
                 } else {
                     prototype[name] = value;
                 }
@@ -46,7 +51,7 @@ define([], function() {
     };
 
     var Class = function() {};
-    Class.extend = function(namespace, options) {
+    var extend = function(namespace, options) {
         var base = this.prototype;
         if(!options) {
             options = {};
@@ -74,6 +79,11 @@ define([], function() {
                             this.init.apply(this, arguments);
                         }
                     }
+                    if (this.afterInit) {
+                        for (var i = 0, l = this.afterInit.length; i < l; i++) {
+                            this.afterInit[i].apply(this, []);
+                        }
+                    }
                 }
             } else {
                 return new constructor({__args__: arguments});
@@ -82,13 +92,14 @@ define([], function() {
 
         constructor.prototype = prototype;
         constructor.constructor = constructor;
-        constructor.extend = arguments.callee;
+        constructor.extend = extend;
         
         if(prototype.__new__) {
             prototype.__new__(constructor, this, prototype);
         }
         return constructor;
     };
+    Class.extend = extend;
 
     return Class;
 });
