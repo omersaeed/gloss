@@ -7,3 +7,15 @@
 .to-be-dragged.dragging {
   background-color: yellow;
 }
+
+.to-be-dragged-and-cloned {
+  width: 100%;
+}
+
+.to-be-dragged-and-cloned tr {
+  line-height: 24px;
+}
+
+.to-be-dragged-and-cloned tr:nth-child(odd) {
+  background-color: white;
+}
