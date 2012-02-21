@@ -24,8 +24,8 @@ define([
                 });
             }
         },
-        _draggableCloneEl: function($el) {
-            return $el.clone(false, false).insertAfter($el);
+        _draggableCloneEl: function() {
+            return this.$node.clone(false, false)
         },
         _draggableOnMouseMove: function(evt) {
             this._draggableSetPos(evt, this._draggableOffset);
@@ -58,7 +58,7 @@ define([
             });
             $('body').addClass('dragging-element');
             if (self.options.draggable.clone) {
-                self._$draggableEl = self._draggableCloneEl(self.$node);
+                self._$draggableEl = self._draggableCloneEl();
             } else {
                 self._$draggableEl = self.$node;
             }

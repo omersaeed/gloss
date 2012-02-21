@@ -7,14 +7,14 @@ require([
     'vendor/gloss/widgets/grid/editable',
     'vendor/gloss/widgets/treegrid',
     'vendor/gloss/widgets/treegrid2/treegridrow',
-    'vendor/gloss/widgets/draggablerow',
+    'vendor/gloss/widgets/treegrid2/dragndroptreegridrow',
     'vendor/gloss/data/model',
     'vendor/gloss/data/tree',
     'vendor/gloss/data/mock',
     'api/v1/recordseries',
     'text!api/v1/test/fixtures/recordseries_tree.json'
-], function($, _, t, Button, Editable, TreeGrid, TreeGridRow, DraggableRow,
-    model, Tree, Mock, RecordSeries, recordseries_tree) {
+], function($, _, t, Button, Editable, TreeGrid, TreeGridRow,
+    DragNDropTreeGridRow, model, Tree, Mock, RecordSeries, recordseries_tree) {
 
     var RowClass,
         showGrid = function() {
@@ -370,14 +370,20 @@ require([
                     on: 'mousedown',
                     selector: 'button.grab',
                     callback: 'draggableOnMouseDown'
+                },
+                {
+                    on: 'dragstart',
+                    callback: 'onDragStart'
                 }
             ],
             draggable: {autoBind: false}
         },
+        onDragStart: function() {
+        },
         renderColGrab: function() {
             return '<button type=button class="button grab">m</button>';
         }
-    }, {mixins: [DraggableRow]});
+    }, {mixins: [DragNDropTreeGridRow]});
 
     module('drag n drop treegrid', {
         setup: function() {

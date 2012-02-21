@@ -9,15 +9,15 @@ define([
                 prototype.defaults.draggable.clone = true;
             }
         },
-        _draggableCloneEl: function($el) {
+        _draggableCloneEl: function() {
             var $tbody = $(null),
-                $origTable = $el.closest('table'),
+                $origTable = this.$node.closest('table'),
                 $table = $($origTable[0].cloneNode(false));
-            if ($el.closest('tbody')) {
-                $tbody = $($el.closest('tbody')[0].cloneNode(false))
+            if (this.$node.closest('tbody')) {
+                $tbody = $(this.$node.closest('tbody')[0].cloneNode(false))
                             .appendTo($table);
             }
-            $el.clone(false, false).appendTo($tbody);
+            this.$node.clone(false, false).appendTo($tbody);
             return $table.width($origTable.width())
                 .addClass('cloned')
                 .insertAfter($origTable);
