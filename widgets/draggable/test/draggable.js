@@ -25,4 +25,5 @@ define([
         var $el = $(draggable_html).appendTo('body').find('.row-to-be-dragged');
         window.w2 = window.MyWidget2($el);
     });
+
 });

@@ -5,8 +5,8 @@ define([
     return $.extend({}, Draggable, {
         __mixin__: function(base, prototype, mixin) {
             Draggable.__mixin__.call(this, base, prototype, mixin);
-            if (prototype.defaults.clone == null) {
-                prototype.defaults.clone = true;
+            if (prototype.defaults.draggable.clone == null) {
+                prototype.defaults.draggable.clone = true;
             }
         },
         _draggableCloneEl: function($el) {
@@ -18,7 +18,9 @@ define([
                             .appendTo($table);
             }
             $el.clone(false, false).appendTo($tbody);
-            return $table.width($origTable.width()).insertAfter($origTable);
+            return $table.width($origTable.width())
+                .addClass('cloned')
+                .insertAfter($origTable);
         }
     });
 });
