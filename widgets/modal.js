@@ -5,13 +5,15 @@ define(
     'vendor/underscore',
     'vendor/gloss/widgets/widget',
     'vendor/gloss/widgets/button',
+    'vendor/gloss/widgets/draggable',
     'link!css/widgets/modal.css'
 ],
 
-function($, _, Widget, Button) {
+function($, _, Widget, Button, Draggable) {
 
     return Widget.extend({
         defaults: {
+            draggable: { autoBind: false }, // leave this alone
             backdrop: true, // set to 'transparent' for clear, 'false' to disable
             clickBackdropToClose: false,
             position: 'center', // set to 'undefined' for manual positioning
@@ -19,56 +21,64 @@ function($, _, Widget, Button) {
             height: undefined,
             closeOnEscape: true,
             title: false, // set this to a string for enable a title
-            closeBtn: false // 'true' to have a close button in the upper corner
+            closeBtn: false, // 'true' to have a close button in the upper corner
+            titleBarDrag: true // set to 'true' for titlebar drag
         },
 
         create: function() {
-            this.$node.hide().addClass(
-                this.options.backdrop? 'modal' : 'modal without-backdrop');
+            var self = this, $node = self.$node, options = self.options;
+            $node.hide().addClass(
+                options.backdrop? 'modal' : 'modal without-backdrop');
 
-            if (this.options.backdrop) {
-                this.$backdrop = $('<div class=modal-backdrop>');
-                if (this.options.backdrop === 'transparent') {
-                    this.$backdrop.addClass('transparent');
+            if (options.backdrop) {
+                self.$backdrop = $('<div class=modal-backdrop>');
+                if (options.backdrop === 'transparent') {
+                    self.$backdrop.addClass('transparent');
                 }
             } else {
-                this.$backdrop = $(null);
+                self.$backdrop = $(null);
             }
 
-            this.$header = this.$node.children().find('h1');
+            self.$header = $node.children().find('h1');
 
-            if (!this.$header.length &&
-                    (this.options.title || this.options.closeBtn)) {
-                this.$header = $('<h1>').prependTo(this.$node);
+            if (!self.$header.length &&
+                    (options.title || options.closeBtn)) {
+                self.$header = $('<h1>').prependTo($node);
             }
 
-            if (this.options.title) {
-                this.$header.text(this.options.title);
+            if (options.title) {
+                self.$header.text(options.title);
             }
 
-            if (this.options.closeBtn) {
-                Button($('<button>X</button>').prependTo(this.$header))
-                    .on('click', this.close);
+            if (options.closeBtn) {
+                Button($('<button>X</button>').prependTo(self.$header))
+                    .on('click', self.close);
             }
 
-            if (this.options.clickBackdropToClose) {
-                this.$backdrop.on('click', this.close);
+            if (options.clickBackdropToClose) {
+                self.$backdrop.on('click', self.close);
             }
 
-            if (this.options.width) {
-                this.$node.width(this.options.width);
+            if (options.width) {
+                $node.width(options.width);
 
-                if (this.options.position === 'center') {
-                    this.$node.css({marginLeft: -this.options.width/2 + 'px'});
+                if (options.position === 'center') {
+                    $node.css({marginLeft: -options.width/2 + 'px'});
                 }
             }
 
-            if (this.options.height) {
-                this.$node.width(this.options.width);
+            if (options.height) {
+                $node.width(options.width);
 
-                if (this.options.position === 'center') {
-                    this.$node.css({marginTop: -this.options.height/2 + 'px'});
+                if (options.position === 'center') {
+                    $node.css({marginTop: -options.height/2 + 'px'});
                 }
+            }
+
+            if (options.titleBarDrag) {
+                self.on('mousedown', 'h1, h1 :not(button)', function(evt) {
+                    self.draggableOnMouseDown(evt);
+                }).$node.find('h1').addClass('drag-handle');
             }
         },
 
@@ -128,6 +138,6 @@ function($, _, Widget, Button) {
                 this.close();
             }
         }
-    });
+    }, {mixins: [Draggable]});
 
 });
