@@ -353,7 +353,7 @@ require([
     var DraggableRowClass = RowClass.extend({
         defaults: {
             colModel: [
-                {name: 'grab', label: ' ', render: 'renderColGrab', modelIndependent: true},
+                {name: 'grab', label: ' ', render: 'renderColGrab', modelIndependent: true, width: 32},
                 {name: 'name', label: 'Name', expandCol: true},
                 {name: 'tasks_option', label: 'Tasks Option'},
                 {name: 'volume_id', label: 'Volume ID'},

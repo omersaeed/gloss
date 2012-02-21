@@ -17,11 +17,10 @@ define([
             tippingPoint: 50
         },
 
-        // nodeTemplate: '<div><div class=table><div class=thead></div><div class=tbody></div></div></div>',
-        nodeTemplate: '<div><table><thead></thead><tbody></tbody></table></div>',
+        nodeTemplate: '<div><table><thead><tr></tr></thead><tbody></tbody></table></div>',
 
         create: function() {
-            var self = this;
+            var self = this, $tr;
             self.$node.addClass('grid');
             self.options.rows = [];
             self.$table = self.$node.find('table');
@@ -49,6 +48,14 @@ define([
                         }
                     }
                 });
+            });
+            $tr = self.$table.find('thead tr');
+            _.each(self.options.colModel, function(col) {
+                var $th = $('<th>').text(col.label || '');
+                if (col.width != null) {
+                    $th.width(col.width);
+                }
+                $th.appendTo($tr);
             });
             self.update();
         },
