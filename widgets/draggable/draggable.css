@@ -1,0 +1,7 @@
+.dragging {
+  position: absolute !important;
+}
+
+.dragged {
+  position: absolute !important;
+}
