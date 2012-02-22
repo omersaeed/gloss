@@ -29,6 +29,14 @@ define([
                     }
                 }
             }
+            if (! defaults.events) {
+                defaults.events = [];
+            }
+            defaults.events.push({
+                on: 'click',
+                selector: '.expand',
+                callback: 'onClickExpand'
+            });
             this._super.apply(this, arguments);
         },
 
@@ -88,35 +96,19 @@ define([
             });
         },
 
+        onClickExpand: function() {
+            if (this.options.model.isparent) {
+                this.toggle();
+            }
+        },
+
         render: function() {
-            var self = this,
-                hasRendered = self.hasRendered;
+            var self = this;
             self._super();
             if (self.options.node.par.expanded) {
                 self.show();
             } else {
                 self.hide();
-            }
-            if (!hasRendered) {
-                setTimeout(function() {
-                    // var options = self.options,
-                    //     index = options.expandColIndex,
-                    //     expandCol = self.node.childNodes[index];
-                    // self._indentNode = expandCol.childNodes[0];
-                    // self._expandNode = expandCol.childNodes[1];
-                    // self._valueNode = expandCol.childNodes[2];
-                    // $(self._expandNode)
-                    //     .off('click')
-                    //     .on('click', function() {
-                    // console.log('binding for',self.$node);
-                    self.$node.find('.expand')
-                        .off('click')
-                        .on('click', function() {
-                            if (self.options.model.isparent) {
-                                self.toggle();
-                            }
-                        });
-                }, 0);
             }
         },
 
