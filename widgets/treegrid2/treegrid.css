@@ -1,4 +1,5 @@
-.tree.grid table tbody td .expand, .tree.grid table tbody tr td .expand {
+.tree.grid table tbody td .expand,
+.tree.grid table tbody tr td .expand {
   width: 30px;
   /* display: inline-block; */
 
@@ -14,4 +15,10 @@
 }
 .tree.grid table tbody tr td .expand.parent {
   cursor: pointer;
+}
+.tree.grid table.cloned.dragging {
+  filter: alpha(opacity=50);
+  -moz-opacity: 0.5;
+  -khtml-opacity: 0.5;
+  opacity: 0.5;
 }

@@ -6,7 +6,7 @@
 }
 .grid table tbody tr {
   height: 2em;
-  background-color: white;
+  background-color: #ffffff;
   display: table-row;
 }
 .grid table tbody tr:nth-child(odd) {
