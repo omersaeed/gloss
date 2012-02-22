@@ -22,3 +22,20 @@
   -khtml-opacity: 0.5;
   opacity: 0.5;
 }
+body.dragging-element .tree.grid table tbody tr.hover {
+  background-color: #60676d;
+  color: white;
+}
+body.dragging-element .tree.grid table tbody tr.hover td button {
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}
+body.dragging-element .tree.grid table tbody tr.hover td .expand {
+  color: white;
+}
+body.dragging-element .tree.grid .insert {
+  position: absolute;
+  height: 6px;
+  background-color: #60676d;
+}

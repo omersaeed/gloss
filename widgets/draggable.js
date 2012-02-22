@@ -25,7 +25,7 @@ define([
             }
         },
         _draggableCloneEl: function() {
-            return this.$node.clone(false, false)
+            return this.$node.clone(false, false);
         },
         _draggableOnMouseMove: function(evt) {
             this._draggableSetPos(evt, this._draggableOffset);

@@ -17,7 +17,26 @@
 .tree.grid table tbody tr td .expand.parent {
   cursor: pointer;
 }
+
 .tree.grid table.cloned.dragging {
   .opacity(50);
 }
 
+body.dragging-element .tree.grid table tbody tr.hover {
+  background-color: @color;
+  color: white;
+}
+
+body.dragging-element .tree.grid table tbody tr.hover td button {
+  .box-shadow(none);
+}
+
+body.dragging-element .tree.grid table tbody tr.hover td .expand {
+  color: white;
+}
+
+body.dragging-element .tree.grid .insert {
+  position: absolute;
+  height: 6px;
+  background-color: @color;
+}
