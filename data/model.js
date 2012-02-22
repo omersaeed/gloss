@@ -122,7 +122,7 @@ define([
         },
 
         add: function(models, idx) {
-            var model;
+            var self = this, model;
             if (!isArray(models)) {
                 models = [models];
             }
@@ -416,7 +416,7 @@ define([
             data = {};
             if (attrs != null) {
                 $.extend(true, data, attrs);
-                self.set(attrs, silent);
+                self.set(attrs);
             }
             if (params != null) {
                 $.extend(true, data, params);
@@ -466,7 +466,7 @@ define([
         },
 
         set: function(attr, value, silent) {
-            var attrs = {}, changing, changed, name, value, currentValue;
+            var attrs = {}, changing, changed, name, currentValue;
             if (attr != null) {
                 if (isString(attr)) {
                     attrs[attr] = value;
