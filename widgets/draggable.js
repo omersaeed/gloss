@@ -37,10 +37,11 @@ define([
                 this._$draggableEl.addClass('dragged');
             }
             this._$draggableEl.removeClass('dragging');
-            $('body').removeClass('dragging-element');
-            $(window).off('mouseup.draggable mousemove.draggable');
+            $('body').removeClass('dragging-element')
+                .off('mouseup.draggable mousemove.draggable');
             delete this._draggablePos;
             delete this._draggableOffset;
+            this.trigger('dragend');
         },
         _draggableSetPos: function(evt, offset) {
             this._$draggableEl.css({
@@ -51,12 +52,11 @@ define([
         _draggableStart: function(evt) {
             var self = this;
             self.off('mouseup.draggable-start mousemove.draggable-start');
-            $(window).on('mouseup.draggable', function() {
+            $('body').on('mouseup.draggable', function() {
                 self._draggableOnMouseUp();
             }).on('mousemove.draggable', function(evt) {
                 self._draggableOnMouseMove(evt);
-            });
-            $('body').addClass('dragging-element');
+            }).addClass('dragging-element');
             if (self.options.draggable.clone) {
                 self._$draggableEl = self._draggableCloneEl();
             } else {

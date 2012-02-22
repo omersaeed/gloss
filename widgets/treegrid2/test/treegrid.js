@@ -244,7 +244,8 @@ require([
 
     asyncTest('expand and collapse nodes with click', function() {
         var tree = this.tree, treegrid = this.treegrid, manager = this.manager;
-        treegrid.appendTo($('body'));
+        // treegrid.appendTo($('body'));
+        treegrid.appendTo($('#qunit-fixture'));
 
         treegrid.load().done(function() {
             treegrid.options.rows[0].$node.find('.expand').trigger('click');
