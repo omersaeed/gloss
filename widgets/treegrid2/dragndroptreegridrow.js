@@ -60,6 +60,9 @@ define([
             delete this._nonTargets;
             this._$insertDiv.remove();
             delete this._$insertDiv;
+            _.each(this.options.grid.options.rows, function(row) {
+                row.$node.removeClass('hover');
+            });
         },
         _draggableStart: function(evt) {
             var self = this, $children = $(null),

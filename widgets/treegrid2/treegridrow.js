@@ -12,7 +12,8 @@ define([
             expandText: '&#x25bc;',
             collapseText: '&#x25b6;',
             // childText: '&#8226;' // bullet
-            childText: '&#9679;' // black circle
+            childText: '&#9679;', // black circle
+            indentText: '&nbsp;&nbsp;&nbsp;&nbsp;'
         },
 
         __new__: function() {
@@ -113,13 +114,13 @@ define([
         },
 
         renderColExpand: function() {
-            // console.log('  rendering',this.$node);
             var i, l,
                 options = this.options,
                 node = options.node,
-                ret = ['<span class=indent>'];
+                ret = ['<span class=indent>'],
+                indentText = options.indentText;
             for (i = 0, l = node.level; i < l; i++) {
-                ret.push('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+                ret.push(indentText);
             }
             ret.push('</span><a href="javascript:void(0)" class="expand');
             if (! node.model.isparent) {
@@ -136,13 +137,12 @@ define([
         },
 
         rerenderColExpand: function() {
-            // console.log('RE-rendering',this.$node);
             var options = this.options,
                 node = options.node,
                 index = options.expandColIndex,
                 name = options.expandColName,
                 expandCol = this.node.childNodes[index],
-                indentTxt = Array(node.level+1).join('&nbsp;&nbsp;&nbsp;&nbsp;'),
+                indentTxt = Array(node.level+1).join(options.indentText),
                 indent = expandCol.childNodes[0],
                 expandTxt = !node.model.isparent? options.childText :
                             node.expanded? options.expandText :
@@ -158,26 +158,6 @@ define([
                 expand.innerHTML = expandTxt;
                 value.textContent = node.model[name];
             }
-
-            // this.$node.children().eq(this.options.expandColIndex).empty()
-            //     .__append__($(this.renderColExpand()));
-
-//             var expandText, options = this.options, node = options.node, name = options.expandColName;
-//             if (!node.model.isparent) {
-//                 expandText = options.childText;
-//             } else if (node.expanded) {
-//                 expandText = options.expandText;
-//             } else {
-//                 expandText = options.collapseText;
-//             }
-//             this._expandNode.innerHTML = expandText;
-//             if (this._indentNode.innerText != null) {
-//                 this._indentNode.innerText = Array(node.level+1).join('&nbsp;&nbsp;&nbsp;&nbsp;');
-//                 this._valueNode.innerText = node[name];
-//             } else {
-//                 this._indentNode.textContent = Array(node.level+1).join('&nbsp;&nbsp;&nbsp;&nbsp;');
-//                 this._valueNode.textContent = node[name];
-//             }
         },
 
         set: function(name, value) {

@@ -60,6 +60,7 @@ require([
                     names[i]
                 );
                 equal($expandCol.find('.expand').text(), text);
+                equal($expandCol.find('.indent').text().length / 4, row.options.node.level);
             });
         },
         findNode = function(tree, id) {
@@ -248,9 +249,16 @@ require([
         treegrid.load().done(function() {
             treegrid.options.rows[0].$node.find('.expand').trigger('click');
             setTimeout(function() {
-                equal(treegrid.options.rows[0].options.node.expanded, true);
-                start();
-            }, 1000);
+                treegrid.options.rows[8].$node.find('.expand').trigger('click');
+                setTimeout(function() {
+                    treegrid.options.rows[9].$node.find('.expand').trigger('click');
+                    setTimeout(function() {
+                        equal(treegrid.options.rows[0].options.node.expanded, true);
+                        treeGridMatchesData(treegrid, tree);
+                        start();
+                    }, 15);
+                }, 15);
+            }, 15);
         });
     });
 
