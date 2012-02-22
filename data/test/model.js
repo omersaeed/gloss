@@ -1,3 +1,4 @@
+/*global test, asyncTest, ok, equal, deepEqual, start, stop, strictEqual, module */
 require([
     'vendor/jquery',
     'vendor/underscore',
@@ -47,7 +48,7 @@ require([
                         params.error({status: 404});
                     }
                 } else {
-                    models = _.sortBy(_.values(models), function(v) {return v.id});
+                    models = _.sortBy(_.values(models), function(v) {return v.id;});
                     total = models.length;
                     if (data.offset) {
                         models = models.slice(data.offset);
@@ -223,18 +224,22 @@ require([
     var models = Test.models;
     window.Test = Test;
 
-    module('model', {
-        setup: function() {
-            storage.models.test = {};
-            for (var i = 0; i < NAMES.length; i++) {
-                storage.models.test[i + 1] = {id: i + 1, name: NAMES[i]};
-            }
-            Test.models.clear();
-        },
-        teardown: function() {
-            storage.models.test = {};
-            Test.models.clear();
+    var setup = function() {
+        storage.models.test = {};
+        for (var i = 0; i < NAMES.length; i++) {
+            storage.models.test[i + 1] = {id: i + 1, name: NAMES[i]};
         }
+        Test.models.clear();
+    };
+
+    var teardown = function() {
+        storage.models.test = {};
+        Test.models.clear();
+    };
+
+    module('model', {
+        setup: setup,
+        teardown: teardown
     });
 
     test('creation of default manager', function() {
@@ -268,7 +273,13 @@ require([
         strictEqual(model.c, 3);
     });
 
+    module('async model tests', {
+        setup: function() { },
+        teardown: function() { }
+    });
+
     asyncTest('simple model lifecycle', function() {
+        setup();
         var model = Test({name: 'name'});
         equal(model.id, null);
 
@@ -287,6 +298,7 @@ require([
 
                     model.destroy().done(function() {
                         equal(storage.get('test', id), null);
+                        teardown();
                         start();
                     });
                 });
@@ -295,6 +307,7 @@ require([
     });
 
     asyncTest('conditional model refresh', function() {
+        setup();
         var model = models.get(1), calls = storage.calls;
         ok(!model._loaded);
         model.refresh().done(function() {
@@ -304,12 +317,14 @@ require([
             calls = storage.calls;
             model.refresh(true).done(function() {
                 strictEqual(calls, storage.calls);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('manager association lifecycle', function() {
+        setup();
         var model = Test({name: 'name'});
         equal(model.id, null);
         equal(model.cid.substr(0, 1), '_');
@@ -322,12 +337,14 @@ require([
 
             model.destroy().done(function() {
                 ok(_.isEmpty(models.models));
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('manager association for existing resource', function() {
+        setup();
         ok(_.isEmpty(models.models));
         var model = models.get(1);
         ok(!_.isEmpty(models.models));
@@ -337,11 +354,13 @@ require([
         model.refresh().done(function() {
             strictEqual(model.name, 'alpha');
             strictEqual(models.get(1), model);
+            teardown();
             start();
         });
     });
 
     asyncTest('collection usage: full load', function() {
+        setup();
         var collection = Test.collection(), calls = storage.calls;
         ok(_.isEmpty(models.models));
         collection.load().done(function(data) {
@@ -355,12 +374,14 @@ require([
             collection.load().done(function(data2) {
                 strictEqual(storage.calls, calls);
                 strictEqual(data.length, data2.length);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('collection usage: limit = 10', function() {
+        setup();
         var collection = Test.collection(), calls = storage.calls;
         collection.load({limit: 10}).done(function(data) {
             var values = storage.all('test');
@@ -377,12 +398,14 @@ require([
                 strictEqual(data.length, data2.length);
                 strictEqual(data[0].id, values[0].id);
                 strictEqual(data[9].id, values[9].id);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('collection usage: offset = 10', function() {
+        setup();
         var collection = Test.collection(), calls = storage.calls;
         collection.load({offset: 10}).done(function(data) {
             var values = storage.all('test');
@@ -401,12 +424,14 @@ require([
                 strictEqual(data.length, data2.length);
                 strictEqual(data[0].id, values[10].id);
                 strictEqual(data[9].id, values[19].id);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('collection usage: offset = 10, limit = 10', function() {
+        setup();
         var collection = Test.collection(), calls = storage.calls;
         collection.load({offset: 10, limit: 10}).done(function(data) {
             var values = storage.all('test');
@@ -426,12 +451,14 @@ require([
                 strictEqual(data.length, data2.length);
                 strictEqual(data[0].id, values[10].id);
                 strictEqual(data[9].id, values[19].id);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('change events, direct subscription', function() {
+        setup();
         var calls = 0, callback = function() {calls++}, model;
         model = Test.models.get(1);
         model.on('change', callback);
@@ -444,12 +471,14 @@ require([
             strictEqual(calls, 2);
             model.save().done(function() {
                 strictEqual(calls, 2);
+                teardown();
                 start();
             });
         });
     });
 
     asyncTest('change events, manager subscription', function() {
+        setup();
         var calls = 0;
         models.on('change', function() {calls++});
         model = Test.models.get(1);
@@ -460,11 +489,13 @@ require([
 
             model.set('name', 'testing');
             strictEqual(calls, 2);
+            teardown();
             start();
         });
     });
 
     asyncTest('change events, subscription via collection', function() {
+        setup();
         var calls = 0, collection = Test.collection(), model;
         collection.on('change', function() {calls++});
         strictEqual(calls, 0);
@@ -479,6 +510,7 @@ require([
             model = models.get(20).refresh().done(function() {
                 model.set('name', 'testing');
                 strictEqual(calls, 1);
+                teardown();
                 start();
             });
         });
