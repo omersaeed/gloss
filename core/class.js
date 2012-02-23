@@ -98,7 +98,7 @@ define([], function() {
         constructor.extend = extend;
         
         if(prototype.__new__) {
-            prototype.__new__(constructor, this, prototype);
+            prototype.__new__(constructor, this, prototype, mixins);
         }
         if(mixins) {
             for(i = mixins.length - 1; i >= 0; i--) {

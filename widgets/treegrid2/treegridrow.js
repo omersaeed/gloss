@@ -58,6 +58,22 @@ define([
             return grid.options.rows.slice(index+1, index+childCount+1);
         },
 
+        _parentRow: function() {
+            var i, options = this.options,
+                rows = options.grid.options.rows,
+                par = options.node.par,
+                idx = options.idx;
+            if (!idx || par.model.id == null) {
+                return undefined;
+            } else {
+                for (i = idx-1; i >= 0; i--) {
+                    if (rows[i].options.node === par) {
+                        return rows[i];
+                    }
+                }
+            }
+        },
+
         _expandSpan: function() {
             return this.$node.find('td').eq(this.options.expandColIndex)
                 .find('.expand');
@@ -91,10 +107,16 @@ define([
         },
 
         moveTo: function(row, index) {
-            var self = this;
-            row.expand().done(function() {
-                self.options.node.moveTo(row.options.node, index);
-            });
+            var self = this,
+                options = self.options,
+                node = options.node;
+            if (row) {
+                row.expand().done(function() {
+                    node.moveTo(row.options.node, index);
+                });
+            } else {
+                node.moveTo(options.grid.options.tree.root, index);
+            }
         },
 
         onClickExpand: function() {

@@ -10,6 +10,7 @@ define([
             }
         },
         _draggableCloneEl: function() {
+        // _dragCloneEl: function() {
             var $tbody = $(null),
                 $origTable = this.$node.closest('table'),
                 $table = $($origTable[0].cloneNode(false));

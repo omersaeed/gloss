@@ -326,10 +326,21 @@ define([
             bindOnMethodHandlers: true
         },
 
-        __new__: function(constructor, base, prototype) {
-            var defaults;
+        __new__: function(constructor, base, prototype, mixins) {
+            var defaults, i, mixin;
             if (base.prototype.defaults != null && prototype.defaults != null) {
                 prototype.defaults = recursiveMerge({}, base.prototype.defaults, prototype.defaults);
+            }
+            if (mixins) {
+                for (i = mixins.length-1; i >= 0; i--) {
+                    mixin = mixins[i];
+                    if (mixin.__updateWidget__) {
+                        if (!prototype._updateWidgetMixins) {
+                            prototype._updateWidgetMixins = [];
+                        }
+                        prototype._updateWidgetMixins.push(mixin.__updateWidget__);
+                    }
+                }
             }
         },
 
@@ -424,11 +435,16 @@ define([
         },
 
         update: function(options) {
-            var updated = {};
+            var i, updated = {};
             $.each(options || this.options, function(key, value) {
                 updated[key] = true;
             });
             this.updateWidget(updated);
+            if (this._updateWidgetMixins) {
+                for (i = this._updateWidgetMixins.length-1; i >= 0; i--) {
+                    this._updateWidgetMixins[i].call(this, updated);
+                }
+            }
             return this;
         },
 
