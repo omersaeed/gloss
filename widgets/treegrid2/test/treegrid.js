@@ -414,4 +414,13 @@ require([
         });
     });
 
+//     asyncTest('test drag to node', function() {
+//         var tree = this.tree, treegrid = this.treegrid;
+//         treegrid.appendTo($('body'));
+
+//         treegrid.load().done(function() {
+//             start();
+//         });
+//     });
+
 });

@@ -2,9 +2,8 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'vendor/gloss/widgets/draggable',
-    'vendor/gloss/widgets/draggablerow',
-    'vendor/gloss/widgets/droppable'
-], function($, _, Draggable, DraggableRow, Droppable) {
+    'vendor/gloss/widgets/draggablerow'
+], function($, _, Draggable, DraggableRow) {
     var _super = function(name) {
         return DraggableRow[name] || Draggable[name];
     };
