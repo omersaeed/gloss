@@ -34,52 +34,43 @@ define([
     };
 
     return $.extend({}, DraggableRow, {
-        _draggableCheckTargets: function(evt) {
+        _dragCheckTargets: function(evt) {
             var rowIndex, where, $row/*, rows = this.options.grid.options.rows*/;
-            if (inside(evt, this._targets) && ! inside(evt, this._nonTargets)) {
-                rowIndex = getRowIndex(evt, this._targets, this._$visibleRows);
+            if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
+                rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
                 where = whereInRow(rowIndex % 1);
-                $row = this._$visibleRows.eq(parseInt(rowIndex, 10));
-                if (this._$lastRow && $row[0] !== this._$lastRow[0]) {
-                    this._$lastRow.removeClass('hover');
-                    this._$insertDiv.addClass('hidden');
+                $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
+                if (this._drag.$lastRow && $row[0] !== this._drag.$lastRow[0]) {
+                    this._drag.$lastRow.removeClass('hover');
+                    this._drag.$insertDiv.addClass('hidden');
                 }
-                this._$lastRow = $row;
+                this._drag.$lastRow = $row;
                 if (where === 'before') {
                     $row.removeClass('hover');
-                    this._$insertDiv
+                    this._drag.$insertDiv
                         .css({top: $row.position().top - 3})
                         .removeClass('hidden');
                 } else if (where === 'after') {
                     $row.removeClass('hover');
-                    this._$insertDiv
+                    this._drag.$insertDiv
                         .css({top: $row.position().top + $row.outerHeight() - 3})
                         .removeClass('hidden');
                 } else {
                     $row.addClass('hover');
-                    this._$insertDiv.addClass('hidden');
+                    this._drag.$insertDiv.addClass('hidden');
                 }
-            } else if (this._$lastRow) {
-                this._$lastRow.removeClass('hover');
-                this._$insertDiv.addClass('hidden');
-                delete this._$lastRow;
+            } else if (this._drag.$lastRow) {
+                this._drag.$lastRow.removeClass('hover');
+                this._drag.$insertDiv.addClass('hidden');
+                delete this._drag.$lastRow;
             }
         },
-        _draggableDrop: function(evt, mousePos) {
-            // var self = this, visibleRowIndex, rowIndex, row, where, dest, i,
-            //     rows = self.options.grid.options.rows,
-            //     $visibleRows = self.options.grid.$tbody.find('tr:visible');
-                // rowIndex = getRowIndex(mousePos, self._targets, rows),
-                // row = rows[parseInt(rowIndex, 10)],
-                // where = whereInRow(rowIndex % 1),
-                // dest = row.options.idx;
-            var i;
-            var row;
-            var dest;
-            var rows = this.options.grid.options.rows;
-            var rowIndex = getRowIndex(mousePos, this._targets, this._$visibleRows);
-            var where = whereInRow(rowIndex % 1);
-            var $row = this._$visibleRows.eq(parseInt(rowIndex, 10));
+        _dragDrop: function(evt, mousePos) {
+            var i, row, dest,
+                rows = this.options.grid.options.rows,
+                rowIndex = getRowIndex(mousePos, this._drag.targets, this._drag.$visibleRows),
+                where = whereInRow(rowIndex % 1),
+                $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
             for (i = rows.length-1; i >= 0; i--) {
                 if (rows[i].node === $row[0]) {
                     row = rows[i];
@@ -87,8 +78,8 @@ define([
                 }
             }
             dest = row.options.node.index();
-            if (!inside(mousePos, this._targets) ||
-                inside(mousePos, this._nonTargets)) {
+            if (!inside(mousePos, this._drag.targets) ||
+                inside(mousePos, this._drag.nonTargets)) {
                 return;
             }
             if (this.options.node.par === row.options.node.par &&
@@ -102,22 +93,17 @@ define([
             } else {
                 this.moveTo(row);
             }
+            this.off('dragend');
         },
-        _draggableOnMouseUp: function(evt) {
-            _super('_draggableOnMouseUp').call(this, evt);
-            this.options.grid.off('mousemove.draggable-treegrid');
-            // this._droppedIndex = getRowIndex(evt, this._targets, this._$visibleRows);
-            // this._$droppedOn = this._$visibleRows.eq(parseInt(this._droppedIndex, 10));
-            delete this._targets;
-            delete this._nonTargets;
-            this._$insertDiv.remove();
-            delete this._$insertDiv;
+        _dragOnMouseUp: function(evt) {
+            this._drag.$insertDiv.remove();
+            _super('_dragOnMouseUp').call(this, evt);
+            this.options.grid.off('mousemove.drag-treegrid');
             _.each(this.options.grid.options.rows, function(row) {
                 row.$node.removeClass('hover');
             });
-            delete this._$visibleRows;
         },
-        _draggableStart: function(evt) {
+        _dragStart: function(evt) {
             var self = this, $children = $(null),
                 children = self._childRows() || [],
                 position = self.$node.position(),
@@ -126,96 +112,32 @@ define([
                 firstChildPos = rows[0].$node.position(),
                 lastRowPos = _.last(rows).$node.position(),
                 lastChildPos = (_.last(children) || self).$node.position();
-            _super('_draggableStart').call(self, evt);
-            self._nonTargets = {
+            _super('_dragStart').call(self, evt);
+            self._drag.nonTargets = {
                 top: position.top,
                 bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight()
             };
-            self._targets = {
+            self._drag.targets = {
                 top: firstChildPos.top,
                 bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
             };
-            self._$visibleRows = self.options.grid.$tbody.find('tr:visible');
-            self.options.grid.on('mousemove.draggable-treegrid', 'tr', function(evt) {
-                self._draggableCheckTargets(evt);
+            self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
+            self.options.grid.on('mousemove.drag-treegrid', 'tr', function(evt) {
+                self._dragCheckTargets(evt);
             });
             _.each(children, function(child) {
                 $children = $children.add(child.$node.clone(false, false));
             });
-            self._$draggableEl.find('tbody').append($children);
-            self._$insertDiv = $('<div class="insert hidden">')
+            self._drag.$el.find('tbody').append($children);
+            self._drag.$insertDiv = $('<div class="insert hidden">')
                 .width(width)
                 .css({left: position.left})
                 .appendTo(self.options.grid.$node);
             self.on('dragend', function(evt, data) {
-                self._draggableDrop(evt, data);
+                self._dragDrop(evt, data);
             });
         }
     });
-
-    // return $.extend({}, DraggableRow, Droppable, {
-    //     __mixin__: function(base, prototype, mixin) {
-    //         DraggableRow.__mixin__.apply(this, arguments);
-    //         Droppable.__mixin__.apply(this, arguments);
-    //     },
-    //     __updateWidget__: function(updated) {
-    //         var self = this;
-    //         if (updated.dragTargets && self._drag) {
-    //             self.options.grid.on('mousemove.drag', function(evt) {
-    //                 self._deliverToTarget(evt);
-    //             });
-    //         }
-    //     },
-    //     afterInit: function() {
-    //         var self = this;
-    //         DraggableRow.afterInit.apply(self, arguments);
-    //         Droppable.afterInit.apply(self, arguments);
-    //     },
-    //     ondragstart: function(evt) {
-    //         var self = this,
-    //             grid = self.options.grid,
-    //             $targets = $(null),
-    //             idx = self.options.idx,
-    //             childRows = self._childRows(),
-    //             lastChildIdx = (_.last(childRows) || self).options.idx;
-
-    //         self.set('dragTargets', _.chain(self.options.grid.options.rows)
-    //             .filter(function(row) {
-    //                 return row.options.idx < idx || row.options.idx > lastChildIdx;
-    //             })
-    //             .filter(function(row) {
-    //                 return row.$node.is(':visible');
-    //             })
-    //             .value());
-
-    //         self._drag.$visibleRows = $(_.pluck(self.options.dragTargets, 'node'));
-
-    //         $(_.map(childRows, function(row) { return row.$node[0]; }))
-    //             .clone(false, false)
-    //             .appendTo(self._drag.$el.find('tbody'));
-
-    //         this._drag.targetDim = {
-    //             top: grid.rows[0].$node.position().top,
-    //             bottom: _.last(grid.rows).$node.position().top +
-    //                     _.last(grid.rows).$node.outerHeight()
-    //         };
-    //         this._drag.nonTargetDim = {
-    //             top: this.$node.position().top,
-    //             bottom: _.last(childRows).position().top + 
-    //                     _.last(childRows).$node.outerHeight()
-    //         };
-    //     },
-    //     _deliverToTarget: function(evt) {
-    //         if (!inside(evt, this._drag.targetDim) || inside(evt, this._drag.nonTargetDim)) {
-    //             return undefined;
-    //         }
-    //         console.log(evt);
-    //     },
-    //     _dragOnMouseUp: function(evt) {
-    //         Draggable._dragOnMouseUp.apply(this, arguments);
-    //         this.options.grid.off('mousemove.drag');
-    //     }
-    // });
 });
 
 

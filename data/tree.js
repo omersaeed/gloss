@@ -84,10 +84,6 @@ define([
                 tree: true,
                 query: query
             });
-
-            // self.collection.on('update', function() {
-            //     self.trigger('update', self);
-            // });
         },
 
         // this should not be used for deleting nodes from the tree.  it's used
@@ -122,7 +118,7 @@ define([
             }
             if (idx == null) {
                 children.push(node);
-            } else if (idx < children.length) {
+            } else if (idx <= children.length) {
                 children.splice(idx, 0, node);
             } else {
                 throw Error('in appendChild, idx >= children.length');
