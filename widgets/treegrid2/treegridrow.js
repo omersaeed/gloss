@@ -182,27 +182,6 @@ define([
             }
         },
 
-        set: function(name, value) {
-            var attrs = {},
-                node = this.options.node;
-            if (_.isString(name)) {
-                attrs[name] = value;
-            } else {
-                attrs = name;
-            }
-
-            if (attrs.node != null) {
-                if (this._nodeUpdate) {
-                    node.off('update', this._nodeUpdate);
-                }
-                if (value === node || name.node === node) {
-                    return this;
-                }
-            }
-
-            Widget.prototype.set.call(this, name, value);
-        },
-
         toggle: function() {
             if (this.options.node.expanded) {
                 return this.collapse();
