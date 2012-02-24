@@ -453,16 +453,21 @@ require([
     };
     var dndArtifactsHaveBeenCleanedUp = function(treegrid) {
         ok($('body').hasClass('dragging-element') === false);
-        equal(treegrid.$node.find('.dragging').length, 0);
+        equal(treegrid.$node.find('.dragging').length, 0,
+                'treegrid doesnt have "dragging" class');
         _.each(treegrid.$node.data('events') || {}, function(events, evtClass) {
-            ok(evtClass !== 'mousemove');
-            ok(evtClass !== 'mouseup');
+            ok(evtClass !== 'mousemove', 'treegrid doesnt have mousemove event');
+            ok(evtClass !== 'mouseup', 'treegrid doesnt have mouseup event');
         });
         treegrid.$node.find('tbody tr').each(function(i, el) {
-            ok($(el).data('events') == null);
+            ok($(el).data('events') == null,
+                'treegrid row doesnt have drag-and-drop events');
+            if ($(el).data('events') != null) {
+                throw Error('in there');
+            }
         });
         _.each(treegrid.options.rows, function(row) {
-            ok(row._drag == null);
+            ok(row._drag == null, 'treegrid row doesnt have _drag state');
         });
     };
     var startDrag = window.startDrag = function(row) {
@@ -580,6 +585,38 @@ require([
                     start();
                 });
             });
+        });
+    });
+
+    asyncTest('start drag, stop w/o moving, and then drag into node', function() {
+        var tree = this.tree, treegrid = this.treegrid;
+        // treegrid.appendTo($('body'));
+        treegrid.appendTo($('#qunit-fixture'));
+
+        treegrid.load().done(function() {
+            var gamma, gammaNode, epsilon, epsilonNode,
+                alpha = find(treegrid, 'alpha something'),
+                alphaNode = alpha.options.node,
+                beta = find(treegrid, 'beta fooasdfasdf'),
+                betaNode = beta.options.node,
+                alphaSomethingCount = 0;
+            startDrag(alpha);
+            dragTo(alpha);
+            drop(alpha);
+
+            dndArtifactsHaveBeenCleanedUp(treegrid);
+
+            alpha = find(treegrid, 'alpha something');
+            alphaNode = alpha.options.node;
+            beta = find(treegrid, 'beta fooasdfasdf');
+            betaNode = beta.options.node;
+            alphaSomethingCount = 0;
+
+            startDrag(alpha);
+            dragTo(beta);
+            drop(beta);
+
+            start();
         });
     });
 

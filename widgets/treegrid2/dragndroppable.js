@@ -101,6 +101,7 @@ define([
             _.each(this.options.grid.options.rows, function(row) {
                 row.$node.removeClass('hover');
             });
+            this.off('dragend');
         },
         _dragStart: function(evt) {
             var self = this, $children = $(null),
