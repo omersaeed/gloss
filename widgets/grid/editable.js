@@ -52,12 +52,13 @@ define([
             if (this._editing()) {
                 return;
             }
-            var self = this,
+            var self = this, tableWidth,
                 $form = $(self.formTemplate({
                     colModel: self.options.colModel,
                     row: self
                 })),
-                $formCols = $form.children();
+                $table = $form.find('table'),
+                $formCols = $table.find('td');
             self.form = (self.options.rowFormClass || RowForm)($form, {
                 modelClass: self.options.modelClass,
                 bindings: self._getBindings()
@@ -74,13 +75,14 @@ define([
                 of: self.$node
             }).css({
                 position: 'absolute' // b/c of IE
-            }).width(Widget.measureMatchingWidth($form, self.$node));
+            });
+            tableWidth = Widget.measureMatchingWidth($table, self.options.grid.$table);
+            $table.width(tableWidth);
             if (self.options.idx % 2 === 0) {
                 $form.addClass('odd');
             }
             self.$node.find('td').each(function(i, el) {
-                // why 3?!?!?!!!!
-                $formCols.eq(i).outerWidth($(el).outerWidth() - 3);
+                $formCols.eq(i).width($(el).width());
             });
             self.form.appendTo(self.options.grid.$node);
             _.values(self.form.options.widgets)[0].$node.focus();

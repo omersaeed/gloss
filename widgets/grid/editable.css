@@ -46,13 +46,3 @@
   left: -10000px;
   top: -10000px;
 }
-.grid-editable > div {
-  display: inline-block;
-  line-height: 28px;
-  width: 10px;
-  overflow: hidden;
-}
-.grid-editable button {
-  height: 16px;
-  padding: 1px 10px;
-}

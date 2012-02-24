@@ -1,12 +1,18 @@
 <form class=grid-editable>
-  <% _.each(colModel, function(col) { %>
-    <div class="col-<%= col.name %>">
-      <% if (col.editable) { %>
-        <%= row[col.editable.toForm](col) %>
-      <% } else { %>
-        <%= row[col.render](col) %>
-      <% } %>
-    </div>
-  <% }); %>
+  <table>
+    <tbody>
+      <tr>
+        <% _.each(colModel, function(col) { %>
+          <td class="col-<%= col.name %>">
+            <% if (col.editable) { %>
+              <%= row[col.editable.toForm](col) %>
+            <% } else { %>
+              <%= row[col.render](col) %>
+            <% } %>
+          </td>
+        <% }); %>
+      </tr>
+    </tbody>
+  </table>
   <input type=submit class=hide-me />
 </form>
