@@ -3,6 +3,7 @@ require([
     'vendor/jquery',
     'vendor/underscore',
     'vendor/t',
+    'vendor/gloss/widgets/widget',
     'vendor/gloss/widgets/button',
     'vendor/gloss/widgets/grid/editable',
     'vendor/gloss/widgets/treegrid',
@@ -13,7 +14,7 @@ require([
     'vendor/gloss/data/mock',
     'api/v1/recordseries',
     'text!api/v1/test/fixtures/recordseries_tree.json'
-], function($, _, t, Button, Editable, TreeGrid, TreeGridRow,
+], function($, _, t, Widget, Button, Editable, TreeGrid, TreeGridRow,
     DragNDropTreeGridRow, model, Tree, Mock, RecordSeries, recordseries_tree) {
 
     var RowClass,
@@ -481,7 +482,6 @@ require([
         var tree = this.tree, treegrid = this.treegrid;
         // treegrid.appendTo($('body'));
         treegrid.appendTo($('#qunit-fixture'));
-        window.treegrid = treegrid;
 
         treegrid.load().done(function() {
             var gamma, gammaNode, epsilon, epsilonNode,
@@ -580,6 +580,88 @@ require([
                     start();
                 });
             });
+        });
+    });
+
+    var MarblesRow = RowClass.extend({
+        defaults: {
+            colModel: [
+                {name: 'grab', label: ' ', render: 'renderColGrab', modelIndependent: true, width: 32, editable: false},
+                {name: 'name', label: 'Name', expandCol: true, editable: true},
+                {name: 'path_linked', label: ' ', render: 'renderColPathLinked', modelIndependent: true, width: 40, editable: false},
+                {name: 'target_volume_id', label: 'Target Output Volume', editable: true},
+                {name: 'target_volume_profile_id', label: 'Target Output Volume Profile', editable: true},
+                {name: 'set_children', render: 'renderColSetChildren', modelIndependent: true, editable: false}
+            ],
+            events: [
+                {
+                    on: 'click',
+                    selector: 'button.set-children',
+                    callback: 'onClickSetChildren'
+                },
+                {
+                    on: 'mousedown',
+                    selector: 'button.grab',
+                    callback: 'startDrag'
+                },
+                {
+                    on: 'click',
+                    selector: ':not(".expand"):not(".set-children"):not("button.grab")',
+                    callback: 'onClickRow'
+                }
+            ],
+            draggable: {autoBind: false}
+        },
+        edit: function() {
+            var self = this;
+            Editable.edit.apply(this, arguments);
+            Widget.onPageClick(this.$node, function() {
+                self.stopEdit();
+            });
+        },
+        onClickRow: function(evt) {
+            if ($(evt.target).is(this.options.grid.$node.data('events').click[1].selector)) {
+                this.edit();
+            }
+        },
+        onClickSetChildren: function(evt) {
+            console.log('clicked "Set Children" for row:',this);
+        },
+        renderColGrab: function() {
+            return '<button type=button class="button grab">m</button>';
+        },
+        renderColPathLinked: function(col) {
+            return this.options.model.path_linked? 'yes' : 'no';
+        },
+        renderColSetChildren: function(col) {
+            return '<button type=button class="button set-children">Set children</button>';
+        }
+    }, {mixins: [DragNDropTreeGridRow, Editable]});
+
+    module('all the marbles', {
+        setup: function() {
+            this.manager = model.Manager(RecordSeries);
+            this.tree = Tree({
+                resource: RecordSeries,
+                query: { file_plan_id: 1 },
+                manager: this.manager
+            });
+            this.treegrid = TreeGrid(undefined, {
+                rowWidgetClass: MarblesRow,
+                tree: this.tree
+            });
+        }
+    });
+
+    asyncTest('all the marbles', function() {
+        var tree = this.tree, treegrid = this.treegrid;
+        treegrid.appendTo($('body'));
+        // treegrid.appendTo($('#qunit-fixture'));
+
+        window.treegrid = treegrid;
+        treegrid.load().done(function() {
+            console.log('done loading');
+            start();
         });
     });
 

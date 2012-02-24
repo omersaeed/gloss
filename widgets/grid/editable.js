@@ -23,7 +23,7 @@ define([
         formTemplate: _.template(editableTmpl),
 
         __mixin__: function(base, prototype, mixin) {
-            _.each(base.defaults.colModel, function(col) {
+            _.each(prototype.defaults.colModel, function(col) {
                 if (col.editable) {
                     if (!_.isObject(col.editable)) {
                         col.editable = {};
@@ -35,6 +35,10 @@ define([
             });
         },
 
+        _editing: function() {
+            return this.form != null;
+        },
+
         _getBindings: function() {
             return _.reduce(this.options.colModel, function(bindings, col) {
                 if (col.editable) {
@@ -44,31 +48,10 @@ define([
             }, []);
         },
 
-        // _getColWidths: function() {
-        //     return this.$node.find('.td').map(function(i, el) {
-        //         return $(el).outerWidth();
-        //     });
-        // },
-
-        // _setColWidths: function(widths) {
-        //     this.$node.find('.td').each(function(i, el) {
-        //         $(el).outerWidth(widths[i]);
-        //     });
-        // },
-
-        // hack to get table-cell rendering working correctly on webkit
-        _tableCellHack: function() {
-            var self = this,
-                $siblings = $(null).add(self.$node.prev()).add(self.$node.next());
-            self.$node.addClass('invisible');
-            $siblings.removeClass('tr');
-            setTimeout(function() {
-                $siblings.addClass('tr');
-                self.$node.removeClass('invisible');
-            }, 0);
-        },
-
         edit: function() {
+            if (this._editing()) {
+                return;
+            }
             var self = this,
                 $form = $(self.formTemplate({
                     colModel: self.options.colModel,
@@ -100,9 +83,13 @@ define([
                 $formCols.eq(i).outerWidth($(el).outerWidth() - 3);
             });
             self.form.appendTo(self.options.grid.$node);
+            _.values(self.form.options.widgets)[0].$node.focus();
         },
 
         stopEdit: function() {
+            if (!this._editing()) {
+                return;
+            }
             this.registry.remove(this.form);
             this.form.$node.remove();
             delete this.form;
