@@ -21,6 +21,9 @@ define([
 
         create: function() {
             var self = this, $tr;
+            if (!self.$node.children().length) {
+                self.$node.append($(self.nodeTemplate).find('table'));
+            }
             self.$node.addClass('grid');
             self.options.rows = [];
             self.$table = self.$node.find('table');

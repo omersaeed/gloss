@@ -8,14 +8,14 @@ require([
     'vendor/gloss/widgets/grid/editable',
     'vendor/gloss/widgets/treegrid',
     'vendor/gloss/widgets/treegrid2/treegridrow',
-    'vendor/gloss/widgets/treegrid2/dragndroptreegridrow',
+    'vendor/gloss/widgets/treegrid2/dragndroppable',
     'vendor/gloss/data/model',
     'vendor/gloss/data/tree',
     'vendor/gloss/data/mock',
     'api/v1/recordseries',
     'text!api/v1/test/fixtures/recordseries_tree.json'
 ], function($, _, t, Widget, Button, Editable, TreeGrid, TreeGridRow,
-    DragNDropTreeGridRow, model, Tree, Mock, RecordSeries, recordseries_tree) {
+    DragNDroppable, model, Tree, Mock, RecordSeries, recordseries_tree) {
 
     var RowClass,
         showGrid = function() {
@@ -389,7 +389,7 @@ require([
         renderColGrab: function() {
             return '<button type=button class="button grab">m</button>';
         }
-    }, {mixins: [DragNDropTreeGridRow]});
+    }, {mixins: [DragNDroppable]});
 
     module('drag n drop treegrid', {
         setup: function() {
@@ -636,7 +636,7 @@ require([
         renderColSetChildren: function(col) {
             return '<button type=button class="button set-children">Set children</button>';
         }
-    }, {mixins: [DragNDropTreeGridRow, Editable]});
+    }, {mixins: [DragNDroppable, Editable]});
 
     module('all the marbles', {
         setup: function() {
