@@ -79,10 +79,10 @@ define([
             for (i = 0, len = colModel.length; i < len; i++) {
                 col = colModel[i];
                 if (!col.modelIndependent) {
+                    td = tds[i];
                     if (col.rerender) {
-                        this[col.rerender](col);
+                        this[col.rerender](col, td);
                     } else {
-                        td = tds[i];
                         if (td.innerText != null) {
                             tds[i].innerText = model[colModel[i].name] || '';
                         } else {

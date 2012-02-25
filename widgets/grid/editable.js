@@ -94,6 +94,7 @@ define([
             }
             this.registry.remove(this.form);
             this.form.$node.remove();
+            this.trigger('stopedit');
             delete this.form;
             this.render();
         },

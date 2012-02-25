@@ -20,6 +20,15 @@ define([
             self.$node.addClass('tree');
             tree.root.expanded = false;
         },
+        _makeRowOptions: function(node, index) {
+            var self = this;
+            return {
+                node: node,
+                grid: self,
+                parentWidget: self,
+                idx: index
+            };
+        },
         _shouldFullyRender: function() {
             var i, l, count = 0,
                 options = this.options,
@@ -61,16 +70,12 @@ define([
             });
         },
         makeRow: function(node, index) {
-            var self = this, row;
+            var self = this, row,
+                opts = self._makeRowOptions(node, index);
             if (node.expanded == null) {
                 node.expanded = !node.model.isparent;
             }
-            return self.options.rowWidgetClass(undefined, {
-                node: node,
-                grid: self,
-                parentWidget: self,
-                idx: index
-            });
+            return self.options.rowWidgetClass(undefined, opts);
         },
         setModel: function(row, node) {
             var self = this;

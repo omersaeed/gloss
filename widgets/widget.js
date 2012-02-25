@@ -393,6 +393,27 @@ define([
             registry.remove(this);
         },
 
+        onPageClick: function(callback) {
+            var $node = this.$node, evtName = 'mousedown.onPageClick_' + this.id;
+            setTimeout(function() {
+                var $doc = $(document).on(evtName, function handler(evt) {
+                    if (evt.target !== $node[0] && !$(evt.target).closest($node).length) {
+                        var ret = callback(evt),
+                            returnedFalse = !ret && typeof ret !== 'undefined',
+                            defaultPrevented = evt.isDefaultPrevented();
+
+                        if (!returnedFalse && !defaultPrevented) {
+                            $doc.off(evtName, handler);
+                        }
+                    }
+                });
+            }, 0);
+        },
+
+        offPageClick: function() {
+            $(document).off('mousedown.onPageClick_' + this.id);
+        },
+
         place: function(params) {
             var displayed = (this.$node.css('display') !== 'none'), offset;
             if (!displayed) {
