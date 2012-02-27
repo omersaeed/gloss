@@ -36,6 +36,34 @@ define([
             });
         },
 
+        _bindReturnKeyPressToNextLine: function() {
+            var self = this;
+            self.form.on('keypress', function(evt) {
+                var grid = self.options.grid, nextRow;
+                if (Widget.identifyKeyEvent(evt) === 'enter') {
+                    nextRow = grid.options.rows[self.options.idx+1];
+                    if (nextRow) {
+                        nextRow.edit();
+                    }
+                }
+            });
+        },
+
+        _bindLastWidgetTabToNextLine: function(widget) {
+            var self = this;
+            widget.on('keydown', function(evt) {
+                var grid = self.options.grid, nextRow;
+                if (Widget.identifyKeyEvent(evt) === 'tab' && !evt.shiftKey) {
+                    self.form.trigger('submit');
+                    nextRow = grid.options.rows[self.options.idx+1];
+                    if (nextRow) {
+                        evt.preventDefault();
+                        nextRow.edit();
+                    }
+                }
+            });
+        },
+
         _editing: function() {
             return this.form != null;
         },
@@ -53,7 +81,7 @@ define([
             if (this._editing()) {
                 return;
             }
-            var self = this, tableWidth,
+            var self = this, tableWidth, lastWidget,
                 formWidgets = {},
                 $form = $(self.formTemplate({
                     colModel: self.options.colModel,
@@ -64,11 +92,14 @@ define([
             $formCols.each(function(i, el) {
                 var widget, col = self.options.colModel[i];
                 if (col.editable) {
-                    widget = self[col.editable.toForm](col);
+                    widget = lastWidget = self[col.editable.toForm](col);
                     formWidgets[widget.$node.attr('name')] = widget;
                     widget.appendTo(el);
                 }
             });
+            if (lastWidget) {
+                self._bindLastWidgetTabToNextLine(lastWidget);
+            }
             $form.position({
                 my: 'left top',
                 at: 'left top',
@@ -98,6 +129,7 @@ define([
             self.form.$node.find('tr').css({
                 backgroundColor: self.$node.css('backgroundColor')
             });
+            self._bindReturnKeyPressToNextLine();
             self.form.appendTo(self.options.grid.$node);
             _.values(self.form.options.widgets)[0].$node.focus();
         },
