@@ -1,11 +1,11 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
-    'vendor/gloss/widgets/widget',
+    'vendor/gloss/widgets/statefulwidget',
     'vendor/gloss/widgets/grid/row',
     'link!vendor/gloss/widgets/grid/grid.css'
-], function($, _, Widget, Row) {
-    return Widget.extend({
+], function($, _, StatefulWidget, Row) {
+    return StatefulWidget.extend({
         defaults: {
             rowWidgetClass: Row,
             rows: null,
@@ -21,6 +21,7 @@ define([
 
         create: function() {
             var self = this, $tr;
+            self._super();
             if (!self.$node.children().length) {
                 self.$node.append($(self.nodeTemplate).find('table'));
             }
@@ -137,6 +138,10 @@ define([
                 parentWidget: this,
                 idx: index
             });
+        },
+
+        rerender: function() {
+            return this.set('models', this.options.models);
         },
 
         setModel: function(row, model) {

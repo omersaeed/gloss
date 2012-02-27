@@ -221,6 +221,8 @@ define([
             if (opts.query != null) {
                 this._instantiateCollection(this.options.query);
             }
+
+            return this;
         }
     }, {mixins: [events]});
 

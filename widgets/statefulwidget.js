@@ -97,7 +97,7 @@ define([
         },
         _onStateEvent: function(event) {
             var self = this;
-            if(!self.disabled) {
+            if(!self.state.disabled) {
                 switch(event.type) {
                     case 'blur':
                         self.state.focused = false;
