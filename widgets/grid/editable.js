@@ -148,7 +148,7 @@ define([
         toForm: function(col) {
             var $node = $('<input type=text>')
                 .attr('name', col.name)
-                .attr('value', this.options.model[col.name]);
+                .val(this.options.model[col.name]);
 
             return TextBox($node);
         }
