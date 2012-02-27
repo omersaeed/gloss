@@ -33,3 +33,6 @@
 .grid.standard table tbody tr {
   height: 28px;
 }
+.grid.standard table tbody tr:hover {
+  background-color: #e5e5e5;
+}

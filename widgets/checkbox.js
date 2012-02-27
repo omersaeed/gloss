@@ -3,6 +3,7 @@ define([
     'vendor/gloss/widgets/formwidget'
 ], function($, FormWidget) {
     return FormWidget.extend({
+        nodeTemplate: '<input type=checkbox />',
         create: function() {
             var self = this;
             self._super();
