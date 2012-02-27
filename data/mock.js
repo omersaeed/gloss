@@ -193,6 +193,15 @@ define([
 
             // possibly filter based on other params (stuff like volumeid)
             if (params != null) {
+
+                // convert all id's into integers, this is helpful b/c this is
+                // basically what happens in the serialization/unserialization
+                // process
+                _.each(params, function(val, key) {
+                    if (/id$/i.test(key)) {
+                        params[key] = parseInt(val, 10);
+                    }
+                });
                 ret = _.filter(ret, function(item) {
                     return _.any(item[0], function(cond) {
                         return _.isEqual(cond, params);

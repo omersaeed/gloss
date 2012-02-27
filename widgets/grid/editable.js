@@ -95,6 +95,9 @@ define([
             self.$node.find('td').each(function(i, el) {
                 $formCols.eq(i).width($(el).width());
             });
+            self.form.$node.find('tr').css({
+                backgroundColor: self.$node.css('backgroundColor')
+            });
             self.form.appendTo(self.options.grid.$node);
             _.values(self.form.options.widgets)[0].$node.focus();
         },
