@@ -314,7 +314,11 @@ define([
         },
 
         appendTo: function(obj) {
-            obj.append(this.$node);
+            if (obj.$node) {
+                this.$node.appendTo(obj.$node);
+            } else {
+                this.$node.appendTo(obj);
+            }
             return this;
         }
     });

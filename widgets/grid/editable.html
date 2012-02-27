@@ -3,13 +3,7 @@
     <tbody>
       <tr>
         <% _.each(colModel, function(col) { %>
-          <td class="col-<%= col.name %>">
-            <% if (col.editable) { %>
-              <%= row[col.editable.toForm](col) %>
-            <% } else { %>
-              <%= row[col.render](col) %>
-            <% } %>
-          </td>
+          <td class="col-<%= col.name %>"></td>
         <% }); %>
       </tr>
     </tbody>

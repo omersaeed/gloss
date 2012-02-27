@@ -3,11 +3,12 @@ define([
     'vendor/underscore',
     'vendor/gloss/widgets/widget',
     'vendor/gloss/widgets/form',
+    'vendor/gloss/widgets/textbox',
     'text!vendor/gloss/widgets/grid/editable.html',
     'link!vendor/gloss/widgets/grid/editable.css'
-], function($, _, Widget, Form, editableTmpl) {
+], function($, _, Widget, Form, TextBox, editableTmpl) {
     var RowForm = Form.extend({
-        defaults: { widgetize: true },
+        defaults: { widgetize: false },
         updateModel: function(model) {
             var values = this.getBoundValues();
             if (this.options.staticValues) {
@@ -53,22 +54,21 @@ define([
                 return;
             }
             var self = this, tableWidth,
+                formWidgets = {},
                 $form = $(self.formTemplate({
                     colModel: self.options.colModel,
                     row: self
                 })),
                 $table = $form.find('table'),
                 $formCols = $table.find('td');
-            self.form = (self.options.rowFormClass || RowForm)($form, {
-                modelClass: self.options.modelClass,
-                bindings: self._getBindings()
-            }).on('submit', function() {
-                self.stopEdit();
-            }).on('keyup', function(e) {
-                if (e.keyCode === 27) {
-                    self.stopEdit();
+            $formCols.each(function(i, el) {
+                var widget, col = self.options.colModel[i];
+                if (col.editable) {
+                    widget = self[col.editable.toForm](col);
+                    formWidgets[widget.$node.attr('name')] = widget;
+                    widget.appendTo(el);
                 }
-            }).bind(self.options.model);
+            });
             $form.position({
                 my: 'left top',
                 at: 'left top',
@@ -76,6 +76,17 @@ define([
             }).css({
                 position: 'absolute' // b/c of IE
             });
+            self.form = (self.options.rowFormClass || RowForm)($form, {
+                modelClass: self.options.modelClass,
+                bindings: self._getBindings(),
+                widgets: formWidgets
+            }).on('submit', function() {
+                self.stopEdit();
+            }).on('keyup', function(e) {
+                if (e.keyCode === 27) {
+                    self.stopEdit();
+                }
+            }).bind(self.options.model);
             tableWidth = Widget.measureMatchingWidth($table, self.options.grid.$table);
             $table.width(tableWidth);
             if (self.options.idx % 2 === 0) {
@@ -100,13 +111,11 @@ define([
         },
 
         toForm: function(col) {
-            return [
-                '<input type=text name="',
-                col.name,
-                '" value="',
-                this.options.model[col.name],
-                '" />'
-            ].join('');
+            var $node = $('<input type=text>')
+                .attr('name', col.name)
+                .attr('value', this.options.model[col.name]);
+
+            return TextBox($node);
         }
     };
 });
