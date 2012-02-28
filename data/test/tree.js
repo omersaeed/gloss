@@ -62,17 +62,69 @@ require([
             });
             return dfd;
         },
+        expandSeveralNodesAndSeveralMore = function(tree) {
+            var dfd = $.Deferred();
+            expandSeveralNodes(tree).done(function() {
+                $.when(
+                    find(tree, 10).load(),
+                    find(tree, 178).load(),
+                    find(tree, 10137).load(),
+                    find(tree, 10135).load()
+                ).done(function() {
+                    $.when(
+                        find(tree, 11).load(),
+                        find(tree, 179).load(),
+                        find(tree, 10138).load(),
+                        find(tree, 10164).load()
+                    ).done(function() {
+                        $.when(
+                            find(tree, 180).load(),
+                            find(tree, 10139).load()
+                        ).done(function() {
+                            dfd.resolve();
+                        });
+                    });
+                });
+            });
+            return dfd;
+        },
         structure = function(tree) {
-            var out = [], indent = 0;
-            t.dfs(tree.root.children, function() {
+            var out = [], indent = 0, removeLevels = false;
+            if (!tree) {
+                return '';
+            }
+            if (!tree.root) {
+                removeLevels = true;
+                tree.level = -1;
+                t.dfs(tree, function(node, par) {
+                    node.level = par? par.level + 1 : 0;
+                });
+            }
+            t.dfs(tree.root? tree.root.children : tree, function() {
+                var nonStandardKeys;
                 out.push(
                     Array(this.level+1).join('    '),
-                    this.model.id,
+                    this.model ? this.model.id : this.id,
                     ': ',
-                    this.model.name,
-                    '\n'
+                    this.model ? this.model.name : this.name
                 );
+                if (this.model) {
+                    if (this.model.isparent) {
+                        out.push('+');
+                    }
+                } else {
+                    nonStandardKeys = _.filter(_.keys(this), function(key) {
+                        return _.indexOf(['id', 'name', 'children', 'level'], key) < 0;
+                    });
+                    if (nonStandardKeys.length) {
+                        out.push(' *');
+                    }
+                }
+                out.push('\n');
             });
+            if (removeLevels) {
+                t.dfs(tree, function() { delete this.level; });
+            }
             return out.join('');
         },
         find = function(tree, id) {
@@ -170,8 +222,8 @@ require([
 
     asyncTest('down', function() {
         var tree = this.tree,
-            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
-            after = '1: alpha something\n    512: blah blah\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+            inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something+\n    512: blah blah\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 8);
             equal(structure(tree), inital);
@@ -184,8 +236,8 @@ require([
 
     asyncTest('up', function() {
         var tree = this.tree,
-            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
-            after = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    511: something else\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+            inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    511: something else\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 2);
             equal(structure(tree), inital);
@@ -198,8 +250,8 @@ require([
 
     asyncTest('left', function() {
         var tree = this.tree,
-            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
-            after = '1: alpha something\n    8: second from under alpha\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n    53: first\n    65: second\n    82: third\n    9: alpha boo\n        10: first\n        20: second\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+            inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something+\n    8: second from under alpha+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n    53: first+\n    65: second+\n    82: third+\n    9: alpha boo+\n        10: first+\n        20: second+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 9),
                 newParent = find(tree, 52);
@@ -213,8 +265,8 @@ require([
 
     asyncTest('right', function() {
         var tree = this.tree,
-            inital = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n        178: alpha\n        202: beta\n        205: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
-            after = '1: alpha something\n    8: second from under alpha\n        9: alpha boo\n            10: first\n            20: second\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first\n        3: alpha too\n            5: second\n            4: first\n                176: delta\n                    177: first\n                        178: alpha\n                        202: beta\n                        205: gamma\n        6: beta\n    23: third\n52: beta fooasdfasdf\n169: gamma\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
+            inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            after = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first+\n                176: delta+\n                    177: first+\n                        178: alpha+\n                        202: beta+\n                        205: gamma+\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 176),
                 newParent = find(tree, 4);
@@ -325,6 +377,26 @@ require([
                 equal(newParent.model.isparent, true);
                 start();
             });
+        });
+    });
+
+    module('test deltas', {
+        setup: function() { }
+    });
+
+    asyncTest('tree of deltas works', function() {
+        setup.call(this);
+        var tree = this.tree;
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas;
+            console.log(structure(tree.deltas()));
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+            console.log(structure(tree));
+            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
+            find(tree, 10167).model.set('name', 'origin renamed');
+            deltas = tree.deltas();
+            console.log(structure(deltas));
+            start();
         });
     });
 

@@ -39,9 +39,16 @@ define([
             self.on('update', function() {
                 self.options.tree.trigger('update', self);
             });
+
+            if (self.model.on) {
+                self.model.on('change', function() {
+                    self.dirty('model');
+                    self.options.tree.trigger('change', self);
+                });
+            }
         },
 
-        _hierarchyFromList: function(list) {
+        _hierarchyFromList: function(list, dontDirty) {
             var i, len, model, children, par, node,
                 options = this.options,
                 tree = options.tree,
@@ -71,7 +78,7 @@ define([
                     }
                 }
 
-                node.appendChild(nodeFactory(model, node, tree));
+                node.appendChild(nodeFactory(model, node, tree), undefined, dontDirty);
             }
         },
 
@@ -109,8 +116,11 @@ define([
             });
         },
 
-        appendChild: function(node, idx) {
+        appendChild: function(node, idx, dontDirty) {
             var children = this.children, setIsparent = false;
+            if (!dontDirty) {
+                this.dirty('children');
+            }
             if (children == null) {
                 children = this.children = [];
                 idx = idx === 0? null : idx;
@@ -134,6 +144,17 @@ define([
             if (setIsparent) {
                 this.model.set('isparent', true);
             }
+        },
+
+        dirtied: function(what) {
+            return what? (this._dirtied || {})[what] : $.extend({}, this._dirtied);
+        },
+
+        dirty: function(what) {
+            if (! this._dirtied) {
+                this._dirtied = {};
+            }
+            this._dirtied[what] = true;
         },
 
         index: function() {
@@ -168,7 +189,7 @@ define([
                 if (! models.length) {
                     return;
                 }
-                self._hierarchyFromList(models);
+                self._hierarchyFromList(models, true);
                 if (recursive) {
                     t.dfs(self.children || [], function() {
                         this._loaded = this._loadedRecursive = true;
@@ -201,6 +222,7 @@ define([
         },
 
         removeChild: function(node) {
+            this.dirty('children');
             if (this._removedChildren == null) {
                 this._removedChildren = [];
             }
@@ -260,6 +282,33 @@ define([
             var ret = [];
             t.dfs(this.root.children || [], function() { ret.push(this); });
             return ret;
+        },
+
+        deltas: function() {
+            var ret = t.dfs(this.root, {order: 'post'}, function(node, par, ctrl, ret) {
+                var result = {id: node.model.id, name: node.model.name},
+                    hasDirtiedModel = node.dirtied('model'),
+                    hasDirtiedChildren =
+                        node.dirtied('children') ||
+                        (node.children && _.any(ret, function(r) { return r; }));
+
+                if (!hasDirtiedChildren && !hasDirtiedModel) {
+                    return;
+                }
+                if (hasDirtiedChildren) {
+                    result.children = _.map(ret, function(r, i) {
+                        var model = node.children[i].model;
+                        return r? r : {id: model.id, name: model.name};
+                    });
+                }
+                if (hasDirtiedModel) {
+                    $.extend(result,
+                        node.model._getRequest('create').extract(node.model));
+                }
+
+                return result;
+            });
+            return ret? ret.children : undefined;
         },
 
         load: function(params) {
