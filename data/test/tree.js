@@ -117,7 +117,11 @@ require([
                         return _.indexOf(['id', 'name', 'children', 'level'], key) < 0;
                     });
                     if (nonStandardKeys.length) {
-                        out.push(' *');
+                        if (this.operation === 'remove') {
+                            out.push(' -');
+                        } else {
+                            out.push(' *');
+                        }
                     }
                 }
                 out.push('\n');
@@ -469,21 +473,86 @@ require([
     });
 
     module('test deltas', {
-        setup: function() { }
+        setup: function() { },
+        expectedStructure: '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n                11: alpha foo+\n                    12: first\n                    13: second\n                    14: third\n                15: beta the original+\n                17: beta+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n            179: first+\n                180: alpha+\n                    181: first+\n                    183: second+\n                    189: third+\n                192: beta+\n            196: second+\n            199: third+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n            10138: refs+\n                10139: remotes+\n                    10141: origin\n                10140: heads\n        10135: refs+\n            10166: tags\n            10165: heads\n            10164: remotes+\n                10167: origin\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n'
     });
 
-    asyncTest('tree of deltas works', function() {
+    asyncTest('tree of deltas', function() {
         setup.call(this);
-        var tree = this.tree;
+        var tree = this.tree,
+            expectedStructure = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n                11: alpha foo+\n                    12: first\n                    13: second\n                    14: third\n                15: beta the original+\n                17: beta+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n            179: first+\n                180: alpha+\n                    181: first+\n                    183: second+\n                    189: third+\n                192: beta+\n            196: second+\n            199: third+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n            10138: refs+\n                10139: remotes+\n                    10141: origin\n                10140: heads\n        10135: refs+\n            10166: tags\n            10165: heads\n            10164: remotes+\n                10167: origin renamed\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            expectedDeltas = '1: alpha something\n52: beta fooasdfasdf\n169: gamma\n176: delta\n207: epsilon\n8932: netware output\n    10131: .git\n        10137: logs\n        10135: refs\n            10166: tags\n            10165: heads\n            10164: remotes\n                10167: origin renamed *\n        10136: objects\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
         expandSeveralNodesAndSeveralMore(tree).done(function() {
             var deltas;
-            console.log(structure(tree.deltas()));
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
-            console.log(structure(tree));
-            console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
             find(tree, 10167).model.set('name', 'origin renamed');
             deltas = tree.deltas();
-            console.log(structure(deltas));
+            equal(structure(tree), expectedStructure);
+            equal(structure(deltas), expectedDeltas);
+            start();
+        });
+    });
+
+    asyncTest('tree of deltas 2', function() {
+        setup.call(this);
+        var tree = this.tree,
+            expectedStructure = this.expectedStructure,
+            expectedDeltas = '1: alpha something *\n52: beta fooasdfasdf\n169: gamma\n176: delta\n207: epsilon\n8932: netware output\n';
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas;
+            find(tree, 'alpha something').model.set('path', 'foo');
+            deltas = tree.deltas();
+            equal(structure(tree), expectedStructure);
+            equal(structure(deltas), expectedDeltas);
+            start();
+        });
+    });
+
+    asyncTest('changes tracked for move', function() {
+        setup.call(this);
+        var tree = this.tree,
+            expectedStructure = '52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n            179: first+\n                180: alpha+\n                    181: first+\n                    183: second+\n                    189: third+\n                192: beta+\n            196: second+\n            199: third+\n        202: beta+\n        205: gamma+\n    1: alpha something+\n        8: second from under alpha+\n            9: alpha boo+\n                10: first+\n                    11: alpha foo+\n                        12: first\n                        13: second\n                        14: third\n                    15: beta the original+\n                    17: beta+\n                20: second+\n            506: child of second\n        512: blah blah\n        511: something else\n        2: first+\n            3: alpha too+\n                5: second\n                4: first\n            6: beta+\n        23: third+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n            10138: refs+\n                10139: remotes+\n                    10141: origin\n                10140: heads\n        10135: refs+\n            10166: tags\n            10165: heads\n            10164: remotes+\n                10167: origin\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            expectedDeltas = '52: beta fooasdfasdf\n169: gamma\n176: delta\n    177: first\n    1: alpha something\n207: epsilon\n8932: netware output\n';
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas;
+            find(tree, 'alpha something').moveTo(find(tree, 176));
+            deltas = tree.deltas();
+            equal(structure(tree), expectedStructure);
+            equal(structure(deltas), expectedDeltas);
+            start();
+        });
+    });
+
+    asyncTest('changes tracked for add', function() {
+        setup.call(this);
+        var tree = this.tree,
+            expectedStructure = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n                11: alpha foo+\n                    12: first\n                    13: second\n                    14: third\n                15: beta the original+\n                17: beta+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n    : something very unique\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n            179: first+\n                180: alpha+\n                    181: first+\n                    183: second+\n                    189: third+\n                192: beta+\n            196: second+\n            199: third+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n            10138: refs+\n                10139: remotes+\n                    10141: origin\n                10140: heads\n        10135: refs+\n            10166: tags\n            10165: heads\n            10164: remotes+\n                10167: origin\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            expectedDeltas = '1: alpha something\n    8: second from under alpha\n    512: blah blah\n    511: something else\n    2: first\n    23: third\n    : something very unique\n52: beta fooasdfasdf\n169: gamma\n176: delta\n207: epsilon\n8932: netware output\n';
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var newNode, changeArgs, deltas,
+                newName =  'something very unique',
+                model = RecordSeries({name: newName}),
+                newParent = find(tree, 'alpha something');
+            newParent.add(model).done(function() {
+                deltas = tree.deltas();
+                equal(structure(tree), expectedStructure);
+                equal(structure(deltas), expectedDeltas);
+                start();
+            });
+        });
+    });
+
+    asyncTest('changes tracked for remove', function() {
+        setup.call(this);
+        var tree = this.tree,
+            expectedStructure = '1: alpha something+\n    8: second from under alpha+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n            179: first+\n                180: alpha+\n                    181: first+\n                    183: second+\n                    189: third+\n                192: beta+\n            196: second+\n            199: third+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n            10138: refs+\n                10139: remotes+\n                    10141: origin\n                10140: heads\n        10135: refs+\n            10166: tags\n            10165: heads\n            10164: remotes+\n                10167: origin\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
+            expectedDeltas = '1: alpha something\n    8: second from under alpha\n        506: child of second\n        9: alpha boo -\n    512: blah blah\n    511: something else\n    2: first\n    23: third\n52: beta fooasdfasdf\n169: gamma\n176: delta\n207: epsilon\n8932: netware output\n';
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas, node = find(tree, 9),
+                origParent = node.par;
+            origParent.removeChild(node);
+            deltas = tree.deltas();
+            equal(structure(tree), expectedStructure);
+            equal(structure(deltas), expectedDeltas);
             start();
         });
     });

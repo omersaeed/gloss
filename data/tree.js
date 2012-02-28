@@ -306,6 +306,13 @@ define([
                         return r? r : {id: model.id, name: model.name};
                     });
                 }
+                _.each(node._removedChildren || [], function(removed) {
+                    result.children.push({
+                        id: removed.model.id,
+                        name: removed.model.name,
+                        operation: 'remove'
+                    });
+                });
                 if (hasDirtiedModel) {
                     $.extend(result,
                         node.model._getRequest('create').extract(node.model));
