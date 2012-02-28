@@ -36,3 +36,11 @@
 .grid.standard table tbody tr:hover {
   background-color: #e5e5e5;
 }
+.grid.standard table tbody tr.highlight {
+  background-color: #60676d;
+  color: white;
+}
+.grid.standard table tbody tr.highlight:hover {
+  background-color: #60676d;
+  color: white;
+}

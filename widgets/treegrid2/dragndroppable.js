@@ -112,6 +112,7 @@ define([
                 firstChildPos = rows[0].$node.position(),
                 lastRowPos = _.last(rows).$node.position(),
                 lastChildPos = (_.last(children) || self).$node.position();
+            self.options.grid.unhighlight();
             _super('_dragStart').call(self, evt);
             self._drag.nonTargets = {
                 top: position.top,

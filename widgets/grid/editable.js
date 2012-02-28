@@ -89,6 +89,7 @@ define([
                 })),
                 $table = $form.find('table'),
                 $formCols = $table.find('td');
+            self.options.grid.unhighlight();
             $formCols.each(function(i, el) {
                 var widget, col = self.options.colModel[i];
                 if (col.editable) {

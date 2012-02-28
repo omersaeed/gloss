@@ -93,6 +93,12 @@ define([
             }
         },
 
+        highlight: function() {
+            this.options.grid.unhighlight();
+            this.$node.addClass('highlight');
+            return this;
+        },
+
         render: function() {
             if (!this.hasRendered) {
                 this.hasRendered = true;
@@ -128,6 +134,11 @@ define([
             }
 
             return this._super(name, value);
+        },
+
+        unhighlight: function() {
+            this.$node.removeClass('highlight');
+            return this;
         },
 
         updateWidget: function(changed) {

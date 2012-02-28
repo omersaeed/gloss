@@ -1,10 +1,11 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/gloss/widgets/widget',
     'vendor/gloss/widgets/statefulwidget',
     'vendor/gloss/widgets/grid/row',
     'link!vendor/gloss/widgets/grid/grid.css'
-], function($, _, StatefulWidget, Row) {
+], function($, _, Widget, StatefulWidget, Row) {
     return StatefulWidget.extend({
         defaults: {
             rowWidgetClass: Row,
@@ -60,6 +61,10 @@ define([
                     $th.width(col.width);
                 }
                 $th.appendTo($tr);
+            });
+            self.onPageClick('unhighlight', function() {
+                self.unhighlight();
+                return false; // don't cancel the callback
             });
             self.update();
         },
@@ -146,6 +151,13 @@ define([
 
         setModel: function(row, model) {
             row.set('model', model);
+        },
+
+        unhighlight: function() {
+            _.each(this.options.rows, function(row) {
+                row.$node.removeClass('highlight');
+            });
+            return this;
         },
 
         updateWidget: function(updated) {

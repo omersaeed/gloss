@@ -81,6 +81,7 @@ define([
 
         collapse: function() {
             var options = this.options, node = options.node;
+            this.options.grid.unhighlight();
             if (! node.model.isparent) {
                 return $.Deferred().resolve();
             }
@@ -92,6 +93,7 @@ define([
 
         expand: function() {
             var self = this, options = self.options, node = options.node;
+            self.options.grid.unhighlight();
             if (! node.model.isparent) {
                 return $.Deferred().resolve();
             }

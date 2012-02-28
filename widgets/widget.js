@@ -397,8 +397,13 @@ define([
             registry.remove(this);
         },
 
-        onPageClick: function(callback) {
+        onPageClick: function(name, callback) {
             var $node = this.$node, evtName = 'mousedown.onPageClick_' + this.id;
+            if (callback == null) {
+                callback = name;
+                name = '';
+            }
+            evtName += '_' + name;
             setTimeout(function() {
                 var $doc = $(document).on(evtName, function handler(evt) {
                     if (evt.target !== $node[0] && !$(evt.target).closest($node).length) {
@@ -412,10 +417,13 @@ define([
                     }
                 });
             }, 0);
+            return this;
         },
 
-        offPageClick: function() {
-            $(document).off('mousedown.onPageClick_' + this.id);
+        offPageClick: function(name) {
+            name = name == null? '' : '_' + name;
+            $(document).off('mousedown.onPageClick_' + this.id + name);
+            return this;
         },
 
         place: function(params) {
