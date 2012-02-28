@@ -431,6 +431,36 @@ require([
         });
     });
 
+    asyncTest('add two nodes at once to tree', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var newNode1, newNode2, newName =  'something very unique',
+                model1 = RecordSeries({name: newName}),
+                model2 = RecordSeries({name: newName + ' again'}),
+                newParent = find(tree, 8),
+                count = 0;
+            tree.on('change', function() { count++; });
+            newParent.add([model1, model2]).done(function() {
+                newNode1 = _.find(newParent.children, function(c) {
+                    return c.model === model1;
+                });
+                newNode2 = _.find(newParent.children, function(c) {
+                    return c.model === model2;
+                });
+                equal(count, 1);
+                ok(newNode1);
+                ok(newNode2);
+                ok(newNode1 === newParent.children[newParent.children.length-2]);
+                ok(newNode2 === _.last(newParent.children));
+                equal(newNode1.model.parent_id, newParent.model.id);
+                equal(newNode2.model.parent_id, newParent.model.id);
+                equal(newNode1.model.name, newName);
+                equal(newNode2.model.name, newName + ' again');
+                start();
+            });
+        });
+    });
+
     asyncTest('node changes from leaf to parent when child added', function() {
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {

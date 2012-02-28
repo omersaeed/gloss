@@ -50,6 +50,36 @@ define([
             }
         },
 
+        _appendChild: function(node, idx, dontDirty) {
+            var children = this.children, setIsparent = false;
+            if (!dontDirty) {
+                this.dirty('children');
+            }
+            if (children == null) {
+                children = this.children = [];
+                idx = idx === 0? null : idx;
+                setIsparent = true;
+            }
+            if (idx == null) {
+                children.push(node);
+            } else if (idx <= children.length) {
+                children.splice(idx, 0, node);
+            } else {
+                throw Error('in _appendChild, idx >= children.length');
+            }
+            node.par = this;
+            node.level = this.level + 1;
+            t.dfs(node.children || [], function(n, par) {
+                n.level = (par || node).level + 1;
+            });
+            if (node.model.set) {
+                node.model.set('parent_id', this.model.id, true);
+            }
+            if (setIsparent) {
+                this.model.set('isparent', true, true);
+            }
+        },
+
         _hierarchyFromList: function(list, dontDirty) {
             var i, len, model, children, par, node,
                 options = this.options,
@@ -112,42 +142,17 @@ define([
             var self = this,
                 options = self.options,
                 tree = options.tree,
-                nodeFactory = tree.options.nodeFactory;
+                nodeFactory = tree.options.nodeFactory,
+                models = _.isArray(model)? model : [model];
             return self.load().done(function() {
-                var newNode = nodeFactory(model, self, tree);
-                self._appendChild(newNode, idx);
-                self.trigger('change', 'add', newNode);
+                var newNodes = [];
+                _.each(models, function(model) {
+                    var newNode = nodeFactory(model, self, tree);
+                    self._appendChild(newNode, idx);
+                    newNodes.push(newNode);
+                });
+                self.trigger('change', 'add', _.isArray(model)? newNodes : newNodes[0]);
             });
-        },
-
-        _appendChild: function(node, idx, dontDirty) {
-            var children = this.children, setIsparent = false;
-            if (!dontDirty) {
-                this.dirty('children');
-            }
-            if (children == null) {
-                children = this.children = [];
-                idx = idx === 0? null : idx;
-                setIsparent = true;
-            }
-            if (idx == null) {
-                children.push(node);
-            } else if (idx <= children.length) {
-                children.splice(idx, 0, node);
-            } else {
-                throw Error('in _appendChild, idx >= children.length');
-            }
-            node.par = this;
-            node.level = this.level + 1;
-            t.dfs(node.children || [], function(n, par) {
-                n.level = (par || node).level + 1;
-            });
-            if (node.model.set) {
-                node.model.set('parent_id', this.model.id, true);
-            }
-            if (setIsparent) {
-                this.model.set('isparent', true, true);
-            }
         },
 
         dirtied: function(what) {
