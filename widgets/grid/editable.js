@@ -43,6 +43,8 @@ define([
                 if (Widget.identifyKeyEvent(evt) === 'enter') {
                     nextRow = grid.options.rows[self.options.idx+1];
                     if (nextRow) {
+                        evt.preventDefault();
+                        self.form.trigger('submit');
                         nextRow.edit();
                     }
                 }
