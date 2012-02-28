@@ -13,8 +13,15 @@ define([
         create: function() {
             var self = this,
                 tree = self.options.tree;
-            tree.on('update', function() {
+            tree.on('update', function(evt, node) {
                 self.set('nodes', self.options.tree.asList());
+            }).on('change', function(evt, node, type, data) {
+                // 'type' will be something like move, remove, add, or model
+                // (see gloss/data/tree.js).  'model' change events are handled
+                // at the row level, so ignore those here
+                if (type !== 'model') {
+                    self.set('nodes', self.options.tree.asList());
+                }
             });
             self._super();
             self.$node.addClass('tree');
@@ -46,6 +53,10 @@ define([
                 }
             }
             return false;
+        },
+        add: function() {
+            // this isn't implemented for the treegrid... just update the tree
+            // and call 'rerender()'
         },
         expandAll: function() {
             var i, l, rows = this.options.rows;

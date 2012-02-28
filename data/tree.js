@@ -38,12 +38,14 @@ define([
 
             self.on('update', function() {
                 self.options.tree.trigger('update', self);
+            }).on('change', function(evt, type, data) {
+                self.options.tree.trigger('change', self, type, data);
             });
 
             if (self.model.on) {
                 self.model.on('change', function() {
                     self.dirty('model');
-                    self.options.tree.trigger('change', self);
+                    self.trigger('change', 'model', self.model);
                 });
             }
         },
@@ -78,7 +80,7 @@ define([
                     }
                 }
 
-                node.appendChild(nodeFactory(model, node, tree), undefined, dontDirty);
+                node._appendChild(nodeFactory(model, node, tree), undefined, dontDirty);
             }
         },
 
@@ -101,7 +103,7 @@ define([
             this.children.remove(idx);
             if (!this.children.length) {
                 delete this.children;
-                this.model.set('isparent', false);
+                this.model.set('isparent', false, true);
                 this._loaded = this._loadedRecursive = true;
             }
         },
@@ -112,11 +114,13 @@ define([
                 tree = options.tree,
                 nodeFactory = tree.options.nodeFactory;
             return self.load().done(function() {
-                self.appendChild(nodeFactory(model, self, tree), idx);
+                var newNode = nodeFactory(model, self, tree);
+                self._appendChild(newNode, idx);
+                self.trigger('change', 'add', newNode);
             });
         },
 
-        appendChild: function(node, idx, dontDirty) {
+        _appendChild: function(node, idx, dontDirty) {
             var children = this.children, setIsparent = false;
             if (!dontDirty) {
                 this.dirty('children');
@@ -131,7 +135,7 @@ define([
             } else if (idx <= children.length) {
                 children.splice(idx, 0, node);
             } else {
-                throw Error('in appendChild, idx >= children.length');
+                throw Error('in _appendChild, idx >= children.length');
             }
             node.par = this;
             node.level = this.level + 1;
@@ -139,10 +143,10 @@ define([
                 n.level = (par || node).level + 1;
             });
             if (node.model.set) {
-                node.model.set('parent_id', this.model.id);
+                node.model.set('parent_id', this.model.id, true);
             }
             if (setIsparent) {
-                this.model.set('isparent', true);
+                this.model.set('isparent', true, true);
             }
         },
 
@@ -197,7 +201,7 @@ define([
                 }
                 return self;
             }).done(function() {
-                self.trigger('update', self);
+                self.trigger('update');
             });
         },
 
@@ -210,10 +214,10 @@ define([
                 if (self.par) {
                     self.par._removeFromChildren(self);
                 }
-                newParent.appendChild(self, idx);
+                newParent._appendChild(self, idx);
                 return self;
             }).done(function() {
-                self.trigger('update', self);
+                self.trigger('change', 'move', newParent);
             });
         },
 
@@ -228,6 +232,7 @@ define([
             }
             this._removedChildren.push(node);
             this._removeFromChildren(node);
+            this.trigger('change', 'remove', node);
         },
 
         set: function(key, value) {

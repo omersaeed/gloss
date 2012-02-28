@@ -398,21 +398,21 @@ define([
         },
 
         onPageClick: function(name, callback) {
-            var $node = this.$node, evtName = 'mousedown.onPageClick_' + this.id;
-            if (callback == null) {
+            var $node = this.$node;
+            if (!callback) {
                 callback = name;
-                name = '';
+                name = 'mousedown.onPageClick';
             }
-            evtName += '_' + name;
+            name += '_' + this.id;
             setTimeout(function() {
-                var $doc = $(document).on(evtName, function handler(evt) {
+                var $doc = $(document).on(name, function handler(evt) {
                     if (evt.target !== $node[0] && !$(evt.target).closest($node).length) {
                         var ret = callback(evt),
                             returnedFalse = !ret && typeof ret !== 'undefined',
                             defaultPrevented = evt.isDefaultPrevented();
 
                         if (!returnedFalse && !defaultPrevented) {
-                            $doc.off(evtName, handler);
+                            $doc.off(name, handler);
                         }
                     }
                 });

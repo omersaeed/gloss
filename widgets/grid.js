@@ -62,7 +62,7 @@ define([
                 }
                 $th.appendTo($tr);
             });
-            self.onPageClick('unhighlight', function() {
+            self.onPageClick('mouseup.unhighlight', function() {
                 self.unhighlight();
                 return false; // don't cancel the callback
             });
@@ -134,6 +134,12 @@ define([
                 newModels,
                 models.slice(idx+1, models.length)
             ));
+        },
+
+        highlighted: function() {
+            return _.find(this.options.rows, function(row) {
+                return row.$node.hasClass('highlight');
+            });
         },
 
         makeRow: function(model, index) {

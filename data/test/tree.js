@@ -145,6 +145,9 @@ require([
                 recursive: true
             }
         });
+        tree.on('change', function() {
+            ok(false, 'loading nodes should trigger "update" events, but "change" event was triggered');
+        });
         tree.load().done(function(root) {
             var result = [];
             ok(root === tree.root);
@@ -159,7 +162,12 @@ require([
     });
 
     asyncTest('load tree incrementally', function() {
-        var tree = this.tree;
+        var tree = this.tree, updateCount = 0;
+        tree.on('change', function() {
+            ok(false, 'loading nodes should trigger "update" events, but "change" event was triggered');
+        }).on('update', function() {
+            updateCount++;
+        });
         tree.load().done(function(root) {
             var count = 0;
             t.dfs(root.children, function() { count += 1; });
@@ -184,6 +192,10 @@ require([
 
                 firstChild.load().done(function(firstChild) {
                     levelCheck(tree);
+
+                    // since .load() was called twice on firstChild, the
+                    // 'update' callback only fired twice
+                    equal(updateCount, 2);
                     start();
                 });
             });
@@ -278,6 +290,33 @@ require([
         });
     });
 
+    asyncTest('moving a node triggers the "change" event at tree', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var changeArgs,
+                node = find(tree, 176),
+                newParent = find(tree, 4),
+                updateCount = 0,
+                changeCount = 0;
+            tree.on('update', function() {
+                updateCount++;
+            }).on('change', function() {
+                changeArgs = Array.prototype.slice.call(arguments, 0);
+                changeCount++;
+            });
+            node.moveTo(newParent, 0).done(function() {
+                equal(changeCount, 1);
+                equal(updateCount, 1); // one 'update' from expanding the node
+                equal(changeArgs.length, 4);
+                equal(changeArgs[0], 'change');
+                ok(changeArgs[1] === node);
+                equal(changeArgs[2], 'move');
+                ok(changeArgs[3] === newParent);
+                start();
+            });
+        });
+    });
+
     asyncTest('moving the last child from parent makes parent a leaf node', function() {
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
@@ -347,6 +386,28 @@ require([
         });
     });
 
+    asyncTest('remove child triggers "change" event at tree', function() {
+        var tree = this.tree, changeArgs, count = 0, updateCount = 0;
+        tree.on('change', function() {
+            changeArgs = Array.prototype.slice.call(arguments, 0);
+            count++;
+        });
+        expandSeveralNodes(tree).done(function() {
+            var node = find(tree, 177),
+                origParent = node.par;
+            tree.on('update', function() { updateCount++; });
+            origParent.removeChild(node);
+            equal(count, 1);
+            equal(updateCount, 0);
+            equal(changeArgs.length, 4);
+            equal(changeArgs[0], 'change');
+            ok(changeArgs[1] === origParent);
+            equal(changeArgs[2], 'remove');
+            ok(changeArgs[3] === node);
+            start();
+        });
+    });
+
     asyncTest('add node to tree', function() {
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
@@ -375,6 +436,33 @@ require([
             equal(newParent.model.isparent, false);
             newParent.add(model).done(function() {
                 equal(newParent.model.isparent, true);
+                start();
+            });
+        });
+    });
+
+    asyncTest('adding a node triggers "change" event in parent', function() {
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var newNode, changeArgs, newName =  'something very unique',
+                model = RecordSeries({name: newName}),
+                newParent = find(tree, 4),
+                updateCount = 0,
+                changeCount = 0;
+            tree.on('update', function() {
+                updateCount++;
+            }).on('change', function() {
+                changeArgs = Array.prototype.slice.call(arguments, 0);
+                changeCount++;
+            });
+            newParent.add(model).done(function() {
+                equal(changeCount, 1);
+                equal(updateCount, 1); // one 'update' from expanding the node
+                equal(changeArgs.length, 4);
+                equal(changeArgs[0], 'change');
+                ok(changeArgs[1] === newParent);
+                equal(changeArgs[2], 'add');
+                ok(changeArgs[3].model === model);
                 start();
             });
         });
