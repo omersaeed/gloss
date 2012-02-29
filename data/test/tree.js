@@ -19,7 +19,10 @@ require([
             this.manager = model.Manager(RecordSeries);
             this.tree = Tree({
                 resource: RecordSeries,
-                query: { file_plan_id: 1 },
+                collectionArgs: {
+                    query: {file_plan_id: 1, tree: true},
+                    tree: true
+                },
                 manager: this.manager
             });
         },
@@ -137,16 +140,21 @@ require([
             });
         };
 
-    Mock(RecordSeries, recordseries_tree);
+    Mock(RecordSeries, recordseries_tree, {
+        collectionArgs: {
+            query: {recursive: true, tree: true},
+            tree: true
+        }
+    });
 
     module('tree', {setup: setup});
 
     asyncTest('load full tree recursively', function() {
         var tree = Tree({
             resource: RecordSeries,
-            query: {
-                file_plan_id: 1,
-                recursive: true
+            collectionArgs: {
+                query: {file_plan_id: 1, recursive: true, tree: true},
+                tree: true
             }
         });
         tree.on('change', function() {
@@ -217,11 +225,13 @@ require([
                     firstChild.collection.__load__.apply(firstChild, arguments);
                 };
                 firstChild.load().done(function() {
-                    var count = 0;
+                    var count = 0, args = firstChild.options.collectionArgs;
                     equal(loadWasCalledAgain, false);
                     t.dfs(firstChild.children, function() { count++; });
                     equal(count, 5);
-                    firstChild.set('query', {recursive: true});
+                    firstChild.set('collectionArgs', $.extend({}, args, {
+                        query: {recursive: true}
+                    }));
                     firstChild.load().done(function() {
                         var count = 0;
                         equal(loadWasCalledAgain, false);

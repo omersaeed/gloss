@@ -42,7 +42,12 @@ require([
     // $.ajax({url: '/api/v1/targetvolumeprofile?offset=0'}).done(function(tvps){window.tvps=_.map(tvps.resources, function(tvp) {return [[{volumeid:tvp.volume_id}], tvp]})})
     Mock(TargetVolumeProfile, JSON.parse(targetvolumeprofile));
     Mock(FilePlan, JSON.parse(fileplan_tree), {method: 'get_tree'});
-    Mock(RecordSeries, JSON.parse(recordseries_tree));
+    Mock(RecordSeries, JSON.parse(recordseries_tree), {
+       collectionArgs: {
+            query: {recursive: true, tree: true},
+            tree: true
+        }
+    });
     window.RecordSeries = RecordSeries;
 
     module('loading flat data set', {

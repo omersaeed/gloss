@@ -9,10 +9,15 @@ define([
 
     var Node = Class.extend({
         defaults: {
-            query: { // required, probably needs something like file_plan_id
-                tree: true,
-                recursive: false
-            },
+            // query: { // required, probably needs something like file_plan_id
+                // tree: true,
+                // recursive: false
+            // },
+
+            // this is the argument that is used to instantiate the collection
+            collectionArgs: { },
+            collectionIdParam: 'root_id',
+
             manager: null, // see the note on Tree's 'manager' default
             tree: null // required
         },
@@ -31,7 +36,8 @@ define([
             // since any *.load() calls on this should have this as the root,
             // set that here
             if (self.model.id != null) {
-                self.options.query.root_id = self.model.id;
+                // self.options.query.root_id = self.model.id;
+                self.options.collectionArgs.query[self.options.collectionIdParam] = self.model.id;
             }
 
             self._loaded = self._loadedRecursive = false;
@@ -114,15 +120,17 @@ define([
             }
         },
 
-        _instantiateCollection: function(query) {
+        // _instantiateCollection: function(query) {
+        _instantiateCollection: function() {
             var self = this,
                 options = self.options,
                 tree = options.tree,
                 collectionSrc = tree.options.manager || tree.options.resource;
-            self.collection = collectionSrc.collection({
-                tree: true,
-                query: query
-            });
+            // self.collection = collectionSrc.collection({
+            //     tree: true,
+            //     query: query
+            // });
+            self.collection = collectionSrc.collection(options.collectionArgs);
         },
 
         // this should not be used for deleting nodes from the tree.  it's used
@@ -181,10 +189,12 @@ define([
         load: function(params) {
             var recursive, collectionSrc, self = this,
                 options = self.options,
-                tree = options.tree,
-                query = options.query;
+                // tree = options.tree,
+                // query = options.query;
+                tree = options.tree;
             if (! self.collection) {
-                self._instantiateCollection(query);
+                // self._instantiateCollection(query);
+                self._instantiateCollection();
             }
             if ((recursive = self.collection.query.recursive)) {
                 if (self._loadedRecursive) {
@@ -252,8 +262,10 @@ define([
 
             $.extend(true, this.options, opts);
 
-            if (opts.query != null) {
-                this._instantiateCollection(this.options.query);
+            // if (opts.query != null) {
+            if (opts.collectionArgs != null) {
+                // this._instantiateCollection(this.options.query);
+                this._instantiateCollection();
             }
 
             return this;
@@ -263,7 +275,8 @@ define([
     var defaultNodeFactory = function(model, parentNode, tree) {
         return Node(model, {
             tree: tree,
-            query: parentNode.options.query
+            // query: parentNode.options.query
+            collectionArgs: parentNode.options.collectionArgs
         });
     };
 
@@ -274,7 +287,8 @@ define([
             // in real implementatios, the 'query' is what will be passed to
             // the collection instantiation, so it'll probably need something
             // like a file_plan_id
-            query: { tree: true },
+            // query: { tree: true },
+            collectionArgs: { },
 
             // this is only really here to support unit tests, in production
             // it'll prob always be null
@@ -286,7 +300,10 @@ define([
 
         init: function(options) {
             this.options = $.extend(true, {}, this.defaults, options);
-            this.root = Node(Model.Model(), {query: this.options.query, tree: this});
+            this.root = Node(Model.Model(), {
+                collectionArgs: this.options.collectionArgs,
+                tree: this
+            });
             this.root.level = -1;
         },
 

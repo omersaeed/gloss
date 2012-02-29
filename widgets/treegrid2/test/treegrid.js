@@ -31,7 +31,10 @@ require([
             this.manager = model.Manager(RecordSeries);
             this.tree = Tree({
                 resource: RecordSeries,
-                query: { file_plan_id: 1 },
+                collectionArgs: {
+                    query: {file_plan_id: 1, recursive: false, tree: true},
+                    tree: true
+                },
                 manager: this.manager
             });
             this.treegrid = TreeGrid(undefined, {
@@ -126,7 +129,12 @@ require([
         }
     });
 
-    Mock(RecordSeries, recordseries_tree);
+    Mock(RecordSeries, recordseries_tree, {
+        collectionArgs: {
+            query: {recursive: true, tree: true},
+            tree: true
+        }
+    });
 
     module('treegrid', {setup: setup});
 
@@ -139,7 +147,10 @@ require([
         manager = model.Manager(RecordSeries);
         tree = Tree({
             resource: RecordSeries,
-            query: { file_plan_id: 1, recursive: true },
+            collectionArgs: {
+                query: {file_plan_id: 1, recursive: true, tree: true},
+                tree: true
+            },
             manager: manager
         });
         treegrid = TreeGrid(undefined, {
@@ -272,7 +283,10 @@ require([
         manager = model.Manager(RecordSeries);
         tree = Tree({
             resource: RecordSeries,
-            query: { file_plan_id: 1, recursive: true},
+            collectionArgs: {
+                query: {file_plan_id: 1, recursive: true, tree: true},
+                tree: true
+            },
             manager: manager
         });
         treegrid = TreeGrid(undefined, {
@@ -332,7 +346,10 @@ require([
             this.manager = model.Manager(RecordSeries);
             this.tree = Tree({
                 resource: RecordSeries,
-                query: { file_plan_id: 1 },
+                collectionArgs: {
+                    query: {file_plan_id: 1, recursive: false, tree: true},
+                    tree: true
+                },
                 manager: this.manager
             });
             this.treegrid = TreeGrid(undefined, {
@@ -396,7 +413,10 @@ require([
             this.manager = model.Manager(RecordSeries);
             this.tree = Tree({
                 resource: RecordSeries,
-                query: { file_plan_id: 1 },
+                collectionArgs: {
+                    query: {file_plan_id: 1, recursive: false, tree: true},
+                    tree: true
+                },
                 manager: this.manager
             });
             this.treegrid = TreeGrid(undefined, {
@@ -680,7 +700,10 @@ require([
             this.manager = model.Manager(RecordSeries);
             this.tree = Tree({
                 resource: RecordSeries,
-                query: { file_plan_id: 1 },
+                collectionArgs: {
+                    query: {file_plan_id: 1, recursive: false, tree: true},
+                    tree: true
+                },
                 manager: this.manager
             });
             this.treegrid = TreeGrid(undefined, {

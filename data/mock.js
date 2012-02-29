@@ -149,7 +149,10 @@ define([
 
         if (params && params.tree) {
             if (!resource.testDataTree) {
-                tmpTree = Tree({resource: resource.resource});
+                tmpTree = Tree({
+                    resource: resource.resource,
+                    collectionArgs: resource.config.collectionArgs
+                });
                 resource.testDataTree = tmpTree.root;
                 resource.testDataTree._hierarchyFromList(
                         justModelData(resource.testData));
