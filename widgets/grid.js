@@ -142,10 +142,16 @@ define([
             ));
         },
 
+        highlight: function(whichRow) {
+            this.unhighlight();
+            whichRow.$node.addClass('highlight');
+            this._highlighted = whichRow;
+            this.trigger('highlight');
+            return this;
+        },
+
         highlighted: function() {
-            return _.find(this.options.rows, function(row) {
-                return row.$node.hasClass('highlight');
-            });
+            return this._highlighted;
         },
 
         makeRow: function(model, index) {
@@ -166,9 +172,11 @@ define([
         },
 
         unhighlight: function() {
-            _.each(this.options.rows, function(row) {
-                row.$node.removeClass('highlight');
-            });
+            if (this._highlighted) {
+                this._highlighted.$node.removeClass('highlight');
+                delete this._highlighted;
+                this.trigger('unhighlight');
+            }
             return this;
         },
 

@@ -96,8 +96,7 @@ define([
         },
 
         highlight: function() {
-            this.options.grid.unhighlight();
-            this.$node.addClass('highlight');
+            this.options.grid.highlight(this);
             return this;
         },
 
