@@ -144,14 +144,16 @@ define([
                 tree = options.tree,
                 nodeFactory = tree.options.nodeFactory,
                 models = _.isArray(model)? model : [model];
-            return self.load().done(function() {
-                var newNodes = [];
+            return self.load().pipe(function() {
+                var newNodes = [], ret;
                 _.each(models, function(model) {
                     var newNode = nodeFactory(model, self, tree);
                     self._appendChild(newNode, idx);
                     newNodes.push(newNode);
                 });
-                self.trigger('change', 'add', _.isArray(model)? newNodes : newNodes[0]);
+                ret = _.isArray(model)? newNodes : newNodes[0];
+                self.trigger('change', 'add', ret);
+                return ret;
             });
         },
 

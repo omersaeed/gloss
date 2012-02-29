@@ -155,7 +155,7 @@ define([
                 ret.push(' parent">', options.collapseText);
             }
             ret.push('</a><span class=content>');
-            ret.push(options.model[this.options.expandColName]);
+            ret.push(options.model[this.options.expandColName] || '');
             ret.push('</span>');
             return ret.join('');
         },

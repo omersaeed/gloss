@@ -1,10 +1,11 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/t',
     'vendor/gloss/widgets/grid',
     'vendor/gloss/widgets/treegrid2/treegridrow',
     'link!vendor/gloss/widgets/treegrid2/treegrid.css'
-], function($, _, Grid, TreeGridRow) {
+], function($, _, t, Grid, TreeGridRow) {
     return Grid.extend({
         defaults: {
             rowWidgetClass: TreeGridRow,
@@ -54,9 +55,20 @@ define([
             }
             return false;
         },
-        add: function() {
-            // this isn't implemented for the treegrid... just update the tree
-            // and call 'rerender()'
+        add: function(models, afterRow) {
+            var self = this,
+                par = afterRow.options.node.par,
+                idx = afterRow.options.node.index() + 1;
+            return afterRow.options.node.par.add(models, idx)
+                .pipe(function(newNodes) {
+                    var newRowIdx = afterRow.options.idx;
+                    t.dfs(afterRow.options.node, function() { newRowIdx++; });
+                    if (_.isArray(models)) {
+                        return self.options.rows.splice(newRowIdx, models.length);
+                    } else {
+                        return self.options.rows[newRowIdx];
+                    }
+                });
         },
         expandAll: function() {
             var i, l, rows = this.options.rows;
