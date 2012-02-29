@@ -46,6 +46,7 @@
 }
 .grid.standard table thead tr {
   height: 28px;
+  border-bottom: 1px solid #ffffff;
   color: #ffffff;
   background-color: #60676d;
 }
