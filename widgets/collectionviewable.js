@@ -7,23 +7,17 @@ define([
             collectionLoadArgs: null
         },
         __updateWidget__: function(updated) {
-            var self = this, startingValue,
+            var self = this,
                 options = self.options,
                 collection = options.collection;
             if (updated.collection) {
-                if (!self._collectionHasLoadedOnce) {
-                    startingValue = self.getValue();
-                }
                 if (self.disable) {
                     self.disable();
                 }
                 collection.load(options.collectionLoadArgs).done(function() {
-                    var hasStartingValue = false;
+                    var startingValue = self.getValue();
                     self.set('models', collection.models);
-                    if (!self._collectionHasLoadedOnce) {
-                        self.setValue(startingValue);
-                    }
-                    self._collectionHasLoadedOnce = true;
+                    self.setValue(startingValue);
                     if (self.enable) {
                         self.enable();
                     }
