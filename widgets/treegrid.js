@@ -28,6 +28,21 @@ define([
             self.$node.addClass('tree');
             tree.root.expanded = false;
         },
+        _addAfterRow: function(models, afterRow) {
+            var self = this,
+                par = afterRow.options.node.par,
+                idx = afterRow.options.node.index() + 1;
+            return afterRow.options.node.par.add(models, idx)
+                .pipe(function(newNodes) {
+                    var newRowIdx = afterRow.options.idx;
+                    t.dfs(afterRow.options.node, function() { newRowIdx++; });
+                    if (_.isArray(models)) {
+                        return self.options.rows.splice(newRowIdx, models.length);
+                    } else {
+                        return self.options.rows[newRowIdx];
+                    }
+                });
+        },
         _makeRowOptions: function(node, index) {
             var self = this;
             return {
@@ -55,20 +70,12 @@ define([
             }
             return false;
         },
-        add: function(models, afterRow) {
-            var self = this,
-                par = afterRow.options.node.par,
-                idx = afterRow.options.node.index() + 1;
-            return afterRow.options.node.par.add(models, idx)
-                .pipe(function(newNodes) {
-                    var newRowIdx = afterRow.options.idx;
-                    t.dfs(afterRow.options.node, function() { newRowIdx++; });
-                    if (_.isArray(models)) {
-                        return self.options.rows.splice(newRowIdx, models.length);
-                    } else {
-                        return self.options.rows[newRowIdx];
-                    }
-                });
+        add: function(models, where) {
+            if (where.after) {
+                return this._addAfterRow(models, where.after);
+            } else {
+                throw Error('only adding "after" is implemented');
+            }
         },
         expandAll: function() {
             var i, l, rows = this.options.rows;

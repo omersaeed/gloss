@@ -176,11 +176,11 @@ define([
             if (indent.innerText != null) {
                 indent.innerHTML = indentTxt;
                 expand.innerHTML = expandTxt;
-                value.innerText = node.model[name];
+                value.innerText = node.model[name] || '';
             } else {
                 indent.innerHTML = indentTxt;
                 expand.innerHTML = expandTxt;
-                value.textContent = node.model[name];
+                value.textContent = node.model[name] || '';
             }
         },
 
