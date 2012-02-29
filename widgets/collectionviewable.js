@@ -17,7 +17,12 @@ define([
                 collection.load(options.collectionLoadArgs).done(function() {
                     var startingValue = self.getValue();
                     self.set('models', collection.models);
-                    self.setValue(startingValue);
+                    _.each(self.options.entries, function(entry) {
+                        // use type coercion in case it's an int
+                        if (entry.value == startingValue) {
+                            self.setValue(startingValue);
+                        }
+                    });
                     if (self.enable) {
                         self.enable();
                     }

@@ -39,9 +39,18 @@ define([
         _bindReturnKeyPressToNextLine: function() {
             var self = this;
             self.form.on('keypress', function(evt) {
-                var grid = self.options.grid, nextRow;
+                var grid = self.options.grid, nextRow, i, l, row;
                 if (Widget.identifyKeyEvent(evt) === 'enter') {
-                    nextRow = grid.options.rows[self.options.idx+1];
+                    i = self.options.idx+1;
+                    l = grid.options.rows.length; 
+                    for (; i < l; i++) {
+                        row = grid.options.rows[i];
+                        if (row.$node.is(':visible')) {
+                            nextRow = row;
+                            break;
+                        }
+                    }
+                    // nextRow = grid.options.rows[self.options.idx+1];
                     if (nextRow) {
                         evt.preventDefault();
                         self.form.trigger('submit');
@@ -135,6 +144,7 @@ define([
             self._bindReturnKeyPressToNextLine();
             self.form.appendTo(self.options.grid.$node);
             _.values(self.form.options.widgets)[0].$node.focus();
+            return self;
         },
 
         stopEdit: function() {
@@ -146,6 +156,7 @@ define([
             this.trigger('stopedit');
             delete this.form;
             this.render();
+            return this;
         },
 
         toForm: function(col) {
