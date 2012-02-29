@@ -4,6 +4,11 @@
 @row-background-color: white;
 @odd-row-background-color: @body-background;
 
+.reversed () {
+  color: @row-background-color;
+  background-color: @color;
+}
+
 .grid table {
   display: table;
 }
@@ -47,14 +52,30 @@
 .grid.standard table tbody tr {
   height: @standard-row-height;
 }
+
 .grid.standard table tbody tr:hover {
   background-color: @odd-row-background-color - #111;
 }
+
 .grid.standard table tbody tr.highlight {
-  background-color: @color;
-  color: white;
+  .reversed()
 }
+
 .grid.standard table tbody tr.highlight:hover {
-  background-color: @color;
-  color: white;
+  .reversed()
 }
+
+.grid.standard table thead tr {
+  height: @standard-row-height;
+  .reversed()
+}
+
+.grid.standard table thead tr th {
+  border-left: 1px solid @row-background-color;
+}
+
+.grid.standard table thead tr th.no-left-border,
+.grid.standard table thead tr th.first {
+  border-left: none;
+}
+

@@ -55,8 +55,14 @@ define([
                 });
             });
             $tr = self.$table.find('thead tr');
-            _.each(self.options.colModel, function(col) {
-                var $th = $('<th>').text(col.label || '');
+            _.each(self.options.colModel, function(col, i) {
+                var $th = $('<th>').text(col.label || '').addClass('col-'+col.name);
+                if (i === 0) {
+                    $th.addClass('first');
+                }
+                if (col.noLeftBorder) {
+                    $th.addClass('no-left-border');
+                }
                 if (col.width != null) {
                     $th.width(col.width);
                 }

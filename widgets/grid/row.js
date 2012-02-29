@@ -33,7 +33,9 @@ define([
 
         template: _.template([
             '<% for (var i = 0, len = colModel.length, col; col = colModel[i], i < len; i++) { %>',
-                '<td class="col-<%= col.name %>"><%= this[col.render](col) %></td>',
+                '<td class="col-<%= col.name %><%= i===0? " first" : "" %><%= col.noLeftBorder? " no-left-border" : "" %>">',
+                    '<%= this[col.render](col) %>',
+                '</td>',
             '<% } %>'
         ].join('')),
 

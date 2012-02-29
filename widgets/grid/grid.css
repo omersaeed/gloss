@@ -37,10 +37,22 @@
   background-color: #e5e5e5;
 }
 .grid.standard table tbody tr.highlight {
+  color: #ffffff;
   background-color: #60676d;
-  color: white;
 }
 .grid.standard table tbody tr.highlight:hover {
+  color: #ffffff;
   background-color: #60676d;
-  color: white;
+}
+.grid.standard table thead tr {
+  height: 28px;
+  color: #ffffff;
+  background-color: #60676d;
+}
+.grid.standard table thead tr th {
+  border-left: 1px solid #ffffff;
+}
+.grid.standard table thead tr th.no-left-border,
+.grid.standard table thead tr th.first {
+  border-left: none;
 }
