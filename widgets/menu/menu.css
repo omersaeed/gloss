@@ -1,0 +1,26 @@
+.menu {
+  background-color: #fff;
+  border: 1px solid #282828;
+  border-radius: 4px;
+  box-shadow: 1px 1px 1px 0 #dadada;
+  position: absolute;
+  z-index: 50;
+}
+.menu > ul {
+  margin: 0;
+  padding: 0;
+}
+.menu > ul > li {
+  cursor: default;
+  list-style-type: none;
+  padding: 5px 10px;
+}
+.menu > ul > li.first {
+}
+.menu > ul > li.last {
+  border-radius: 0 0 4px 4px;
+}
+.menu > ul > li:hover {
+  background-color: #e4e4e4;
+}
+
