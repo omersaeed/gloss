@@ -152,6 +152,14 @@ define([
             return this.models[idx] || null;
         },
 
+        create: function(attrs, params, idx) {
+            var self = this, model = this.manager.model(attrs);
+            return model.save(params).pipe(function(instance) {
+                self.add([instance], idx);
+                return instance;
+            });
+        },
+
         get: function(id) {
             return this.cache[id] || null;
         },
@@ -260,6 +268,7 @@ define([
 
     var Manager = Class.extend({
         init: function(model) {
+            this.cache = [];
             this.model = model;
             this.models = {};
         },
@@ -282,8 +291,22 @@ define([
             return this;
         },
 
-        collection: function(params) {
-            return Collection(this, params);
+        collection: function(params, independent) {
+            if (independent || !params) {
+                return Collection(this, params);
+            }
+
+            var query = params.query || {}, cache = this.cache;
+            for (var i = 0, l = cache.length; i < l; i++) {
+                cached = cache[i];
+                if (isEqual(cached.query, query)) {
+                    return cached;
+                }
+            }
+
+            collection = Collection(this, params);
+            cache.push(collection);
+            return collection;
         },
 
         dissociate: function(model) {
@@ -340,8 +363,8 @@ define([
                 return Manager(constructor);
             };
             constructor.models = prototype.__models__ = constructor.manager();
-            constructor.collection = function(params) {
-                return constructor.models.collection(params);
+            constructor.collection = function(params, independent) {
+                return constructor.models.collection(params, independent);
             };
         },
 

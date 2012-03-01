@@ -359,6 +359,22 @@ require([
         });
     });
 
+    asyncTest('collection caching', function() {
+        setup();
+        var c1 = Test.collection({query: {name: 'test'}});
+        var c2 = Test.collection({query: {name: 'test'}});
+        var c3 = Test.collection({query: {name: 'test'}}, true);
+        strictEqual(c1, c2);
+        notStrictEqual(c1, c3);
+        notStrictEqual(c2, c3);
+
+        var c4 = Test.collection({query: {name: 'other'}});
+        notStrictEqual(c4, c1);
+        notStrictEqual(c4, c2);
+        notStrictEqual(c4, c3);
+        start();
+    });
+
     asyncTest('collection usage: full load', function() {
         setup();
         var collection = Test.collection(), calls = storage.calls;
@@ -454,6 +470,18 @@ require([
                 teardown();
                 start();
             });
+        });
+    });
+
+    asyncTest('collection usage: creation of model', function() {
+        setup();
+        var collection = Test.collection();
+        collection.create({name: 'test'}).done(function(model) {
+            ok(model.id);
+            strictEqual(model.name, 'test');
+            strictEqual(collection.get(model.id).id, model.id);
+            strictEqual(collection.at(0).id, model.id);
+            start();
         });
     });
 
