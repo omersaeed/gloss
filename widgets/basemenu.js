@@ -29,6 +29,7 @@ define([
                 $node.hide(options.animation);
             }
 
+            $node.removeClass('open');
             this.shown = false;
             return this;
         },
@@ -75,8 +76,16 @@ define([
                 });
             }
 
+            $node.addClass('open');
             this.shown = true;
             return this;
+        },
+        toggle: function(open) {
+            if(this.shown) {
+                this.hide();
+            } else  {
+                this.show();
+            }
         },
         updateWidget: function(updated) {
             this.constructed = false;
