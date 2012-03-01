@@ -54,8 +54,17 @@ define([
                     }
                 });
             });
-            $tr = self.$table.find('thead tr');
-            _.each(self.options.colModel, function(col, i) {
+            self._buildHeader();
+            self.onPageClick('mouseup.unhighlight', function() {
+                self.unhighlight();
+                return false; // don't cancel the callback
+            });
+            self.update();
+        },
+
+        _buildHeader: function() {
+            var $tr = this.$table.find('thead tr');
+            _.each(this.options.colModel, function(col, i) {
                 var $th = $('<th>').text(col.label || '').addClass('col-'+col.name);
                 if (i === 0) {
                     $th.addClass('first');
@@ -68,11 +77,6 @@ define([
                 }
                 $th.appendTo($tr);
             });
-            self.onPageClick('mouseup.unhighlight', function() {
-                self.unhighlight();
-                return false; // don't cancel the callback
-            });
-            self.update();
         },
 
         _setModels: function() {

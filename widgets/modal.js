@@ -77,7 +77,8 @@ function($, _, Widget, Button, Draggable) {
 
             if (options.titleBarDrag) {
                 self.on('mousedown', 'h1, h1 :not(button)', function(evt) {
-                    self.draggableOnMouseDown(evt);
+                    // self.draggableOnMouseDown(evt);
+                    self.startDrag(evt);
                 }).$node.find('h1').addClass('drag-handle');
             }
         },
