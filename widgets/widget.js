@@ -350,7 +350,7 @@ define([
         },
 
         init: function(node, options, extension) {
-            var name, value, parentWidget, $tmpl;
+            var name, value, parentWidget, $tmpl, classes, i;
             if (extension != null) {
                 _.extend(this, extension);
             }
@@ -375,13 +375,12 @@ define([
                 }
             }
 
-            if (this.options.populateEmptyNode &&
-                !this.$node.children().length &&
-                node) {
+            if (this.options.populateEmptyNode && !this.$node.children().length && node) {
                 $tmpl = $(this.nodeTemplate);
-                _.each($tmpl.attr('class').split(' '), function(className) {
-                    this.$node.addClass(className);
-                });
+                classes = $tmpl.attr('class').split(' ');
+                for (i = classes.length-1; i >= 0; i--) {
+                    this.$node.addClass(classes[i]);
+                }
                 this.$node.html($tmpl.html());
             }
             
