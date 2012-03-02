@@ -328,7 +328,7 @@ define([
             nostyling: false,
             bindAll: true,
             bindOnMethodHandlers: true,
-            populateEmptyWidget: false
+            populateEmptyNode: false
         },
 
         __new__: function(constructor, base, prototype, mixins) {
@@ -375,7 +375,7 @@ define([
                 }
             }
 
-            if (this.options.populateEmptyWidget &&
+            if (this.options.populateEmptyNode &&
                 !this.$node.children().length &&
                 node) {
                 $tmpl = $(this.nodeTemplate);
