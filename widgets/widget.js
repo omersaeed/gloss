@@ -327,7 +327,8 @@ define([
         defaults: {
             nostyling: false,
             bindAll: true,
-            bindOnMethodHandlers: true
+            bindOnMethodHandlers: true,
+            populateEmptyWidget: false
         },
 
         __new__: function(constructor, base, prototype, mixins) {
@@ -349,13 +350,13 @@ define([
         },
 
         init: function(node, options, extension) {
-            var name, value, parentWidget;
+            var name, value, parentWidget, $tmpl;
             if (extension != null) {
                 _.extend(this, extension);
             }
 
             BaseWidget.prototype.init.call(this, node);
-            
+
             this.id = this.$node.attr('id');
             if (this.id == null) {
                 this.id = _.uniqueId('widget');
@@ -374,6 +375,16 @@ define([
                 }
             }
 
+            if (this.options.populateEmptyWidget &&
+                !this.$node.children().length &&
+                node) {
+                $tmpl = $(this.nodeTemplate);
+                _.each($tmpl.attr('class').split(' '), function(className) {
+                    this.$node.addClass(className);
+                });
+                this.$node.html($tmpl.html());
+            }
+            
             if (this.options.bindAll) {
                 _.bindAll(this);
             }
