@@ -126,7 +126,7 @@ define([
             }).on('submit', function() {
                 self.stopEdit();
             }).on('keyup', function(e) {
-                if (e.keyCode === 27) {
+                if (Widget.identifyKeyEvent(e) === 'escape') {
                     self.stopEdit();
                 }
             }).bind(self.options.model);

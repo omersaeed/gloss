@@ -120,6 +120,7 @@ function($, _, Widget, Button, Draggable) {
 
             this.propagate('show');
             this.trigger('show');
+            return this;
         },
 
         // prevent default functionality of this.$node.show/hide()
@@ -132,6 +133,7 @@ function($, _, Widget, Button, Draggable) {
             this.$node.hide();
             $(document).off('keyup.modal');
             this.trigger('hide');
+            return this;
         },
 
         checkKeyup: function(evt) {
