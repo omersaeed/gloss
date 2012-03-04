@@ -189,16 +189,17 @@ define([
         load: function(params) {
             var recursive, collectionSrc, self = this,
                 options = self.options,
-                // tree = options.tree,
-                // query = options.query;
                 tree = options.tree;
             if (! self.collection) {
-                // self._instantiateCollection(query);
                 self._instantiateCollection();
             }
             if ((recursive = self.collection.query.recursive)) {
                 if (self._loadedRecursive) {
                     return $.Deferred().resolve(this);
+                } else {
+                    // we've loaded before, but we're re-loading recursively,
+                    // so set the 'reload' flag on the collection load params
+                    (params = params || {}).reload = true;
                 }
             } else {
                 if (self._loaded) {

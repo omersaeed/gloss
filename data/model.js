@@ -288,6 +288,7 @@ define([
 
         clear: function() {
             this.models = {};
+            this.cache = [];
             return this;
         },
 
@@ -296,7 +297,7 @@ define([
                 return Collection(this, params);
             }
 
-            var query = params.query || {}, cache = this.cache;
+            var query = params.query || {}, cache = this.cache, collection, cached;
             for (var i = 0, l = cache.length; i < l; i++) {
                 cached = cache[i];
                 if (isEqual(cached.query, query)) {

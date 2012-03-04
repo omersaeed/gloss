@@ -16,14 +16,13 @@ require([
             return item[1];
         }),
         setup = function() {
-            this.manager = model.Manager(RecordSeries);
+            RecordSeries.models.clear();
             this.tree = Tree({
                 resource: RecordSeries,
                 collectionArgs: {
                     query: {file_plan_id: 1, tree: true},
                     tree: true
-                },
-                manager: this.manager
+                }
             });
         },
         levelCheck = function(tree) {
@@ -147,9 +146,10 @@ require([
         }
     });
 
-    module('tree', {setup: setup});
+    module('tree', {});
 
     asyncTest('load full tree recursively', function() {
+        setup.call(this);
         var tree = Tree({
             resource: RecordSeries,
             collectionArgs: {
@@ -174,6 +174,7 @@ require([
     });
 
     asyncTest('load tree incrementally', function() {
+        setup.call(this);
         var tree = this.tree, updateCount = 0;
         tree.on('change', function() {
             ok(false, 'loading nodes should trigger "update" events, but "change" event was triggered');
@@ -215,6 +216,7 @@ require([
     });
 
     asyncTest('reloading nodes doesnt break anything', function() {
+        setup.call(this);
         var tree = this.tree;
         tree.load().done(function(root) {
             root.children[0].load().done(function(firstChild) {
@@ -222,7 +224,7 @@ require([
                 firstChild.collection.__load__ = firstChild.collection.load;
                 firstChild.collection.load = function() {
                     loadWasCalledAgain = true;
-                    firstChild.collection.__load__.apply(firstChild, arguments);
+                    return firstChild.collection.__load__.apply(firstChild.collection, arguments);
                 };
                 firstChild.load().done(function() {
                     var count = 0, args = firstChild.options.collectionArgs;
@@ -234,7 +236,7 @@ require([
                     }));
                     firstChild.load().done(function() {
                         var count = 0;
-                        equal(loadWasCalledAgain, false);
+                        equal(loadWasCalledAgain, true);
                         t.dfs(firstChild.children, function() { count++; });
                         equal(count, 53);
                         start();
@@ -244,9 +246,11 @@ require([
         });
     });
 
-    module('moving a node', {setup: setup});
+    // module('moving a node', {setup: setup});
+    module('moving a node', {});
 
     asyncTest('down', function() {
+        setup.call(this);
         var tree = this.tree,
             inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
             after = '1: alpha something+\n    512: blah blah\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
@@ -261,6 +265,7 @@ require([
     });
 
     asyncTest('up', function() {
+        setup.call(this);
         var tree = this.tree,
             inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
             after = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    511: something else\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
@@ -275,6 +280,7 @@ require([
     });
 
     asyncTest('left', function() {
+        setup.call(this);
         var tree = this.tree,
             inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
             after = '1: alpha something+\n    8: second from under alpha+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n    53: first+\n    65: second+\n    82: third+\n    9: alpha boo+\n        10: first+\n        20: second+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
@@ -290,6 +296,7 @@ require([
     });
 
     asyncTest('right', function() {
+        setup.call(this);
         var tree = this.tree,
             inital = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n176: delta+\n    177: first+\n        178: alpha+\n        202: beta+\n        205: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n',
             after = '1: alpha something+\n    8: second from under alpha+\n        9: alpha boo+\n            10: first+\n            20: second+\n        506: child of second\n    512: blah blah\n    511: something else\n    2: first+\n        3: alpha too+\n            5: second\n            4: first+\n                176: delta+\n                    177: first+\n                        178: alpha+\n                        202: beta+\n                        205: gamma+\n        6: beta+\n    23: third+\n52: beta fooasdfasdf+\n169: gamma+\n207: epsilon+\n8932: netware output+\n    10131: .git+\n        10137: logs+\n        10135: refs+\n        10136: objects+\n        10134: hooks\n        10133: info\n    10132: test_create_folder\n    10130: siq_licenses\n';
@@ -305,6 +312,7 @@ require([
     });
 
     asyncTest('moving a node triggers the "change" event at tree', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var changeArgs,
@@ -332,6 +340,7 @@ require([
     });
 
     asyncTest('moving the last child from parent makes parent a leaf node', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var node1 = find(tree, 9),
@@ -352,6 +361,7 @@ require([
     });
 
     asyncTest('promote into leaf node turns leaf to parent', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 8932),
@@ -367,6 +377,7 @@ require([
     module('add/remove', {setup: setup});
 
     asyncTest('removeChild works', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var removedIds = [],
@@ -387,6 +398,7 @@ require([
     });
 
     asyncTest('remove last child changes isparent to false', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var node = find(tree, 177),
@@ -401,6 +413,7 @@ require([
     });
 
     asyncTest('remove child triggers "change" event at tree', function() {
+        setup.call(this);
         var tree = this.tree, changeArgs, count = 0, updateCount = 0;
         tree.on('change', function() {
             changeArgs = Array.prototype.slice.call(arguments, 0);
@@ -423,6 +436,7 @@ require([
     });
 
     asyncTest('add node to tree', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var newNode, newName =  'something very unique',
@@ -442,6 +456,7 @@ require([
     });
 
     asyncTest('add two nodes at once to tree', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var newNode1, newNode2, newName =  'something very unique',
@@ -472,6 +487,7 @@ require([
     });
 
     asyncTest('node changes from leaf to parent when child added', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var newNode, newName =  'something very unique',
@@ -486,6 +502,7 @@ require([
     });
 
     asyncTest('adding a node triggers "change" event in parent', function() {
+        setup.call(this);
         var tree = this.tree;
         expandSeveralNodes(tree).done(function() {
             var newNode, changeArgs, newName =  'something very unique',
