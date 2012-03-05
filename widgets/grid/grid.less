@@ -1,13 +1,5 @@
 @import '../../../../css/globallib.less';
-
-@standard-row-height: 28px;
-@row-background-color: white;
-@odd-row-background-color: @body-background;
-
-.reversed () {
-  color: @row-background-color;
-  background-color: @color;
-}
+@import './gridlib.less';
 
 .grid table {
   display: table;
@@ -36,13 +28,8 @@
   display: inline-block;
 }
 
-.grid-table-tbody-td-button {
-  height: 16px;
-  padding: 1px 10px;
-}
-
-.grid table tbody td button {
-  .grid-table-tbody-td-button
+.grid table tbody tr td button {
+  .grid-table-tbody-tr-td-button
 }
 
 .grid.standard table {

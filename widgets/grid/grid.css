@@ -1,3 +1,7 @@
+.grid-table-tbody-tr-td-button {
+  height: 16px;
+  padding: 1px 10px;
+}
 .grid table {
   display: table;
 }
@@ -19,11 +23,7 @@
 .grid table tbody form td {
   display: inline-block;
 }
-.grid-table-tbody-td-button {
-  height: 16px;
-  padding: 1px 10px;
-}
-.grid table tbody td button {
+.grid table tbody tr td button {
   height: 16px;
   padding: 1px 10px;
 }

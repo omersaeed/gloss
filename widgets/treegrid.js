@@ -23,6 +23,7 @@ define([
                 if (type !== 'model') {
                     self.set('nodes', self.options.tree.asList());
                 }
+                self._markAsModified();
             });
             self._super();
             self.$node.addClass('tree');
@@ -51,6 +52,13 @@ define([
                 parentWidget: self,
                 idx: index
             };
+        },
+        _markAsModified: function() {
+            if (this._modified) {
+                return;
+            }
+            this._modified = true;
+            this.$node.addClass('modified');
         },
         _shouldFullyRender: function() {
             var i, l, count = 0,
