@@ -23,7 +23,7 @@ define([
                 if (type !== 'model') {
                     self.set('nodes', self.options.tree.asList());
                 }
-                self._markAsModified();
+                self._markAsModified(true);
             });
             self._super();
             self.$node.addClass('tree');
@@ -53,12 +53,17 @@ define([
                 idx: index
             };
         },
-        _markAsModified: function() {
-            if (this._modified) {
-                return;
+        _markAsModified: function(modified) {
+            if (modified) {
+                if (this._modified) {
+                    return;
+                }
+                this._modified = true;
+                this.$node.addClass('modified');
+            } else {
+                delete this._modified;
+                this.$node.removeClass('modified');
             }
-            this._modified = true;
-            this.$node.addClass('modified');
         },
         _shouldFullyRender: function() {
             var i, l, count = 0,

@@ -270,7 +270,13 @@ define([
             }
 
             return this;
+        },
+
+        undirty: function() {
+            delete this._dirtied;
+            delete this._removedChildren;
         }
+
     }, {mixins: [events]});
 
     var defaultNodeFactory = function(model, parentNode, tree) {
@@ -312,6 +318,10 @@ define([
             var ret = [];
             t.dfs(this.root.children || [], function() { ret.push(this); });
             return ret;
+        },
+
+        clearDeltas: function() {
+            t.dfs(this.root, function() { this.undirty(); });
         },
 
         deltas: function() {
