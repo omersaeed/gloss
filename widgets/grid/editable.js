@@ -50,7 +50,6 @@ define([
                             break;
                         }
                     }
-                    // nextRow = grid.options.rows[self.options.idx+1];
                     if (nextRow) {
                         evt.preventDefault();
                         self.form.trigger('submit');

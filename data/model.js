@@ -165,10 +165,11 @@ define([
         },
 
         load: function(params) {
-            var self = this, manager = this.manager, query = {}, offset, limit, models;
+            var self = this, manager = this.manager, query = {}, offset, limit, models, offsetGiven = false;
             params = params || {};
             $.extend(true, query, self.query);
 
+            offsetGiven = offsetGiven || params.offset != null;
             query.offset = offset = params.offset || 0;
             if (params.limit != null) {
                 query.limit = params.limit;
@@ -177,6 +178,10 @@ define([
                 query.limit = self.total - offset;
             }
             limit = query.limit;
+
+            if (!offsetGiven && !params.reload && self.total != null) {
+                return $.Deferred().resolve(self.models);
+            }
 
             if (!params.reload) {
                 models = self.models;

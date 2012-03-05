@@ -16,12 +16,12 @@ define([
             self.$node.addClass('formwidget');
         },
         disable: function() {
-            this.$node.attr('disabled', true);
+            this.$node.prop('disabled', true);
             this._super();
             return this;
         },
         enable: function() {
-            this.$node.attr('disabled', false);
+            this.$node.removeProp('disabled');
             this._super();
             return this;
         },
