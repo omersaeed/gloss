@@ -16,7 +16,10 @@ define([
             translator: function() { }, // function to translate the collection
                                         // into the same format as the
                                         // 'entries' option
-            collectionLoadArgs: {all: true}
+            collectionLoadArgs: {all: true},
+
+            // optionally set fixed width
+            width: null
         },
         create: function() {
             var self = this, options = this.options;
@@ -129,6 +132,10 @@ define([
 
             this.toggle(false);
 
+            if (updated.width && options.width != null) {
+                $node.width(options.width);
+            }
+
             if(options.entries != null && options.entries.length > 0) {
                 this.populated = true;
             } else {
@@ -136,8 +143,10 @@ define([
                 return;
             }
 
-            $node.width(Widget.measureMinimumWidth($('<div/>').addClass($node.attr('class')),
-                _.pluck(options.entries, 'content')) + 6);
+            if (options.width == null) {
+                $node.width(Widget.measureMinimumWidth($('<div/>').addClass($node.attr('class')),
+                    _.pluck(options.entries, 'content')) + 6);
+            }
 
             if(options.initialValue != null) {
                 this.setValue(options.initialValue, true);
