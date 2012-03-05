@@ -27,6 +27,21 @@
   height: 16px;
   padding: 1px 10px;
 }
+.grid table thead tr th {
+  position: relative;
+}
+.grid table thead tr th .resize-handle {
+  position: absolute;
+  top: 0;
+  right: -6px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  border-left: 2px solid #60676d;
+}
+.grid table thead tr th .resize-handle.dragging {
+  border-left: 2px solid #ffffff;
+}
 .grid.standard table {
   width: 100%;
 }

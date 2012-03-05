@@ -4,8 +4,17 @@ define([
     'vendor/gloss/widgets/widget',
     'vendor/gloss/widgets/statefulwidget',
     'vendor/gloss/widgets/grid/row',
+    'vendor/gloss/widgets/draggable',
     'link!vendor/gloss/widgets/grid/grid.css'
-], function($, _, Widget, StatefulWidget, Row) {
+], function($, _, Widget, StatefulWidget, Row, Draggable) {
+
+    var ResizeHandle = Widget.extend({
+        defaults: {
+            draggable: {dimensions: {x: true, y: false}}
+        },
+        nodeTemplate: '<span class=resize-handle></span>'
+    }, {mixins: [Draggable]});
+
     return StatefulWidget.extend({
         defaults: {
             rowWidgetClass: Row,
@@ -74,6 +83,14 @@ define([
                 }
                 if (col.width != null) {
                     $th.width(col.width);
+                }
+                if (col.resizable) {
+                    ResizeHandle().appendTo($th).on('dragend', function(evt, pos) {
+                        var diff = pos.clientX - $th.position().left;
+                        if (diff > 0) {
+                            $th.width(diff);
+                        }
+                    });
                 }
                 $th.appendTo($tr);
             });

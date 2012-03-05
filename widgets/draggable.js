@@ -16,6 +16,9 @@ define([
             if (draggable.autoBind == null) {
                 draggable.autoBind = true;
             }
+            if (!draggable.dimensions) {
+                draggable.dimensions = {x: true, y: true};
+            }
         },
         afterInit: function() {
             var self = this;
@@ -80,10 +83,14 @@ define([
             return this.$node.clone(false, false);
         },
         _dragSetPos: function(evt, offset) {
-            this._drag.$el.css({
-                left: evt.clientX - (offset? offset.left : 0),
-                top: evt.clientY - (offset? offset.top : 0)
-            });
+            var val = {}, dims = this.options.draggable.dimensions;
+            if (dims.x) {
+                val.left = evt.clientX - (offset? offset.left : 0);
+            }
+            if (dims.y) {
+                val.top = evt.clientY - (offset? offset.top : 0);
+            }
+            this._drag.$el.css(val);
         }
     };
 });
