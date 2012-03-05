@@ -33,15 +33,24 @@ define([
             return this;
         },
         disable: function() {
+            var tabindex = this.$node.attr('tabindex');
             this.state.disabled = true;
             this.addState('disabled');
             this.propagate('disable');
+            if (tabindex > -1) {
+                this.$node.removeAttr('tabindex');
+                this._tabindex = tabindex;
+            }
             return this;
         },
         enable: function() {
             this.state.disabled = false;
             this.removeState('disabled');
             this.propagate('enable');
+            if (this._tabindex != null) {
+                this.$node.attr('tabindex', this._tabindex);
+                delete this._tabindex;
+            }
             return this;
         },
         removeState: function(states, silent) {

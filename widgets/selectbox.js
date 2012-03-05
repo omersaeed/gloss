@@ -105,7 +105,7 @@ define([
             if(typeof open !== 'boolean') {
                 open = !self.opened;
             }
-            if(open && !self.opened && !self.disabled) {
+            if(open && !self.opened && !self.state.disabled) {
                 Widget.onPageClick(self.$node, function() {
                     self.toggle(false);
                 });
