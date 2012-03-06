@@ -50,6 +50,11 @@
   border-left: 2px solid @row-background-color;
 }
 
+body.dragging-element .grid table thead tr th,
+body.dragging-element .grid table tbody tr td {
+  .user-select(none);
+}
+
 .grid.standard table {
   width: 100%;
 }

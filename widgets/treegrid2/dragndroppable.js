@@ -70,34 +70,36 @@ define([
                 rowIndex = getRowIndex(mousePos, this._drag.targets, this._drag.$visibleRows),
                 where = whereInRow(rowIndex % 1),
                 $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
+            this.off('dragend');
             for (i = rows.length-1; i >= 0; i--) {
                 if (rows[i].node === $row[0]) {
                     row = rows[i];
                     break;
                 }
             }
-            dest = row.options.node.index();
-            if (!inside(mousePos, this._drag.targets) ||
-                inside(mousePos, this._drag.nonTargets)) {
-                return;
+            if (row) {
+                dest = row.options.node.index();
+                if (!inside(mousePos, this._drag.targets) ||
+                    inside(mousePos, this._drag.nonTargets)) {
+                    return;
+                }
+                if (this.options.node.par === row.options.node.par &&
+                    rowIndex > this.options.node.index()) {
+                    dest--;
+                }
+                if (where === 'before') {
+                    this.moveTo(row._parentRow(), dest);
+                } else if (where === 'after') {
+                    this.moveTo(row._parentRow(), dest+1);
+                } else {
+                    this.moveTo(row);
+                }
             }
-            if (this.options.node.par === row.options.node.par &&
-                rowIndex > this.options.node.index()) {
-                dest--;
-            }
-            if (where === 'before') {
-                this.moveTo(row._parentRow(), dest);
-            } else if (where === 'after') {
-                this.moveTo(row._parentRow(), dest+1);
-            } else {
-                this.moveTo(row);
-            }
-            this.off('dragend');
         },
         _dragOnMouseUp: function(evt) {
             this._drag.$insertDiv.remove();
             _super('_dragOnMouseUp').call(this, evt);
-            this.options.grid.off('mousemove.drag-treegrid');
+            $(document).off('mousemove.drag-treegrid');
             _.each(this.options.grid.options.rows, function(row) {
                 row.$node.removeClass('hover');
             });
@@ -123,7 +125,7 @@ define([
                 bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
             };
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
-            self.options.grid.on('mousemove.drag-treegrid', 'tr', function(evt) {
+            $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
                 self._dragCheckTargets(evt);
             });
             _.each(children, function(child) {

@@ -42,6 +42,23 @@
 .grid table thead tr th .resize-handle.dragging {
   border-left: 2px solid #ffffff;
 }
+body.dragging-element .grid table thead tr th,
+body.dragging-element .grid table tbody tr td {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
 .grid.standard table {
   width: 100%;
 }

@@ -46,11 +46,15 @@ define([
         _dragStart: function(evt) {
             var self = this;
             self.off('mouseup.drag-start mousemove.drag-start');
-            $('body').on('mousemove.drag', function(evt) {
+            $(document).on('mousemove.drag', function(evt) {
+                evt.preventDefault();
+                evt.stopPropagation();
                 self._dragOnMouseMove(evt);
+                return false;
             }).on('mouseup.drag', function(evt) {
                 self._dragOnMouseUp(evt);
-            }).addClass('dragging-element');
+            });
+            $('body').addClass('dragging-element');
             if (self.options.draggable.clone) {
                 self._drag.$el = self._dragCloneEl();
             } else {
@@ -64,19 +68,20 @@ define([
             this._dragSetPos(evt, this._drag.offset);
         },
         _dragOnMouseUp: function(evt) {
-            this.trigger('dragend', {
-                clientX: evt.clientX,
-                clientY: evt.clientY
-            });
-            if (this.options.draggable.clone) {
-                this._drag.$el.remove();
-            } else {
-                this._drag.$el.addClass('dragged');
+            if (typeof this._drag !== 'undefined') {
+                this.trigger('dragend', {
+                    clientX: evt.clientX,
+                    clientY: evt.clientY
+                });
+                if (this.options.draggable.clone) {
+                    this._drag.$el.remove();
+                } else {
+                    this._drag.$el.addClass('dragged');
+                }
+                this._drag.$el.removeClass('dragging');
             }
-            this._drag.$el.removeClass('dragging');
-            $('body')
-                .removeClass('dragging-element')
-                .off('mouseup.drag mousemove.drag');
+            $(document).off('mouseup.drag mousemove.drag');
+            $('body').removeClass('dragging-element')
             delete this._drag;
         },
         _dragCloneEl: function() {

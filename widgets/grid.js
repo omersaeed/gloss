@@ -12,7 +12,13 @@ define([
         defaults: {
             draggable: {dimensions: {x: true, y: false}}
         },
-        nodeTemplate: '<span class=resize-handle></span>'
+        nodeTemplate: '<span class=resize-handle></span>',
+        create: function() {
+            this.$node.on('mousedown', function(evt) {
+                evt.preventDefault();
+                return false;
+            });
+        }
     }, {mixins: [Draggable]});
 
     return StatefulWidget.extend({
@@ -74,7 +80,8 @@ define([
         _buildHeader: function() {
             var $tr = this.$table.find('thead tr');
             _.each(this.options.colModel, function(col, i) {
-                var $th = $('<th>').text(col.label || '').addClass('col-'+col.name);
+                var resizeHandle,
+                    $th = $('<th>').text(col.label || '').addClass('col-'+col.name);
                 if (i === 0) {
                     $th.addClass('first');
                 }
@@ -85,12 +92,17 @@ define([
                     $th.width(col.width);
                 }
                 if (col.resizable) {
-                    ResizeHandle().appendTo($th).on('dragend', function(evt, pos) {
-                        var diff = pos.clientX - $th.position().left;
-                        if (diff > 0) {
-                            $th.width(diff);
-                        }
-                    });
+                    resizeHandle = ResizeHandle()
+                        .appendTo($th)
+                        .on('dragend', function(evt, pos) {
+                            var thPos = $th.position(),
+                                diff = pos.clientX - thPos.left;
+                            if (diff > 0) {
+                                $th.width(diff);
+                            } else {
+                                resizeHandle.node.style.removeProperty('left');
+                            }
+                        });
                 }
                 $th.appendTo($tr);
             });
