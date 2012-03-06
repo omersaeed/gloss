@@ -16,6 +16,15 @@ define([
             };
             this.on('blur focus mouseenter mouseleave mousedown', this._onStateEvent);
         },
+        getState: function(state) {
+            var currentState;
+            if (state == null) {
+                currentState = this.state;
+            } else {
+                currentState = this.state[state];
+            }
+            return currentState;
+        },
         addState: function(states, silent) {
             var active = this.activeStates, managed = this.managedStates, state;
             if(!$.isArray(states)) {
