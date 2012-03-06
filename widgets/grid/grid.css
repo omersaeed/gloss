@@ -27,20 +27,23 @@
   height: 16px;
   padding: 1px 10px;
 }
-.grid table thead tr th {
-  position: relative;
+.grid table thead tr th span.buffer {
+  margin: 0 5px;
+  display: block;
 }
 .grid table thead tr th .resize-handle {
-  position: absolute;
-  top: 0;
-  right: -6px;
-  width: 8px;
+  width: 5px;
   height: 100%;
   cursor: col-resize;
   border-left: 2px solid #60676d;
+  float: right;
+  height: 12px;
+  margin-right: -4px;
 }
 .grid table thead tr th .resize-handle.dragging {
   border-left: 2px solid #ffffff;
+  height: 28px;
+  margin-top: -8px;
 }
 body.dragging-element .grid table thead tr th,
 body.dragging-element .grid table tbody tr td {

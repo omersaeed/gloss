@@ -92,17 +92,17 @@ define([
                     $th.width(col.width);
                 }
                 if (col.resizable) {
-                    resizeHandle = ResizeHandle()
-                        .appendTo($th)
-                        .on('dragend', function(evt, pos) {
-                            var thPos = $th.position(),
-                                diff = pos.clientX - thPos.left;
-                            if (diff > 0) {
-                                $th.width(diff);
-                            } else {
-                                resizeHandle.node.style.removeProperty('left');
-                            }
-                        });
+                    $th.text('').append($('<span class=buffer>').text(col.label || ''));
+                    resizeHandle = ResizeHandle().on('dragend', function(evt, pos) {
+                        var thPos = $th.position(),
+                            diff = pos.clientX - thPos.left;
+                        if (diff > 0) {
+                            $th.width(diff);
+                        } else {
+                            resizeHandle.node.style.removeProperty('left');
+                        }
+                    });
+                    resizeHandle.$node.prependTo($th);
                 }
                 $th.appendTo($tr);
             });

@@ -32,22 +32,27 @@
   .grid-table-tbody-tr-td-button
 }
 
-.grid table thead tr th {
-  position: relative;
+@resize-handle-width: 5px;
+
+.grid table thead tr th span.buffer {
+  margin: 0 @resize-handle-width;
+  display: block;
 }
 
 .grid table thead tr th .resize-handle {
-  position: absolute;
-  top: 0;
-  right: -6px;
-  width: 8px;
+  width: @resize-handle-width;
   height: 100%;
   cursor: col-resize;
   border-left: 2px solid @color;
+  float: right;
+  height: 12px;
+  margin-right: -(@resize-handle-width / 2 + 1.5)
 }
 
 .grid table thead tr th .resize-handle.dragging {
   border-left: 2px solid @row-background-color;
+  height: @standard-row-height;
+  margin-top: -8px;
 }
 
 body.dragging-element .grid table thead tr th,
