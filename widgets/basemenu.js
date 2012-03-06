@@ -16,7 +16,7 @@ define([
             self.constructed = false;
             self.shown = false;
 
-            self.$node.addClass('basemenu').hide();
+            self.$node.addClass('base-menu').hide();
         },
         hide: function() {
             var $node = this.$node, options = this.options;
@@ -31,6 +31,7 @@ define([
 
             $node.removeClass('open');
             this.shown = false;
+            this.trigger('hide');
             return this;
         },
         show: function(params) {
@@ -78,6 +79,7 @@ define([
 
             $node.addClass('open');
             this.shown = true;
+            this.trigger('show');
             return this;
         },
         toggle: function(open) {
