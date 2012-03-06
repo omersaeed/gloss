@@ -99,7 +99,9 @@ define([
                         if (diff > 0) {
                             $th.width(diff);
                         } else {
-                            resizeHandle.node.style.removeProperty('left');
+                            if (resizeHandle.node.style.removeProperty) {
+                                resizeHandle.node.style.removeProperty('left');
+                            }
                         }
                     });
                     resizeHandle.$node.prependTo($th);
