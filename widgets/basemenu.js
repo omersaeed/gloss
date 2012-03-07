@@ -71,15 +71,9 @@ define([
                 $node.show();
             }
 
-            if(this.options.updateDisplay) {
-                self.onPageClick(function() {
-                    self.hide();
-                });
-            }
-
             $node.addClass('open');
-            this.shown = true;
-            this.trigger('show');
+            self.shown = true;
+            self.trigger('show');
             return this;
         },
         toggle: function(open) {
