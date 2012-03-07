@@ -329,7 +329,12 @@ define([
            
             ret = t.dfs(self.root, {order: 'post'}, function(node, par, ctrl, ret) {
                 var filePlanId = self.options.collectionArgs.query.file_plan_id,
-                    result = {id: node.model.id, name: node.model.name, file_plan_id: filePlanId},
+                    result = {
+                        id: node.model.id,
+                        name: node.model.name,
+                        file_plan_id: filePlanId,
+                        parent_id: par? par.model.id : null
+                    },
                     hasDirtiedModel = node.dirtied('model'),
                     hasDirtiedChildren =
                         node.dirtied('children') || (node.children && _.any(ret));
@@ -340,7 +345,13 @@ define([
                 if (hasDirtiedChildren) {
                     result.children = _.map(ret, function(r, i) {
                         var model = node.children[i].model;
-                        return r? r : {id: model.id, name: model.name, rank: i, file_plan_id: filePlanId};
+                        return r? r : {
+                            id: model.id,
+                            name: model.name,
+                            rank: i,
+                            file_plan_id: filePlanId,
+                            parent_id: node.model.id
+                        };
                     });
                 }
                 _.each(node._removedChildren || [], function(removed) {
