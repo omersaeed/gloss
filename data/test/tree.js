@@ -648,4 +648,24 @@ require([
         });
     });
 
+    asyncTest('deltas for deleted node includes file plan id', function() {
+        setup.call(this);
+        var tree = this.tree;
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas, node = find(tree, 9),
+                origParent = node.par,
+                foundDeleted = false;
+            origParent.removeChild(node);
+            deltas = tree.deltas(true);
+            t.dfs(deltas, function() {
+                if (this.operation === 'delete') {
+                    equal(this.file_plan_id, 1);
+                    foundDeleted = true;
+                }
+            });
+            ok(foundDeleted);
+            start();
+        });
+    });
+
 });
