@@ -120,7 +120,7 @@ require([
                         return _.indexOf(standardKeys, key) < 0;
                     });
                     if (nonStandardKeys.length) {
-                        if (this.operation === 'remove') {
+                        if (this.operation === 'delete') {
                             out.push(' -');
                         } else {
                             out.push(' *');

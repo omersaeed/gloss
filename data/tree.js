@@ -346,7 +346,7 @@ define([
                     result.children.push({
                         id: removed.model.id,
                         name: removed.model.name,
-                        operation: 'remove'
+                        operation: 'delete'
                     });
                 });
                 if (hasDirtiedModel) {
