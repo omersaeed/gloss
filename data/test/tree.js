@@ -622,10 +622,10 @@ require([
             var deltas;
             find(tree, 'alpha something').moveTo(find(tree, 176));
             deltas = tree.deltas(true);
-            t.dfs(deltas, function() {
+            t.dfs(deltas, function(node, par) {
                 ok(this.rank != null);
-                if (this.par) {
-                    equal(this.rank, _.indexOf(this.par.children, this));
+                if (par) {
+                    equal(this.rank, _.indexOf(par.children, this)+1);
                 }
             });
             start();

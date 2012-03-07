@@ -348,7 +348,7 @@ define([
                         return r? r : {
                             id: model.id,
                             name: model.name,
-                            rank: i,
+                            rank: i+1,
                             file_plan_id: filePlanId,
                             parent_id: node.model.id
                         };
@@ -366,7 +366,7 @@ define([
                         node.model._getRequest('create').extract(node.model));
                 }
                 if (result.rank == null && par) {
-                    result.rank = _.indexOf(par.children, node);
+                    result.rank = _.indexOf(par.children, node) + 1;
                 }
 
                 return result;
