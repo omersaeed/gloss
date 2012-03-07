@@ -104,7 +104,7 @@ require([
             }
             t.dfs(tree.root? tree.root.children : tree, function() {
                 var nonStandardKeys,
-                    standardKeys = ['id', 'name', 'children', 'level', 'rank'];
+                    standardKeys = ['id', 'name', 'children', 'level', 'rank', 'file_plan_id'];
                 out.push(
                     Array(this.level+1).join('    '),
                     this.model ? this.model.id : this.id,
