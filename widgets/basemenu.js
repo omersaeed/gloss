@@ -72,7 +72,7 @@ define([
             }
 
             if(this.options.updateDisplay) {
-                Widget.onPageClick(self.$node, function() {
+                self.onPageClick(function() {
                     self.hide();
                 });
             }
