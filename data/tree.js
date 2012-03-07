@@ -329,8 +329,7 @@ define([
                 var result = {id: node.model.id, name: node.model.name},
                     hasDirtiedModel = node.dirtied('model'),
                     hasDirtiedChildren =
-                        node.dirtied('children') ||
-                        (node.children && _.any(ret, function(r) { return r; }));
+                        node.dirtied('children') || (node.children && _.any(ret));
 
                 if (!hasDirtiedChildren && !hasDirtiedModel) {
                     return;
@@ -338,7 +337,7 @@ define([
                 if (hasDirtiedChildren) {
                     result.children = _.map(ret, function(r, i) {
                         var model = node.children[i].model;
-                        return r? r : {id: model.id, name: model.name};
+                        return r? r : {id: model.id, name: model.name, rank: i};
                     });
                 }
                 _.each(node._removedChildren || [], function(removed) {
@@ -352,6 +351,9 @@ define([
                     $.extend(result,
                         node.model._getRequest('create').extract(node.model));
                 }
+                if (result.rank == null && par) {
+                    result.rank = _.indexOf(par.children, node);
+                }
 
                 return result;
             });
@@ -361,6 +363,7 @@ define([
         load: function(params) {
             return this.root.load(params);
         }
+
     }, {mixins: [events]});
 
     Tree.Node = Node;

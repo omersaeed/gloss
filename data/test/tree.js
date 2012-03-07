@@ -103,7 +103,8 @@ require([
                 });
             }
             t.dfs(tree.root? tree.root.children : tree, function() {
-                var nonStandardKeys;
+                var nonStandardKeys,
+                    standardKeys = ['id', 'name', 'children', 'level', 'rank'];
                 out.push(
                     Array(this.level+1).join('    '),
                     this.model ? this.model.id : this.id,
@@ -116,7 +117,7 @@ require([
                     }
                 } else {
                     nonStandardKeys = _.filter(_.keys(this), function(key) {
-                        return _.indexOf(['id', 'name', 'children', 'level'], key) < 0;
+                        return _.indexOf(standardKeys, key) < 0;
                     });
                     if (nonStandardKeys.length) {
                         if (this.operation === 'remove') {
@@ -610,6 +611,23 @@ require([
             deltas = tree.deltas();
             equal(structure(tree), expectedStructure);
             equal(structure(deltas), expectedDeltas);
+            start();
+        });
+    });
+
+    asyncTest('rank included in deltas', function() {
+        setup.call(this);
+        var tree = this.tree;
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltas;
+            find(tree, 'alpha something').moveTo(find(tree, 176));
+            deltas = tree.deltas();
+            t.dfs(deltas, function() {
+                ok(this.rank != null);
+                if (this.par) {
+                    equal(this.rank, _.indexOf(this.par.children, this));
+                }
+            });
             start();
         });
     });
