@@ -543,7 +543,7 @@ require([
         expandSeveralNodesAndSeveralMore(tree).done(function() {
             var deltas;
             find(tree, 10167).model.set('name', 'origin renamed');
-            deltas = tree.deltas();
+            deltas = tree.deltas(true);
             equal(structure(tree), expectedStructure);
             equal(structure(deltas), expectedDeltas);
             start();
@@ -558,7 +558,7 @@ require([
         expandSeveralNodesAndSeveralMore(tree).done(function() {
             var deltas;
             find(tree, 'alpha something').model.set('path', 'foo');
-            deltas = tree.deltas();
+            deltas = tree.deltas(true);
             equal(structure(tree), expectedStructure);
             equal(structure(deltas), expectedDeltas);
             start();
@@ -573,7 +573,7 @@ require([
         expandSeveralNodesAndSeveralMore(tree).done(function() {
             var deltas;
             find(tree, 'alpha something').moveTo(find(tree, 176));
-            deltas = tree.deltas();
+            deltas = tree.deltas(true);
             equal(structure(tree), expectedStructure);
             equal(structure(deltas), expectedDeltas);
             start();
@@ -591,7 +591,7 @@ require([
                 model = RecordSeries({name: newName}),
                 newParent = find(tree, 'alpha something');
             newParent.add(model).done(function() {
-                deltas = tree.deltas();
+                deltas = tree.deltas(true);
                 equal(structure(tree), expectedStructure);
                 equal(structure(deltas), expectedDeltas);
                 start();
@@ -608,7 +608,7 @@ require([
             var deltas, node = find(tree, 9),
                 origParent = node.par;
             origParent.removeChild(node);
-            deltas = tree.deltas();
+            deltas = tree.deltas(true);
             equal(structure(tree), expectedStructure);
             equal(structure(deltas), expectedDeltas);
             start();
@@ -621,13 +621,29 @@ require([
         expandSeveralNodesAndSeveralMore(tree).done(function() {
             var deltas;
             find(tree, 'alpha something').moveTo(find(tree, 176));
-            deltas = tree.deltas();
+            deltas = tree.deltas(true);
             t.dfs(deltas, function() {
                 ok(this.rank != null);
                 if (this.par) {
                     equal(this.rank, _.indexOf(this.par.children, this));
                 }
             });
+            start();
+        });
+    });
+
+    asyncTest('flat deltas match tree of deltas', function() {
+        setup.call(this);
+        var tree = this.tree;
+        expandSeveralNodesAndSeveralMore(tree).done(function() {
+            var deltaTree, namesFromDeltaTree = [], deltaList;
+            find(tree, 'alpha something').moveTo(find(tree, 176));
+            deltaTree = tree.deltas(true);
+            t.dfs(deltaTree, function() {
+                namesFromDeltaTree.push(this.name);
+            });
+            deltaList = tree.deltas();
+            deepEqual(namesFromDeltaTree, _.pluck(deltaList, 'name'));
             start();
         });
     });

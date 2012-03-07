@@ -324,8 +324,10 @@ define([
             t.dfs(this.root, function() { this.undirty(); });
         },
 
-        deltas: function() {
-            var ret = t.dfs(this.root, {order: 'post'}, function(node, par, ctrl, ret) {
+        deltas: function(asTree) {
+            var flat = [], ret;
+           
+            ret = t.dfs(this.root, {order: 'post'}, function(node, par, ctrl, ret) {
                 var result = {id: node.model.id, name: node.model.name},
                     hasDirtiedModel = node.dirtied('model'),
                     hasDirtiedChildren =
@@ -357,7 +359,21 @@ define([
 
                 return result;
             });
-            return ret? ret.children : undefined;
+            if (!ret) {
+                return undefined;
+            } else if (asTree) {
+                return ret.children;
+            } else {
+                t.dfs(ret.children, function() {
+                    flat.push(_.reduce(this, function(newObj, val, key) {
+                        if (key !== 'children') {
+                            newObj[key] = val;
+                        }
+                        return newObj;
+                    }, {}));
+                });
+                return flat;
+            }
         },
 
         load: function(params) {
