@@ -346,6 +346,7 @@ define([
         clearDeltas: function() {
             this._markAsModified(false);
             t.dfs(this.root, function() { this.undirty(); });
+            return this;
         },
 
         deltas: function(asTree, includeNodeRef) {
@@ -471,6 +472,14 @@ define([
             }
 
             return errors;
+        },
+
+        updateNewRecordSeriesFromResponse: function(response) {
+            var deltas = this.deltas(false, true);
+            _.each(this.deltas(false, true), function(delta, i) {
+                delta._node.model.set('id', response[i].id, true);
+            });
+            return this;
         },
 
         unload: function() {
