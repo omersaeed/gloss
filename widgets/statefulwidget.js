@@ -19,7 +19,7 @@ define([
         getState: function(state) {
             var currentState;
             if (state == null) {
-                currentState = this.state;
+                currentState = $.extend({}, this.state);
             } else {
                 currentState = this.state[state];
             }
