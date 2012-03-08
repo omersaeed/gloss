@@ -71,6 +71,12 @@ body.dragging-element .grid table tbody tr td {
 .grid.standard table tbody tr:hover {
   background-color: #e5e5e5;
 }
+.grid.standard.disabled table tbody tr:hover {
+  background-color: #ffffff;
+}
+.grid.standard.disabled table tbody tr:hover:nth-child(odd) {
+  background-color: #f6f6f6;
+}
 .grid.standard table tbody tr.highlight {
   color: #ffffff;
   background-color: #60676d;

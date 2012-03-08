@@ -270,9 +270,7 @@ define([
 
             $.extend(true, this.options, opts);
 
-            // if (opts.query != null) {
             if (opts.collectionArgs != null) {
-                // this._instantiateCollection(this.options.query);
                 this._instantiateCollection();
             }
 
@@ -282,6 +280,17 @@ define([
         undirty: function() {
             delete this._dirtied;
             delete this._removedChildren;
+            return this;
+        },
+
+        unload: function() {
+            delete this._loaded;
+            delete this._loadedRecursive;
+            if (this.collection) {
+                this.collection.reset();
+            }
+            delete this.children;
+            return this;
         }
 
     }, {mixins: [events]});
@@ -436,28 +445,37 @@ define([
                     if (!errors.node_errors) {
                         errors.node_errors = {};
                     }
-                    if (!errors.node_errors[node.id]) {
-                        errors.node_errors[node.id] = {node: node, errors: {}};
+                    if (!errors.node_errors[node.model.id]) {
+                        errors.node_errors[node.model.id] = {node: node, errors: {}};
                     }
-                    errors.node_errors[node.id].errors[name] = {
+                    errors.node_errors[node.model.id].errors[name] = {
                         token: token,
                         msg: msg
                     };
                 };
 
-            deltas = this.deltas();
+            deltas = this.deltas(false, true);
 
-            _.each(deltas, function(node, i) {
-                var e = errorResponse[i];
-                if (! e) {
-                    return; // there were no errors saving this node, continue
-                }
-                _.each(e, function(fieldErrors, fieldName) {
-                    _.each(fieldErrors, function(e) {
-                        setNodeError();
+            if (errorResponse.structural_errors) {
+                _.each(deltas, function(delta, i) {
+                    var e = errorResponse.structural_errors[i];
+                    if (! e) {
+                        return; // there were no errors saving this node, continue
+                    }
+                    _.each(e, function(fieldErrors, fieldName) {
+                        _.each(fieldErrors, function(e) {
+                            setNodeError(delta._node, fieldName, e.token, e.message);
+                        });
                     });
                 });
-            });
+            }
+
+            return errors;
+        },
+
+        unload: function() {
+            this.root.unload();
+            return this;
         }
 
     }, {mixins: [events]});

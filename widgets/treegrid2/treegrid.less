@@ -14,8 +14,17 @@
   color: #60676d;
   cursor: default;
 }
+
 .tree.grid table tbody tr td .expand.parent {
   cursor: pointer;
+}
+
+.tree.grid.disabled table tbody tr td .expand.parent {
+  cursor: default;
+}
+
+.tree.grid.disabled table tbody tr td .expand {
+  color: @color + #656566;
 }
 
 .tree.grid table.cloned.dragging {

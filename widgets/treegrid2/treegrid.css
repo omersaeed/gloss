@@ -16,6 +16,12 @@
 .tree.grid table tbody tr td .expand.parent {
   cursor: pointer;
 }
+.tree.grid.disabled table tbody tr td .expand.parent {
+  cursor: default;
+}
+.tree.grid.disabled table tbody tr td .expand {
+  color: #c5ccd3;
+}
 .tree.grid table.cloned.dragging {
   filter: alpha(opacity=50);
   -moz-opacity: 0.5;

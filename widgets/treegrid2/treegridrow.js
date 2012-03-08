@@ -122,7 +122,7 @@ define([
         },
 
         onClickExpand: function() {
-            if (this.options.model.isparent) {
+            if (this.options.model.isparent && !this.options.grid.getState('disabled')) {
                 this.toggle();
             }
         },

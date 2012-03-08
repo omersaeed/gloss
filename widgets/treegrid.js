@@ -23,7 +23,6 @@ define([
                 if (type !== 'model') {
                     self.set('nodes', self.options.tree.asList());
                 }
-                self._markAsModified(true);
             });
             self._super();
             self.$node.addClass('tree');
@@ -37,11 +36,7 @@ define([
                 .pipe(function(newNodes) {
                     var newRowIdx = afterRow.options.idx;
                     t.dfs(afterRow.options.node, function() { newRowIdx++; });
-                    if (_.isArray(models)) {
-                        return self.options.rows.splice(newRowIdx, models.length);
-                    } else {
-                        return self.options.rows[newRowIdx];
-                    }
+                    return self._pipeNewNodesToRows(models, newNodes, newRowIdx);
                 });
         },
         _makeRowOptions: function(node, index) {
@@ -53,16 +48,11 @@ define([
                 idx: index
             };
         },
-        _markAsModified: function(modified) {
-            if (modified) {
-                if (this._modified) {
-                    return;
-                }
-                this._modified = true;
-                this.$node.addClass('modified');
+        _pipeNewNodesToRows: function(models, newNodes, idx) {
+            if (_.isArray(models)) {
+                return this.options.rows.splice(idx, models.length);
             } else {
-                delete this._modified;
-                this.$node.removeClass('modified');
+                return this.options.rows[idx];
             }
         },
         _shouldFullyRender: function() {
@@ -84,10 +74,15 @@ define([
             return false;
         },
         add: function(models, where) {
-            if (where.after) {
-                return this._addAfterRow(models, where.after);
+            var node, self = this, rows = self.options.rows, lastRow = _.last(rows);
+            if ((where || {}).after) {
+                return self._addAfterRow(models, where.after);
             } else {
-                throw Error('only adding "after" is implemented');
+                node = rows.length? lastRow : self.options.tree.root;
+                return node.add(models).pipe(function(newNodes) {
+                    var idx = lastRow? lastRow.options.idx+1 : 0;
+                    return self._pipeNewNodesToRows(models, newNodes, idx);
+                });
             }
         },
         expandAll: function() {
@@ -101,6 +96,9 @@ define([
             return tree.load().done(function() {
                 rows = self.options.rows;
                 tree.root.expanded = true;
+                if (!rows.length) {
+                    return;
+                }
                 rows[0].show();
                 var i, l, row, cur = 1, topLevelChildren = tree.root.children;
                 for (i = 1, l = rows.length; i < l; i++) {

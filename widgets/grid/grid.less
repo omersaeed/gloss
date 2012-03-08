@@ -72,6 +72,14 @@ body.dragging-element .grid table tbody tr td {
   background-color: @odd-row-background-color - #111;
 }
 
+.grid.standard.disabled table tbody tr:hover {
+  background-color: @row-background-color;
+}
+
+.grid.standard.disabled table tbody tr:hover:nth-child(odd) {
+  background-color: @odd-row-background-color;
+}
+
 .grid.standard table tbody tr.highlight {
   .reversed()
 }
