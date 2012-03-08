@@ -516,7 +516,8 @@ define([
                     currentValue = this[name];
                     value = attrs[name];
                     if (!isEqual(value, currentValue)) {
-                        changed = true;
+                        changed = changed || {};
+                        changed[name] = true;
                         this[name] = value;
                     }
                 }
@@ -525,7 +526,7 @@ define([
             if (!changing && changed) {
                 this.construct();
                 if (!silent) {
-                    this.trigger('change', this);
+                    this.trigger('change', this, changed);
                     this._manager.notify(this, 'change');
                 }
             }

@@ -49,8 +49,8 @@ define([
             });
 
             if (self.model.on) {
-                self.model.on('change', function() {
-                    self.dirty('model');
+                self.model.on('change', function(type, model, changed) {
+                    self.dirty('model', changed);
                     self.trigger('change', 'model', self.model);
                 });
             }
@@ -169,11 +169,18 @@ define([
             return what? (this._dirtied || {})[what] : $.extend({}, this._dirtied);
         },
 
-        dirty: function(what) {
+        dirty: function(what, details) {
             if (! this._dirtied) {
                 this._dirtied = {};
             }
-            this._dirtied[what] = true;
+            if (details) {
+                if (!_.isObject(this._dirtied[what])) {
+                    this._dirtied[what] = {};
+                }
+                _.extend(this._dirtied[what], details);
+            } else {
+                this._dirtied[what] = true;
+            }
         },
 
         index: function() {
@@ -312,6 +319,13 @@ define([
                 tree: this
             });
             this.root.level = -1;
+            this.on('change', function() {
+                this._markAsModified(true);
+            });
+        },
+
+        _markAsModified: function(modified) {
+            this._modified = modified;
         },
 
         asList: function() {
@@ -321,10 +335,11 @@ define([
         },
 
         clearDeltas: function() {
+            this._markAsModified(false);
             t.dfs(this.root, function() { this.undirty(); });
         },
 
-        deltas: function(asTree) {
+        deltas: function(asTree, includeNodeRef) {
             var flat = [], ret, self = this;
            
             ret = t.dfs(self.root, {order: 'post'}, function(node, par, ctrl, ret) {
@@ -339,19 +354,27 @@ define([
                     hasDirtiedChildren =
                         node.dirtied('children') || (node.children && _.any(ret));
 
+                if (includeNodeRef) {
+                    result._node = node;
+                }
+
                 if (!hasDirtiedChildren && !hasDirtiedModel) {
                     return;
                 }
                 if (hasDirtiedChildren) {
                     result.children = _.map(ret, function(r, i) {
                         var model = node.children[i].model;
-                        return r? r : {
+                        r = r || {
                             id: model.id,
                             name: model.name,
                             rank: i+1,
                             file_plan_id: filePlanId,
                             parent_id: node.model.id
                         };
+                        if (includeNodeRef && ! r._node) {
+                            r._node = node.children[i];
+                        }
+                        return r;
                     });
                 }
                 _.each(node._removedChildren || [], function(removed) {
@@ -361,10 +384,14 @@ define([
                         operation: 'delete',
                         file_plan_id: filePlanId
                     });
+                    if (includeNodeRef) {
+                        _.last(result.children)._node = removed;
+                    }
                 });
                 if (hasDirtiedModel) {
-                    $.extend(result,
-                        node.model._getRequest('create').extract(node.model));
+                    _.each(node.dirtied('model'), function(val, key) {
+                        result[key] = node.model[key];
+                    });
                 }
                 if (result.rank == null && par) {
                     result.rank = _.indexOf(par.children, node) + 1;
@@ -389,8 +416,48 @@ define([
             }
         },
 
+        isModified: function() {
+            return !!this._modified;
+        },
+
         load: function(params) {
             return this.root.load(params);
+        },
+
+        translateErrors: function(errorResponse) {
+            var deltas, errors = {},
+                setGlobalError = function(msg) {
+                    if (!errors.global_errors) {
+                        errors.global_errors = [];
+                    }
+                    errors.global_errors.push(msg);
+                },
+                setNodeError = function(node, name, token, msg) {
+                    if (!errors.node_errors) {
+                        errors.node_errors = {};
+                    }
+                    if (!errors.node_errors[node.id]) {
+                        errors.node_errors[node.id] = {node: node, errors: {}};
+                    }
+                    errors.node_errors[node.id].errors[name] = {
+                        token: token,
+                        msg: msg
+                    };
+                };
+
+            deltas = this.deltas();
+
+            _.each(deltas, function(node, i) {
+                var e = errorResponse[i];
+                if (! e) {
+                    return; // there were no errors saving this node, continue
+                }
+                _.each(e, function(fieldErrors, fieldName) {
+                    _.each(fieldErrors, function(e) {
+                        setNodeError();
+                    });
+                });
+            });
         }
 
     }, {mixins: [events]});
