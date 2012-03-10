@@ -2,36 +2,25 @@
   height: 16px;
   padding: 1px 10px;
 }
-.grid table {
-  display: table;
-}
-.grid table tbody {
-  display: table-row-group;
-}
-.grid table tbody tr {
+.grid table.grid tbody tr {
   height: 2em;
   background-color: #ffffff;
-  display: table-row;
 }
-.grid table tbody tr:nth-child(odd) {
+.grid table.grid tbody tr:nth-child(odd) {
   background-color: #f6f6f6;
 }
-.grid table tbody td {
+.grid table.grid tbody td {
   vertical-align: middle;
-  display: table-cell;
 }
-.grid table tbody form td {
-  display: inline-block;
-}
-.grid table tbody tr td button {
+.grid table.grid tbody tr td button {
   height: 16px;
   padding: 1px 10px;
 }
-.grid table thead tr th span.buffer {
+.grid table.grid thead tr th span.buffer {
   margin: 0 5px;
   display: block;
 }
-.grid table thead tr th .resize-handle {
+.grid table.grid thead tr th .resize-handle {
   width: 5px;
   height: 100%;
   cursor: col-resize;
@@ -40,13 +29,13 @@
   height: 12px;
   margin-right: -4px;
 }
-.grid table thead tr th .resize-handle.dragging {
+.grid table.grid thead tr th .resize-handle.dragging {
   border-left: 2px solid #ffffff;
   height: 28px;
   margin-top: -8px;
 }
-body.dragging-element .grid table thead tr th,
-body.dragging-element .grid table tbody tr td {
+body.dragging-element .grid table.grid thead tr th,
+body.dragging-element .grid table.grid tbody tr td {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -62,13 +51,13 @@ body.dragging-element .grid table tbody tr td {
   -o-user-select: none;
   user-select: none;
 }
-.grid.standard table {
+.grid.standard table.grid {
   width: 100%;
 }
-.grid.standard table tbody tr {
+.grid.standard table.grid tbody tr {
   height: 28px;
 }
-.grid.standard table tbody tr:hover {
+.grid.standard table.grid tbody tr:hover {
   background-color: #e5e5e5;
 }
 .grid.standard.disabled table tbody tr:hover {
@@ -77,24 +66,24 @@ body.dragging-element .grid table tbody tr td {
 .grid.standard.disabled table tbody tr:hover:nth-child(odd) {
   background-color: #f6f6f6;
 }
-.grid.standard table tbody tr.highlight {
+.grid.standard table.grid tbody tr.highlight {
   color: #ffffff;
   background-color: #60676d;
 }
-.grid.standard table tbody tr.highlight:hover {
+.grid.standard table.grid tbody tr.highlight:hover {
   color: #ffffff;
   background-color: #60676d;
 }
-.grid.standard table thead tr {
+.grid.standard table.grid thead tr {
   height: 28px;
   border-bottom: 1px solid #ffffff;
   color: #ffffff;
   background-color: #60676d;
 }
-.grid.standard table thead tr th {
+.grid.standard table.grid thead tr th {
   border-left: 1px solid #ffffff;
 }
-.grid.standard table thead tr th.no-left-border,
-.grid.standard table thead tr th.first {
+.grid.standard table.grid thead tr th.no-left-border,
+.grid.standard table.grid thead tr th.first {
   border-left: none;
 }

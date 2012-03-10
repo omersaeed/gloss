@@ -33,7 +33,7 @@ define([
             tippingPoint: 50
         },
 
-        nodeTemplate: '<div><table><thead><tr></tr></thead><tbody></tbody></table></div>',
+        nodeTemplate: '<div><table class=grid><thead><tr></tr></thead><tbody></tbody></table></div>',
 
         create: function() {
             var self = this, $tr;
@@ -48,6 +48,12 @@ define([
             if (!self.options.colModel) {
                 self.options.colModel =
                     self.options.rowWidgetClass.prototype.defaults.colModel;
+            }
+            if (! self.col) {
+                self.col = _.reduce(self.options.colModel, function(cols, col) {
+                    cols[col.name] = col;
+                    return cols;
+                }, {});
             }
             if (!self.options.nostyling) {
                 self.$node.addClass('standard');
@@ -200,6 +206,14 @@ define([
 
         rerender: function() {
             return this.set('models', this.options.models);
+        },
+
+        setColWidth: function(col, width) {
+            if (_.isString(col)) {
+                col = this.col[col];
+            }
+            col.width = width;
+            this.$table.find('thead th.col-'+col.name).outerWidth(width);
         },
 
         setModel: function(row, model) {

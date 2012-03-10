@@ -1,45 +1,31 @@
 @import '../../../../css/globallib.less';
 @import './gridlib.less';
 
-.grid table {
-  display: table;
-}
-
-.grid table tbody {
-  display: table-row-group;
-}
-
-.grid table tbody tr {
+.grid table.grid tbody tr {
   height: 2em;
   background-color: @row-background-color;
-  display: table-row;
 }
 
-.grid table tbody tr:nth-child(odd) {
+.grid table.grid tbody tr:nth-child(odd) {
   background-color: @odd-row-background-color;
 }
 
-.grid table tbody td {
+.grid table.grid tbody td {
   vertical-align: middle;
-  display: table-cell;
 }
 
-.grid table tbody form td {
-  display: inline-block;
-}
-
-.grid table tbody tr td button {
+.grid table.grid tbody tr td button {
   .grid-table-tbody-tr-td-button
 }
 
 @resize-handle-width: 5px;
 
-.grid table thead tr th span.buffer {
+.grid table.grid thead tr th span.buffer {
   margin: 0 @resize-handle-width;
   display: block;
 }
 
-.grid table thead tr th .resize-handle {
+.grid table.grid thead tr th .resize-handle {
   width: @resize-handle-width;
   height: 100%;
   cursor: col-resize;
@@ -49,26 +35,26 @@
   margin-right: -(@resize-handle-width / 2 + 1.5)
 }
 
-.grid table thead tr th .resize-handle.dragging {
+.grid table.grid thead tr th .resize-handle.dragging {
   border-left: 2px solid @row-background-color;
   height: @standard-row-height;
   margin-top: -8px;
 }
 
-body.dragging-element .grid table thead tr th,
-body.dragging-element .grid table tbody tr td {
+body.dragging-element .grid table.grid thead tr th,
+body.dragging-element .grid table.grid tbody tr td {
   .user-select(none);
 }
 
-.grid.standard table {
+.grid.standard table.grid {
   width: 100%;
 }
 
-.grid.standard table tbody tr {
+.grid.standard table.grid tbody tr {
   height: @standard-row-height;
 }
 
-.grid.standard table tbody tr:hover {
+.grid.standard table.grid tbody tr:hover {
   background-color: @odd-row-background-color - #111;
 }
 
@@ -80,26 +66,26 @@ body.dragging-element .grid table tbody tr td {
   background-color: @odd-row-background-color;
 }
 
-.grid.standard table tbody tr.highlight {
+.grid.standard table.grid tbody tr.highlight {
   .reversed()
 }
 
-.grid.standard table tbody tr.highlight:hover {
+.grid.standard table.grid tbody tr.highlight:hover {
   .reversed()
 }
 
-.grid.standard table thead tr {
+.grid.standard table.grid thead tr {
   height: @standard-row-height;
   border-bottom: 1px solid @row-background-color;
   .reversed()
 }
 
-.grid.standard table thead tr th {
+.grid.standard table.grid thead tr th {
   border-left: 1px solid @row-background-color;
 }
 
-.grid.standard table thead tr th.no-left-border,
-.grid.standard table thead tr th.first {
+.grid.standard table.grid thead tr th.no-left-border,
+.grid.standard table.grid thead tr th.first {
   border-left: none;
 }
 

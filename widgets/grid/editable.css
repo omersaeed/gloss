@@ -25,3 +25,6 @@
   height: 16px;
   padding: 1px 10px;
 }
+.grid-editable table tbody tr td {
+  vertical-align: middle;
+}
