@@ -31,7 +31,7 @@ function($, _, Widget, Button, Draggable) {
                 options.backdrop? 'modal' : 'modal without-backdrop');
 
             if (options.backdrop) {
-                self.$backdrop = $('<div class=modal-backdrop>');
+                self.$backdrop = $('<div class=modal-backdrop></div>');
                 if (options.backdrop === 'transparent') {
                     self.$backdrop.addClass('transparent');
                 }
