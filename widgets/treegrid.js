@@ -23,6 +23,7 @@ define([
                 if (type !== 'model') {
                     self.set('nodes', self.options.tree.asList());
                 }
+                self.set('modified', true);
             });
             self._super();
             self.$node.addClass('tree');
@@ -129,6 +130,10 @@ define([
             this._super(updated);
             if (updated.nodes) {
                 this.set('models', this.options.nodes);
+            }
+
+            if (updated.modified) {
+                this.$node[this.options.modified? 'addClass' : 'removeClass']('modified');
             }
         }
     });
