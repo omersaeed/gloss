@@ -90,6 +90,12 @@ define([
                 var error = null;
                 if (xhr.status === 406 && xhr.responseText) {
                     error = $.parseJSON(xhr.responseText);
+                } else if (xhr.status === 500) {
+                    error = {
+                        global_errors: [
+                            {token: 'server_error', message: 'Internal server error'}
+                        ]
+                    };
                 }
                 cache.splice(_.indexOf(cache, cached), 1);
                 deferred.reject(error, xhr);
