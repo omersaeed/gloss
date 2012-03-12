@@ -17,7 +17,7 @@ define([
             widgetMap: [
                 ['button', Button],
                 ['input[type=checkbox]', CheckBox],
-                ['input[type=text],input[type=password]', TextBox],
+                ['input[type=text],input[type=password],input[type=search]', TextBox],
                 ['input[type=submit],input[type=reset]', Button],
                 ['input[type=number]', NumberBox],
                 ['select,div.select', SelectBox],
