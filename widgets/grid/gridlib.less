@@ -1,12 +1,13 @@
-@import '../../../../css/globallib.less';
+@import '../../../../css/theme.less';
 
 @standard-row-height: 28px;
-@row-background-color: white;
-@odd-row-background-color: @body-background;
+@row-highlight-color: @dark-highlight-color;
+@row-background-color: @background-color;
+@odd-row-background-color: @non-content-background-color;
 
 .reversed () {
   color: @row-background-color;
-  background-color: @color;
+  background-color: @row-highlight-color;
 }
 
 .grid-table-tbody-tr-td-button {

@@ -1,3 +1,21 @@
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
 .grid-table-tbody-tr-td-button {
   height: 16px;
   padding: 1px 10px;

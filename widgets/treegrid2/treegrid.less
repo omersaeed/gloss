@@ -1,4 +1,5 @@
-@import '../../../../css/globallib.less';
+@import '../../../../css/theme.less';
+@import '../grid/gridlib.less';
 
 .tree.grid table tbody td .expand, .tree.grid table tbody tr td .expand {
   width: 30px;
@@ -24,7 +25,7 @@
 }
 
 .tree.grid.disabled table tbody tr td .expand {
-  color: @color + #656566;
+  color: @font-color + #656566;
 }
 
 .tree.grid table.cloned.dragging {
@@ -32,7 +33,7 @@
 }
 
 body.dragging-element .tree.grid table tbody tr.hover {
-  background-color: @color;
+  background-color: @row-highlight-color;
   color: white;
 }
 
@@ -49,5 +50,5 @@ body.dragging-element .tree.grid table tbody tr.hover td .expand,
 body.dragging-element .tree.grid .insert {
   position: absolute;
   height: 6px;
-  background-color: @color;
+  background-color: @row-highlight-color;
 }

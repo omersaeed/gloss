@@ -1,3 +1,25 @@
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
+.grid-table-tbody-tr-td-button {
+  height: 16px;
+  padding: 1px 10px;
+}
 .tree.grid table tbody td .expand,
 .tree.grid table tbody tr td .expand {
   width: 30px;
@@ -27,6 +49,10 @@
   -moz-opacity: 0.5;
   -khtml-opacity: 0.5;
   opacity: 0.5;
+  filter: alpha(opacity=50);
+  -moz-opacity: 0.5;
+  -khtml-opacity: 0.5;
+  opacity: 0.5;
 }
 body.dragging-element .tree.grid table tbody tr.hover {
   background-color: #60676d;
@@ -34,6 +60,9 @@ body.dragging-element .tree.grid table tbody tr.hover {
 }
 body.dragging-element .tree.grid table tbody tr.hover td button,
 .tree.grid table tbody tr.highlight td button {
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
