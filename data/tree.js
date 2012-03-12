@@ -9,11 +9,6 @@ define([
 
     var Node = Class.extend({
         defaults: {
-            // query: { // required, probably needs something like file_plan_id
-                // tree: true,
-                // recursive: false
-            // },
-
             // this is the argument that is used to instantiate the collection
             collectionArgs: { },
             collectionIdParam: 'root_id',
@@ -52,6 +47,20 @@ define([
                 self.model.on('change', function(type, model, changed) {
                     self.dirty('model', changed);
                     self.trigger('change', 'model', self.model);
+                }).on('push', function(type, model, pushed) {
+                    var _set = _.isArray(pushed)?
+                        function(childModel, pushedAttrs) {
+                            _.each(pushedAttrs, function(pushedAttr) {
+                                childModel.set(pushedAttr, model[pushedAttr], true);
+                            });
+                        } : 
+                        function(childModel, pushedAttr) {
+                            childModel.set(pushedAttr, model[pushedAttr], true);
+                        };
+                    t.dfs(self.children || [], function() {
+                        _set(this.model, pushed);
+                    });
+                    self.trigger('change', 'push', self.model, pushed);
                 });
             }
         },
@@ -126,10 +135,6 @@ define([
                 options = self.options,
                 tree = options.tree,
                 collectionSrc = tree.options.manager || tree.options.resource;
-            // self.collection = collectionSrc.collection({
-            //     tree: true,
-            //     query: query
-            // });
             self.collection = collectionSrc.collection(options.collectionArgs);
         },
 
