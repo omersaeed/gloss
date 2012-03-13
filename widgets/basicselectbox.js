@@ -11,7 +11,8 @@ define([
         defaults: {
             translator: function(model) {
                 return {value: model.id, content: model.name};
-            }
+            },
+            width: null
         },
         nodeTemplate: '<select></select>',
         optionsTemplate: _.template([
@@ -35,6 +36,9 @@ define([
             }
             if (updated.entries) {
                 self.$node.html(self.optionsTemplate(options));
+            }
+            if (updated.width && options.width != null) {
+                self.$node.width(options.width);
             }
         }
     }, {mixins: [CollectionViewable]});
