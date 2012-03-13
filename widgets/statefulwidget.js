@@ -92,21 +92,21 @@ define([
                 }
             }
 
-            if(this.state.disabled) {
+            if(this.state.disabled && (inArray('disabled', managed) > -1)) {
                 classes.push('disabled');
-            } else if(this.state.readonly) {
+            } else if(this.state.readonly && (inArray('readonly', managed) > -1)) {
                 classes.push('readonly');
             } else {
-                if(this.state.active) {
+                if(this.state.active && (inArray('active', managed) > -1)) {
                     classes.push('active');
-                } else if(this.state.hovering) {
+                } else if(this.state.hovering && (inArray('hover', managed) > -1)) {
                     classes.push('hover');
                 }
                 if(this.activeStates.length > 0) {
                     classes = classes.concat(this.activeStates);
                 }
             }
-            if(this.state.focused) {
+            if(this.state.focused && (inArray('focused', managed) > -1)) {
                 classes.push('focused');
             }
 
