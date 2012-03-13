@@ -50,6 +50,9 @@ define([
             } else if (inBody(widget.$node)) {
                 this._injectWidget(widget);
             }
+            if (widget._childWidgets == null) {
+                widget._childWidgets = [];
+            }
             widget.registry = this;
         },
 
@@ -169,7 +172,7 @@ define([
                 }
             }
 
-            delete widget._childWidgets;
+            // delete widget._childWidgets;
             delete widget._parentWidget;
         },
 
