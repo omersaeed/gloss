@@ -25,6 +25,7 @@ define([
         create: function() {
             this._super();
             this.$node.addClass('selectbox');
+            this.$node.addClass('hover');
             this.update();
         },
         updateWidget: function(updated) {
