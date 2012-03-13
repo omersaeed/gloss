@@ -12,22 +12,8 @@ define([
             tippingPoint: 15
         },
         create: function() {
-            var self = this,
-                tree = self.options.tree;
-            tree.on('update', function(evt, node) {
-                self.set('nodes', self.options.tree.asList());
-            }).on('change', function(evt, node, type, data) {
-                // 'type' will be something like move, remove, add, or model
-                // (see gloss/data/tree.js).  'model' change events are handled
-                // at the row level, so ignore those here
-                if (type !== 'model') {
-                    self.set('nodes', self.options.tree.asList());
-                }
-                self.set('modified', true);
-            });
-            self._super();
-            self.$node.addClass('tree');
-            tree.root.expanded = false;
+            this.$node.addClass('tree');
+            this._super();
         },
         _addAfterRow: function(models, afterRow) {
             var self = this,
@@ -55,6 +41,21 @@ define([
             } else {
                 return this.options.rows[idx];
             }
+        },
+        _setTree: function() {
+            var self = this, tree = self.options.tree;
+            tree.on('update', function(evt, node) {
+                self.set('nodes', self.options.tree.asList());
+            }).on('change', function(evt, node, type, data) {
+                // 'type' will be something like move, remove, add, or model
+                // (see gloss/data/tree.js).  'model' change events are handled
+                // at the row level, so ignore those here
+                if (type !== 'model') {
+                    self.set('nodes', self.options.tree.asList());
+                }
+                self.set('modified', true);
+            });
+            tree.root.expanded = false;
         },
         _shouldFullyRender: function() {
             var i, l, count = 0,
@@ -134,6 +135,10 @@ define([
 
             if (updated.modified) {
                 this.$node[this.options.modified? 'addClass' : 'removeClass']('modified');
+            }
+
+            if (updated.tree) {
+                this._setTree();
             }
         }
     });
