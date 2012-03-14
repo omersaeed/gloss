@@ -5,8 +5,9 @@ define([
     'vendor/gloss/widgets/statefulwidget',
     'vendor/gloss/widgets/grid/row',
     'vendor/gloss/widgets/draggable',
+    'vendor/gloss/widgets/tooltip',
     'link!vendor/gloss/widgets/grid/grid.css'
-], function($, _, Widget, StatefulWidget, Row, Draggable) {
+], function($, _, Widget, StatefulWidget, Row, Draggable, ToolTip) {
 
     var ResizeHandle = Widget.extend({
         defaults: {
@@ -86,8 +87,16 @@ define([
         _buildHeader: function() {
             var $tr = this.$table.find('thead tr');
             _.each(this.options.colModel, function(col, i) {
+                var $tooltip = null, $helpIcon = null, $helpText = null;
+                if (col.help) {
+                    $helpIcon = $('<span>').addClass('icon').text('?');
+                    $helpText = $('<span>').html(col.help);
+                    $tooltip = ToolTip($helpText, {target: $helpIcon});
+                }
+
                 var resizeHandle,
-                    $th = $('<th>').text(col.label || '').addClass('col-'+col.name);
+                    thText = (!col.resizable && col.label) || '',
+                    $th = $('<th>').text(thText).addClass('col-'+col.name);
                 if (i === 0) {
                     $th.addClass('first');
                 }
@@ -97,8 +106,15 @@ define([
                 if (col.width != null) {
                     $th.width(col.width);
                 }
+                if (col.help && !col.resizable) {
+                    $th.append($helpIcon).append($helpText);
+                }
                 if (col.resizable) {
-                    $th.text('').append($('<span class=buffer>').text(col.label || ''));
+                    var $buffer = $('<span class=buffer>').text(col.label || '');
+                    if (col.help) {
+                        $buffer.append($helpIcon).append($helpText);
+                    }
+                    $th.append($buffer);
                     resizeHandle = ResizeHandle().on('dragend', function(evt, pos) {
                         var thPos = $th.position(),
                             diff = pos.clientX - thPos.left;
