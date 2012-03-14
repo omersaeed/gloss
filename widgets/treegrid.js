@@ -37,7 +37,7 @@ define([
         },
         _pipeNewNodesToRows: function(models, newNodes, idx) {
             if (_.isArray(models)) {
-                return this.options.rows.splice(idx, models.length);
+                return this.options.rows.slice(idx, models.length);
             } else {
                 return this.options.rows[idx];
             }
