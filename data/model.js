@@ -491,7 +491,6 @@ define([
 
             return request.initiate(self.id, data).pipe(function(data) {
                 if (creating) {
-                    self.id = data.id;
                     self._manager.associate(self);
                 }
                 self.set(data);

@@ -43,6 +43,14 @@ define([
                     }
                 }
             });
+            self.$node.find('label[data-for]:not([for])').each(function(i, el) {
+                var $el = $(el),
+                    name = $el.attr('data-for'),
+                    widget = self.options.widgets[name];
+                if (widget) {
+                    $(el).attr('for', widget.id);
+                }
+            });
         },
 
         getValues: function() {

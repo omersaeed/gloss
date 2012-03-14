@@ -26,12 +26,12 @@ define([
             return this;
         },
 
-        updateModel: function(model) {
+        updateModel: function() {
             var values = this.getBoundValues();
             if (this.options.staticValues) {
                 $.extend(values, this.options.staticValues);
             }
-            return model.set(values).save();
+            return this.getModel().set(values).save();
         }
     });
 });
