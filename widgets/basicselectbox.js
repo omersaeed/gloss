@@ -5,9 +5,6 @@ define([
     'vendor/gloss/widgets/collectionviewable'
 ], function($, _, FormWidget, CollectionViewable) {
     return FormWidget.extend({
-        managedStates: _.filter(FormWidget.prototype.managedStates, function(s) {
-            return s !== 'hover';
-        }),
         defaults: {
             translator: function(model) {
                 return {value: model.id, content: model.name};
@@ -24,8 +21,6 @@ define([
         ].join('')),
         create: function() {
             this._super();
-            this.$node.addClass('selectbox');
-            this.$node.addClass('hover');
             this.update();
         },
         updateWidget: function(updated) {
