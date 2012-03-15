@@ -16,7 +16,7 @@ function($, _, Widget, Button, Draggable) {
             draggable: { autoBind: false }, // leave this alone
             backdrop: true, // set to 'transparent' for clear, 'false' to disable
             clickBackdropToClose: false,
-            position: 'center', // set to 'undefined' for manual positioning
+            position: 'center', // set to 'undefined' to use CSS positioning
             width: undefined,
             height: undefined,
             closeOnEscape: true,
@@ -94,7 +94,8 @@ function($, _, Widget, Button, Draggable) {
             this.propagate('beforeShow');
 
             if (this.options.position === 'center' &&
-                (! this.options.width || ! this.options.height)) {
+                (! this.options.width || ! this.options.height) &&
+                ! this._positioned) {
 
                 var size = {
                     width: this.$node.width(),
@@ -108,6 +109,8 @@ function($, _, Widget, Button, Draggable) {
                 if (!this.options.height) {
                     this.$node.css({marginTop: -size.height/2 + 'px'});
                 }
+
+                this._positioned = true;
             }
 
             this.$node.removeClass('invisible').hide();
