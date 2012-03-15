@@ -76,3 +76,9 @@ body.dragging-element .tree.grid .insert {
   height: 6px;
   background-color: #60676d;
 }
+.tree.grid table.grid tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+.tree.grid table.grid tbody tr {
+  border-top: 1px solid #60676d;
+}
