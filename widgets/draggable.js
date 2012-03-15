@@ -81,7 +81,7 @@ define([
                 this._drag.$el.removeClass('dragging');
             }
             $(document).off('mouseup.drag mousemove.drag');
-            $('body').removeClass('dragging-element')
+            $('body').removeClass('dragging-element');
             delete this._drag;
         },
         _dragCloneEl: function() {

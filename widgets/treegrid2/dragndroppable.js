@@ -19,7 +19,7 @@ define([
     // row
     var getRowIndex = function(evt, dims, $rows) {
         var height = dims.bottom - dims.top;
-        return (evt.clientY - dims.top) / height * $rows.length;
+        return (evt.clientY + dims.scrollTop - dims.top) / height * $rows.length;
     };
 
     var whereInRow = function(where) {
@@ -34,7 +34,7 @@ define([
 
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
-            var rowIndex, where, $row/*, rows = this.options.grid.options.rows*/;
+            var rowIndex, where, $row;
             if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
                 rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
                 where = whereInRow(rowIndex % 1);
@@ -122,7 +122,8 @@ define([
             };
             self._drag.targets = {
                 top: firstChildPos.top,
-                bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
+                bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
+                scrollTop: $('body').scrollTop()
             };
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
             $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
