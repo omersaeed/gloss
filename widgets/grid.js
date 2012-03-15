@@ -110,7 +110,7 @@ define([
                     $th.append($helpIcon).append($helpText);
                 }
                 if (col.resizable) {
-                    var $buffer = $('<span class=buffer>').text(col.label || '');
+                    var $buffer = $('<span class=buffer/>').text(col.label || '');
                     if (col.help) {
                         $buffer.append($helpIcon).append($helpText);
                     }
