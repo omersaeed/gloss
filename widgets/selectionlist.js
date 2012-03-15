@@ -1,10 +1,11 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     'vendor/gloss/widgets/widget',
     'text!vendor/gloss/widgets/selectionlist/selectionlist.html',
     'link!vendor/gloss/widgets/selectionlist/selectionlist.css',
     'link!css/widgets/selectionlist.css'
-], function($, Widget, html) {
+], function($, _, Widget, html) {
     return Widget.extend({
         defaults: {
             delayed: false,
@@ -17,7 +18,7 @@ define([
         },
         create: function() {
             var self = this;
-            self.disabled = {};
+            self.disabled = [];
             self.items = [];
             self.offset = 0;
             self.page = 1;
@@ -25,6 +26,7 @@ define([
             self.query = null;
             self.selections = [];
             self.total = 0;
+            self.hidden = [];
 
             self.$node.addClass('selectionlist');
             $(html).appendTo(self.$node);
@@ -37,6 +39,7 @@ define([
             self.$header = self.$node.find('.header');
             if(self.options.filtering) {
                 self.$filter = self.$header.find('input');
+                self.$filter.on('change', self.filter);
             } else {
                 self.$header.hide();
             }
@@ -91,6 +94,25 @@ define([
             if(!self.options.delayed) {
                 self.refresh();
             }
+        },
+        filter: function(evt) {
+            var self = this, filterValue, hiddenItems, shownItems;
+            evt.preventDefault();
+            filterValue = evt.currentTarget.value.toLowerCase();
+
+            if (filterValue.length === 0) {
+                self.toggleHidden(self.items, false);
+                return;
+            }
+            hiddenItems = _.filter(self.items, function(item) {
+                return item.name.toLowerCase().indexOf(filterValue) < 0
+            });
+            shownItems = _.reject(self.items, function(item) {
+                return item.name.toLowerCase().indexOf(filterValue) < 0
+            });
+            self.toggleHidden(hiddenItems, true);
+            self.toggleHidden(shownItems, false);
+            return this;
         },
         add: function(items) {
             var self = this, offset = this.offset, limit = this.options.pageSize;
@@ -215,6 +237,7 @@ define([
             this.page = 1;
             this.pages = 0;
             this.total = 0;
+            this.hidden = [];
         },
         resize: function() {
             var height = this.$node.height();
@@ -253,6 +276,38 @@ define([
                                 $(node).data('disabled', true).addClass('disabled');
                             } else {
                                 $(node).data('disabled', false).removeClass('disabled');
+                            }
+                        }
+                    } else {
+                        return false;
+                    }
+                });
+            }
+            return this;
+        },
+        toggleHidden: function(items, hidden) {
+            var self = this, field = this.options.fields.id, ids = [];
+            if(!$.isArray(items)) {
+                items = [items];
+            }
+            $.each(items, function(i, item) {
+                var id = item[field];
+                if(id && (self.hidden[id] ? !hidden : hidden)) {
+                    self.hidden[id] = hidden;
+                    ids.push(id);
+                }
+            });
+            if(ids.length >= 1) {
+                var item, id;
+                self.$pager.find('li').each(function(i, node) {
+                    item = $(node).data('item');
+                    if(item) {
+                        id = item[field];
+                        if($.inArray(id, ids) >= 0) {
+                            if(self.hidden[id]) {
+                                $(node).data('hidden', true).addClass('hidden');
+                            } else {
+                                $(node).data('hidden', false).removeClass('hidden');
                             }
                         }
                     } else {
