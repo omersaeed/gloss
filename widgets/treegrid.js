@@ -112,6 +112,39 @@ define([
                 }
             });
         },
+        // this function exists b/c of the search API for fileplan record
+        // series.  this is probably not the way we want to do things
+        loadPath: function(path) {
+            var self = this, i, row,
+                rows = self.options.rows,
+                curId = 0,
+                len = rows.length,
+                tree = self.options.tree,
+                root = tree.root,
+                args = root.options.collectionArgs;
+            path = path.slice(0);
+            return root.set('collectionArgs', $.extend(true, args, {
+                query: {path: path, recursive: true}
+            })).load().pipe(function() {
+                i = 0;
+                while (path.length) {
+                    curId = path.splice(0, 1)[0];
+                    for (; i < len; i++) {
+                        row = rows[i];
+                        if (row.options.node.model.id === curId) {
+                            if (path.length) {
+                                // since we just loaded the path, and this node
+                                // is on the path, .expand() should return
+                                // immediately
+                                row.expand();
+                            }
+                            break;
+                        }
+                    }
+                }
+                return row;
+            });
+        },
         makeRow: function(node, index) {
             var self = this, row,
                 opts = self._makeRowOptions(node, index);

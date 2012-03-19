@@ -284,8 +284,10 @@ define([
             this.models = {};
         },
 
-        associate: function(model) {
-            var id = model.id || model.cid;
+        associate: function(model, id) {
+            if (typeof id === 'undefined') {
+                id = model.id || model.cid;
+            }
             if (this.models[id]) {
                 if (this.models[id] !== model) {
                     var name = this.model.prototype.__name__;
@@ -491,7 +493,7 @@ define([
 
             return request.initiate(self.id, data).pipe(function(data) {
                 if (creating) {
-                    self._manager.associate(self);
+                    self._manager.associate(self, data.id);
                 }
                 self.set(data);
                 self._loaded = true;

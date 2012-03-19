@@ -238,23 +238,28 @@ require([
     };
 
     module('model', {
-        setup: setup,
-        teardown: teardown
+        setup: function() { },
+        teardown: function() { }
     });
 
     test('creation of default manager', function() {
+        setup();
         ok(models);
         strictEqual(models.model, Test);
         strictEqual(models, Test.prototype.__models__);
+        teardown();
     });
 
     test('simple instantiation of a model', function() {
+        setup();
         var model = Test();
         strictEqual(model._manager, models);
         strictEqual(model.id, null);
+        teardown();
     });
 
     test('setting model values', function() {
+        setup();
         var model = Test();
         ok(!model.has('attr'));
 
@@ -271,6 +276,7 @@ require([
 
         model.set('c', 3);
         strictEqual(model.c, 3);
+        teardown();
     });
 
     module('async model tests', {
@@ -333,7 +339,7 @@ require([
             var id = model.id;
             ok(id);
             ok(!_.isEmpty(models.models));
-            strictEqual(models.get(id), model);
+            ok(models.get(id) === model);
 
             model.destroy().done(function() {
                 ok(_.isEmpty(models.models));
@@ -353,7 +359,7 @@ require([
 
         model.refresh().done(function() {
             strictEqual(model.name, 'alpha');
-            strictEqual(models.get(1), model);
+            ok(models.get(1) === model);
             teardown();
             start();
         });
@@ -364,14 +370,14 @@ require([
         var c1 = Test.collection({query: {name: 'test'}});
         var c2 = Test.collection({query: {name: 'test'}});
         var c3 = Test.collection({query: {name: 'test'}}, true);
-        strictEqual(c1, c2);
-        notStrictEqual(c1, c3);
-        notStrictEqual(c2, c3);
+        ok(c1 === c2);
+        ok(c1 !== c3);
+        ok(c2 !== c3);
 
         var c4 = Test.collection({query: {name: 'other'}});
-        notStrictEqual(c4, c1);
-        notStrictEqual(c4, c2);
-        notStrictEqual(c4, c3);
+        ok(c4 !== c1);
+        ok(c4 !== c2);
+        ok(c4 !== c3);
         start();
     });
 

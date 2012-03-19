@@ -228,7 +228,9 @@ require([
                     return firstChild.collection.__load__.apply(firstChild.collection, arguments);
                 };
                 firstChild.load().done(function() {
-                    var count = 0, args = firstChild.options.collectionArgs;
+                    var count = 0,
+                        origCollection = firstChild.collection,
+                        args = firstChild.options.collectionArgs;
                     equal(loadWasCalledAgain, false);
                     t.dfs(firstChild.children, function() { count++; });
                     equal(count, 5);
@@ -237,7 +239,7 @@ require([
                     }));
                     firstChild.load().done(function() {
                         var count = 0;
-                        equal(loadWasCalledAgain, true);
+                        ok(firstChild.collection !== origCollection);
                         t.dfs(firstChild.children, function() { count++; });
                         equal(count, 53);
                         start();

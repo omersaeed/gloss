@@ -129,13 +129,13 @@ define([
             }
         },
 
-        // _instantiateCollection: function(query) {
         _instantiateCollection: function() {
             var self = this,
                 options = self.options,
+                args = $.extend(true, {}, options.collectionArgs),
                 tree = options.tree,
                 collectionSrc = tree.options.manager || tree.options.resource;
-            self.collection = collectionSrc.collection(options.collectionArgs);
+            self.collection = collectionSrc.collection(args);
         },
 
         // this should not be used for deleting nodes from the tree.  it's used
@@ -199,13 +199,14 @@ define([
         },
 
         load: function(params) {
-            var recursive, collectionSrc, self = this,
+            var recursive, query, collectionSrc, self = this,
                 options = self.options,
                 tree = options.tree;
             if (! self.collection) {
                 self._instantiateCollection();
             }
-            if ((recursive = self.collection.query.recursive)) {
+            query = self.collection.query;
+            if ((recursive = query.recursive && !query.path)) {
                 if (self._loadedRecursive) {
                     return $.Deferred().resolve(this);
                 } else {
@@ -214,7 +215,7 @@ define([
                     (params = params || {}).reload = true;
                 }
             } else {
-                if (self._loaded) {
+                if (self._loaded && !query.path) {
                     return $.Deferred().resolve(this);
                 }
             }
@@ -227,6 +228,12 @@ define([
                 if (recursive) {
                     t.dfs(self.children || [], function() {
                         this._loaded = this._loadedRecursive = true;
+                    });
+                } else if (query.path) {
+                    t.dfs(self.children || [], function() {
+                        if (this.model.isparent && _.isArray(this.children)) {
+                            this._loaded = true;
+                        }
                     });
                 }
                 return self;
@@ -303,8 +310,7 @@ define([
     var defaultNodeFactory = function(model, parentNode, tree) {
         return Node(model, {
             tree: tree,
-            // query: parentNode.options.query
-            collectionArgs: parentNode.options.collectionArgs
+            collectionArgs: $.extend(true, {}, tree.options.collectionArgs)
         });
     };
 
@@ -329,7 +335,7 @@ define([
         init: function(options) {
             this.options = $.extend(true, {}, this.defaults, options);
             this.root = Node(Model.Model(), {
-                collectionArgs: this.options.collectionArgs,
+                collectionArgs: $.extend(true, {}, this.options.collectionArgs),
                 tree: this
             });
             this.root.level = -1;
