@@ -58,7 +58,7 @@ require([
                 var $expandCol = $(el).find('td').eq(expandColIndex),
                     row = treegrid.options.rows[i],
                     text = !row.options.model.isparent? childText :
-                            row.options.node.expanded? expandText : collapseText;
+                            treegrid.getExpanded(row.options.node)? expandText : collapseText;
                 equal(
                     $expandCol.find('span.content').text(),
                     names[i]
@@ -266,7 +266,8 @@ require([
                 setTimeout(function() {
                     treegrid.options.rows[9].$node.find('.expand').trigger('click');
                     setTimeout(function() {
-                        equal(treegrid.options.rows[0].options.node.expanded, true);
+                        ok(treegrid.getExpanded(treegrid.options.rows[0].options.node));
+                        // equal(treegrid.options.rows[0].options.node.expanded, true);
                         treeGridMatchesData(treegrid, tree);
                         start();
                     }, 15);
@@ -303,7 +304,8 @@ require([
             $row = $('tr:contains("blah blah")');
             row = treegrid.options.rows[$row.index()];
             node = row.options.node;
-            equal(node.expanded, true);
+            ok(treegrid.getExpanded(node));
+            // equal(node.expanded, true);
             start();
         });
     });

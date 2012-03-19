@@ -13,6 +13,7 @@ define([
         },
         create: function() {
             this.$node.addClass('tree');
+            this.expanded = {};
             this._super();
         },
         _addAfterRow: function(models, afterRow) {
@@ -55,7 +56,8 @@ define([
                 }
                 self.set('modified', true);
             });
-            tree.root.expanded = false;
+            self.setExpanded(tree.root, false);
+            // tree.root.expanded = false;
         },
         _shouldFullyRender: function() {
             var i, l, count = 0,
@@ -87,6 +89,9 @@ define([
                 });
             }
         },
+        getExpanded: function(node) {
+            return this.expanded[node.model.id];
+        },
         expandAll: function() {
             var i, l, rows = this.options.rows;
             for (i = 0, l = rows.length; i < l; i++) {
@@ -97,7 +102,8 @@ define([
             var self = this, rows, tree = self.options.tree;
             return tree.load().done(function() {
                 rows = self.options.rows;
-                tree.root.expanded = true;
+                self.setExpanded(tree.root, true);
+                // tree.root.expanded = true;
                 if (!rows.length) {
                     return;
                 }
@@ -148,16 +154,25 @@ define([
         makeRow: function(node, index) {
             var self = this, row,
                 opts = self._makeRowOptions(node, index);
-            if (node.expanded == null) {
-                node.expanded = !node.model.isparent;
+            if (self.getExpanded(node) == null) {
+                self.setExpanded(node, !node.model.isparent);
             }
+            // if (node.expanded == null) {
+            //     node.expanded = !node.model.isparent;
+            // }
             return self.options.rowWidgetClass(undefined, opts);
+        },
+        setExpanded: function(node, value) {
+            this.expanded[node.model.id] = value;
         },
         setModel: function(row, node) {
             var self = this;
-            if (node.expanded == null) {
-                node.expanded = !node.model.isparent;
+            if (self.getExpanded(node) == null) {
+                self.setExpanded(node, !node.model.isparent);
             }
+            // if (node.expanded == null) {
+            //     node.expanded = !node.model.isparent;
+            // }
             row.set('node', node);
         },
         updateWidget: function(updated) {

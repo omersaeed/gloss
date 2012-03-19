@@ -96,23 +96,49 @@ define([
         },
 
         _hierarchyFromList: function(list, dontDirty) {
-            var i, len, model, children, par, node,
+            var i, len, model, children, par, node, childrenIdx, creatingChildren, tmp,
+                childrenIdxStack = [],
                 options = this.options,
                 tree = options.tree,
                 nodeFactory = options.tree.options.nodeFactory;
 
             node = this;
             par = this.par;
-            children = this.children = [];
+            if (this.children) {
+                creatingChildren = false;
+                children = this.children;
+            } else {
+                creatingChildren = true;
+                children = this.children = [];
+            }
+            childrenIdx = 0;
 
             for (i = 0, len = list.length; i < len; i++) {
                 model = list[i];
 
+                // check if the parent of the current new model has changed --
+                // if so then we know we're now at a different level of the
+                // tree
                 if (node.model.id != model.parent_id) {
-                    if (children[children.length-1].model.id === model.parent_id) {
+
+                    // if it changed, check if we're now at a lower level of
+                    // the tree
+                    if (children[childrenIdx-1].model.id === model.parent_id) {
+                        // we've descended a level in the tree
                         par = node;
-                        node = children[children.length-1];
-                        children = node.children = [];
+                        node = children[childrenIdx-1];
+                        childrenIdxStack.push([childrenIdx, creatingChildren]);
+                        if (node.children) {
+                            creatingChildren = false;
+                            children = node.children;
+                        } else {
+                            creatingChildren = true;
+                            children = node.children = [];
+                        }
+                        childrenIdx = 0;
+
+                    // otherwise we're now at a higher level, so figure out how
+                    // high we've gone back up
                     } else {
                         while (node.model.id != model.parent_id) {
                             if (!par) {
@@ -120,12 +146,18 @@ define([
                             }
                             node = par;
                             par = node.par;
+                            tmp = childrenIdxStack.pop();
+                            childrenIdx = tmp[0];
+                            creatingChildren = tmp[1];
                         }
                         children = node.children;
                     }
                 }
 
-                node._appendChild(nodeFactory(model, node, tree), undefined, dontDirty);
+                if (creatingChildren) {
+                    node._appendChild(nodeFactory(model, node, tree), undefined, dontDirty);
+                }
+                childrenIdx++;
             }
         },
 

@@ -85,7 +85,8 @@ define([
             if (! node.model.isparent) {
                 return $.Deferred().resolve();
             }
-            node.expanded = false;
+            options.grid.setExpanded(node, false);
+            // node.expanded = false;
             this._expandSpan().html(this.options.collapseText);
             _.each(this._childRows(), function(row) { row.hide(); });
             return $.Deferred().resolve();
@@ -97,11 +98,14 @@ define([
             if (! node.model.isparent) {
                 return $.Deferred().resolve();
             }
-            node.expanded = true;
+            options.grid.setExpanded(node, true);
+            // node.expanded = true;
             self._expandSpan().html(self.options.expandText);
             return node.load().done(function() {
                 var expand = [];
-                t.dfs(node.children, function() { expand.push(this.par.expanded); });
+                t.dfs(node.children, function() {
+                    expand.push(options.grid.getExpanded(this.par));
+                });
                 _.each(self._childRows(), function(row, i) {
                     row[expand[i]? 'show' : 'hide']();
                 });
@@ -128,9 +132,10 @@ define([
         },
 
         render: function() {
-            var self = this;
+            var self = this, options = self.options;
             self._super();
-            if (self.options.node.par.expanded) {
+            if (options.grid.getExpanded(options.node.par)) {
+            // if (self.options.node.par.expanded) {
                 self.show();
             } else {
                 self.hide();
@@ -149,7 +154,7 @@ define([
             ret.push('</span><a href="javascript:void(0)" class="expand');
             if (! node.model.isparent) {
                 ret.push('">', options.childText);
-            } else if (node.expanded) {
+            } else if (options.grid.getExpanded(node)) {
                 ret.push(' parent">', options.expandText);
             } else {
                 ret.push(' parent">', options.collapseText);
@@ -163,13 +168,14 @@ define([
         rerenderColExpand: function() {
             var options = this.options,
                 node = options.node,
+                expanded = options.grid.getExpanded(node),
                 index = options.expandColIndex,
                 name = options.expandColName,
                 expandCol = this.node.childNodes[index],
                 indentTxt = Array(node.level+1).join(options.indentText),
                 indent = expandCol.childNodes[0],
                 expandTxt = !node.model.isparent? options.childText :
-                            node.expanded? options.expandText :
+                            expanded? options.expandText :
                             options.collapseText,
                 expand = expandCol.childNodes[1],
                 value = expandCol.childNodes[2];
@@ -185,7 +191,7 @@ define([
         },
 
         toggle: function() {
-            if (this.options.node.expanded) {
+            if (this.options.grid.getExpanded(this.options.node)) {
                 return this.collapse();
             } else {
                 return this.expand();
