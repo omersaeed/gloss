@@ -123,7 +123,7 @@ define([
             self._drag.targets = {
                 top: firstChildPos.top,
                 bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
-                scrollTop: $('body').scrollTop()
+                scrollTop: $(document).scrollTop()
             };
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
             $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
