@@ -112,7 +112,9 @@ define([
         },
         _dragOnMouseUp: function(evt) {
             if (this._drag) {
-                this._drag.$insertDiv.remove();
+                if (this._drag.$insertDiv) {
+                    this._drag.$insertDiv.remove();
+                }
                 _.each(this.options.grid.options.rows, function(row) {
                     row.$node.removeClass('hover');
                 });

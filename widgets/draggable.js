@@ -37,6 +37,7 @@ define([
         startDrag: function(evt) {
             var self = this;
             self._dragOnMouseUp();
+            window._dragWidget = self;
             self._drag = {
                 pos: self.$node.position(),
                 offset: { }
@@ -86,18 +87,24 @@ define([
                         clientY: evt.clientY
                     });
                 }
-                if (this.options.draggable.clone) {
-                    this._drag.$el.remove();
-                } else {
-                    this._drag.$el.addClass('dragged');
+                if (this._drag.$el) {
+                    if (this.options.draggable.clone) {
+                        this._drag.$el.remove();
+                    } else {
+                        this._drag.$el.addClass('dragged');
+                    }
+                    this._drag.$el.removeClass('dragging');
                 }
-                this._drag.$el.removeClass('dragging');
             }
-            // we cancel all events we could possibly set b/c IE8 gets in weird
-            // race conditions when text is being highlighted
             $(document).off('mouseup.drag mousemove.drag keyup.drag');
+            // b/c of an IE8 quirk, these may have been set and never unset
+            this.off('mouseup.drag-start mousemove.drag-start');
             $('body').removeClass('dragging-element');
             delete this._drag;
+            if (window._dragWidget && window._dragWidget !== this) {
+                window._dragWidget._dragOnMouseUp();
+            }
+            window._dragWidget = null;
         },
         _dragCloneEl: function() {
             return this.$node.clone(false, false);
