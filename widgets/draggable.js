@@ -28,6 +28,11 @@ define([
                     self.startDrag(evt);
                 });
             }
+            if (typeof self.node.onselectstart !== 'undefined') {
+                self.node.onselectstart = function() {
+                    return false;
+                };
+            }
         },
         startDrag: function(evt) {
             var self = this;
@@ -88,6 +93,8 @@ define([
                 }
                 this._drag.$el.removeClass('dragging');
             }
+            // we cancel all events we could possibly set b/c IE8 gets in weird
+            // race conditions when text is being highlighted
             $(document).off('mouseup.drag mousemove.drag keyup.drag');
             $('body').removeClass('dragging-element');
             delete this._drag;
