@@ -1,8 +1,9 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/gloss/widgets/widget',
     'link!vendor/gloss/widgets/draggable/draggable.css'
-], function($, _) {
+], function($, _, Widget) {
     return {
         __mixin__: function(base, prototype, mixin) {
             var draggable;
@@ -30,6 +31,7 @@ define([
         },
         startDrag: function(evt) {
             var self = this;
+            self._dragOnMouseUp();
             self._drag = {
                 pos: self.$node.position(),
                 offset: { }
@@ -53,6 +55,10 @@ define([
                 return false;
             }).on('mouseup.drag', function(evt) {
                 self._dragOnMouseUp(evt);
+            }).on('keyup.drag', function(evt) {
+                if (Widget.identifyKeyEvent(evt) === 'escape') {
+                    self._dragOnMouseUp();
+                }
             });
             $('body').addClass('dragging-element');
             if (self.options.draggable.clone) {
@@ -69,10 +75,12 @@ define([
         },
         _dragOnMouseUp: function(evt) {
             if (typeof this._drag !== 'undefined') {
-                this.trigger('dragend', {
-                    clientX: evt.clientX,
-                    clientY: evt.clientY
-                });
+                if (evt) {
+                    this.trigger('dragend', {
+                        clientX: evt.clientX,
+                        clientY: evt.clientY
+                    });
+                }
                 if (this.options.draggable.clone) {
                     this._drag.$el.remove();
                 } else {
@@ -80,7 +88,7 @@ define([
                 }
                 this._drag.$el.removeClass('dragging');
             }
-            $(document).off('mouseup.drag mousemove.drag');
+            $(document).off('mouseup.drag mousemove.drag keyup.drag');
             $('body').removeClass('dragging-element');
             delete this._drag;
         },

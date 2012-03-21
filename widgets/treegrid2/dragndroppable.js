@@ -8,8 +8,8 @@ define([
         return DraggableRow[name] || Draggable[name];
     };
     var inside = function(evt, dims) {
-        var y = evt.clientY;
-        return y > dims.top && y < dims.bottom;
+        var absY = evt.clientY + dims.scrollTop;
+        return absY > dims.top && absY < dims.bottom;
     };
 
     // this returns a floating point number, for example, a return value of 2.3
@@ -35,6 +35,10 @@ define([
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
             var rowIndex, where, $row;
+            // var insideTargets = inside(evt, this._drag.targets);
+            // var insideNonTargets = inside(evt, this._drag.nonTargets);
+            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            // if (insideTargets && ! insideNonTargets) {
             if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
                 rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
                 where = whereInRow(rowIndex % 1);
@@ -97,12 +101,14 @@ define([
             }
         },
         _dragOnMouseUp: function(evt) {
-            this._drag.$insertDiv.remove();
+            if (this._drag) {
+                this._drag.$insertDiv.remove();
+                _.each(this.options.grid.options.rows, function(row) {
+                    row.$node.removeClass('hover');
+                });
+            }
             _super('_dragOnMouseUp').call(this, evt);
             $(document).off('mousemove.drag-treegrid');
-            _.each(this.options.grid.options.rows, function(row) {
-                row.$node.removeClass('hover');
-            });
             this.off('dragend');
         },
         _dragStart: function(evt) {
