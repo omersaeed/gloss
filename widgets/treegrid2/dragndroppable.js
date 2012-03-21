@@ -94,7 +94,12 @@ define([
                 if (where === 'before') {
                     this.moveTo(row._parentRow(), dest);
                 } else if (where === 'after') {
-                    this.moveTo(row._parentRow(), dest+1);
+                    if (row.options.model.isparent &&
+                            this.options.grid.getExpanded(row.options.node)) {
+                        this.moveTo(row, 0);
+                    } else {
+                        this.moveTo(row._parentRow(), dest+1);
+                    }
                 } else {
                     this.moveTo(row);
                 }
