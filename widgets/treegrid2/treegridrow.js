@@ -151,7 +151,7 @@ define([
             for (i = 0, l = node.level; i < l; i++) {
                 ret.push(indentText);
             }
-            ret.push('</span><a href="javascript:void(0)" class="expand');
+            ret.push('</span><span class="expand');
             if (! node.model.isparent) {
                 ret.push('">', options.childText);
             } else if (options.grid.getExpanded(node)) {
@@ -159,7 +159,7 @@ define([
             } else {
                 ret.push(' parent">', options.collapseText);
             }
-            ret.push('</a><span class=content>');
+            ret.push('</span><span class=content>');
             ret.push(options.model[this.options.expandColName] || '');
             ret.push('</span>');
             return ret.join('');
