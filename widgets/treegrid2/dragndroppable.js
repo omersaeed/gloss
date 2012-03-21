@@ -35,11 +35,11 @@ define([
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
             var rowIndex, where, $row;
-            // var insideTargets = inside(evt, this._drag.targets);
-            // var insideNonTargets = inside(evt, this._drag.nonTargets);
-            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
-            // if (insideTargets && ! insideNonTargets) {
-            if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
+            var insideTargets = inside(evt, this._drag.targets);
+            var insideNonTargets = inside(evt, this._drag.nonTargets);
+            console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            if (insideTargets && ! insideNonTargets) {
+            // if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
                 rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
                 where = whereInRow(rowIndex % 1);
                 $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
@@ -124,12 +124,13 @@ define([
             _super('_dragStart').call(self, evt);
             self._drag.nonTargets = {
                 top: position.top,
-                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight()
+                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight(),
+                scrollTop: $(document).scrollTop()
             };
             self._drag.targets = {
                 top: firstChildPos.top,
                 bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
-                scrollTop: $(document).scrollTop()
+                scrollTop: self._drag.nonTargets.scrollTop
             };
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
             $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
