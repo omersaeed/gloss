@@ -35,11 +35,11 @@ define([
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
             var rowIndex, where, $row;
-            var insideTargets = inside(evt, this._drag.targets);
-            var insideNonTargets = inside(evt, this._drag.nonTargets);
-            console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
-            if (insideTargets && ! insideNonTargets) {
-            // if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
+            // var insideTargets = inside(evt, this._drag.targets);
+            // var insideNonTargets = inside(evt, this._drag.nonTargets);
+            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            // if (insideTargets && ! insideNonTargets) {
+            if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
                 rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
                 where = whereInRow(rowIndex % 1);
                 $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
@@ -101,7 +101,12 @@ define([
                         this.moveTo(row._parentRow(), dest+1);
                     }
                 } else {
-                    this.moveTo(row);
+                    if (row.options.model.isparent &&
+                            this.options.grid.getExpanded(row.options.node)) {
+                        this.moveTo(row, 0);
+                    } else {
+                        this.moveTo(row);
+                    }
                 }
             }
         },
