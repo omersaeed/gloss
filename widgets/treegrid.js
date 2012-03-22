@@ -3,8 +3,8 @@ define([
     'vendor/underscore',
     'vendor/t',
     'vendor/gloss/widgets/grid',
-    'vendor/gloss/widgets/treegrid2/treegridrow',
-    'link!vendor/gloss/widgets/treegrid2/treegrid.css'
+    'vendor/gloss/widgets/treegrid/treegridrow',
+    'link!vendor/gloss/widgets/treegrid/treegrid.css'
 ], function($, _, t, Grid, TreeGridRow) {
     return Grid.extend({
         defaults: {

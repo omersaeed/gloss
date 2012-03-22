@@ -1,3 +1,4 @@
+/*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
     'vendor/jquery',
     'vendor/gloss/widgets/menu'
@@ -32,4 +33,6 @@ require([
 
         start();
     });
+
+    start();
 });

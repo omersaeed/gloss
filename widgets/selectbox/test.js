@@ -1,3 +1,4 @@
+/*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
     'vendor/jquery',
     'vendor/gloss/widgets/selectbox'
@@ -21,4 +22,6 @@ require([
 
         start();
     });
+
+    start();
 });
