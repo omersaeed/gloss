@@ -23,6 +23,22 @@ define([
             this._super();
             this.update();
         },
+        setValue: function(newValue) {
+            // PP-1973 when a select element's value is set to 'null' in IE8,
+            // FF and webkit, the box assumes the value of the first option.
+            // in IE9 however, it's value becomes null.  we abstract this
+            // difference here
+            var values;
+            if (newValue == null) {
+                values = this.$node.find('option').map(function(i, el) {
+                    return $(el).val();
+                });
+                if (_.indexOf(values, newValue) < 0) {
+                    return this._super(values[0]);
+                }
+            }
+            return this._super(newValue);
+        },
         updateWidget: function(updated) {
             var self = this, options = self.options;
             if (updated.models) {
