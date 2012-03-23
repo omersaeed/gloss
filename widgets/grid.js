@@ -78,10 +78,6 @@ define([
             });
             self._buildHeader();
             self.onPageClick('mouseup.unhighlight', self.onPageClickUnhighlight);
-            // self.onPageClick('mouseup.unhighlight', function() {
-            //     self.unhighlight();
-            //     return false; // don't cancel the callback
-            // });
             self.update();
         },
 
