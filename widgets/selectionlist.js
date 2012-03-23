@@ -95,6 +95,30 @@ define([
                 self.refresh();
             }
         },
+        _enableDisable: function(items, disable) {
+            var self = this, entry,
+                id = self.options.fields.id,
+                method = disable? 'addClass' : 'removeClass',
+                lis = _.reduce(self.$node.find('li'), function(lis, li, i) {
+                    var $li = $(li), item = $li.data('item');
+                    if (item) {
+                        lis[item[id]] = {
+                            item: item,
+                            $node: $li
+                        };
+                    }
+                    return lis;
+                }, {});
+            _.each(_.isArray(items)? items : items? [items] : [], function(item) {
+                if (item[id] != null) {
+                    self.disabled[id] = disable;
+                    entry = lis[item[id]];
+                    if (entry) {
+                        entry.$node.data('disabled', disable)[method]('disabled');
+                    }
+                }
+            });
+        },
         filter: function(evt) {
             var self = this, filterValue, hiddenItems, shownItems;
             evt.preventDefault();
@@ -252,6 +276,9 @@ define([
                 this.$filter.width(this.$header.width() - 40);
             }
             return this;
+        },
+        disable: function(items) {
+            this._enableDisable(items, true);
         },
         toggle: function(items, disabled) {
             var self = this, field = this.options.fields.id, ids = [];
