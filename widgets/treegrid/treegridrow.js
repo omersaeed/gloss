@@ -11,7 +11,6 @@ define([
             node: null, // required
             expandText: '&#x25bc;',
             collapseText: '&#x25b6;',
-            // childText: '&#8226;' // bullet
             childText: '&#9679;', // black circle
             indentText: '&nbsp;&nbsp;&nbsp;&nbsp;'
         },
@@ -86,7 +85,6 @@ define([
                 return $.Deferred().resolve();
             }
             options.grid.setExpanded(node, false);
-            // node.expanded = false;
             this._expandSpan().html(this.options.collapseText);
             _.each(this._childRows(), function(row) { row.hide(); });
             return $.Deferred().resolve();
@@ -99,7 +97,6 @@ define([
                 return $.Deferred().resolve();
             }
             options.grid.setExpanded(node, true);
-            // node.expanded = true;
             self._expandSpan().html(self.options.expandText);
             return node.load().done(function() {
                 var expand = [];
@@ -137,7 +134,6 @@ define([
             var self = this, options = self.options;
             self._super();
             if (options.grid.getExpanded(options.node.par)) {
-            // if (self.options.node.par.expanded) {
                 self.show();
             } else {
                 self.hide();
