@@ -121,10 +121,9 @@ define([
         // this function exists b/c of the search API for fileplan record
         // series.  this is probably not the way we want to do things
         loadPath: function(path) {
-            var self = this, i, row,
+            var self = this, i, len, row,
                 rows = self.options.rows,
                 curId = 0,
-                len = rows.length,
                 tree = self.options.tree,
                 root = tree.root,
                 args = root.options.collectionArgs;
@@ -132,6 +131,7 @@ define([
             return root.set('collectionArgs', $.extend(true, args, {
                 query: {path: path, recursive: true}
             })).load().pipe(function() {
+                len = rows.length;
                 i = 0;
                 while (path.length) {
                     curId = path.splice(0, 1)[0];
@@ -144,6 +144,7 @@ define([
                                 // immediately
                                 row.expand();
                             }
+                            i++;
                             break;
                         }
                     }
@@ -157,9 +158,6 @@ define([
             if (self.getExpanded(node) == null) {
                 self.setExpanded(node, !node.model.isparent);
             }
-            // if (node.expanded == null) {
-            //     node.expanded = !node.model.isparent;
-            // }
             return self.options.rowWidgetClass(undefined, opts);
         },
         setExpanded: function(node, value) {
@@ -170,9 +168,6 @@ define([
             if (self.getExpanded(node) == null) {
                 self.setExpanded(node, !node.model.isparent);
             }
-            // if (node.expanded == null) {
-            //     node.expanded = !node.model.isparent;
-            // }
             row.set('node', node);
         },
         updateWidget: function(updated) {
