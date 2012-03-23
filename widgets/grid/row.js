@@ -34,7 +34,7 @@ define([
         template: _.template([
             '<% for (var i = 0, len = colModel.length, col; col = colModel[i], i < len; i++) { %>',
                 '<td class="col-<%= col.name %><%= i===0? " first" : "" %><%= col.noLeftBorder? " no-left-border" : "" %>">',
-                    '<%= this[col.render](col) %>',
+                    '<%= _.isString(col.render)? this[col.render](col) : col.render(col) %>',
                 '</td>',
             '<% } %>'
         ].join('')),
@@ -48,7 +48,9 @@ define([
 
             _.each(self.options.colModel, function(col) {
                 self.cols[col.name] = col;
-                col.render = self[col.render] == null? 'renderCol' : col.render;
+                if (! _.isFunction(col.render)) {
+                    col.render = self[col.render] == null? 'renderCol' : col.render;
+                }
             });
 
             self.hasRendered = false;
