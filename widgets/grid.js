@@ -90,7 +90,7 @@ define([
             _.each(this.options.colModel, function(col, i) {
                 var $tooltip = null, $helpIcon = null, $helpText = null;
                 if (col.help) {
-                    $helpIcon = $('<span>').addClass('icon').text('?');
+                    $helpIcon = $('<span>').addClass('icon help').text('?');
                     $helpText = $('<span>').html(col.help);
                     $tooltip = ToolTip($helpText, {target: $helpIcon});
                 }

@@ -20,6 +20,9 @@
   margin: 0 5px;
   display: block;
 }
+.grid table.grid thead tr th span.help {
+  margin-left: 5px;
+}
 .grid table.grid thead tr th .resize-handle {
   width: 5px;
   height: 100%;
