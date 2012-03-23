@@ -116,10 +116,10 @@ define([
                     }
                     $th.append($buffer);
                     resizeHandle = ResizeHandle().on('dragend', function(evt, pos) {
-                        var thPos = $th.position(),
+                        var thPos = $th.offset(),
                             diff = pos.clientX - thPos.left;
                         if (diff > 0) {
-                            $th.width(diff);
+                            $th.outerWidth(diff);
                         } else {
                             if (resizeHandle.node.style.removeProperty) {
                                 resizeHandle.node.style.removeProperty('left');
