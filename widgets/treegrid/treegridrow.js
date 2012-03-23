@@ -117,9 +117,11 @@ define([
                 options = self.options,
                 node = options.node;
             if (row) {
-                row.expand().done(function() {
-                    node.moveTo(row.options.node, index);
-                });
+                if (row !== self) {
+                    row.expand().done(function() {
+                        node.moveTo(row.options.node, index);
+                    });
+                }
             } else {
                 node.moveTo(options.grid.options.tree.root, index);
             }
