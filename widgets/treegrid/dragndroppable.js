@@ -1,26 +1,53 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/gloss/core/class',
     'vendor/gloss/widgets/draggable',
     'vendor/gloss/widgets/draggablerow'
-], function($, _, Draggable, DraggableRow) {
+], function($, _, Class, Draggable, DraggableRow) {
     var _super = function(name) {
         return DraggableRow[name] || Draggable[name];
     };
-    var inside = function(evt, dims, scrollTop) {
-        var absY = evt.clientY + scrollTop;
-        return absY > dims.top && absY < dims.bottom;
-    };
+
+    var Dimensions = Class.extend({
+        // init: function(_top, bottom, scrollManager, $rows) {
+        init: function(options) {
+            this.top = options.top;
+            this.bottom = options.bottom;
+            this.scrollManager = options.scrollManager;
+            this.$rows = options.$rows;
+            this.base = this.scrollManager.scrollTop;
+        },
+        inside: function(evt) {
+            var scrollManager = this.scrollManager,
+                scrollTop = scrollManager.scrollTop,
+                y = evt.clientY,
+                shift = scrollTop - this.base;
+            return  y > (this.top - shift) && y < (this.bottom - shift);
+        },
+        getRowIndex: function(evt) {
+            var height = this.bottom - this.top,
+                scrollTop = this.scrollManager.scrollTop,
+                shift = scrollTop - this.base;
+            return (evt.clientY - this.top + shift) / height * this.$rows.length;
+        }
+    });
+
+    // var inside = function(evt, dims, scrollTop) {
+    //     var absY = evt.clientY + scrollTop;
+    //     return absY > dims.top && absY < dims.bottom;
+    // };
 
     // this returns a floating point number, for example, a return value of 2.3
     // means that the user is hovering over the row whose index is 2 (the third
     // row), and is hovering 30% of the way down the row.  that 30% is useful
     // when deciding whether the user wants to drop into the row or next to the
     // row
-    var getRowIndex = function(evt, dims, $rows, scrollTop) {
-        var height = dims.bottom - dims.top;
-        return (evt.clientY + scrollTop - dims.top) / height * $rows.length;
-    };
+    // var getRowIndex = function(evt, dims, $rows, scrollTop) {
+    //     var height = dims.bottom - dims.top;
+    //     console.log('y:',evt.clientY,'; scrollTop:',scrollTop,'; top:',dims.top,'; bottom:',dims.bottom);
+    //     return (evt.clientY + scrollTop - dims.top) / height * $rows.length;
+    // };
 
     var whereInRow = function(where) {
         if (where <= 0.2) {
@@ -36,12 +63,15 @@ define([
         _dragCheckTargets: function(evt) {
             var rowIndex, where, $row, _drag = this._drag;
             // var insideTargets = inside(evt, _drag.targets, _drag.scrollTop);
+            var insideTargets = _drag.targets.inside(evt);
             // var insideNonTargets = inside(evt, _drag.nonTargets, _drag.scrollTop);
-            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
-            // if (insideTargets && ! insideNonTargets) {
-            if (inside(evt, _drag.targets, _drag.scrollTop) &&
-                !inside(evt, _drag.nonTargets, _drag.scrollTop)) {
-                rowIndex = getRowIndex(evt, _drag.targets, _drag.$visibleRows, _drag.scrollTop);
+            var insideNonTargets = _drag.nonTargets.inside(evt);
+            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            if (insideTargets && ! insideNonTargets) {
+            // if (inside(evt, _drag.targets, _drag.scrollTop) &&
+                // !inside(evt, _drag.nonTargets, _drag.scrollTop)) {
+                // rowIndex = getRowIndex(evt, _drag.targets, _drag.$visibleRows, _drag.scrollTop);
+                rowIndex = _drag.targets.getRowIndex(evt);
                 where = whereInRow(rowIndex % 1);
                 $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
                 if (_drag.$lastRow && $row[0] !== _drag.$lastRow[0]) {
@@ -73,7 +103,8 @@ define([
             var i, row, dest,
                 rows = this.options.grid.options.rows,
                 _drag = this._drag,
-                rowIndex = getRowIndex(mousePos, _drag.targets, _drag.$visibleRows, _drag.scrollTop),
+                // rowIndex = getRowIndex(mousePos, _drag.targets, _drag.$visibleRows, _drag.scrollTop),
+                rowIndex = _drag.targets.getRowIndex(mousePos),
                 where = whereInRow(rowIndex % 1),
                 $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
             this.off('dragend');
@@ -85,8 +116,10 @@ define([
             }
             if (row) {
                 dest = row.options.node.index();
-                if (!inside(mousePos, _drag.targets, _drag.scrollTop) ||
-                    inside(mousePos, _drag.nonTargets, _drag.scrollTop)) {
+                // if (!inside(mousePos, _drag.targets, _drag.scrollTop) ||
+                //     inside(mousePos, _drag.nonTargets, _drag.scrollTop)) {
+                if (!_drag.targets.inside(mousePos) ||
+                    _drag.nonTargets.inside(mousePos)) {
                     return;
                 }
                 if (this.options.node.par === row.options.node.par &&
@@ -136,16 +169,28 @@ define([
                 lastChildPos = (_.last(children) || self).$node.position();
             self.options.grid.unhighlight();
             _super('_dragStart').call(self, evt);
-            self._drag.nonTargets = {
-                top: position.top,
-                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight()
-            };
-            self._drag.targets = {
-                top: firstChildPos.top,
-                bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
-            };
-            self._drag.scrollTop = $(document).scrollTop();
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
+            // self._drag.nonTargets = {
+            //     top: position.top,
+            //     bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight()
+            // };
+            self._drag.nonTargets = Dimensions({
+                top: position.top,
+                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight(),
+                scrollManager: self._drag.scroll,
+                $rows: self._drag.$visibleRows
+            });
+            // self._drag.targets = {
+            //     top: firstChildPos.top,
+            //     bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
+            // };
+            self._drag.targets = Dimensions({
+                top: firstChildPos.top,
+                bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
+                scrollManager: self._drag.scroll,
+                $rows: self._drag.$visibleRows
+            });
+            // self._drag.scrollTop = $(document).scrollTop();
             $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
                 self._dragCheckTargets(evt);
             });
