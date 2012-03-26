@@ -7,8 +7,8 @@ define([
     var _super = function(name) {
         return DraggableRow[name] || Draggable[name];
     };
-    var inside = function(evt, dims) {
-        var absY = evt.clientY + dims.scrollTop;
+    var inside = function(evt, dims, scrollTop) {
+        var absY = evt.clientY + scrollTop;
         return absY > dims.top && absY < dims.bottom;
     };
 
@@ -17,9 +17,9 @@ define([
     // row), and is hovering 30% of the way down the row.  that 30% is useful
     // when deciding whether the user wants to drop into the row or next to the
     // row
-    var getRowIndex = function(evt, dims, $rows) {
+    var getRowIndex = function(evt, dims, $rows, scrollTop) {
         var height = dims.bottom - dims.top;
-        return (evt.clientY + dims.scrollTop - dims.top) / height * $rows.length;
+        return (evt.clientY + scrollTop - dims.top) / height * $rows.length;
     };
 
     var whereInRow = function(where) {
@@ -34,46 +34,48 @@ define([
 
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
-            var rowIndex, where, $row;
-            // var insideTargets = inside(evt, this._drag.targets);
-            // var insideNonTargets = inside(evt, this._drag.nonTargets);
-            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',this._drag.targets.top,'; bot:',this._drag.targets.bottom,'; scroll:',this._drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            var rowIndex, where, $row, _drag = this._drag;
+            // var insideTargets = inside(evt, _drag.targets, _drag.scrollTop);
+            // var insideNonTargets = inside(evt, _drag.nonTargets, _drag.scrollTop);
+            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.targets.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
             // if (insideTargets && ! insideNonTargets) {
-            if (inside(evt, this._drag.targets) && ! inside(evt, this._drag.nonTargets)) {
-                rowIndex = getRowIndex(evt, this._drag.targets, this._drag.$visibleRows);
+            if (inside(evt, _drag.targets, _drag.scrollTop) &&
+                !inside(evt, _drag.nonTargets, _drag.scrollTop)) {
+                rowIndex = getRowIndex(evt, _drag.targets, _drag.$visibleRows, _drag.scrollTop);
                 where = whereInRow(rowIndex % 1);
-                $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
-                if (this._drag.$lastRow && $row[0] !== this._drag.$lastRow[0]) {
-                    this._drag.$lastRow.removeClass('hover');
-                    this._drag.$insertDiv.addClass('hidden');
+                $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
+                if (_drag.$lastRow && $row[0] !== _drag.$lastRow[0]) {
+                    _drag.$lastRow.removeClass('hover');
+                    _drag.$insertDiv.addClass('hidden');
                 }
-                this._drag.$lastRow = $row;
+                _drag.$lastRow = $row;
                 if (where === 'before') {
                     $row.removeClass('hover');
-                    this._drag.$insertDiv
+                    _drag.$insertDiv
                         .css({top: $row.position().top - 3})
                         .removeClass('hidden');
                 } else if (where === 'after') {
                     $row.removeClass('hover');
-                    this._drag.$insertDiv
+                    _drag.$insertDiv
                         .css({top: $row.position().top + $row.outerHeight() - 3})
                         .removeClass('hidden');
                 } else {
                     $row.addClass('hover');
-                    this._drag.$insertDiv.addClass('hidden');
+                    _drag.$insertDiv.addClass('hidden');
                 }
-            } else if (this._drag.$lastRow) {
-                this._drag.$lastRow.removeClass('hover');
-                this._drag.$insertDiv.addClass('hidden');
-                delete this._drag.$lastRow;
+            } else if (_drag.$lastRow) {
+                _drag.$lastRow.removeClass('hover');
+                _drag.$insertDiv.addClass('hidden');
+                delete _drag.$lastRow;
             }
         },
         _dragDrop: function(evt, mousePos) {
             var i, row, dest,
                 rows = this.options.grid.options.rows,
-                rowIndex = getRowIndex(mousePos, this._drag.targets, this._drag.$visibleRows),
+                _drag = this._drag,
+                rowIndex = getRowIndex(mousePos, _drag.targets, _drag.$visibleRows, _drag.scrollTop),
                 where = whereInRow(rowIndex % 1),
-                $row = this._drag.$visibleRows.eq(parseInt(rowIndex, 10));
+                $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
             this.off('dragend');
             for (i = rows.length-1; i >= 0; i--) {
                 if (rows[i].node === $row[0]) {
@@ -83,8 +85,8 @@ define([
             }
             if (row) {
                 dest = row.options.node.index();
-                if (!inside(mousePos, this._drag.targets) ||
-                    inside(mousePos, this._drag.nonTargets)) {
+                if (!inside(mousePos, _drag.targets, _drag.scrollTop) ||
+                    inside(mousePos, _drag.nonTargets, _drag.scrollTop)) {
                     return;
                 }
                 if (this.options.node.par === row.options.node.par &&
@@ -136,14 +138,13 @@ define([
             _super('_dragStart').call(self, evt);
             self._drag.nonTargets = {
                 top: position.top,
-                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight(),
-                scrollTop: $(document).scrollTop()
+                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight()
             };
             self._drag.targets = {
                 top: firstChildPos.top,
-                bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
-                scrollTop: self._drag.nonTargets.scrollTop
+                bottom: lastRowPos.top + _.last(rows).$node.innerHeight()
             };
+            self._drag.scrollTop = $(document).scrollTop();
             self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
             $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
                 self._dragCheckTargets(evt);
