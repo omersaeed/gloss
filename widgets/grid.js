@@ -252,6 +252,11 @@ define([
                 this._setModels();
                 return;
             }
+            if (updated.height) {
+                this.$node
+                    .addClass('fixed-height')
+                    .outerHeight(this.options.height);
+            }
         }
     });
 });

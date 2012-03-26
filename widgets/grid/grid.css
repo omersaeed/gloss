@@ -90,3 +90,6 @@ body.dragging-element .grid table.grid tbody tr td {
 .grid.standard table.grid thead tr th.first {
   border-left: none;
 }
+.fixed-height.grid {
+  overflow: auto;
+}
