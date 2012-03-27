@@ -6,6 +6,13 @@ define([
     'link!vendor/gloss/widgets/draggable/draggable.css'
 ], function($, _, Class, Widget) {
     var defaultTimeout = $.browser.msie && +$.browser.version[0] < 9? 100 : 50;
+
+    // the scroll manager is a way for separate components to all keep track of
+    // the scrolling, position, and dimensions of the dragged object and its
+    // container w/o all of the different components indivitually making DOM
+    // calls.  this way many calculations can happen in any given mousemove
+    // event w/o suffering the performance hit of repeated DOM API calls and
+    // possibly reflows
     var ScrollManager = Class.extend({
         defaults: {
             wait: 500,
@@ -28,9 +35,6 @@ define([
             this.containerHeight = this.$container.innerHeight();
             this.contentHeight = this.$content.outerHeight();
             this._disabled = this.contentHeight <= this.containerHeight;
-            // if (this._disabled) {
-            //     return;
-            // }
             if ((this._containerIsWindow = $container[0] === window)) {
                 this.containerPosition = {top: 0, left: 0};
             } else {
