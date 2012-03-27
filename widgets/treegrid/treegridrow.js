@@ -10,7 +10,7 @@ define([
         defaults: {
             node: null, // required
             expandText: '&#x25bc;',
-            collapseText: '&#x25b6;',
+            collapseText: '&#x25ba;',
             childText: '&#9679;', // black circle
             indentText: '&nbsp;&nbsp;&nbsp;&nbsp;'
         },
