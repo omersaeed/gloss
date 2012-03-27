@@ -401,7 +401,7 @@ require([
                     callback: 'startDrag'
                 }
             ],
-            draggable: {autoBind: false}
+            draggable: {autoBind: false, autoScroll: true}
         },
         onDragStart: function() {
         },
@@ -428,15 +428,15 @@ require([
         }
     });
 
-    asyncTest('drag to node', function() {
-        var tree = this.tree, treegrid = this.treegrid;
-        // treegrid.appendTo($('body'));
-        treegrid.appendTo($('#qunit-fixture'));
+    // asyncTest('drag to node', function() {
+    //     var tree = this.tree, treegrid = this.treegrid;
+    //     // treegrid.appendTo($('body'));
+    //     treegrid.appendTo($('#qunit-fixture'));
 
-        treegrid.load().done(function() {
-            start();
-        });
-    });
+    //     treegrid.load().done(function() {
+    //         start();
+    //     });
+    // });
 
     var grabButton = function(row) {
         return row.$node.find('button.grab');
@@ -505,10 +505,10 @@ require([
         row.$node.trigger($.Event('mouseup', whereOnRow(row, where)));
     };
 
-    asyncTest('test drag to node', function() {
+    asyncTest('drag to node', function() {
         var tree = this.tree, treegrid = this.treegrid;
-        // treegrid.appendTo($('body'));
-        treegrid.appendTo($('#qunit-fixture'));
+        treegrid.appendTo($('body'));
+        // treegrid.appendTo($('#qunit-fixture'));
 
         treegrid.load().done(function() {
             var gamma, gammaNode, epsilon, epsilonNode,
@@ -669,7 +669,7 @@ require([
                     callback: 'onClickRow'
                 }
             ],
-            draggable: {autoBind: false}
+            draggable: {autoBind: false, autoScroll: true}
         },
         edit: function() {
             var self = this;
@@ -717,10 +717,10 @@ require([
 
     asyncTest('all the marbles', function() {
         var tree = this.tree, treegrid = this.treegrid;
-        treegrid.appendTo($('body'));
-        // treegrid.appendTo($('#qunit-fixture'));
+        // treegrid.appendTo($('body'));
+        treegrid.appendTo($('#qunit-fixture'));
 
-        window.treegrid = treegrid;
+        // window.treegrid = treegrid;
         treegrid.load().done(function() {
             console.log('done loading');
             start();
