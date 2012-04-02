@@ -22,6 +22,7 @@
 }
 .grid table.grid thead tr th span.help {
   margin-left: 5px;
+  font-size: 14px;
 }
 .grid table.grid thead tr th .resize-handle {
   width: 5px;
