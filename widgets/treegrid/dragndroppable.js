@@ -5,9 +5,15 @@ define([
     'vendor/gloss/widgets/draggable',
     'vendor/gloss/widgets/draggablerow'
 ], function($, _, Class, Draggable, DraggableRow) {
-    var _super = function(name) {
-        return DraggableRow[name] || Draggable[name];
-    };
+    var $doc = $(document),
+
+        // we only want to check the drop target every few times the mousemove
+        // event fires, so THROTTLE determines that frequency
+        THROTTLE = 1,
+
+        _super = function(name) {
+            return DraggableRow[name] || Draggable[name];
+        };
 
     var Dimensions = Class.extend({
         init: function(options) {
@@ -52,10 +58,15 @@ define([
 
     return $.extend({}, DraggableRow, {
         _dragCheckTargets: function(evt) {
-            var rowIndex, where, $row, _drag = this._drag;
-            var insideTargets = _drag.targets.inside(evt);
-            var insideNonTargets = _drag.nonTargets.inside(evt);
-            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
+            var rowIndex, where, $row, insideTargets, insideNonTargets,
+               _drag = this._drag;
+            if (! _drag.targets || ! (_drag.dndThrottleIndex++) % THROTTLE) {
+                return;
+            }
+            _drag.dndThrottleIndex = 0;
+            insideTargets = _drag.targets.inside(evt);
+            insideNonTargets = _drag.nonTargets.inside(evt);
+            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.scroll.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
             if (insideTargets && ! insideNonTargets) {
                 rowIndex = _drag.targets.getRowIndex(evt);
                 where = whereInRow(rowIndex % 1);
@@ -86,19 +97,26 @@ define([
             }
         },
         _dragDrop: function(evt, mousePos) {
-            var i, row, dest,
-                rows = this.options.grid.options.rows,
-                _drag = this._drag,
-                rowIndex = _drag.targets.getRowIndex(mousePos),
-                where = whereInRow(rowIndex % 1),
-                $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
+            var _drag = this._drag, i, row, dest, rows, rowIndex, where, $row;
+
             this.off('dragend');
+
+            rows = this.options.grid.options.rows;
+            if (! _drag.targets) {
+                return;
+            }
+
+            rowIndex = _drag.targets.getRowIndex(mousePos);
+            where = whereInRow(rowIndex % 1);
+            $row = _drag.$visibleRows.eq(parseInt(rowIndex, 10));
+
             for (i = rows.length-1; i >= 0; i--) {
                 if (rows[i].node === $row[0]) {
                     row = rows[i];
                     break;
                 }
             }
+
             if (row) {
                 dest = row.options.node.index();
                 if (!_drag.targets.inside(mousePos) ||
@@ -138,46 +156,77 @@ define([
                 });
             }
             _super('_dragOnMouseUp').call(this, evt);
-            $(document).off('mousemove.drag-treegrid');
+            $doc.off('mousemove.drag-treegrid');
             this.off('dragend');
         },
         _dragStart: function(evt) {
-            var self = this, $children = $(null),
-                children = self._childRows() || [],
-                position = self.$node.position(),
-                width = self.$node.innerWidth(),
-                rows = self.options.grid.options.rows,
-                firstChildPos = rows[0].$node.position(),
-                lastRowPos = _.last(rows).$node.position(),
-                lastChildPos = (_.last(children) || self).$node.position();
+            var self = this, $children , lastChildPos, _drag, children,
+                position, width, rows, firstChildPos, lastRowPos, lastChild;
             self.options.grid.unhighlight();
-            _super('_dragStart').call(self, evt);
-            self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
-            self._drag.nonTargets = Dimensions({
+
+            window.__ts1 = new Date();
+            _super('_dragStart').call(this, evt);
+
+            // do this in a setTimeout since it's not immediately necessary and
+            // contains several DOM API calls
+            setTimeout(function() {
+                _drag = self._drag;
+                if (! _drag) {
+                    return;
+                }
+                $children = $(null);
+                children = (_drag.children = self._childRows() || []);
+                position = _drag.pos;
+                width = self.$node.innerWidth();
+                rows = (_drag.rows = self.options.grid.options.rows);
+                firstChildPos = (_drag.firstChildPos = rows[0].$node.position());
+                lastRowPos = (_drag.lastRowPos = _.last(rows).$node.position());
+
+                if ((lastChild = _.last(children))) {
+                    lastChildPos = _drag.lastChildPos = lastChild.$node.position();
+                } else {
+                    lastChildPos = _drag.lastChildPos = _drag.pos;
+                }
+
+                self._drag.$visibleRows = self.options.grid.$tbody.find('tr:visible');
+                $doc.on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
+                    self._dragCheckTargets(evt);
+                });
+                _.each(children, function(child) {
+                    $children = $children.add(child.$node.clone(false, false));
+                });
+                self._drag.$el.find('tbody').append($children);
+                self._drag.$insertDiv = $('<div class="insert hidden">')
+                    .width(width)
+                    .css({left: position.left})
+                    .appendTo(self.options.grid.$node);
+                self.on('dragend', function(evt, data) {
+                    self._dragDrop(evt, data);
+                });
+
+                _drag.dndThrottleIndex = 0;
+            }, 50);
+            console.log('dragndroppable._dragStart:',new Date()-window.__ts1);
+        },
+        _dragSetScrollManager: function() {
+            _super('_dragSetScrollManager').apply(this, arguments);
+            var _drag = this._drag, position, $lastChild;
+            if (! _drag) {
+                return;
+            }
+            position = _drag.pos;
+            $lastChild = (_.last(_drag.children) || this).$node;
+            this._drag.nonTargets = Dimensions({
                 top: position.top,
-                bottom: lastChildPos.top + (_.last(children) || self).$node.innerHeight(),
-                scrollManager: self._drag.scroll,
-                $rows: self._drag.$visibleRows
+                bottom: _drag.lastChildPos.top + $lastChild.innerHeight(),
+                scrollManager: this._drag.scroll,
+                $rows: this._drag.$visibleRows
             });
-            self._drag.targets = Dimensions({
-                top: firstChildPos.top,
-                bottom: lastRowPos.top + _.last(rows).$node.innerHeight(),
-                scrollManager: self._drag.scroll,
-                $rows: self._drag.$visibleRows
-            });
-            $(document).on('mousemove.drag-treegrid', '#'+self.options.grid.id+' tr', function(evt) {
-                self._dragCheckTargets(evt);
-            });
-            _.each(children, function(child) {
-                $children = $children.add(child.$node.clone(false, false));
-            });
-            self._drag.$el.find('tbody').append($children);
-            self._drag.$insertDiv = $('<div class="insert hidden">')
-                .width(width)
-                .css({left: position.left})
-                .appendTo(self.options.grid.$node);
-            self.on('dragend', function(evt, data) {
-                self._dragDrop(evt, data);
+            this._drag.targets = Dimensions({
+                top: _drag.firstChildPos.top,
+                bottom: _drag.lastRowPos.top + _.last(_drag.rows).$node.innerHeight(),
+                scrollManager: this._drag.scroll,
+                $rows: this._drag.$visibleRows
             });
         }
     });

@@ -38,7 +38,7 @@
   margin-top: -8px;
 }
 body.dragging-element .grid table.grid thead tr th,
-body.dragging-element .grid table.grid tbody tr td {
+body.dragging-element .grid table.grid thead tr td {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -53,6 +53,10 @@ body.dragging-element .grid table.grid tbody tr td {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+body.dragging-element .grid.standard table.grid tbody tr:hover,
+body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
+  background-color: #ffffff;
 }
 .grid.standard table.grid {
   width: 100%;

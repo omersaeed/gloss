@@ -1,7 +1,8 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     'vendor/gloss/widgets/widget'
-], function($, Widget) {
+], function($, _, Widget) {
     var inArray = $.inArray;
     return Widget.extend({
         managedStates: ['active', 'disabled', 'focused', 'hover', 'readonly'],
@@ -14,7 +15,9 @@ define([
                 hovering: false,
                 readonly: false
             };
-            this.on('blur focus mouseenter mouseleave mousedown', this._onStateEvent);
+            if (_.difference(this.managedStates, ['disabled']).length) {
+                this.on('blur focus mouseenter mouseleave mousedown', this._onStateEvent);
+            }
         },
         getState: function(state) {
             var currentState;

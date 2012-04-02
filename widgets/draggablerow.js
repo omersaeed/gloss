@@ -9,7 +9,6 @@ define([
                 prototype.defaults.draggable.clone = true;
             }
         },
-        // _draggableCloneEl: function() {
         _dragCloneEl: function() {
             var $tbody = $(null),
                 $origTable = this.$node.closest('table'),

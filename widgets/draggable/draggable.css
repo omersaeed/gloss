@@ -1,3 +1,8 @@
 .dragging {
   position: absolute !important;
 }
+.global.drag-element {
+  background-color: #ffffff;
+  border: 1px solid #60676d;
+  padding: 8px;
+}

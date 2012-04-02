@@ -493,16 +493,33 @@ require([
         });
     };
     var startDrag = window.startDrag = function(row) {
-        var newPos, pos = grabButtonCenter(row);
+        var newPos, pos = grabButtonCenter(row), dfd = $.Deferred();
         grabButton(row).trigger($.Event('mousedown', pos));
         newPos = plus(pos, {clientX: 1, clientY: 1});
         row.$node.trigger($.Event('mousemove', newPos));
+        setTimeout(function() { dfd.resolve(); }, 100);
+        return dfd;
     };
+
+    // becuase the code may be throttling (only handling 1 out of say 3
+    // events), we need to trigger several mousemove events to make sure the
+    // code has registered what's happening
     var dragTo = window.dragTo = function(row, where) {
-        row.$node.trigger($.Event('mousemove', whereOnRow(row, where)));
+        var dfd = $.Deferred(), at = whereOnRow(row, where);
+        row.$node.trigger($.Event('mousemove', at));
+        row.$node.trigger($.Event('mousemove', at));
+        setTimeout(function() {
+            row.$node.trigger($.Event('mousemove', at));
+            row.$node.trigger($.Event('mousemove', at));
+            dfd.resolve();
+        }, 100);
+        return dfd;
     };
     var drop = window.drop = function(row, where) {
+        var dfd = $.Deferred();
         row.$node.trigger($.Event('mouseup', whereOnRow(row, where)));
+        setTimeout(function() { dfd.resolve(); }, 100);
+        return dfd;
     };
 
     asyncTest('drag to node', function() {
@@ -517,94 +534,106 @@ require([
                 beta = find(treegrid, 'beta fooasdfasdf'),
                 betaNode = beta.options.node,
                 alphaSomethingCount = 0;
-            startDrag(alpha);
-            dragTo(beta);
-            drop(beta);
+            startDrag(alpha).done(function() {
+                dragTo(beta).done(function() {
+                    drop(beta).done(function() {
+                        ok(_.last(betaNode.children) === alphaNode,
+                            'alpha is now a child of beta');
+                        t.dfs(tree.root.children, function() {
+                            if (this.model.name === 'alpha something') {
+                                alphaSomethingCount++;
+                            }
+                        });
+                        equal(alphaSomethingCount, 1);
+                        treeGridMatchesData(treegrid, tree);
 
-            ok(_.last(betaNode.children) === alphaNode,
-                'alpha is now a child of beta');
-            t.dfs(tree.root.children, function() {
-                if (this.model.name === 'alpha something') {
-                    alphaSomethingCount++;
-                }
-            });
-            equal(alphaSomethingCount, 1);
-            treeGridMatchesData(treegrid, tree);
+                        alpha = find(treegrid, 'alpha something');
+                        alphaNode = alpha.options.node;
+                        gamma = find(treegrid, 'gamma');
+                        gammaNode = gamma.options.node;
+                        alphaSomethingCount = 0;
 
-            alpha = find(treegrid, 'alpha something');
-            alphaNode = alpha.options.node;
-            gamma = find(treegrid, 'gamma');
-            gammaNode = gamma.options.node;
-            alphaSomethingCount = 0;
+                        startDrag(alpha).done(function() {
+                                dragTo(gamma, 'after').done(function() {
+                                    drop(gamma, 'after').done(function() {
 
-            startDrag(alpha);
-            dragTo(gamma, 'after');
-            drop(gamma, 'after');
+                                    ok(_.last(betaNode.children) !== alphaNode,
+                                        'alpha is no longer a child of beta');
+                                    ok(_.last(gammaNode.children || []) !== alphaNode,
+                                        'alpha is not a child of gamma');
+                                    ok(tree.root.children[1] === gammaNode);
+                                    ok(tree.root.children[2] === alphaNode);
+                                    t.dfs(tree.root.children, function() {
+                                        if (this.model.name === 'alpha something') {
+                                            alphaSomethingCount++;
+                                        }
+                                    });
+                                    equal(alphaSomethingCount, 1);
+                                    treeGridMatchesData(treegrid, tree);
 
-            ok(_.last(betaNode.children) !== alphaNode,
-                'alpha is no longer a child of beta');
-            ok(_.last(gammaNode.children || []) !== alphaNode,
-                'alpha is not a child of gamma');
-            ok(tree.root.children[1] === gammaNode);
-            ok(tree.root.children[2] === alphaNode);
-            t.dfs(tree.root.children, function() {
-                if (this.model.name === 'alpha something') {
-                    alphaSomethingCount++;
-                }
-            });
-            equal(alphaSomethingCount, 1);
-            treeGridMatchesData(treegrid, tree);
+                                    epsilon = find(treegrid, 'epsilon');
+                                    epsilon.toggle().done(function() {
+                                        epsilon.toggle().done(function() {
+                                            alpha = find(treegrid, 'alpha something');
+                                            alphaNode = alpha.options.node;
+                                            epsilon = find(treegrid, 'epsilon');
+                                            epsilonNode = epsilon.options.node;
+                                            alphaSomethingCount = 0;
 
-            epsilon = find(treegrid, 'epsilon');
-            epsilon.toggle().done(function() {
-                epsilon.toggle().done(function() {
-                    alpha = find(treegrid, 'alpha something');
-                    alphaNode = alpha.options.node;
-                    epsilon = find(treegrid, 'epsilon');
-                    epsilonNode = epsilon.options.node;
-                    alphaSomethingCount = 0;
+                                            startDrag(alpha).done(function() {
+                                                dragTo(epsilon, 'after').done(function() {
+                                                    drop(epsilon, 'after').done(function() {
 
-                    startDrag(alpha);
-                    dragTo(epsilon, 'after');
-                    drop(epsilon, 'after');
+                                                        ok(_.last(epsilonNode.children) !== alphaNode,
+                                                            'alpha is not a child of epsilon');
+                                                        ok(tree.root.children[3] === epsilonNode);
+                                                        ok(tree.root.children[4] === alphaNode);
+                                                        t.dfs(tree.root.children, function() {
+                                                            if (this.model.name === 'alpha something') {
+                                                                alphaSomethingCount++;
+                                                            }
+                                                        });
+                                                        equal(alphaSomethingCount, 1);
+                                                        treeGridMatchesData(treegrid, tree);
 
-                    ok(_.last(epsilonNode.children) !== alphaNode,
-                        'alpha is not a child of epsilon');
-                    ok(tree.root.children[3] === epsilonNode);
-                    ok(tree.root.children[4] === alphaNode);
-                    t.dfs(tree.root.children, function() {
-                        if (this.model.name === 'alpha something') {
-                            alphaSomethingCount++;
-                        }
+                                                        alpha = find(treegrid, 'alpha something');
+                                                        alphaNode = alpha.options.node;
+                                                        epsilon = find(treegrid, 'epsilon');
+                                                        epsilonNode = epsilon.options.node;
+                                                        alphaSomethingCount = 0;
+
+                                                        startDrag(alpha).done(function() {
+                                                            dragTo(epsilon, 'in').done(function() {
+                                                                drop(epsilon, 'in').done(function() {
+
+                                                                    ok(_.last(epsilonNode.children) === alphaNode,
+                                                                        'alpha is now a child of epsilon');
+                                                                    ok(tree.root.children[3] === epsilonNode);
+                                                                    equal(_.indexOf(tree.root.children, alphaNode), -1);
+                                                                    ok(alphaNode.par, epsilonNode);
+                                                                    t.dfs(tree.root.children, function() {
+                                                                        if (this.model.name === 'alpha something') {
+                                                                            alphaSomethingCount++;
+                                                                        }
+                                                                    });
+                                                                    equal(alphaSomethingCount, 1);
+                                                                    dndArtifactsHaveBeenCleanedUp(treegrid);
+                                                                    treeGridMatchesData(treegrid, tree);
+
+                                                                    start();
+
+                                                                });
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        });
+                                    });
+                                });
+                            });
+                        });
                     });
-                    equal(alphaSomethingCount, 1);
-                    treeGridMatchesData(treegrid, tree);
-
-                    alpha = find(treegrid, 'alpha something');
-                    alphaNode = alpha.options.node;
-                    epsilon = find(treegrid, 'epsilon');
-                    epsilonNode = epsilon.options.node;
-                    alphaSomethingCount = 0;
-
-                    startDrag(alpha);
-                    dragTo(epsilon, 'in');
-                    drop(epsilon, 'in');
-
-                    ok(_.last(epsilonNode.children) === alphaNode,
-                        'alpha is now a child of epsilon');
-                    ok(tree.root.children[3] === epsilonNode);
-                    equal(_.indexOf(tree.root.children, alphaNode), -1);
-                    ok(alphaNode.par, epsilonNode);
-                    t.dfs(tree.root.children, function() {
-                        if (this.model.name === 'alpha something') {
-                            alphaSomethingCount++;
-                        }
-                    });
-                    equal(alphaSomethingCount, 1);
-                    dndArtifactsHaveBeenCleanedUp(treegrid);
-                    treeGridMatchesData(treegrid, tree);
-
-                    start();
                 });
             });
         });
@@ -622,23 +651,28 @@ require([
                 beta = find(treegrid, 'beta fooasdfasdf'),
                 betaNode = beta.options.node,
                 alphaSomethingCount = 0;
-            startDrag(alpha);
-            dragTo(alpha);
-            drop(alpha);
+            startDrag(alpha).done(function() {
+                dragTo(alpha).done(function() {
+                    drop(alpha).done(function() {
 
-            dndArtifactsHaveBeenCleanedUp(treegrid);
+                        dndArtifactsHaveBeenCleanedUp(treegrid);
 
-            alpha = find(treegrid, 'alpha something');
-            alphaNode = alpha.options.node;
-            beta = find(treegrid, 'beta fooasdfasdf');
-            betaNode = beta.options.node;
-            alphaSomethingCount = 0;
+                        alpha = find(treegrid, 'alpha something');
+                        alphaNode = alpha.options.node;
+                        beta = find(treegrid, 'beta fooasdfasdf');
+                        betaNode = beta.options.node;
+                        alphaSomethingCount = 0;
 
-            startDrag(alpha);
-            dragTo(beta);
-            drop(beta);
-
-            start();
+                        startDrag(alpha).done(function() {
+                            dragTo(beta).done(function() {
+                                drop(beta).done(function() {
+                                    start();
+                                });
+                            });
+                        });
+                    });
+                });
+            });
         });
     });
 

@@ -5,7 +5,13 @@ define([
     'vendor/gloss/widgets/widget',
     'link!vendor/gloss/widgets/draggable/draggable.css'
 ], function($, _, Class, Widget) {
-    var defaultTimeout = $.browser.msie && +$.browser.version[0] < 9? 100 : 50;
+    var defaultTimeout = $.browser.msie && +$.browser.version[0] < 9? 100 : 50,
+        whichDrag = 1,
+        THROTTLE = 1,
+        DEGRADED_THROTTLE = 1, // this doesn't seem to help user experience...
+        $doc = $(document),
+        $dragEl = $('<div class="global drag-element hidden"></div>')
+                .appendTo('body');
 
     // the scroll manager is a way for separate components to all keep track of
     // the scrolling, position, and dimensions of the dragged object and its
@@ -35,6 +41,7 @@ define([
             this.containerHeight = this.$container.innerHeight();
             this.contentHeight = this.$content.outerHeight();
             this._disabled = this.contentHeight <= this.containerHeight;
+            // console.log('scrolling not disabled:',this.$content,this.contentHeight, this.containerHeight);
             if ((this._containerIsWindow = $container[0] === window)) {
                 this.containerPosition = {top: 0, left: 0};
             } else {
@@ -84,8 +91,9 @@ define([
                 obj = key;
             }
             if (obj.hasOwnProperty('$container')) {
-                // assume that if they're setting $container, they're setting
-                // $content
+                if (!obj.hasOwnProperty('$content')) {
+                    throw Error('$content must be set with $container');
+                }
                 this._setContainerAndContent(obj.$container, obj.$content);
             }
         },
@@ -171,63 +179,104 @@ define([
             }
         },
         startDrag: function(evt) {
-            var self = this;
+            window.sd = new Date();
+            var self = this, draggable = self.options.draggable, timestamp;
             self._dragOnMouseUp();
             window._dragWidget = self;
+            timestamp = new Date();
             self._drag = {
-                pos: self.$node.position(),
+                // the '.position()' call takes ~275 ms on IE8 w/ 300 visible
+                // rows, this is a big performance hit, and it's where this
+                // function spends all of its time
+                pos: draggable.degraded? {left: 0, top: 0} : self.$node.position(),
                 offset: { }
             };
+            if (new Date() - timestamp > 50) {
+                draggable.degraded = true;
+                THROTTLE = DEGRADED_THROTTLE;
+                self._drag.pos = {left: 0, top: 0};
+            }
+            window.sd1 = new Date();
             self._drag.offset.left = evt.clientX - self._drag.pos.left;
             self._drag.offset.top = evt.clientY - self._drag.pos.top;
-            self.on('mousemove.drag-start', function(evt) {
+            $doc.on('mousemove.drag-start', function(evt) {
+                console.log('intermediate mousemove',new Date()-window.sd);
                 self._dragStart(evt);
-            }).on('mouseup.drag-start', function() {
-                self.off('mouseup.drag-start mousemove.drag-start');
+            });
+            window.sd2 = new Date();
+            $doc.on('mouseup.drag-start', function() {
+                $doc.off('mousemove.drag-start mouseup.drag-start');
                 delete self._drag;
             });
+            window.sd3 = new Date();
+            console.log('startDrag ',window.sd,' (',window.sd3-window.sd,': [',window.sd1-window.sd,',',window.sd2-window.sd1,',',window.sd3-window.sd2,'])');
         },
         _dragStart: function(evt) {
+            window._sd = new Date();
             var self = this, draggable = self.options.draggable;
-            self.off('mouseup.drag-start mousemove.drag-start');
-            $(document).on('mousemove.drag', function(evt) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                self._dragOnMouseMove(evt);
-                return false;
-            }).on('mouseup.drag', function(evt) {
-                self._dragOnMouseUp(evt);
-            }).on('keyup.drag', function(evt) {
-                if (Widget.identifyKeyEvent(evt) === 'escape') {
-                    self._dragOnMouseUp();
-                }
-            });
+            $doc.off('mousemove.drag-start mouseup.drag-start')
+                .on('mousemove.drag', function(evt) {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    self._dragOnMouseMove(evt);
+                    return false;
+                }).on('mouseup.drag', function(evt) {
+                    self._dragOnMouseUp(evt);
+                }).on('keyup.drag', function(evt) {
+                    if (Widget.identifyKeyEvent(evt) === 'escape') {
+                        self._dragOnMouseUp();
+                    }
+                });
+            window._sd1 = new Date();
             $('body').addClass('dragging-element');
+            window._sd15 = new Date();
             if (draggable.clone) {
-                self._drag.$el = self._dragCloneEl();
+                if (! draggable.degraded) {
+                    // this takes ~ 275 ms on IE8 w/ 300 visible rows, which is
+                    // another big performance hit along w/ the .position()
+                    // call in startDrag()
+                    self._drag.$el = self._dragCloneEl();
+                } else {
+                    self._drag.$el = $dragEl.removeClass('hidden');
+                }
             } else {
                 self._drag.$el = self.$node;
             }
+            window._sd2 = new Date();
             self._drag.$el.addClass('dragging');
-            self._dragSetPos(evt, self._drag.offset);
+            window._sd25 = new Date();
+            self._dragSetPos(evt, draggable.degraded? null : self._drag.offset);
+            window._sd26 = new Date();
             if (draggable.autoScroll) {
-                self._drag.scroll = ScrollManager({
-                    $container: draggable.scroll.$container,
-                    $content: draggable.scroll.$content
-                });
+                setTimeout(function() {
+                    self._dragSetScrollManager();
+                    // self._drag.scroll = ScrollManager({
+                    //     $container: draggable.scroll.$container,
+                    //     $content: draggable.scroll.$content
+                    // });
+                }, 100);
             }
+            window._sd3 = new Date();
+            self._drag.throttleIndex = 0;
             self.trigger('dragstart');
+            window._sd4 = new Date();
+            console.log('_dragStart',window._sd4-window.sd,' (',window._sd1-window._sd,': [',window._sd1-window._sd,',',window._sd15-window._sd1,',',window._sd2-window._sd15,',',window._sd25-window._sd2,',',window._sd26-window._sd25,',',window._sd3-window._sd25,',',window._sd4-window._sd3,'])');
         },
         _dragOnMouseMove: function(evt) {
             var _drag = this._drag, scrollTop, diff, scroll = _drag.scroll;
+            if (! (_drag.throttleIndex++) % THROTTLE) {
+                return;
+            }
+            _drag.throttleIndex = 0;
+            // console.log('mousemove:',evt.clientX,',',evt.clientY);
             if (scroll) {
                 scroll.onMouseMove(evt);
-                // _drag.scrollTop = scroll.scrollTop;
-                // _drag.scrollTop = 0;
             }
-            this._dragSetPos(evt, _drag.offset);
+            this._dragSetPos(evt, this.options.draggable.degraded? null : _drag.offset);
         },
         _dragOnMouseUp: function(evt) {
+            if (evt) {console.log('_dragOnMouseUp',new Date()-window.sd);}
+            var draggable = this.options.draggable;
             if (typeof this._drag !== 'undefined') {
                 if (evt) {
                     this.trigger('dragend', {
@@ -236,8 +285,12 @@ define([
                     });
                 }
                 if (this._drag.$el) {
-                    if (this.options.draggable.clone) {
-                        this._drag.$el.remove();
+                    if (draggable.clone) {
+                        if (draggable.degraded) {
+                            this._drag.$el.addClass('hidden');
+                        } else {
+                            this._drag.$el.remove();
+                        }
                     } else {
                         this._drag.$el.addClass('dragged');
                     }
@@ -249,9 +302,7 @@ define([
                 }
             }
 
-            $(document).off('mouseup.drag mousemove.drag keyup.drag');
-            // b/c of an IE8 quirk, these may have been set and never unset
-            this.off('mouseup.drag-start mousemove.drag-start');
+            $doc.off('mouseup.drag mousemove.drag keyup.drag mousemove.drag-start mouseup.drag-start');
             $('body').removeClass('dragging-element');
 
             delete this._drag;
@@ -272,6 +323,15 @@ define([
                 val.top = evt.clientY - (offset? offset.top : 0);
             }
             this._drag.$el.css(val);
+        },
+        _dragSetScrollManager: function() {
+            var draggable = this.options.draggable;
+            if (this._drag) {
+                this._drag.scroll = ScrollManager({
+                    $container: draggable.scroll.$container,
+                    $content: draggable.scroll.$content
+                });
+            }
         }
     };
 });

@@ -36,6 +36,8 @@ define([
 
         nodeTemplate: '<div><table class=grid><thead><tr></tr></thead><tbody></tbody></table></div>',
 
+        managedStates: ['disabled'],
+
         create: function() {
             var self = this, $tr;
             self._super();

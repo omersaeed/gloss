@@ -45,9 +45,18 @@
   margin-top: -8px;
 }
 
-body.dragging-element .grid table.grid thead tr th,
-body.dragging-element .grid table.grid tbody tr td {
-  .user-select(none);
+body.dragging-element {
+  .grid table.grid thead tr {
+    th, td {
+      .user-select(none);
+    }
+  }
+
+  .grid.standard table.grid tbody {
+    tr:hover, tr:hover:nth-child(odd) {
+      background-color: @row-background-color;
+    }
+  }
 }
 
 .grid.standard table.grid {
