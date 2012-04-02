@@ -66,7 +66,6 @@ define([
             _drag.dndThrottleIndex = 0;
             insideTargets = _drag.targets.inside(evt);
             insideNonTargets = _drag.nonTargets.inside(evt);
-            // console.log('x:',evt.clientX,'; y:',evt.clientY,'; top:',_drag.targets.top,'; bot:',_drag.targets.bottom,'; scroll:',_drag.scroll.scrollTop,'; inside:',insideTargets,'; insideNon:',insideNonTargets);
             if (insideTargets && ! insideNonTargets) {
                 rowIndex = _drag.targets.getRowIndex(evt);
                 where = whereInRow(rowIndex % 1);
@@ -164,7 +163,6 @@ define([
                 position, width, rows, firstChildPos, lastRowPos, lastChild;
             self.options.grid.unhighlight();
 
-            window.__ts1 = new Date();
             _super('_dragStart').call(this, evt);
 
             // do this in a setTimeout since it's not immediately necessary and
@@ -206,7 +204,6 @@ define([
 
                 _drag.dndThrottleIndex = 0;
             }, 50);
-            console.log('dragndroppable._dragStart:',new Date()-window.__ts1);
         },
         _dragSetScrollManager: function() {
             _super('_dragSetScrollManager').apply(this, arguments);

@@ -41,7 +41,6 @@ define([
             this.containerHeight = this.$container.innerHeight();
             this.contentHeight = this.$content.outerHeight();
             this._disabled = this.contentHeight <= this.containerHeight;
-            // console.log('scrolling not disabled:',this.$content,this.contentHeight, this.containerHeight);
             if ((this._containerIsWindow = $container[0] === window)) {
                 this.containerPosition = {top: 0, left: 0};
             } else {
@@ -182,7 +181,6 @@ define([
             window.sd = new Date();
             var self = this, draggable = self.options.draggable, timestamp;
             self._dragOnMouseUp();
-            window._dragWidget = self;
             timestamp = new Date();
             self._drag = {
                 // the '.position()' call takes ~275 ms on IE8 w/ 300 visible
@@ -196,23 +194,17 @@ define([
                 THROTTLE = DEGRADED_THROTTLE;
                 self._drag.pos = {left: 0, top: 0};
             }
-            window.sd1 = new Date();
             self._drag.offset.left = evt.clientX - self._drag.pos.left;
             self._drag.offset.top = evt.clientY - self._drag.pos.top;
             $doc.on('mousemove.drag-start', function(evt) {
-                console.log('intermediate mousemove',new Date()-window.sd);
                 self._dragStart(evt);
             });
-            window.sd2 = new Date();
             $doc.on('mouseup.drag-start', function() {
                 $doc.off('mousemove.drag-start mouseup.drag-start');
                 delete self._drag;
             });
-            window.sd3 = new Date();
-            console.log('startDrag ',window.sd,' (',window.sd3-window.sd,': [',window.sd1-window.sd,',',window.sd2-window.sd1,',',window.sd3-window.sd2,'])');
         },
         _dragStart: function(evt) {
-            window._sd = new Date();
             var self = this, draggable = self.options.draggable;
             $doc.off('mousemove.drag-start mouseup.drag-start')
                 .on('mousemove.drag', function(evt) {
@@ -227,9 +219,7 @@ define([
                         self._dragOnMouseUp();
                     }
                 });
-            window._sd1 = new Date();
             $('body').addClass('dragging-element');
-            window._sd15 = new Date();
             if (draggable.clone) {
                 if (! draggable.degraded) {
                     // this takes ~ 275 ms on IE8 w/ 300 visible rows, which is
@@ -242,25 +232,15 @@ define([
             } else {
                 self._drag.$el = self.$node;
             }
-            window._sd2 = new Date();
             self._drag.$el.addClass('dragging');
-            window._sd25 = new Date();
             self._dragSetPos(evt, draggable.degraded? null : self._drag.offset);
-            window._sd26 = new Date();
             if (draggable.autoScroll) {
                 setTimeout(function() {
                     self._dragSetScrollManager();
-                    // self._drag.scroll = ScrollManager({
-                    //     $container: draggable.scroll.$container,
-                    //     $content: draggable.scroll.$content
-                    // });
                 }, 100);
             }
-            window._sd3 = new Date();
             self._drag.throttleIndex = 0;
             self.trigger('dragstart');
-            window._sd4 = new Date();
-            console.log('_dragStart',window._sd4-window.sd,' (',window._sd1-window._sd,': [',window._sd1-window._sd,',',window._sd15-window._sd1,',',window._sd2-window._sd15,',',window._sd25-window._sd2,',',window._sd26-window._sd25,',',window._sd3-window._sd25,',',window._sd4-window._sd3,'])');
         },
         _dragOnMouseMove: function(evt) {
             var _drag = this._drag, scrollTop, diff, scroll = _drag.scroll;
@@ -268,14 +248,12 @@ define([
                 return;
             }
             _drag.throttleIndex = 0;
-            // console.log('mousemove:',evt.clientX,',',evt.clientY);
             if (scroll) {
                 scroll.onMouseMove(evt);
             }
             this._dragSetPos(evt, this.options.draggable.degraded? null : _drag.offset);
         },
         _dragOnMouseUp: function(evt) {
-            if (evt) {console.log('_dragOnMouseUp',new Date()-window.sd);}
             var draggable = this.options.draggable;
             if (typeof this._drag !== 'undefined') {
                 if (evt) {
