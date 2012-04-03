@@ -1,6 +1,6 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/formwidget'
+    'path!jquery',
+    'path!gloss:widgets/formwidget'
 ], function($, FormWidget) {
     return FormWidget.extend({
         defaults: {

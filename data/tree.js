@@ -1,10 +1,10 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'vendor/gloss/core/class',
-    'vendor/gloss/data/model',
-    'vendor/gloss/core/events'
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:core/class',
+    'path!gloss:data/model',
+    'path!gloss:core/events'
 ], function($, _, t, Class, Model, events) {
 
     var Node = Class.extend({

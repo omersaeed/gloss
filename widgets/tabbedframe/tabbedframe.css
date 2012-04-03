@@ -1,0 +1,21 @@
+.tabbedframe .tabs button {
+  background-color: #b4b4b4;
+  border: solid #909090;
+  border-width: 1px 0 1px 1px;
+  color: #60676d;
+  font-size: 113%;
+  font-weight: bold;
+  margin: 0;
+  padding: 4px 20px;
+}
+.tabbedframe .tabs button.first {
+  border-radius: 4px 0 0 4px;
+}
+.tabbedframe .tabs button.last {
+  border-radius: 0 4px 4px 0;
+  border-width: 1px;
+}
+.tabbedframe .tabs button.selected,
+.tabbedframe .tabs button:hover {
+  background-color: #e8e8e8;
+}

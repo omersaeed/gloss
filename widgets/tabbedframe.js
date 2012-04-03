@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/widget',
-    'link!css/widgets/tabbedframe.css'
+    'path!jquery',
+    'path!gloss:widgets/widget',
+    'path!gloss:link!widgets/tabbedframe/tabbedframe.css'
 ], function($, Widget) {
     return Widget.extend({
         defaults: {

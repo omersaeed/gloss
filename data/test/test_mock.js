@@ -1,17 +1,17 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 require([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'api/v1/targetvolume',
-    'api/v1/targetvolumeprofile',
-    'api/v1/fileplan',
-    'api/v1/recordseries',
-    'text!api/v1/test/fixtures/targetvolumeprofile.json',
-    'text!api/v1/test/fixtures/fileplan_tree.json',
-    'text!api/v1/test/fixtures/recordseries_tree.json',
-    'vendor/gloss/data/mock',
-    'vendor/gloss/data/tree'
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:test/api/v1/targetvolume',
+    'path!gloss:test/api/v1/targetvolumeprofile',
+    'path!gloss:test/api/v1/fileplan',
+    'path!gloss:test/api/v1/recordseries',
+    'path!gloss:text!test/api/v1/test/fixtures/targetvolumeprofile.json',
+    'path!gloss:text!test/api/v1/test/fixtures/fileplan_tree.json',
+    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json',
+    'path!gloss:data/mock',
+    'path!gloss:data/tree'
 ], function($, _, t, TargetVolume, TargetVolumeProfile, FilePlan, RecordSeries,
     targetvolumeprofile, fileplan_tree, recordseries_tree, Mock, Tree) {
 

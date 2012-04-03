@@ -1,6 +1,6 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/draggable'
+    'path!jquery',
+    'path!gloss:widgets/draggable'
 ], function($, Draggable) {
     return $.extend({}, Draggable, {
         __mixin__: function(base, prototype, mixin) {

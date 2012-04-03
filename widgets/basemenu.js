@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/widget',
-    'link!vendor/gloss/widgets/basemenu/basemenu.css'
+    'path!jquery',
+    'path!gloss:widgets/widget',
+    'path!gloss:link!widgets/basemenu/basemenu.css'
 ], function($, Widget) {
     return Widget.extend({
         defaults: {

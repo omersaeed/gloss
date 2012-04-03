@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/formwidget'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/formwidget'
 ], function($, _, FormWidget) {
     return FormWidget.extend({
         nodeTemplate: '<input type="text">',

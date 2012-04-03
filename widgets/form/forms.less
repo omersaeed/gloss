@@ -1,0 +1,156 @@
+@import '../theme.less';
+@import '../../vendor/gloss/style/globallib.less';
+
+@enabled-border: 1px solid @border-color;
+@disabled-border: 1px solid @disabled-color;
+@darker-border: 1px solid @border-color - #333;
+@darker-font-color: @font-color - #333;
+@bg-color: @non-content-background-color - #111;
+@hover-bg-color: #c3cdd7;
+@std-border-radius: 4px;
+
+.std-box-shadow {
+  .box-shadow(1px, 1px, 1px, 0, #dadada);
+}
+
+@invalid-border: 1px solid @invalid-color;
+
+button.formwidget {
+  border: 0;
+}
+button.formwidget.button {
+  border: @enabled-border;
+}
+.button {
+  color: @font-color;
+  padding: 4px 10px;
+  text-align: center;
+  border: @enabled-border;
+  font: @font;
+  text-decoration: none;
+  background-color: @bg-color;
+  .linear-gradient(top, @bg-color, 0%, @bg-color - #080808, 50%, @bg-color - #222, 100%);
+  .std-box-shadow;
+  .border-radius(@std-border-radius);
+}
+.button:visited {
+  text-decoration: none;
+  color: @font-color;
+}
+
+.button.hover,
+.button:hover {
+  border: @darker-border;
+  color: @darker-font-color;
+  background-color: @hover-bg-color;
+  .linear-gradient(top, @hover-bg-color, 0%, @hover-bg-color - #080808, 50%, @hover-bg-color - #222, 100%);
+}
+
+.button:active,
+.button.active {
+  .box-shadow(none);
+  .linear-gradient(top, @hover-bg-color - #191919, 0%, @hover-bg-color - #080808, 50%, @hover-bg-color, 100%);
+}
+
+.button.disabled,
+.button.disabled:hover,
+.button.disabled.hover,
+button.button.formwidget.disabled {
+  border: @disabled-border;
+  color: @disabled-color;
+  cursor: default;
+  background-color: @bg-color;
+  .linear-gradient(top, @bg-color, 0%, @bg-color - #080808, 50%, @bg-color - #111, 100%);
+  .box-shadow(none);
+}
+
+
+.radiogroup input[type=radio] {
+  margin-right: 3px;
+  vertical-align: sub;
+}
+select,
+.selectbox {
+  background: #fff url(/static/img/down-arrow-enabled.png) no-repeat right center;
+  border: @enabled-border;
+  cursor: pointer;
+  display: inline-block;
+  min-width: 40px;
+  padding: 4px 24px 4px 10px;
+  .border-radius(@std-border-radius);
+  .std-box-shadow;
+}
+.selectbox.hover, .selectbox:hover, .selectbox.active, .selectbox:active {
+  background: #fff url(/static/img/down-arrow.png) no-repeat right center;
+}
+select.hover, select:hover, select.active, select:active,
+.selectbox.hover, .selectbox:hover, .selectbox.active, .selectbox:active {
+  border: @darker-border;
+  color: @darker-font-color;
+}
+select.disabled, select.disabled.hover, select.disabled:hover,
+select.disabled.active, select.disabled:active,
+.selectbox.disabled, .selectbox.disabled.hover, .selectbox.disabled:hover,
+.selectbox.disabled.active, .selectbox.disabled:active {
+  border: @disabled-border;
+  color: @disabled-color;
+  cursor: default;
+}
+select.invalid,
+.selectbox.invalid {
+  border: @invalid-border !important;
+  color: @invalid-color !important;
+  background-color: @invalid-background-color;
+}
+.selectbox.open {
+  border-bottom: 0;
+  .border-radius(@std-border-radius, @std-border-radius, 0, 0);
+}
+select .menu,
+.selectbox .menu {
+  border-top: 1px solid @font-color + #444;
+  .border-radius(0, 0, @std-border-radius, @std-border-radius);
+}
+select,
+select.selectbox {
+  background: #fff;
+  padding: 3px 5px 3px 0;
+  height: 22px;
+  line-height: 22px;
+}
+select.open,
+select.selectbox.open {
+  border: @enabled-border;
+  .border-radius(@std-border-radius);
+}
+
+.textbox, .textarea {
+  background: #fff;
+  border: 1px solid @border-color;
+  color: @font-color;
+  .border-radius(@std-border-radius);
+  .std-box-shadow;
+}
+.textbox {
+  padding: 4px 6px;
+}
+.textarea {
+  padding: 4px;
+  width: 95%;
+}
+.textbox.active, .textbox.focused, .textbox.hover,
+.textarea.active, .textarea.focused, .textarea.hover {
+  border: @darker-border;
+  color: @font-color;
+}
+.textbox.disabled, .textarea.disabled {
+  border: @disabled-border;
+  color: @disabled-color;
+  .box-shadow(none);
+}
+.textbox.invalid, .textarea.invalid {
+  border: @invalid-border !important;
+  color: @invalid-color !important;
+  background-color: @invalid-background-color;
+}
+

@@ -31,3 +31,71 @@
 .selectionlist .controls button {
   position: relative;
 }
+
+.selectionlist {
+  border: 1px solid #bbb;
+}
+
+.selectionlist .header {
+  background-color: #ddd;
+  border-bottom: 1px solid #bbb;
+  padding: 4px 8px;
+}
+
+.selectionlist .pager li {
+  cursor: pointer;
+  padding: 1px 8px;
+}
+
+.selectionlist .pager .selected,
+.selectionlist .pager .selecting {
+  background-color: #eee;
+}
+
+.selectionlist .pager .disabled {
+  color: #999;
+}
+
+.selectionlist .controls {
+  background-color: #ddd;
+  border-top: 1px solid #bbb;
+  margin: 0;
+  padding: 4px 8px;
+}
+
+.selectionlist .controls li {
+  border-right: 1px solid #bbb;
+  margin-right: 2px;
+  padding-right: 2px;
+}
+.selectionlist .controls li.last {
+  border-right: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.selectionlist .controls button {
+  border: 0 !important;
+  cursor: pointer;
+  height: 16px !important;
+  overflow: visible;
+  vertical-align: middle;
+  width: 16px !important;
+}
+
+.selectionlist .controls .first-page {
+  background: transparent url(/static/img/widgets/first-page.png) no-repeat left;
+}
+.selectionlist .controls .prev-page {
+  background: transparent url(/static/img/widgets/prev-page.png) no-repeat left;
+}
+.selectionlist .controls .next-page {
+  background: transparent url(/static/img/widgets/next-page.png) no-repeat left;
+}
+.selectionlist .controls .last-page {
+  background: transparent url(/static/img/widgets/last-page.png) no-repeat left;
+}
+
+.selectionlist .controls input[type=text] {
+  width: 30px;
+}

@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/core/eventset',
-    'vendor/gloss/widgets/widget',
-    'vendor/gloss/widgets/boundwidgetgroup'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:core/eventset',
+    'path!gloss:widgets/widget',
+    'path!gloss:widgets/boundwidgetgroup'
 ], function($, _, EventSet, Widget, BoundWidgetGroup) {
     var isArray = $.isArray, isPlainObject = $.isPlainObject, isString = _.isString;
     return BoundWidgetGroup.extend({

@@ -1,8 +1,8 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/formwidget',
-    'vendor/gloss/widgets/collectionviewable'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/formwidget',
+    'path!gloss:widgets/collectionviewable'
 ], function($, _, FormWidget, CollectionViewable) {
     return FormWidget.extend({
         defaults: {

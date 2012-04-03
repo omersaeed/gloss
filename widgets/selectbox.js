@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/widget',
-    'vendor/gloss/widgets/formwidget',
-    'vendor/gloss/widgets/menu'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/widget',
+    'path!gloss:widgets/formwidget',
+    'path!gloss:widgets/menu'
 ], function($, _, Widget, FormWidget, Menu) {
     return FormWidget.extend({
         defaults: {

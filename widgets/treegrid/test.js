@@ -1,19 +1,19 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'vendor/gloss/widgets/widget',
-    'vendor/gloss/widgets/button',
-    'vendor/gloss/widgets/grid/editable',
-    'vendor/gloss/widgets/treegrid',
-    'vendor/gloss/widgets/treegrid/treegridrow',
-    'vendor/gloss/widgets/treegrid/dragndroppable',
-    'vendor/gloss/data/model',
-    'vendor/gloss/data/tree',
-    'vendor/gloss/data/mock',
-    'api/v1/recordseries',
-    'text!api/v1/test/fixtures/recordseries_tree.json'
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:widgets/widget',
+    'path!gloss:widgets/button',
+    'path!gloss:widgets/grid/editable',
+    'path!gloss:widgets/treegrid',
+    'path!gloss:widgets/treegrid/treegridrow',
+    'path!gloss:widgets/treegrid/dragndroppable',
+    'path!gloss:data/model',
+    'path!gloss:data/tree',
+    'path!gloss:data/mock',
+    'path!gloss:test/api/v1/recordseries',
+    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json'
 ], function($, _, t, Widget, Button, Editable, TreeGrid, TreeGridRow,
     DragNDroppable, model, Tree, Mock, RecordSeries, recordseries_tree) {
 

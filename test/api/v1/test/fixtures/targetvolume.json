@@ -1,0 +1,56 @@
+[
+    [
+        [], 
+        {
+            "category": "primary", 
+            "id": 1357, 
+            "name": "controller: /mnt/demo-A", 
+            "type": "nfs"
+        }
+    ], 
+    [
+        [], 
+        {
+            "category": "primary", 
+            "id": 2468, 
+            "name": "controller: /mnt/demo-B", 
+            "type": "nfs"
+        }
+    ], 
+    [
+        [], 
+        {
+            "category": "primary", 
+            "id": 4, 
+            "name": "nw65: ASTACY", 
+            "type": "ncpfs"
+        }
+    ], 
+    [
+        [], 
+        {
+            "category": "primary", 
+            "id": 1, 
+            "name": "qa2.qa.local: astacy-A", 
+            "type": "smbfs"
+        }
+    ], 
+    [
+        [], 
+        {
+            "category": "retention", 
+            "id": 3, 
+            "name": "qa2.qa.local: astacy-B", 
+            "type": "smbfs"
+        }
+    ], 
+    [
+        [], 
+        {
+            "category": "primary", 
+            "id": 2, 
+            "name": "repo65: REPO65", 
+            "type": "documentum"
+        }
+    ]
+]

@@ -1,15 +1,11 @@
-define(
-
-[
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/widget',
-    'vendor/gloss/widgets/button',
-    'vendor/gloss/widgets/draggable',
-    'link!css/widgets/modal.css'
-],
-
-function($, _, Widget, Button, Draggable) {
+define([
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/widget',
+    'path!gloss:widgets/button',
+    'path!gloss:widgets/draggable',
+    'path!gloss:link!widgets/modal/modal.css'
+], function($, _, Widget, Button, Draggable) {
 
     return Widget.extend({
         defaults: {

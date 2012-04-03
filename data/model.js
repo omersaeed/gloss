@@ -1,10 +1,10 @@
 define([
-    'vendor/underscore',
-    'vendor/jquery',
-    'vendor/json2',
-    'vendor/gloss/core/class',
-    'vendor/gloss/core/events',
-    'vendor/gloss/data/fields'
+    'path!underscore',
+    'path!jquery',
+    'path!json2',
+    'path!gloss:core/class',
+    'path!gloss:core/events',
+    'path!gloss:data/fields'
 ], function(_, $, json2, Class, events, fields) {
     var isArray = _.isArray, isBoolean = _.isBoolean, isEqual = _.isEqual, isString = _.isString;
 

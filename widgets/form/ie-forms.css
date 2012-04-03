@@ -1,0 +1,21 @@
+
+/*IE specific hacks*/
+
+/*prevent dynamic pseudo-class from changing the DOM at run-time*/
+select.hover,
+select:hover,
+select.active,
+select:active {
+  border: 1px solid #60676d\9;
+  color: #60676d\9;
+}
+
+
+/*the home brew selectbox works in ie but it needs to be consistent with the above styling*/
+.selectbox.hover,
+.selectbox:hover,
+.selectbox.active,
+.selectbox:active {
+  border: 1px solid #60676d\9;
+  color: #60676d\9;
+}

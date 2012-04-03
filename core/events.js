@@ -1,4 +1,4 @@
-define(['vendor/gloss/core/class'], function(Class) {
+define(['path!gloss:core/class'], function(Class) {
     return {
         on: function(name, callback, context) {
             var events = this._eventCallbacks;

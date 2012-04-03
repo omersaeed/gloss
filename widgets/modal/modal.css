@@ -1,0 +1,71 @@
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  border: 1px solid #747E84;
+
+          border-radius: 4px;
+     -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+
+          box-shadow: 3px 3px 5px black;
+     -moz-box-shadow: 3px 3px 5px black;
+  -webkit-box-shadow: 3px 3px 5px black;
+
+  background-color: white;
+}
+
+.modal.without-backdrop {
+          box-shadow: 3px 3px 5px gray;
+     -moz-box-shadow: 3px 3px 5px gray;
+  -webkit-box-shadow: 3px 3px 5px gray;
+}
+
+.modal-backdrop {
+  filter: alpha(opacity=80);
+              opacity: 0.8;
+         -moz-opacity: 0.8;
+      -webkit-opacity: 0.8;
+  background-color: black;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: none;
+}
+
+.modal-backdrop.transparent {
+  background-color: transparent;
+}
+
+.modal > h1 {
+  margin: 0;
+  background-color: #999;
+  color: white;
+  font-size: 18px;
+  padding: 8px 12px;
+}
+
+.modal > h1.drag-handle {
+  cursor: move;
+}
+
+.modal > h1 > button {
+  float: right;
+          box-shadow: 1px 1px 1px 0 #777;
+     -moz-box-shadow: 1px 1px 1px 0 #777;
+  -webkit-box-shadow: 1px 1px 1px 0 #777;
+  font-weight: bold;
+}
+
+.modal > h1.drag-handle > button {
+  cursor: pointer;
+}
+
+.modal > h1 > button.active {
+  float: right;
+          box-shadow: none;
+     -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+}

@@ -1,10 +1,10 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'vendor/gloss/widgets/grid',
-    'vendor/gloss/widgets/treegrid/treegridrow',
-    'link!vendor/gloss/widgets/treegrid/treegrid.css'
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:widgets/grid',
+    'path!gloss:widgets/treegrid/treegridrow',
+    'path!gloss:link!widgets/treegrid/treegrid.css'
 ], function($, _, t, Grid, TreeGridRow) {
     return Grid.extend({
         defaults: {

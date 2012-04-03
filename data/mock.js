@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'vendor/gloss/data/model',
-    'vendor/gloss/data/tree'
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:data/model',
+    'path!gloss:data/tree'
 ], function($, _, t, Models, Tree) {
 
     // mocked resources, i.e.:

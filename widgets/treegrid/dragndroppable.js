@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/core/class',
-    'vendor/gloss/widgets/draggable',
-    'vendor/gloss/widgets/draggablerow'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:core/class',
+    'path!gloss:widgets/draggable',
+    'path!gloss:widgets/draggablerow'
 ], function($, _, Class, Draggable, DraggableRow) {
     var $doc = $(document),
 

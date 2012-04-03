@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
-    'vendor/jquery',
-    'vendor/gloss/widgets/basemenu'
+    'path!jquery',
+    'path!gloss:widgets/basemenu'
 ], function($, BaseMenu) {
 
     var showGrid = function() {

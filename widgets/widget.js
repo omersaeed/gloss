@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/jquery-ui',
-    'vendor/underscore',
-    'vendor/gloss/core/class',
-    'link!css/widgets/widget.css'
+    'path!jquery',
+    'path!jquery-ui',
+    'path!underscore',
+    'path!gloss:core/class',
+    'path!gloss:link!widgets/widget/widget.css'
 ], function($, ui, _, Class) {
     var isArray = _.isArray, isPlainObject = $.isPlainObject, slice = Array.prototype.slice;
 

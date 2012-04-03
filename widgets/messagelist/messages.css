@@ -1,0 +1,49 @@
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
+/* @font: 11px Arial, Helvetica, clean-sans; */
+/* @color: #60676D; */
+/* @body-background: #F6F6F6; */
+/* @disabled-color: @color + #333; */
+/* @darker-color: @color - #333; */
+/* @invalid-color: #9B4C52; */
+/* @invalid-background: #FFF9FC; */
+/* @info-color: #2C739E; */
+/* @info-background: #D0E8F5; */
+.messagelist {
+  padding: 0 4px 4px 4px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}
+.messagelist .invalid {
+  background: url('/static/img/widgets/error-icon.png') no-repeat left 1px;
+  color: #9b4c52;
+  font-weight: normal;
+  margin-top: 4px;
+  padding-left: 14px;
+}
+.messagelist.error {
+  color: #9b4c52;
+  background-color: #fff9fc;
+  border: 1px solid #9b4c52;
+}
+.messagelist .info {
+  background-color: #b8d8e8;
+  border: 1px solid #0000ff;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+}

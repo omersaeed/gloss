@@ -1,7 +1,7 @@
 define([
-    'vendor/underscore',
-    'vendor/gloss/core/class',
-    'vendor/gloss/util/datetime'
+    'path!underscore',
+    'path!gloss:core/class',
+    'path!gloss:util/datetime'
 ], function(_, Class, datetime) {
     var isNumber = _.isNumber, isString = _.isString;
 

@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/form'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/form'
 ], function($, _, Form) {
     return Form.extend({
         defaults: {

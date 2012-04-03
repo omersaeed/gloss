@@ -1,5 +1,5 @@
 define([
-    'vendor/jquery'
+    'path!jquery'
 ], function($) {
     var w;
     return {

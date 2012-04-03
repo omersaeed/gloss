@@ -1,16 +1,14 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 require([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/t',
-    'api/v1/recordseries',
-    'vendor/gloss/data/tree',
-    'vendor/gloss/data/mock',
-    'vendor/gloss/data/model',
-    'text!util/test/hierarchy_test_fixtures.json',
-    'text!api/v1/test/fixtures/recordseries_tree.json'
-], function($, _, t, RecordSeries, Tree, Mock, model, fixturesJSON,
-    recordseries_tree) {
+    'path!jquery',
+    'path!underscore',
+    'path!t',
+    'path!gloss:test/api/v1/recordseries',
+    'path!gloss:data/tree',
+    'path!gloss:data/mock',
+    'path!gloss:data/model',
+    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json'
+], function($, _, t, RecordSeries, Tree, Mock, model, recordseries_tree) {
 
     var recordseries = _.map(JSON.parse(recordseries_tree), function(item) {
             return item[1];

@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/widget'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/widget'
 ], function($, _, Widget) {
     // for the IE innerHTML bug workaround
     var $dummy = $('<div></div>'),

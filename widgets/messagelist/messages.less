@@ -1,0 +1,27 @@
+@import '../../vendor/gloss/style/globallib.less';
+@import '../theme.less';
+
+.messagelist {
+  padding: 0 4px 4px 4px;
+  .border-radius(4px);
+}
+
+.messagelist .invalid {
+  background: url('/static/img/widgets/error-icon.png') no-repeat left 1px;
+  color: @invalid-color;
+  font-weight: normal;
+  margin-top: 4px;
+  padding-left: 14px;
+}
+
+.messagelist.error {
+  color: @invalid-color;
+  background-color: @invalid-background-color;
+  border: 1px solid @invalid-color;
+}
+
+.messagelist .info {
+  background-color: @info-background-color;
+  border: 1px solid @info-color;
+  .border-radius(4px);
+}

@@ -1,10 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/widget',
-    'text!vendor/gloss/widgets/selectionlist/selectionlist.html',
-    'link!vendor/gloss/widgets/selectionlist/selectionlist.css',
-    'link!css/widgets/selectionlist.css'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/widget',
+    'path!gloss:text!widgets/selectionlist/selectionlist.html',
+    'path!gloss:link!widgets/selectionlist/selectionlist.css'
 ], function($, _, Widget, html) {
     return Widget.extend({
         defaults: {

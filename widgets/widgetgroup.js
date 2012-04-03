@@ -1,14 +1,14 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/widgets/widget',
-    'vendor/gloss/widgets/button',
-    'vendor/gloss/widgets/numberbox',
-    'vendor/gloss/widgets/checkbox',
-    'vendor/gloss/widgets/radiogroup',
-    'vendor/gloss/widgets/selectbox',
-    'vendor/gloss/widgets/textbox',
-    'vendor/gloss/widgets/messagelist'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:widgets/widget',
+    'path!gloss:widgets/button',
+    'path!gloss:widgets/numberbox',
+    'path!gloss:widgets/checkbox',
+    'path!gloss:widgets/radiogroup',
+    'path!gloss:widgets/selectbox',
+    'path!gloss:widgets/textbox',
+    'path!gloss:widgets/messagelist'
 ], function($, _, Widget, Button, NumberBox, CheckBox, RadioGroup, SelectBox, TextBox, MessageList) {
     return Widget.extend({
         defaults: {

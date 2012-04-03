@@ -1,6 +1,6 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/textbox'
+    'path!jquery',
+    'path!gloss:widgets/textbox'
 ], function($, TextBox) {
     return TextBox.extend({
         nodeTemplate: '<input type=number>',

@@ -1,6 +1,6 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/boundwidgetgroup'
+    'path!jquery',
+    'path!gloss:widgets/boundwidgetgroup'
 ], function($, BoundWidgetGroup) {
     return BoundWidgetGroup.extend({
         nodeTemplate: '<form>',

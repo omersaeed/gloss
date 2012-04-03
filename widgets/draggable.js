@@ -1,9 +1,9 @@
 define([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/core/class',
-    'vendor/gloss/widgets/widget',
-    'link!vendor/gloss/widgets/draggable/draggable.css'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:core/class',
+    'path!gloss:widgets/widget',
+    'path!gloss:link!widgets/draggable/draggable.css'
 ], function($, _, Class, Widget) {
     var defaultTimeout = $.browser.msie && +$.browser.version[0] < 9? 100 : 50,
         whichDrag = 1,

@@ -1,10 +1,10 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, stop, strictEqual, module */
 require([
-    'vendor/jquery',
-    'vendor/underscore',
-    'vendor/gloss/core/class',
-    'vendor/gloss/data/fields',
-    'vendor/gloss/data/model'
+    'path!jquery',
+    'path!underscore',
+    'path!gloss:core/class',
+    'path!gloss:data/fields',
+    'path!gloss:data/model'
 ], function($, _, Class, fields, model) {
     var NAMES = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda',
         'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega'];

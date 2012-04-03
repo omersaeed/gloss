@@ -1,7 +1,7 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/statefulwidget',
-    'vendor/gloss/widgets/formwidget'
+    'path!jquery',
+    'path!gloss:widgets/statefulwidget',
+    'path!gloss:widgets/formwidget'
 ], function($, StatefulWidget, FormWidget) {
     return FormWidget.extend({
         create: function() {

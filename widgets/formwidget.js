@@ -1,8 +1,8 @@
 define([
-    'vendor/jquery',
-    'vendor/gloss/widgets/statefulwidget',
-    'link!css/widgets/forms.css',
-    'link!css/widgets/ie-forms.css'
+    'path!jquery',
+    'path!gloss:widgets/statefulwidget',
+    'path!gloss:link!widgets/form/forms.css',
+    'path!gloss:link!widgets/form/ie-forms.css'
 ], function($, StatefulWidget) {
     return StatefulWidget.extend({
         managedStates: StatefulWidget.prototype.managedStates.concat('invalid', 'valid'),
