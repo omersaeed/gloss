@@ -128,14 +128,21 @@ define([
                 return;
             }
             hiddenItems = _.filter(self.items, function(item) {
-                return item.name.toLowerCase().indexOf(filterValue) < 0
+                return item.name.toLowerCase().indexOf(filterValue) < 0;
             });
             shownItems = _.reject(self.items, function(item) {
-                return item.name.toLowerCase().indexOf(filterValue) < 0
+                return item.name.toLowerCase().indexOf(filterValue) < 0;
             });
             self.toggleHidden(hiddenItems, true);
             self.toggleHidden(shownItems, false);
             return this;
+        },
+        clearFilter: function() {
+            var self = this;
+            self.toggleHidden(self.items, false);
+            if(self.$filter.val().length > 0) {
+                self.$filter.val('');
+            }
         },
         add: function(items) {
             var self = this, offset = this.offset, limit = this.options.pageSize;
@@ -189,7 +196,8 @@ define([
             return this;
         },
         refresh: function(reset) {
-            var self = this, paging = this.options.paging;
+            var self = this, paging = this.options.paging,
+                filtering = this.options.filtering;
             if(reset) {
                 self.reset();
             }
@@ -204,6 +212,9 @@ define([
                 }
                 if(paging) {
                     self.$currentPage.val(self.page);
+                }
+                if(filtering) {
+                    self.clearFilter();
                 }
                 self.clearSelections();
                 self.$pager.find('li').each(function(_, node) {
@@ -260,7 +271,6 @@ define([
             this.page = 1;
             this.pages = 0;
             this.total = 0;
-            this.hidden = [];
         },
         resize: function() {
             var height = this.$node.height();
