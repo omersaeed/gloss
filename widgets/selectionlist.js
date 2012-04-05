@@ -38,7 +38,7 @@ define([
             self.$header = self.$node.find('.header');
             if(self.options.filtering) {
                 self.$filter = self.$header.find('input');
-                self.$filter.on('change', self.filter);
+                self.$filter.on('keyup', self.filter);
             } else {
                 self.$header.hide();
             }
