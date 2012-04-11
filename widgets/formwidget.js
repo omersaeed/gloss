@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/statefulwidget',
     'path!gloss:link!widgets/form/forms.css',
     'path!gloss:link!widgets/form/ie-forms.css'

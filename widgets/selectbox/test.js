@@ -1,6 +1,6 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/selectbox'
 ], function($, SelectBox) {
 

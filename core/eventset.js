@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:core/class'
 ], function($, Class) {
     var slice = Array.prototype.slice;

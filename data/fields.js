@@ -1,5 +1,5 @@
 define([
-    'path!underscore',
+    'path!vendor:underscore',
     'path!gloss:core/class',
     'path!gloss:util/datetime'
 ], function(_, Class, datetime) {

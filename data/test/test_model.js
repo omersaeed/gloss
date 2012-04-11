@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, stop, strictEqual, module */
 require([
-    'path!jquery',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:core/class',
     'path!gloss:data/fields',
     'path!gloss:data/model'

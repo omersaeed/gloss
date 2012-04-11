@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start */
 require([
-    'vendor/jquery',
-    'vendor/underscore',
+    'vendor/vendor:jquery',
+    'vendor/vendor:underscore',
     'vendor/gloss/widgets/grid',
     'vendor/gloss/widgets/grid/row',
     'vendor/gloss/widgets/button',

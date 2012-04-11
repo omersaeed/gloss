@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/basemenu',
     'path!gloss:link!widgets/menu/menu.css'
 ], function($, BaseMenu) {

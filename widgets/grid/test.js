@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 require([
-    'path!jquery',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:widgets/grid',
     'path!gloss:widgets/grid/row',
     'path!gloss:widgets/grid/editable',

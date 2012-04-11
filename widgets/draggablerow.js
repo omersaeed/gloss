@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/draggable'
 ], function($, Draggable) {
     return $.extend({}, Draggable, {

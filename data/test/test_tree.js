@@ -1,8 +1,8 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 require([
-    'path!jquery',
-    'path!underscore',
-    'path!t',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
+    'path!vendor:t',
     'path!gloss:test/api/v1/recordseries',
     'path!gloss:data/tree',
     'path!gloss:data/mock',

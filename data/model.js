@@ -1,7 +1,7 @@
 define([
-    'path!underscore',
-    'path!jquery',
-    'path!json2',
+    'path!vendor:underscore',
+    'path!vendor:jquery',
+    'path!vendor:json2',
     'path!gloss:core/class',
     'path!gloss:core/events',
     'path!gloss:data/fields'

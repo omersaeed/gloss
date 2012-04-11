@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/boundwidgetgroup'
 ], function($, BoundWidgetGroup) {
     return BoundWidgetGroup.extend({

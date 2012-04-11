@@ -1,6 +1,6 @@
 define([
-    'path!jquery',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:core/eventset',
     'path!gloss:widgets/widgetgroup'
 ], function($, _, EventSet, WidgetGroup) {

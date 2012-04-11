@@ -1,5 +1,5 @@
 define([
-    'path!underscore'
+    'path!vendor:underscore'
 ], function(_) {
     return {
         defaults: {

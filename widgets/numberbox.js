@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/textbox'
 ], function($, TextBox) {
     return TextBox.extend({
