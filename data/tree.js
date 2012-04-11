@@ -240,7 +240,7 @@ define([
             query = self.collection.query;
             if ((recursive = query.recursive && !query.path)) {
                 if (self._loadedRecursive) {
-                    return $.Deferred().resolve(this);
+                    return $.Deferred().resolve(self);
                 } else {
                     // we've loaded before, but we're re-loading recursively,
                     // so set the 'reload' flag on the collection load params
@@ -248,8 +248,11 @@ define([
                 }
             } else {
                 if (self._loaded && !query.path) {
-                    return $.Deferred().resolve(this);
+                    return $.Deferred().resolve(self);
                 }
+            }
+            if (self.model.id == null && self.model.cid != null && tree.root !== self) {
+                return $.Deferred().resolve(self);
             }
             return self.collection.load(params).pipe(function(models) {
                 self[recursive? '_loadedRecursive' : '_loaded'] = true;

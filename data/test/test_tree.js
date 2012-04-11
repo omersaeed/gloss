@@ -668,5 +668,28 @@ require([
         });
     });
 
+    asyncTest('collection.load() isn\'t called on new instance', function() {
+        setup.call(this);
+        var tree = this.tree;
+        expandSeveralNodes(tree).done(function() {
+            var newNode, newName =  'something very unique',
+                model = RecordSeries({name: newName}),
+                newParent = find(tree, 8);
+            newParent.add(model).done(function(newNode) {
+                var loadWasCalledAgain = false;
+                newNode._instantiateCollection();
+                newNode.collection.__load__ = newNode.collection.load;
+                newNode.collection.load = function() {
+                    loadWasCalledAgain = true;
+                    return newNode.collection.__load__.apply(newNode.collection, arguments);
+                };
+                newNode.load().done(function() {
+                    equal(loadWasCalledAgain, false);
+                    start();
+                });
+            });
+        });
+    });
+
     start();
 });
