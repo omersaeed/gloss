@@ -1,7 +1,7 @@
 define([
-    'path!jquery',
-    'path!jquery-ui',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:jquery-ui',
+    'path!vendor:underscore',
     'path!gloss:core/class',
     'path!gloss:link!widgets/widget/widget.css'
 ], function($, ui, _, Class) {

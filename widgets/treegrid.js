@@ -1,7 +1,7 @@
 define([
-    'path!jquery',
-    'path!underscore',
-    'path!t',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
+    'path!vendor:t',
     'path!gloss:widgets/grid',
     'path!gloss:widgets/treegrid/treegridrow',
     'path!gloss:link!widgets/treegrid/treegrid.css'

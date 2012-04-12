@@ -1,8 +1,8 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 require([
-    'path!jquery',
-    'path!underscore',
-    'path!t',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
+    'path!vendor:t',
     'path!gloss:widgets/widget',
     'path!gloss:widgets/button',
     'path!gloss:widgets/grid/editable',

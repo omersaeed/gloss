@@ -1,6 +1,6 @@
 define([
-    'path!jquery',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:core/class',
     'path!gloss:widgets/draggable',
     'path!gloss:widgets/draggablerow'

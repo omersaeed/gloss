@@ -1,6 +1,6 @@
 define([
-    'path!jquery',
-    'path!underscore',
+    'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:widgets/widget',
     'path!gloss:text!widgets/selectionlist/selectionlist.html',
     'path!gloss:link!widgets/selectionlist/selectionlist.css'

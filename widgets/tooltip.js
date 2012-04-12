@@ -1,5 +1,5 @@
 define([
-    'path!jquery',
+    'path!vendor:jquery',
     'path!gloss:widgets/widget',
     'path!gloss:link!widgets/tooltip/tooltip.css'
 ], function($, Widget) {
