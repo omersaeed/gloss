@@ -57,7 +57,6 @@ define([
                 self.set('modified', true);
             });
             self.setExpanded(tree.root, false);
-            // tree.root.expanded = false;
         },
         _shouldFullyRender: function() {
             var i, l, count = 0,

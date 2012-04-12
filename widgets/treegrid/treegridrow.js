@@ -115,13 +115,14 @@ define([
                 node = options.node;
             if (row) {
                 if (row !== self) {
-                    row.expand().done(function() {
+                    return row.expand().done(function() {
                         node.moveTo(row.options.node, index);
                     });
                 }
             } else {
                 node.moveTo(options.grid.options.tree.root, index);
             }
+            return $.Deferred().resolve();
         },
 
         onClickExpand: function() {
