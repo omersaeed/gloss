@@ -731,32 +731,33 @@ require([
         }
     }, {mixins: [DragNDroppable, Editable]});
 
-    module('all the marbles', {
-        setup: function() {
-            this.manager = model.Manager(RecordSeries);
-            this.tree = Tree({
-                resource: RecordSeries,
-                collectionArgs: {
-                    query: {file_plan_id: 1, recursive: false, tree: true},
-                    tree: true
-                },
-                manager: this.manager
-            });
-            this.treegrid = TreeGrid(undefined, {
-                rowWidgetClass: MarblesRow,
-                tree: this.tree
-            });
-        }
-    });
+    module('all the marbles', {});
 
     asyncTest('all the marbles', function() {
-        var tree = this.tree, treegrid = this.treegrid;
+        var tree, treegrid;
+        RecordSeries.models.clear();
+        this.manager = model.Manager(RecordSeries);
+        this.tree = Tree({
+            resource: RecordSeries,
+            collectionArgs: {
+                query: {file_plan_id: 1, recursive: false, tree: true},
+                tree: true
+            },
+            manager: this.manager
+        });
+        this.treegrid = TreeGrid(undefined, {
+            rowWidgetClass: MarblesRow,
+            tree: this.tree
+        });
+        tree = this.tree;
+        treegrid = this.treegrid;
         // treegrid.appendTo($('body'));
         treegrid.appendTo($('#qunit-fixture'));
 
         // window.treegrid = treegrid;
         treegrid.load().done(function() {
             console.log('done loading');
+            ok(true);
             start();
         });
     });

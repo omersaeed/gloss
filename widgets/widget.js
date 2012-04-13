@@ -3,6 +3,7 @@ define([
     'path!vendor:jquery-ui',
     'path!vendor:underscore',
     'path!gloss:core/class',
+    'path!gloss:link!style/base.css',
     'path!gloss:link!widgets/widget/widget.css'
 ], function($, ui, _, Class) {
     var isArray = _.isArray, isPlainObject = $.isPlainObject, slice = Array.prototype.slice;
