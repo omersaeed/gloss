@@ -1,0 +1,17 @@
+{
+  "name": "gloss",
+  "description": "StoredIQ client-side Javascript UI library",
+  "contributors": [
+     "Aaron Stacy <astacy@storediq.com>",
+     "Jordan McCoy",
+     "Ralph Smith"
+  ],
+  "version": "0.0.1",
+  "dependencies": {
+    "siq-vendor-js": "0.0.x",
+    "siq-js-component": "0.0.x"
+  },
+  "component": {
+      "name": "gloss"
+  }
+}
