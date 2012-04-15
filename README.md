@@ -1,6 +1,6 @@
 # gloss
 
-a javascript ui library
+a Javascript UI framework
 
 
 ### Copyright (C) 2012 StoredIQ Inc.
