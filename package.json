@@ -1,6 +1,6 @@
 {
   "name": "gloss",
-  "description": "StoredIQ client-side Javascript UI library",
+  "description": "a Javascript UI framework",
   "contributors": [
      "Aaron Stacy <astacy@storediq.com>",
      "Jordan McCoy",
