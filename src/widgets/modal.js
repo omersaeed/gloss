@@ -4,7 +4,7 @@ define([
     'path!gloss:widgets/widget',
     'path!gloss:widgets/button',
     'path!gloss:widgets/draggable',
-    'path!gloss:link!widgets/modal/modal.css'
+    'path!gloss:css!widgets/modal/modal.css'
 ], function($, _, Widget, Button, Draggable) {
 
     return Widget.extend({

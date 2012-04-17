@@ -1,7 +1,7 @@
 define([
     'path!vendor:jquery',
     'path!gloss:widgets/widget',
-    'path!gloss:link!widgets/messagelist/messages.css'
+    'path!gloss:css!widgets/messagelist/messages.css'
 ], function($, Widget) {
     return Widget.extend({
         create: function() {

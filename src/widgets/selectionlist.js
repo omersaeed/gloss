@@ -3,7 +3,7 @@ define([
     'path!vendor:underscore',
     'path!gloss:widgets/widget',
     'path!gloss:text!widgets/selectionlist/selectionlist.html',
-    'path!gloss:link!widgets/selectionlist/selectionlist.css'
+    'path!gloss:css!widgets/selectionlist/selectionlist.css'
 ], function($, _, Widget, html) {
     return Widget.extend({
         defaults: {

@@ -5,7 +5,7 @@ define([
     'path!gloss:widgets/form',
     'path!gloss:widgets/textbox',
     'path!gloss:text!widgets/grid/editable.html',
-    'path!gloss:link!widgets/grid/editable.css'
+    'path!gloss:css!widgets/grid/editable.css'
 ], function($, _, Widget, Form, TextBox, editableTmpl) {
     var RowForm = Form.extend({
         defaults: { widgetize: false },

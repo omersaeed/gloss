@@ -6,7 +6,7 @@ define([
     'path!gloss:widgets/grid/row',
     'path!gloss:widgets/draggable',
     'path!gloss:widgets/tooltip',
-    'path!gloss:link!widgets/grid/grid.css'
+    'path!gloss:css!widgets/grid/grid.css'
 ], function($, _, Widget, StatefulWidget, Row, Draggable, ToolTip) {
 
     var ResizeHandle = Widget.extend({

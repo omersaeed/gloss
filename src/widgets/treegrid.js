@@ -4,7 +4,7 @@ define([
     'path!vendor:t',
     'path!gloss:widgets/grid',
     'path!gloss:widgets/treegrid/treegridrow',
-    'path!gloss:link!widgets/treegrid/treegrid.css'
+    'path!gloss:css!widgets/treegrid/treegrid.css'
 ], function($, _, t, Grid, TreeGridRow) {
     return Grid.extend({
         defaults: {
