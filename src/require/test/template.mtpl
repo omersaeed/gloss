@@ -1,0 +1,9 @@
+<div>
+  <span><%= data.foo.bar %></span>
+  <span>length: <%= data.list.length %></span>
+  <ul>
+    <% for (var i = 0; i < data.list.length; i++) { %>
+      <li><%= data.list[i] %></li>
+    <% } %>
+  </ul>
+</div>
