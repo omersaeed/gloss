@@ -2,7 +2,7 @@ define([
     'path!vendor:jquery',
     'path!vendor:jquery-ui',
     'path!vendor:underscore',
-    'path!gloss:core/class',
+    'path!bedrock:class',
     'path!gloss:link!style/base.css',
     'path!gloss:link!widgets/widget/widget.css'
 ], function($, ui, _, Class) {

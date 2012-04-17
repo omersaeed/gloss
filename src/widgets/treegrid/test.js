@@ -9,7 +9,7 @@ require([
     'path!gloss:widgets/treegrid',
     'path!gloss:widgets/treegrid/treegridrow',
     'path!gloss:widgets/treegrid/dragndroppable',
-    'path!gloss:data/model',
+    'path!mesh:model',
     'path!gloss:data/tree',
     'path!gloss:data/mock',
     'path!gloss:test/api/v1/recordseries',

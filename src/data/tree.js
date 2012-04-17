@@ -2,10 +2,11 @@ define([
     'path!vendor:jquery',
     'path!vendor:underscore',
     'path!vendor:t',
-    'path!gloss:core/class',
-    'path!gloss:data/model',
-    'path!gloss:core/events'
-], function($, _, t, Class, Model, events) {
+    'path!bedrock:class',
+    'path!bedrock:events',
+    'path!mesh:model',
+    'path!mesh:collection'
+], function($, _, t, Class, events, Model, collection) {
 
     var Node = Class.extend({
         defaults: {
@@ -237,7 +238,8 @@ define([
             if (! self.collection) {
                 self._instantiateCollection();
             }
-            query = self.collection.query;
+            // query = self.collection.query;
+            query = options.collectionArgs.query;
             if ((recursive = query.recursive && !query.path)) {
                 if (self._loadedRecursive) {
                     return $.Deferred().resolve(self);

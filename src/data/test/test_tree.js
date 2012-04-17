@@ -6,7 +6,7 @@ require([
     'path!gloss:test/api/v1/recordseries',
     'path!gloss:data/tree',
     'path!gloss:data/mock',
-    'path!gloss:data/model',
+    'path!mesh:model',
     'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json'
 ], function($, _, t, RecordSeries, Tree, Mock, model, recordseries_tree) {
 

@@ -1,7 +1,7 @@
 define([
     'path!vendor:jquery',
     'path!vendor:underscore',
-    'path!gloss:core/class',
+    'path!bedrock:class',
     'path!gloss:widgets/draggable',
     'path!gloss:widgets/draggablerow'
 ], function($, _, Class, Draggable, DraggableRow) {

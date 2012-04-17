@@ -2,9 +2,10 @@ define([
     'path!vendor:jquery',
     'path!vendor:underscore',
     'path!vendor:t',
-    'path!gloss:data/model',
+    // 'path!mesh:model',
+    'path!mesh:request',
     'path!gloss:data/tree'
-], function($, _, t, Models, Tree) {
+], function($, _, t, Request, Tree) {
 
     // mocked resources, i.e.:
     //  {
@@ -94,6 +95,7 @@ define([
 
     var getTree = function(testData, testDataTree, params) {
         var node, result = [];
+        params = params.query;
         if (params.recursive && params.root_id == null) {
             return {total: testData.length, resources: justModelData(testData)};
         } else {
@@ -127,7 +129,7 @@ define([
     // this is the 'initiate' function that we'll monkey-patch on to
     // Models.Request.prototype.initiate so that we can intercept AJAX calls
     // for mocked resources
-    var actualInitiate = Models.Request.prototype.initiate;
+    var actualInitiate = Request.prototype.initiate;
     var initiate = function(id, params) {
         var ret, data, i, cur, tmpTree,
             info = urlToResourceInfo(this.url),
@@ -185,7 +187,7 @@ define([
         } else {
             // caller requested some collection
             // first process any query params
-            params = params || {};
+            params = params.query != null? params.query : params? params : {};
             ret = _.rest(data, params.offset || 0);
             delete params.offset;
 
@@ -248,8 +250,8 @@ define([
 
         // if this is the first time we've called this function, we'll need to
         // monkey-patch the Request.initiate method
-        if (Models.Request.prototype.initiate !== initiate) {
-            Models.Request.prototype.initiate = initiate;
+        if (Request.prototype.initiate !== initiate) {
+            Request.prototype.initiate = initiate;
         }
     };
 });
