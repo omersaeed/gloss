@@ -6,7 +6,7 @@ define([
 ], function($, _, StatefulWidget, FormWidget) {
     return FormWidget.extend({
         create: function() {
-            var self = this;
+            var self = this, $checked;
             self._super();
 
             self.buttons = {};
@@ -29,6 +29,8 @@ define([
             });
             if(self.options.initialValue != null) {
                 self.setValue(self.options.initialValue, true);
+            } else if (($checked = self.$buttons.filter(':checked')).length) {
+                self.setValue($checked.val());
             }
         },
         disable: function() {
