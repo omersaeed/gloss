@@ -22,12 +22,23 @@ define([
             width: null
         },
         create: function() {
-            var self = this, options = this.options;
+            var self = this, options = self.options;
             this._super();
 
             self.entry = null;
             self.opened = false;
             self.populated = false;
+
+            if (options.entries == null) {
+                self.$node.children().each(function(i, el) {
+                    var $el = $(el),
+                        entries = options.entries = options.entries || [];
+                    entries.push({content: $el.text(), value: $el.val()});
+                    if ($el.is(':selected')) {
+                        self.entry = _.last(entries);
+                    }
+                });
+            }
 
             self.$node.addClass('selectbox').empty();
             if(self.$node.attr('tabindex') == null) {
