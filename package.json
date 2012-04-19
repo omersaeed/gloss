@@ -2,11 +2,11 @@
   "name": "gloss",
   "description": "a Javascript UI framework",
   "contributors": [
-     "Aaron Stacy <astacy@storediq.com>",
-     "Jordan McCoy",
-     "Ralph Smith"
+    "Aaron Stacy <astacy@storediq.com>",
+    "Jordan McCoy",
+    "Ralph Smith"
   ],
-  "version": "0.0.1",
+  "version": "0.0.2",
   "dependencies": {
     "siq-vendor-js": "0.0.x",
     "siq-js-component": "0.0.x",
@@ -16,5 +16,10 @@
   },
   "component": {
     "name": "gloss"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
   }
 }
