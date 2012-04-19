@@ -1,8 +1,9 @@
 define([
     'path!vendor:jquery',
+    'path!vendor:underscore',
     'path!gloss:widgets/statefulwidget',
     'path!gloss:widgets/formwidget'
-], function($, StatefulWidget, FormWidget) {
+], function($, _, StatefulWidget, FormWidget) {
     return FormWidget.extend({
         create: function() {
             var self = this;
@@ -14,8 +15,11 @@ define([
 
             self.$node.addClass('radiogroup');
             self.$buttons.each(function(i, element) {
-                var button = $(element);
-                self.buttons[button.val()] = button;
+                var $button = $(element);
+                self.buttons[$button.val()] = $button;
+                if ($button.attr('id') == null) {
+                    $button.attr('id', _.uniqueId('radiogroup-widget'));
+                }
             });
             
             self.on('change', 'input', function(event) {

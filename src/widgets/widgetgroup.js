@@ -24,7 +24,7 @@ define([
                 ['textarea', TextBox],
                 ['div[class=radiogroup]', RadioGroup]
             ],
-            widgetSelector: 'button[name],input[name],select[name],div.select[name],textarea[name],div[name][class=radiogroup]'
+            widgetSelector: 'button[name],div[class=radiogroup],input[name],select[name],div.select[name],textarea[name]'
         },
 
         create: function() {
@@ -44,11 +44,19 @@ define([
                 }
             });
             self.$node.find('label[data-for]:not([for])').each(function(i, el) {
-                var $el = $(el),
-                    name = $el.attr('data-for'),
+                var $radio, $el = $(el),
+                    split = $el.attr('data-for').split(':'),
+                    name = split[0],
+                    value = split[1],
                     widget = self.options.widgets[name];
                 if (widget) {
-                    $(el).attr('for', widget.id);
+                    if (value != null) {
+                        $radio = widget.$node
+                            .find('[type=radio][value=' + value + ']');
+                        $el.attr('for', $radio.attr('id'));
+                    } else {
+                        $el.attr('for', widget.id);
+                    }
                 }
             });
         },
@@ -70,11 +78,14 @@ define([
         widgetizeDescendents: function() {
             var self = this, map = this.options.widgetMap, widgets = this.options.widgets;
             self.$node.find(self.options.widgetSelector).each(function(i, node) {
-                var $node = $(node);
+                var $node = $(node), name;
                 if (!self.registry.isWidget($node)) {
                     $.each(map, function(i, candidate) {
                         if ($node.is(candidate[0])) {
-                            widgets[$node.attr('name')] = candidate[1]($node);
+                            name = $node.hasClass('radiogroup')?
+                                $node.find('input[type=radio]').attr('name') :
+                                $node.attr('name');
+                            widgets[name] = candidate[1]($node);
                         }
                     });
                 }
