@@ -1,0 +1,23 @@
+.togglegroup {
+  display: inline-table;
+}
+.togglegroup button {
+  border: solid #909090;
+  border-width: 1px 0px 1px 1px;
+  border-radius: 0px;
+  color: #60676d;
+  margin: 0px;
+  padding: 4px 20px;
+}
+.togglegroup button.first {
+  border-radius: 4px 0 0 4px;
+}
+.togglegroup button.last {
+  border-radius: 0 4px 4px 0;
+  border-width: 1px;
+}
+
+.togglegroup button[checked],
+.togglegroup button:hover {
+  background-color: #e8e8e8;
+}

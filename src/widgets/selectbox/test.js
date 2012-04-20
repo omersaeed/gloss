@@ -2,8 +2,9 @@
 require([
     'path!vendor:jquery',
     'path!gloss:widgets/selectbox',
+    'path!gloss:widgets/form',
     'path!gloss:text!widgets/selectbox/selectbox.html'
-], function($, SelectBox, html) {
+], function($, SelectBox, Form, html) {
 
     module("Select Box");
 
@@ -27,6 +28,14 @@ require([
         equal(sb.options.entries.length, 3);
         equal(sb.getValue(), 3);
     });
+    test ('selectbox on form is wigetized', function(){
+        var $form = $('<form>').html(html).appendTo('#qunit-fixture'),
+            form = Form($form, {widgetize: true});
 
+        ok($form);
+        ok(form);
+
+        form.appendTo($('body'));
+    });
     start();
 });
