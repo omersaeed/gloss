@@ -23,7 +23,7 @@ define([
             width: null
         },
         create: function() {
-            var self = this, options = self.options;
+            var self = this, options = self.options, $replacement;
             this._super();
 
             self.entry = null;
@@ -41,7 +41,13 @@ define([
                 });
             }
 
-            self.$node.addClass('selectbox').empty();
+            if (self.node.tagName.toLowerCase() === 'select') {
+                self.$node.replaceWith($replacement = $('<div></div>'));
+                self.node = (self.$node = $replacement)[0];
+            } else {
+                self.$node.empty();
+            }
+            self.$node.addClass('selectbox');
 
             if (self.$node.attr('tabindex') == null) {
                 self.$node.attr('tabindex', 0);
