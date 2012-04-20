@@ -1,0 +1,3 @@
+<% for (var i = 0; i < data.length; i++) { %>
+  <button type=button value=<%= data[i].value %>><%= data[i].text %></button>
+<% } %>

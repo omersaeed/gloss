@@ -6,10 +6,11 @@ define([
     'path!gloss:widgets/numberbox',
     'path!gloss:widgets/checkbox',
     'path!gloss:widgets/radiogroup',
+    'path!gloss:widgets/togglegroup',
     'path!gloss:widgets/selectbox',
     'path!gloss:widgets/textbox',
     'path!gloss:widgets/messagelist'
-], function($, _, Widget, Button, NumberBox, CheckBox, RadioGroup, SelectBox, TextBox, MessageList) {
+], function($, _, Widget, Button, NumberBox, CheckBox, RadioGroup, ToggleGroup, SelectBox, TextBox, MessageList) {
     return Widget.extend({
         defaults: {
             widgets: null,
@@ -22,9 +23,10 @@ define([
                 ['input[type=number]', NumberBox],
                 ['select,div.select', SelectBox],
                 ['textarea', TextBox],
-                ['div[class=radiogroup]', RadioGroup]
+                ['div[class=radiogroup]', RadioGroup],
+                ['div[class=togglegroup]', ToggleGroup]
             ],
-            widgetSelector: 'button[name],div[class=radiogroup],input[name],select[name],div.select[name],textarea[name]'
+            widgetSelector: 'button[name],div[class=radiogroup],input[name],select[name],div.select[name],textarea[name],div[class=togglegroup]'
         },
 
         create: function() {
