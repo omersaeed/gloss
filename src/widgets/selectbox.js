@@ -35,6 +35,7 @@ define([
                     var $el = $(el),
                         entries = options.entries = options.entries || [];
                     entries.push({content: $el.text(), value: $el.val()});
+                    console.log('in there');
                     if ($el.is(':selected')) {
                         self.entry = _.last(entries);
                     }
@@ -53,7 +54,9 @@ define([
                 self.$node.attr('tabindex', 0);
             }
             self.$node.append('<span class=arrow>&#x25bc;</span>');
-            self.$text = $('<span class=content>').appendTo(self.$node);
+            self.$text = $('<span class=content>')
+                .html(self.entry? self.entry.content : '')
+                .appendTo(self.$node);
 
             self.$menu = $('<div>').hide().appendTo(self.$node);
             self.menu = Menu(self.$menu, {
