@@ -35,7 +35,6 @@ define([
                     var $el = $(el),
                         entries = options.entries = options.entries || [];
                     entries.push({content: $el.text(), value: $el.val()});
-                    console.log('in there');
                     if ($el.is(':selected')) {
                         self.entry = _.last(entries);
                     }
