@@ -34,7 +34,7 @@ define([
         },
         _constructMenu: function() {
             var self = this, entries = this.options.entries;
-            if(entries == null || entries.length == 0) {
+            if (entries == null || entries.length === 0) {
                 self.constructed = false;
                 return;
             }

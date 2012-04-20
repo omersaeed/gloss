@@ -1,8 +1,7 @@
 .menu {
   background-color: #fff;
-  border: 1px solid #282828;
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px 0 #dadada;
+  border: 1px solid;
+  border-top: 0px solid;
   position: absolute;
   z-index: 50;
 }
@@ -15,12 +14,3 @@
   list-style-type: none;
   padding: 5px 10px;
 }
-.menu > ul > li.first {
-}
-.menu > ul > li.last {
-  border-radius: 0 0 4px 4px;
-}
-.menu > ul > li:hover {
-  background-color: #e4e4e4;
-}
-

@@ -1,8 +1,6 @@
 .base-menu {
-  background-color: #fff;
-  border: 1px solid #282828;
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px 0 #dadada;
   position: absolute;
   z-index: 50;
+  border-style: solid;
+  border-width: 0 1px 1px 1px;
 }

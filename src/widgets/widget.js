@@ -4,7 +4,8 @@ define([
     'path!vendor:underscore',
     'path!bedrock:class',
     'path!gloss:css!style/base.css',
-    'path!gloss:css!widgets/widget/widget.css'
+    'path!lookandfeel:'
+    // 'path!gloss:css!widgets/widget/widget.css'
 ], function($, ui, _, Class) {
     var isArray = _.isArray, isPlainObject = $.isPlainObject, slice = Array.prototype.slice;
 
