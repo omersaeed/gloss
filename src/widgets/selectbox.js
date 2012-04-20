@@ -3,7 +3,8 @@ define([
     'path!vendor:underscore',
     'path!gloss:widgets/widget',
     'path!gloss:widgets/formwidget',
-    'path!gloss:widgets/menu'
+    'path!gloss:widgets/menu',
+    'path!gloss:css!widgets/selectbox/selectbox.css'
 ], function($, _, Widget, FormWidget, Menu) {
     return FormWidget.extend({
         defaults: {
@@ -22,7 +23,7 @@ define([
             width: null
         },
         create: function() {
-            var self = this, options = self.options;
+            var self = this, options = self.options, $replacement;
             this._super();
 
             self.entry = null;
@@ -40,11 +41,21 @@ define([
                 });
             }
 
-            self.$node.addClass('selectbox').empty();
-            if(self.$node.attr('tabindex') == null) {
+            if (self.node.tagName.toLowerCase() === 'select') {
+                self.$node.replaceWith($replacement = $('<div></div>'));
+                self.node = (self.$node = $replacement)[0];
+            } else {
+                self.$node.empty();
+            }
+            self.$node.addClass('selectbox');
+
+            if (self.$node.attr('tabindex') == null) {
                 self.$node.attr('tabindex', 0);
             }
-            self.$text = $('<span>').appendTo(self.$node);
+            self.$node.append('<span class=arrow>&#x25bc;</span>');
+            self.$text = $('<span class=content>')
+                .html(self.entry? self.entry.content : '')
+                .appendTo(self.$node);
 
             self.$menu = $('<div>').hide().appendTo(self.$node);
             self.menu = Menu(self.$menu, {
@@ -53,7 +64,8 @@ define([
                 updateDisplay: false,
                 onselect: function(event, entry) {
                     self.toggle(false);
-                    if(self.entry != null && entry.value !== self.entry.value) {
+                    console.log('int here',entry,self.entry);
+                    if (self.entry != null && entry.value !== self.entry.value) {
                         self.setValue(entry.value);
                     }
                 }
@@ -135,7 +147,7 @@ define([
             return self;
         },
         updateWidget: function(updated) {
-            var $node = this.$node, options = this.options;
+            var $node = this.$node, options = this.options, w;
 
             if (updated.collection && options.collection) {
                 options.collection.load(options.collectionLoadArgs);
@@ -144,6 +156,7 @@ define([
             this.toggle(false);
 
             if (updated.width && options.width != null) {
+                console.log('setting the width');
                 $node.width(options.width);
             }
 
@@ -155,8 +168,10 @@ define([
             }
 
             if (options.width == null) {
-                $node.width(Widget.measureMinimumWidth($('<div/>').addClass($node.attr('class')),
-                    _.pluck(options.entries, 'content')) + 6);
+                w = Widget.measureMinimumWidth(
+                        $('<div/>').addClass($node.attr('class')),
+                        _.pluck(options.entries, 'content'));
+                $node.find('.content').width(w);
             }
 
             if(options.initialValue != null) {

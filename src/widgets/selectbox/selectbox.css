@@ -1,0 +1,19 @@
+.selectbox {
+  display: inline-block;
+  min-width: 40px;
+  border: 1px solid;
+}
+
+.selectbox .content {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selectbox .arrow {
+  font-size: .75em;
+  margin: 0 0.5em;
+  padding-left: 0.5em;
+  border-left: 1px solid;
+  float: right;
+}

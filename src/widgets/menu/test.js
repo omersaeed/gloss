@@ -4,34 +4,21 @@ require([
     'path!gloss:widgets/menu'
 ], function($, Menu) {
 
-    var showGrid = function() {
-            $('#qunit-fixture').css({position: 'static'});
-        },
-        hideGrid = function() {
-            $('#qunit-fixture').css({position: 'absolute'});
-        },
-        setup = function() {
-            this.menu = Menu($('<div></div>'), {
+    test('Menu Check', function(){
+        var menu = Menu($('<div></div>'), {
                 entries: [
-                    {content: "Directory", name: 'directory'},
-                    {content: "Directory0", name: 'directory0'},
-                    {content: "Directory1", name: 'directory1'},
-                    {content: "Directory2", name: 'directory2'}
+                    {content: "Directory",  value: 'directory'},
+                    {content: "Directory0", value: 'directory0'},
+                    {content: "Directory1", value: 'directory1'},
+                    {content: "Directory2", value: 'directory2'}
                 ]
-            }).appendTo($('#qunit-fixture'));
-        };
+            }).appendTo($('body')),
+            options = menu.options;
 
-    module("Menu", {setup: setup});
-
-    asyncTest ('Menu Check', function(){
-        var menu = this.menu, options = this.menu.options;
+        menu.show();
 
         ok(true, "true");
         ok(options.entries.length === 4, "number of entries");
-
-        menu.appendTo($('body'));
-
-        start();
     });
 
     start();
