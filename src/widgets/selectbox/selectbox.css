@@ -1,0 +1,12 @@
+.selectbox {
+  display: inline-block;
+  min-width: 40px;
+  border: 1px solid;
+}
+
+.selectbox .arrow {
+  font-size: .75em;
+  margin-left: 0.5em;
+  padding-left: 0.5em;
+  border-left: 1px solid;
+}
