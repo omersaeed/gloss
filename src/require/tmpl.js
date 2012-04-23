@@ -27,7 +27,6 @@ define(function() {
     return {
         load: function(name, req, load) {
             var url = req.toUrl(name);
-            console.log('name to url:',url);
             req(['text!' + req.toUrl(name)], function(templateText) {
                 load(compile(templateText));
             });
