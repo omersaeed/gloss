@@ -30,8 +30,7 @@ define([
     'path!gloss:widgets/statefulwidget',
     'path!gloss:widgets/formwidget',
     'path!gloss:widgets/button',
-    'path!gloss:tmpl!widgets/togglegroup/togglegroup.mtpl',
-    'path!gloss:css!widgets/togglegroup/togglegroup.css'
+    'path!gloss:tmpl!widgets/togglegroup/togglegroup.mtpl'
 ], function($, StatefulWidget, FormWidget, Button, tmpl) {
     return FormWidget.extend({
         defaults: {
