@@ -12,18 +12,16 @@ define([
 ], function($, Widget) {
     return Widget.extend({
         defaults: {
-            microTemplate: null,
-            mTplArgs: null
+            microTemplate: null
         },
         create: function() {
             var self = this,
-                mTpl = self.options.microTemplate,
-                mTplArgs = self.options.mTplArgs;
+                mTpl = self.options.microTemplate;
 
             this._super();
 
             if(mTpl !== null) {
-                self.$html = $(mTpl(mTplArgs));
+                self.$html = $(mTpl);
             }
             window.onload = self.onPageLoad();
         },
@@ -33,6 +31,7 @@ define([
             if(self.$html !== undefined) {
                 $('body').prepend(self.$html);
             }
+            self.trigger('onload');
         }
     });
 });

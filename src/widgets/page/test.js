@@ -14,7 +14,7 @@ require([
     });
     test('Page micro template with no args test', function () {
         var page = Page(undefined, {
-            microTemplate: NoArgTmpl
+            microTemplate: NoArgTmpl(null)
         });
 
         ok(page);
@@ -33,8 +33,7 @@ require([
             ];
 
         page = Page(undefined, {
-            microTemplate: ArgTmpl,
-            mTplArgs: args
+            microTemplate: ArgTmpl(args)
         });
 
         ok(page);
