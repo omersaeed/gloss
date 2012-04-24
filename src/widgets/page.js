@@ -23,7 +23,7 @@ define([
             if(mTpl !== null) {
                 self.$html = $(mTpl);
             }
-            window.onload = self.onPageLoad();
+            $(document).ready(self.onPageLoad);
         },
         onPageLoad: function() {
             var self = this;
@@ -31,7 +31,7 @@ define([
             if(self.$html !== undefined) {
                 $('body').prepend(self.$html);
             }
-            self.trigger('onload');
+            this.trigger('loaded');
         }
     });
 });
