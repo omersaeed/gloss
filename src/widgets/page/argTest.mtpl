@@ -1,0 +1,4 @@
+<div>This is a test with args</div>
+<% for (var i = 0; i < data.length; i++) { %>
+<div><%= data[i].text %></div>
+<% } %>
