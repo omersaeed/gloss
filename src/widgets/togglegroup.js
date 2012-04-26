@@ -89,11 +89,11 @@ define([
             }
             if(value !== this.value) {
                 if(this.value != null) {
-                    this.buttons[this.value].attr('checked', false);
+                    this.buttons[this.value].prop('checked', false);
                 }
                 this.value = value;
                 if(value != null) {
-                    this.buttons[value].attr('checked', true);
+                    this.buttons[value].prop('checked', true);
                 }
                 if(!silent) {
                     this.trigger('change');
