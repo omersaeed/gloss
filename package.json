@@ -11,8 +11,7 @@
     "siq-vendor-js": "0.0.x",
     "csi": "0.0.x",
     "siq-mesh": "0.0.x",
-    "bedrockjs": "0.0.x",
-    "siq-lookandfeel": "0.0.x"
+    "bedrockjs": "0.0.x"
   },
   "component": {
     "name": "gloss"
