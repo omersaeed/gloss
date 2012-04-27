@@ -5,7 +5,6 @@
 }
 
 .selectbox .content {
-  display: inline-block;
   overflow: hidden;
   text-overflow: ellipsis;
 }
