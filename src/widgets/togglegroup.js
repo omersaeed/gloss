@@ -90,10 +90,12 @@ define([
             if(value !== this.value) {
                 if(this.value != null) {
                     this.buttons[this.value].prop('checked', false);
+                    this.buttons[this.value].removeClass('checked');
                 }
                 this.value = value;
                 if(value != null) {
                     this.buttons[value].prop('checked', true);
+                    this.buttons[this.value].addClass('checked');
                 }
                 if(!silent) {
                     this.trigger('change');
