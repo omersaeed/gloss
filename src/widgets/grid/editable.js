@@ -98,8 +98,9 @@ define([
                     row: self
                 })),
                 $table = $form.find('table'),
-                $formCols = $table.find('td');
-            self.options.grid.unhighlight();
+                $formCols = $table.find('td'),
+                grid = self.options.grid;
+            grid.unhighlight().$node.addClass('editing');
             $formCols.each(function(i, el) {
                 var widget, col = self.options.colModel[i];
                 if (col.editable) {
@@ -114,7 +115,17 @@ define([
             $form.position({
                 my: 'left top',
                 at: 'left top',
-                of: self.$node
+                of: self.$node,
+                // since we set the .table-wrapper position to relative, we
+                // need to adjust the jquery-ui calculated position to account
+                // for the .table-wrapper pos
+                using: function(pos) {
+                    var wrapPos = grid.$node.find('.table-wrapper').position();
+                    $form.css({
+                        left: pos.left - wrapPos.left,
+                        top: pos.top - wrapPos.top
+                    });
+                }
             }).css({
                 position: 'absolute' // b/c of IE
             });
@@ -129,7 +140,7 @@ define([
                     self.stopEdit();
                 }
             }).bind(self.options.model);
-            tableWidth = Widget.measureMatchingWidth($table, self.options.grid.$table);
+            tableWidth = Widget.measureMatchingWidth($table, grid.$table);
             $table.width(tableWidth);
             if (self.options.idx % 2 === 0) {
                 $form.addClass('odd');
@@ -141,7 +152,7 @@ define([
                 backgroundColor: self.$node.css('backgroundColor')
             });
             self._bindReturnKeyPressToNextLine();
-            self.form.appendTo(self.options.grid.$node);
+            self.form.appendTo(grid.$node.find('.table-wrapper'));
             _.values(self.form.options.widgets)[0].$node.focus();
             return self;
         },
@@ -154,6 +165,7 @@ define([
             this.form.$node.remove();
             this.trigger('stopedit');
             delete this.form;
+            this.options.grid.$node.removeClass('editing');
             this.render();
             return this;
         },
