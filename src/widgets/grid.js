@@ -34,7 +34,7 @@ define([
             tippingPoint: 50
         },
 
-        nodeTemplate: '<div><table class=grid><thead><tr></tr></thead><tbody></tbody></table></div>',
+        nodeTemplate: '<div><div class=table-wrapper><table class=grid><thead><tr></tr></thead><tbody></tbody></table></div></div>',
 
         managedStates: ['disabled'],
 
@@ -42,7 +42,7 @@ define([
             var self = this, $tr;
             self._super();
             if (!self.$node.children().length) {
-                self.$node.append($(self.nodeTemplate).find('table'));
+                self.$node.append($(self.nodeTemplate).children());
             }
             self.$node.addClass('grid');
             self.options.rows = [];

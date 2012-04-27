@@ -398,15 +398,15 @@ define([
         },
 
         deltas: function(asTree, includeNodeRef) {
-            var flat = [], ret, self = this;
+            var flat = [], ret, self = this, root = self.root;
            
             ret = t.dfs(self.root, {order: 'post'}, function(node, par, ctrl, ret) {
                 var filePlanId = self.options.collectionArgs.query.file_plan_id,
                     result = {
-                        id: node.model.id,
+                        id: node.model.id || +(node.model.cid.replace(/_/,'-')),
                         name: node.model.name,
                         file_plan_id: filePlanId,
-                        parent_id: par? par.model.id : null
+                        parent_id: par && (par !== root) ? par.model.id || +(par.model.cid.replace(/_/,'-')) : null
                     },
                     hasDirtiedModel = node.dirtied('model'),
                     hasDirtiedChildren =
@@ -423,11 +423,11 @@ define([
                     result.children = _.map(ret, function(r, i) {
                         var model = node.children[i].model;
                         r = r || {
-                            id: model.id,
+                            id: model.id || +(model.cid.replace(/_/,'-')),
                             name: model.name,
                             rank: i+1,
                             file_plan_id: filePlanId,
-                            parent_id: node.model.id
+                            parent_id: node !== root ? node.model.id || +(node.model.cid.replace(/_/,'-')) : null
                         };
                         if (includeNodeRef && ! r._node) {
                             r._node = node.children[i];
