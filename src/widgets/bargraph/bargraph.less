@@ -1,0 +1,17 @@
+@color: #3267F4;
+@gray4: #aaaaaa;
+
+.box-shadow (@offset-x, @offset-y, @radius, @spread, @color) {
+          box-shadow: @offset-x @offset-y @radius @spread @color;
+     -moz-box-shadow: @offset-x @offset-y @radius @spread @color;
+  -webkit-box-shadow: @offset-x @offset-y @radius @spread @color;
+}
+
+.bargraph table {
+  border-spacing: 5px;
+}
+
+.graph-bar {
+  background-color: @color;
+  .box-shadow(-3px, 7px, 5px, 0px, @gray4);
+}

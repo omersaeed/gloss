@@ -1,0 +1,9 @@
+.bargraph table {
+  border-spacing: 5px;
+}
+.graph-bar {
+  background-color: #3267f4;
+  box-shadow: -3px 7px 5px 0px #aaaaaa;
+  -moz-box-shadow: -3px 7px 5px 0px #aaaaaa;
+  -webkit-box-shadow: -3px 7px 5px 0px #aaaaaa;
+}

@@ -1,0 +1,11 @@
+<table>
+  <% for(var i=0; i < data.length; i++) { %>
+  <tr>
+    <td><%= data[i].name %></td>
+    <td class=graph-bar-cell>
+      <div class=graph-bar style="width: 0px" value=<%= data[i].value %>></div>
+    </td>
+    <td><%= data[i].value %></td>
+  </tr>
+  <% } %>
+</table>
