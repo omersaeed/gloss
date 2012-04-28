@@ -9,7 +9,17 @@ require([
         ok(rg);
         start()
     });
+    test('Object graph no animation test', function () {
+        var rg = RatioGraph(undefined, {
+            totalCount: 100,
+            currentCount: 50,
+            animate: false
+        }).appendTo('#qunit-fixture');
 
+        ok(rg);
+
+        start()
+    });
     test('Object graph visual test', function () {
         var rg = RatioGraph().appendTo($('body'));
 

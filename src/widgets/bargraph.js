@@ -22,7 +22,8 @@ define([
                                  */
             barHeight: 10,      // height in px
             maxWidth: 100,      // width in px
-            animationDuration: 1000
+            animationDuration: 1000,
+            animate: true
         },
         nodeTemplate: '<div>',
 
@@ -45,15 +46,19 @@ define([
         },
         renderGraphBar: function($bar) {
             var self = this,
-                animationProps, width;
+                cssProps, width;
 
             // -- interpolate width for max width
             width = $bar.attr('value') * self.lerpValue;
-            animationProps = {
+            cssProps = {
                 width: width + 'px'
             }
             $bar.css('height', self.options.barHeight);
-            $bar.animate(animationProps, self.options.animationDuration);
+            if(self.options.animate) {
+                $bar.animate(cssProps, self.options.animationDuration);
+            } else {
+                $bar.css(cssProps);
+            }
         },
         _getMaxValue: function() {
             var self = this,

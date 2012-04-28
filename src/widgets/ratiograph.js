@@ -14,6 +14,7 @@ define([
     return Widget.extend({
         defaults: {
             animationDuration: 1000,
+            animate: true,
             totalWidth: 50,
             totalHeight: 50,
             totalCount: 100,
@@ -39,7 +40,7 @@ define([
                 totalWidth = self.options.totalWidth,
                 totalHeight = self.options.totalHeight,
                 currentWidth, currentHeight,
-                area, newArea, animationProps;
+                area, newArea, cssProps;
 
 
             area = totalWidth * totalHeight;
@@ -47,14 +48,18 @@ define([
             currentWidth = Math.sqrt(newArea);
             currentHeight = Math.sqrt(newArea);
 
-            animationProps = {
+            cssProps = {
                 width: currentWidth + 'px',
                 height: currentHeight + 'px',
                 top: (totalWidth - currentWidth) + 'px',
                 left: (totalHeight - currentHeight) + 'px'
             }
             self.$currentCount.text(currentCount);
-            self.$currentView.animate(animationProps, self.options.animationDuration);
+            if(self.options.animate) {
+                self.$currentView.animate(cssProps, self.options.animationDuration);
+            } else {
+                self.$currentView.css(cssProps);
+            }
         },
         renderTotalCount: function() {
             var self = this;

@@ -23,7 +23,21 @@ require([
         ok(bg);
     });
 
-    test('Details graph visual test', function () {
+    test('Details graph no animation', function () {
+        var bg = BarGraph(undefined, {
+            data: [
+                {name: "Outlook PST", value: 100 },
+                {name: "Zip Archive", value: 25 },
+                {name: "TGZ archive", value: 75 },
+                {name: "WinRAR archive", value: 50 }
+            ],
+            animate: false
+        }).appendTo('#qunit-fixture');
+
+        ok(bg);
+    });
+
+    test('Details graph animation visual test', function () {
         var bg = BarGraph().appendTo($('body'));
 
         var data = [
