@@ -1,0 +1,27 @@
+require([
+    'path!vendor:jquery',
+    'path!gloss:widgets/ratiograph'
+], function ($, RatioGraph) {
+
+    test('Object graph instantiation', function () {
+        var rg = RatioGraph().appendTo('#qunit-fixture');
+
+        ok(rg);
+        start()
+    });
+
+    test('Object graph visual test', function () {
+        var rg = RatioGraph().appendTo($('body'));
+
+        ok(rg);
+
+        rg.set('totalCount', 50);
+        rg.set('currentCount', 15);
+        rg.set('currentCount', 25);
+        rg.set('currentCount', 35);
+
+        start()
+    });
+
+    start();
+});

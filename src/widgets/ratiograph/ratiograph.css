@@ -1,0 +1,10 @@
+.ratio-graph .total-count-view {
+  background: #ffffff;
+  border: 1px solid #909090;
+}
+.ratio-graph .current-count-view {
+  position: relative;
+  background: #909090;
+  border: solid #909090;
+  border-width: 0px 1px 1px 0px;
+}

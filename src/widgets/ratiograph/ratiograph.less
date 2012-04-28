@@ -1,0 +1,23 @@
+@graph-column-margin: 10px;
+@side-column-width: 100px;
+
+@background-color: #ffffff;
+@fill-color: #909090;
+@boarder: 1px solid @fill-color;
+@fill-boarder: solid @fill-color;
+@fill-boarder-width: 0px 1px 1px 0px;
+
+.ratio-graph {
+
+  .total-count-view {
+    background: @background-color;
+    border: @boarder;
+  }
+
+  .current-count-view {
+    position: relative;
+    background: @fill-color;
+    border: @fill-boarder;
+    border-width: @fill-boarder-width;
+  }
+}
