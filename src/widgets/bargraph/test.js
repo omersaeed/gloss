@@ -31,7 +31,7 @@ require([
                 {name: "TGZ archive", value: 75 },
                 {name: "WinRAR archive", value: 50 }
             ],
-            animate: false
+            animationDuration: 0
         }).appendTo('#qunit-fixture');
 
         ok(bg);

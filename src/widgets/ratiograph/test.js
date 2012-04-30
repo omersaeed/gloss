@@ -13,7 +13,7 @@ require([
         var rg = RatioGraph(undefined, {
             totalCount: 100,
             currentCount: 50,
-            animate: false
+            animationDuration:0
         }).appendTo('#qunit-fixture');
 
         ok(rg);

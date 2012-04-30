@@ -22,8 +22,7 @@ define([
                                  */
             barHeight: 10,      // height in px
             maxWidth: 100,      // width in px
-            animationDuration: 1000,
-            animate: true
+            animationDuration: 1000
         },
         nodeTemplate: '<div>',
 
@@ -54,11 +53,7 @@ define([
                 width: width + 'px'
             }
             $bar.css('height', self.options.barHeight);
-            if(self.options.animate) {
-                $bar.animate(cssProps, self.options.animationDuration);
-            } else {
-                $bar.css(cssProps);
-            }
+            $bar.animate(cssProps, self.options.animationDuration);
         },
         _getMaxValue: function() {
             var self = this,

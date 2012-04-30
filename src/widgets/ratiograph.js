@@ -14,7 +14,6 @@ define([
     return Widget.extend({
         defaults: {
             animationDuration: 1000,
-            animate: true,
             totalWidth: 50,
             totalHeight: 50,
             totalCount: 100,
@@ -55,11 +54,7 @@ define([
                 left: (totalHeight - currentHeight) + 'px'
             }
             self.$currentCount.text(currentCount);
-            if(self.options.animate) {
-                self.$currentView.animate(cssProps, self.options.animationDuration);
-            } else {
-                self.$currentView.css(cssProps);
-            }
+            self.$currentView.animate(cssProps, self.options.animationDuration);
         },
         renderTotalCount: function() {
             var self = this;
