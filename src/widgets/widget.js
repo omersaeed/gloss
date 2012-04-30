@@ -247,8 +247,9 @@ define([
         nodeTemplate: '<div>',
 
         init: function(node) {
+            var html;
             if (node == null) {
-                this.$node = $(this.nodeTemplate);
+                this.$node = $(this._compiledHtml());
             } else {
                 this.$node = $(node);
             }
@@ -259,6 +260,12 @@ define([
                 throw new Error('cannot instantiate widget: ' + node);
             }
             this.node = this.$node.get(0);
+        },
+
+        _compiledHtml: function() {
+            return _.isFunction(this.nodeTemplate)?
+                this.nodeTemplate(this.options || this.defaults || {}) :
+                this.nodeTemplate;
         },
 
         hide: function(params) {
@@ -323,6 +330,11 @@ define([
                 this.$node.appendTo(obj);
             }
             return this;
+        },
+
+        prependTo: function(obj) {
+            this.$node.prependTo(obj.$node? obj.$node : obj);
+            return this;
         }
     });
 
@@ -353,46 +365,49 @@ define([
         },
 
         init: function(node, options, extension) {
-            var name, value, parentWidget, $tmpl, classes, i;
+            var name, value, parentWidget, $tmpl, classes, i, opts, $node;
             if (extension != null) {
                 _.extend(this, extension);
             }
 
+            this.options = opts = recursiveMerge({}, this.defaults, options);
+
             BaseWidget.prototype.init.call(this, node);
 
-            this.id = this.$node.attr('id');
+            $node = this.$node;
+
+            this.id = $node.attr('id');
             if (this.id == null) {
                 this.id = _.uniqueId('widget');
-                this.$node.attr('id', this.id);
+                $node.attr('id', this.id);
             }
 
-            this.options = recursiveMerge({}, this.defaults, options);
-            if (this.defaults.bindOnMethodHandlers) {
-                for (name in this.options) {
-                    if (this.options.hasOwnProperty(name)) {
-                        value = this.options[name];
+            if (opts.bindOnMethodHandlers) {
+                for (name in opts) {
+                    if (opts.hasOwnProperty(name)) {
+                        value = opts[name];
                         if (name.substr(0, 2) === 'on' && $.isFunction(value)) {
-                            this.$node.on(name.substr(2).toLowerCase(), value);
+                            $node.on(name.substr(2).toLowerCase(), value);
                         }
                     }
                 }
             }
 
-            if (this.options.populateEmptyNode && !this.$node.children().length && node) {
-                $tmpl = $(this.nodeTemplate);
+            if (opts.populateEmptyNode && !$node.children().length && node) {
+                $tmpl = $(this._compiledHtml());
                 classes = $tmpl.attr('class').split(' ');
                 for (i = classes.length-1; i >= 0; i--) {
-                    this.$node.addClass(classes[i]);
+                    $node.addClass(classes[i]);
                 }
-                this.$node.html($tmpl.html());
+                $node.html($tmpl.html());
             }
             
-            if (this.options.bindAll) {
+            if (opts.bindAll) {
                 _.bindAll(this);
             }
 
-            parentWidget = this.options.parentWidget;
-            delete this.options.parentWidget;
+            parentWidget = opts.parentWidget;
+            delete opts.parentWidget;
             if (parentWidget) {
                 registry.add(this, parentWidget, []);
             } else {
