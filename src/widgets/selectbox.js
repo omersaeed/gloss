@@ -64,7 +64,6 @@ define([
                 updateDisplay: false,
                 onselect: function(event, entry) {
                     self.toggle(false);
-                    console.log('int here',entry,self.entry);
                     if (self.entry != null && entry.value !== self.entry.value) {
                         self.setValue(entry.value);
                     }

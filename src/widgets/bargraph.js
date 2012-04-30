@@ -82,7 +82,7 @@ define([
 
                     self.maxValue = self._getMaxValue();
                     self.lerpValue = self.options.maxWidth / self.maxValue;
-                    self.$node.remove('table');
+                    self.$node.find('table').remove();
                     self.$node.append($html);
                     self.$graphBars = self.$node.find('.graph-bar');
                     self.renderGraphBars();
