@@ -2,7 +2,7 @@
  * Author: Ralph Smith
  * Date: 4/24/12
  * Time: 11:43 AM
- * Description: Base page widget to handle prepending micro
+ * Description: Base page widget to handle prepending compiled micro
  *          templates on page load.
  */
 
@@ -12,18 +12,30 @@ define([
 ], function($, Widget) {
     return Widget.extend({
         defaults: {
-            microTemplate: null
+            template: null
         },
+
         create: function() {
             var self = this,
-                mTpl = self.options.microTemplate;
+                template = self.options.template;
 
             this._super();
 
-            if(mTpl !== null) {
-                self.$html = $(mTpl);
+            self.loaded = false
+
+            if(template !== null) {
+                self.$html = $(template);
             }
             $(document).ready(self.onPageLoad);
+        },
+        on: function(event, callback) {
+            /* if the page is already load then just return
+             * otherwise wait for the trigger
+             */
+            var self = this;
+            if(self.loaded) {
+                callback('loaded');
+            }
         },
         onPageLoad: function() {
             var self = this;
@@ -31,7 +43,8 @@ define([
             if(self.$html !== undefined) {
                 $('body').prepend(self.$html);
             }
-            this.trigger('loaded');
+            self.$node.trigger('loaded');
+            self.loaded = true;
         }
     });
 });

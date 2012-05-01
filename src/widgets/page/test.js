@@ -5,6 +5,10 @@ require([
     'path!gloss:tmpl!widgets/page/argTest.mtpl'
 ], function ($, Page, NoArgTmpl, ArgTmpl) {
 
+    $(document).ready(function() {
+        console.log('doc ready');
+    });
+
     test('Page instantiation test', function () {
         var page = Page();
 
@@ -14,7 +18,7 @@ require([
     });
     test('Page micro template with no args test', function () {
         var page = Page(undefined, {
-            microTemplate: NoArgTmpl(null)
+            template: NoArgTmpl(null)
         });
 
         ok(page);
@@ -33,12 +37,19 @@ require([
             ];
 
         page = Page(undefined, {
-            microTemplate: ArgTmpl(args)
+            template: ArgTmpl(args)
         });
 
         ok(page);
 
         start();
+    });
+    test('Page loaded test', function() {
+        var page = Page();
+        ok(page);
+        page.on('loaded', function() {
+            ok("complete", document.readyState);
+        });
     });
     start();
 });
