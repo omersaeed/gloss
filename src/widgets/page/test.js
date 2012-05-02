@@ -5,10 +5,6 @@ require([
     'path!gloss:tmpl!widgets/page/argTest.mtpl'
 ], function ($, Page, NoArgTmpl, ArgTmpl) {
 
-    $(document).ready(function() {
-        console.log('doc ready');
-    });
-
     test('Page instantiation test', function () {
         var page = Page();
 
@@ -44,11 +40,20 @@ require([
 
         start();
     });
-    test('Page loaded test', function() {
+    test('Page loaded event test', function() {
         var page = Page();
+
         ok(page);
         page.on('loaded', function() {
             ok("complete", document.readyState);
+        });
+    });
+    test('Page load deferred test', function() {
+        var page = Page();
+
+        page.load.done(function() {
+            ok(page);
+            start();
         });
     });
     start();

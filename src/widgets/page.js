@@ -16,35 +16,33 @@ define([
         },
 
         create: function() {
+            var self = this;
+            this._super();
+
+            self.load = $.Deferred();
+            $(function() {
+                self._prependTmpl();
+                self.load.resolve();
+            });
+        },
+        on: function(event, callback) {
+            /* if the page is already loaded then just return
+             * otherwise return a deferred object
+             */
+            var self = this;
+            if (event === 'load' || event === 'loaded') {
+                self.load.done(callback);
+            } else {
+                self._super.apply(arguments);
+            }
+        },
+        _prependTmpl: function() {
             var self = this,
                 template = self.options.template;
 
-            this._super();
-
-            self.loaded = false
-
             if(template !== null) {
-                self.$html = $(template);
+                $('body').prepend($(template));
             }
-            $(document).ready(self.onPageLoad);
-        },
-        on: function(event, callback) {
-            /* if the page is already load then just return
-             * otherwise wait for the trigger
-             */
-            var self = this;
-            if(self.loaded) {
-                callback('loaded');
-            }
-        },
-        onPageLoad: function() {
-            var self = this;
-
-            if(self.$html !== undefined) {
-                $('body').prepend(self.$html);
-            }
-            self.$node.trigger('loaded');
-            self.loaded = true;
         }
     });
 });
