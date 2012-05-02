@@ -1,13 +1,14 @@
 <div>
   <div class=controls>
-    <div class=app-logo></div>
+    <div class=logo></div>
   </div>
 
-  <a href="<%= data.logoHref || '/' %>" class=logo></a>
+  <a href="<%= data.logoHref || '/' %>" class=app-logo></a>
 
   <div class=tabs>
     <% _.each(data.tabs, function(tab) { %>
-      <a href="<%= _.isObject(tab)? tab.href : 'javascript:void(0)' %>" class=tab>
+      <a  href="<%= _.isObject(tab)? tab.href : 'javascript:void(0)' %>"
+          class="tab <%= _.isObject(tab) && tab.selected? 'selected' : '' %>">
         <%= _.isFunction(tab)? tab() : _.isObject(tab)? tab.content : tab %>
       </a>
     <% }); %>

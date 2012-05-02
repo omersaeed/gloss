@@ -15,7 +15,11 @@
   border: 1px solid black;
 }
 
-.toolbar .logo, .toolbar .app-logo {
+.toolbar .app-logo {
+  display: inline-block;
+}
+
+.toolbar .logo {
   width: 150px;
   height: 40px;
   display: inline-block;
