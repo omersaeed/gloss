@@ -1,0 +1,6 @@
+<% _.each(data.options.entries, function(entry) { %>
+  <label>
+    <input type=checkbox data-value="<%=entry.value%>" />
+    <%=entry.name%>
+  </label>
+<% }); %>
