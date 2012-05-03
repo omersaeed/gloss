@@ -7,6 +7,8 @@
 .selectbox .content {
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  margin-right: 20px;
 }
 
 .selectbox .arrow {

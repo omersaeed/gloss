@@ -3,10 +3,15 @@ require([
     'path!vendor:jquery',
     'path!gloss:widgets/selectbox',
     'path!gloss:widgets/form',
+    'path!gloss:data/mock',
+    'path!gloss:test/api/v1/targetvolume',
+    'path!gloss:text!test/api/v1/test/fixtures/targetvolume.json',
     'path!gloss:text!widgets/selectbox/selectbox.html'
-], function($, SelectBox, Form, html) {
+], function($, SelectBox, Form, Mock, TargetVolume, targetvolume_json, html) {
 
     module("Select Box");
+
+    Mock(TargetVolume, JSON.parse(targetvolume_json));
 
     test('Select Box', function(){
         var sb = SelectBox($('<div></div>'), {
@@ -20,7 +25,7 @@ require([
 
         equal(sb.options.entries.length, 4, "number of entries is 4");
 
-        sb.appendTo($('body'));
+        sb.appendTo($('#qunit-fixture'));
     });
 
     test('selectbox from html', function() {
@@ -28,6 +33,7 @@ require([
         equal(sb.options.entries.length, 3);
         equal(sb.getValue(), 3);
     });
+
     test ('selectbox on form is wigetized', function(){
         var $form = $('<form>').html(html).appendTo('#qunit-fixture'),
             form = Form($form, {widgetize: true});
@@ -35,7 +41,37 @@ require([
         ok($form);
         ok(form);
 
-        form.appendTo($('body'));
+        form.appendTo($('#qunit-fixture'));
     });
+
+    asyncTest('selectbox with collection at instantiation time loads', function() {
+        var sb = SelectBox(undefined, {
+            collection: TargetVolume.collection()
+        }).appendTo('body');
+        setTimeout(function() {
+            equal(sb.options.entries.length, 6);
+            equal(sb.menu.options.entries.length, 6);
+            sb.$node.trigger('click');
+            setTimeout(function() {
+                equal(sb.$node.find('.menu ul li').length, 6);
+                start();
+            });
+        }, 50);
+    });
+
+    asyncTest('selectbox with collection set after instantiation loads', function() {
+        var sb = SelectBox().appendTo('body');
+        sb.set('collection', TargetVolume.collection());
+        setTimeout(function() {
+            equal(sb.options.entries.length, 6);
+            equal(sb.menu.options.entries.length, 6);
+            sb.$node.trigger('click');
+            setTimeout(function() {
+                equal(sb.$node.find('.menu ul li').length, 6);
+                start();
+            });
+        }, 50);
+    });
+
     start();
 });

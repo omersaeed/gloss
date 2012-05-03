@@ -42,8 +42,11 @@ define([
             self.$entries.empty();
             $.each(entries, function(i, entry) {
                 var $node = $('<li>').html(entry.content).data('entry', entry).attr('tabindex', -1);
-                if(entry.classes != null) {
+                if (entry.classes != null) {
                     $node.addClass(entry.classes);
+                }
+                if (entry.title) {
+                    $node.attr('title', entry.title);
                 }
                 self.$entries.append($node);
             });

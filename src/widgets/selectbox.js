@@ -3,9 +3,10 @@ define([
     'path!vendor:underscore',
     'path!gloss:widgets/widget',
     'path!gloss:widgets/formwidget',
+    'path!gloss:widgets/collectionviewable',
     'path!gloss:widgets/menu',
     'path!gloss:css!widgets/selectbox/selectbox.css'
-], function($, _, Widget, FormWidget, Menu) {
+], function($, _, Widget, FormWidget, CollectionViewable, Menu) {
     return FormWidget.extend({
         defaults: {
             entries: null,              // list of the format: [
@@ -13,11 +14,10 @@ define([
                                         //  {content: '...', value: '...'},
                                         //  ...
                                         // ]
-            collection: null,           // collection object to populate entries
-            translator: function() { }, // function to translate the collection
-                                        // into the same format as the
-                                        // 'entries' option
-            collectionLoadArgs: {all: true},
+
+            translator: function(item) {
+                return {value: item.id, content: item.name, title: item.name};
+            },
 
             // optionally set fixed width
             width: null
@@ -28,7 +28,6 @@ define([
 
             self.entry = null;
             self.opened = false;
-            self.populated = false;
 
             if (options.entries == null) {
                 self.$node.children().each(function(i, el) {
@@ -64,32 +63,24 @@ define([
                 updateDisplay: false,
                 onselect: function(event, entry) {
                     self.toggle(false);
-                    if (self.entry != null && entry.value !== self.entry.value) {
+                    if (self.entry == null || entry.value !== self.entry.value) {
                         self.setValue(entry.value);
                     }
                 }
             });
             
-            if (options.collection) {
-                options.collection.on('update', function(evtName, collection) {
-                    var newEntries = options.translator?
-                        _.map(collection.models, options.translator) : collection.models;
-                    self.set('entries', newEntries);
-                });
-            }
-
             self.update();
             self.on('click', self.toggle);
             self.on('keydown', self.onKeyEvent);
         },
+        _setAutoWidth: function() {
+            var w, $test = $('<div/>').addClass(this.$node.attr('class')),
+                contents = _.pluck(this.options.entries, 'content');
+            w = Widget.measureMinimumWidth($test, contents);
+            this.$node.css({width: ''}).find('.content').width(w);
+        },
         getValue: function() {
-            if(this.entry != null) {
-                return this.entry.value;
-            } else if (/select/i.test(this.$node[0].tagName)) {
-                return this.$node.val();
-            } else {
-                return null;
-            }
+            return this.entry != null? this.entry.value : null;
         },
         onKeyEvent: function(event) {
             var key = Widget.identifyKeyEvent(event),
@@ -106,9 +97,6 @@ define([
         },
         setValue: function(value, silent) {
             if(this.options.entries == null) {
-                if (/select/i.test(this.$node[0].tagName)) {
-                    this.$node.val(value);
-                }
                 return this;
             }
             if(!$.isPlainObject(value)) {
@@ -148,39 +136,39 @@ define([
         updateWidget: function(updated) {
             var $node = this.$node, options = this.options, w;
 
-            if (updated.collection && options.collection) {
-                options.collection.load(options.collectionLoadArgs);
-            }
-
-            this.toggle(false);
-
-            if (updated.width && options.width != null) {
-                console.log('setting the width');
-                $node.width(options.width);
-            }
-
-            if(options.entries != null && options.entries.length > 0) {
-                this.populated = true;
-            } else {
-                this.populated = false;
-                return;
-            }
-
-            if (options.width == null) {
-                w = Widget.measureMinimumWidth(
-                        $('<div/>').addClass($node.attr('class')),
-                        _.pluck(options.entries, 'content'));
-                $node.find('.content').width(w);
-            }
-
-            if(options.initialValue != null) {
+            if (updated.initialValue && options.initialValue != null) {
                 this.setValue(options.initialValue, true);
             }
-            if(this.entry == null) {
-                this.entry = options.entries[0];
-                this.$text.html(this.entry.content);
+
+            if (updated.models) {
+                this.set('entries', _.map(options.models, options.translator));
             }
-            this.menu.set('entries', options.entries);
+
+            if (updated.entries) {
+                if (options.width == null) {
+                    this._setAutoWidth();
+                }
+
+                this.menu.set('entries', options.entries);
+
+                if (options.entries && options.entries.length) {
+                    if (this.entry == null) {
+                        this.setValue(options.entries[0]);
+                    }
+                } else {
+                    this.setValue(null);
+                }
+            }
+
+            if (updated.width) {
+                if (options.width != null) {
+                    $node.outerWidth(options.width)
+                        .find('.content').css('width', '');
+                } else {
+                    this._setAutoWidth();
+                }
+            }
+
         }
-    });
+    }, {mixins: [CollectionViewable]});
 });

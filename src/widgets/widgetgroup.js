@@ -21,7 +21,7 @@ define([
                 ['input[type=text],input[type=password],input[type=search]', TextBox],
                 ['input[type=submit],input[type=reset]', Button],
                 ['input[type=number]', NumberBox],
-                ['select,div.select', SelectBox],
+                ['select,.select', SelectBox],
                 ['textarea', TextBox],
                 ['div[class=radiogroup]', RadioGroup],
                 ['div[class=togglegroup]', ToggleGroup]
