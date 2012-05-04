@@ -23,14 +23,20 @@ define([
                 _.map(this.checkboxes, function(cb) {
                     return cb.getValue()? cb.options.value : null;
                 }),
-                _.identity
+                function(v) { return v !== null; }
             );
         },
 
         setValue: function(array) {
-            _.each(this.checkboxes, function(cb) {
-                cb.setValue(_.indexOf(array, cb.options.value) >= 0);
-            });
+            if (_.isString(array)) {
+                _.each(this.checkboxes, function(cb) {
+                    cb.setValue(array === 'all');
+                });
+            } else {
+                _.each(this.checkboxes, function(cb) {
+                    cb.setValue(_.indexOf(array, cb.options.value) >= 0);
+                });
+            }
             return this;
         },
 

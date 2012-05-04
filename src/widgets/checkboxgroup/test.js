@@ -54,6 +54,21 @@ require([
         }, 50);
     });
 
+    test('setting value to all/none', function() {
+        var cbg = window.cbg = CheckBoxGroup(undefined, {
+            entries: [
+                {name: 'foo bar baz', value: 0},
+                {name: 'foo bar biggity iggity bazzle', value: 1}
+            ]
+        }).appendTo('#qunit-fixture');
+
+        cbg.setValue('all');
+        deepEqual(cbg.getValue(), [0, 1]);
+
+        cbg.setValue('none');
+        deepEqual(cbg.getValue(), []);
+    });
+
     test('checkboxgroup correctly widgetized', function() {
         var $frm = $('<form><div name=my-cbg class=checkboxgroup></div></form>')
                 .appendTo('body'),
