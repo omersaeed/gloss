@@ -4,12 +4,14 @@ define([
     return {
         defaults: {
             collection: null,
-            collectionLoadArgs: null
+            collectionLoadArgs: null,
+            collectionMap: function(models) {return models;}
         },
         __updateWidget__: function(updated) {
             var self = this,
                 options = self.options,
-                collection = options.collection;
+                collection = options.collection,
+                collectionMap = options.collectionMap;
             if (updated.collection) {
                 if (self.disable) {
                     self.disable();
@@ -17,7 +19,7 @@ define([
                 if (collection) {
                     collection.load(options.collectionLoadArgs).done(function() {
                         var startingValue = self.getValue();
-                        self.set('models', collection.models);
+                        self.set('models', collectionMap(collection.models));
                         _.each(self.options.entries, function(entry) {
                             // use type coercion in case it's an int
                             if (entry.value == startingValue) {

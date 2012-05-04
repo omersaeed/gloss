@@ -360,6 +360,9 @@ define([
                         }
                         prototype._updateWidgetMixins.push(mixin.__updateWidget__);
                     }
+                    if (mixin.defaults) {
+                        prototype.defaults = recursiveMerge(prototype.defaults, mixin.defaults);
+                    }
                 }
             }
         },
