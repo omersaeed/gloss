@@ -3,7 +3,7 @@ define([
 ], function(_) {
     return {
         defaults: {
-            collection: null,
+            collection: undefined,
             collectionLoadArgs: null,
             collectionMap: function(models) {return models;}
         },
@@ -12,7 +12,7 @@ define([
                 options = self.options,
                 collection = options.collection,
                 collectionMap = options.collectionMap;
-            if (updated.collection) {
+            if (updated.collection && typeof options.collection !== 'undefined') {
                 if (self.disable) {
                     self.disable();
                 }
