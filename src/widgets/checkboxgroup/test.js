@@ -1,11 +1,13 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
 require([
+    'path!vendor:jquery',
     'path!vendor:underscore',
     'path!gloss:widgets/checkboxgroup',
+    'path!gloss:widgets/form',
     'path!gloss:data/mock',
     'path!gloss:test/api/v1/targetvolume',
     'path!gloss:text!test/api/v1/test/fixtures/targetvolume.json'
-], function(_, CheckBoxGroup, Mock, TargetVolume, targetvolume_json) {
+], function($, _, CheckBoxGroup, Form, Mock, TargetVolume, targetvolume_json) {
 
     var valueMatchesCheckboxes = function(checkboxes, value) {
         _.each(checkboxes, function(cb) {
@@ -50,6 +52,14 @@ require([
             valueMatchesCheckboxes(cbg.checkboxes, cbg.getValue());
             start();
         }, 50);
+    });
+
+    test('checkboxgroup correctly widgetized', function() {
+        var $frm = $('<form><div name=my-cbg class=checkboxgroup></div></form>')
+                .appendTo('body'),
+            form = Form($frm, {widgetize: true});
+
+        ok(form.getWidget('my-cbg'));
     });
 
     start();
