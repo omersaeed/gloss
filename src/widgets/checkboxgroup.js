@@ -27,15 +27,25 @@ define([
             );
         },
 
-        setValue: function(array) {
+        setValue: function(array, silent) {
+            var cur = this.getValue().sort();
             if (_.isString(array)) {
+                if (array === 'all') {
+                    array = _.map(this.checkboxes, function(cb) {
+                        return cb.options.value;
+                    });
+                } else {
+                    array = [];
+                }
+            }
+            array = array.slice(0).sort();
+            if (!_.isEqual(cur, array)) {
                 _.each(this.checkboxes, function(cb) {
-                    cb.setValue(array === 'all');
+                    cb.setValue(_.indexOf(array, cb.options.value) >= 0, true);
                 });
-            } else {
-                _.each(this.checkboxes, function(cb) {
-                    cb.setValue(_.indexOf(array, cb.options.value) >= 0);
-                });
+                if (!silent) {
+                    this.trigger('change');
+                }
             }
             return this;
         },
