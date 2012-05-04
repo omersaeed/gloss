@@ -42,6 +42,7 @@ define([
 
             if (self.node.tagName.toLowerCase() === 'select') {
                 self.$node.replaceWith($replacement = $('<div></div>'));
+                $replacement.attr('name', self.$node.attr('name'));
                 self.node = (self.$node = $replacement)[0];
             } else {
                 self.$node.empty();

@@ -34,7 +34,7 @@ require([
         equal(sb.getValue(), 3);
     });
 
-    test ('selectbox on form is wigetized', function(){
+    test('selectbox on form is wigetized', function(){
         var $form = $('<form>').html(html).appendTo('#qunit-fixture'),
             form = Form($form, {widgetize: true});
 
@@ -42,6 +42,22 @@ require([
         ok(form);
 
         form.appendTo($('#qunit-fixture'));
+    });
+
+    test('instantiating from &lt;select&gt;', function() {
+        var $sel = $('<select name=foo><option value=1>bar</option><option value=2>baz</option></select>'),
+            selectbox = SelectBox($sel);
+
+        deepEqual(selectbox.options.entries, [
+            {content: 'bar', value: "1"},
+            {content: 'baz', value: "2"}
+        ]);
+        deepEqual(selectbox.menu.options.entries, [
+            {content: 'bar', value: "1"},
+            {content: 'baz', value: "2"}
+        ]);
+
+        equal(selectbox.$node.attr('name'), 'foo');
     });
 
     asyncTest('selectbox with collection at instantiation time loads', function() {
