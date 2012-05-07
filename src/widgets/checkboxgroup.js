@@ -60,7 +60,7 @@ define([
             if (updated.entries) {
                 _.each(this.checkboxes || [], function(cb) { cb.destroy(); });
                 this.checkboxes = checkboxes = [];
-                this.$node.html(template(this))
+                this.$node.html(options.template(this))
                     .find('input[type=checkbox]').each(function(i, el) {
                         checkboxes.push(CheckBox(el, {
                             value: options.entries[i].value,

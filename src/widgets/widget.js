@@ -257,14 +257,15 @@ define([
                 this.$node = this.prepareNode(this.$node);
             }
             if (this.$node.length !== 1) {
-                throw new Error('cannot instantiate widget: ' + node);
+                throw new Error('widget $node must be only one DOM node: ' + node);
             }
             this.node = this.$node.get(0);
         },
 
-        _compiledHtml: function() {
+        _compiledHtml: function(context) {
+            context = context == null? this : context; 
             return _.isFunction(this.nodeTemplate)?
-                this.nodeTemplate(this.options || this.defaults || {}) :
+                this.nodeTemplate(this) :
                 this.nodeTemplate;
         },
 
@@ -397,12 +398,7 @@ define([
             }
 
             if (opts.populateEmptyNode && !$node.children().length && node) {
-                $tmpl = $(this._compiledHtml());
-                classes = $tmpl.attr('class').split(' ');
-                for (i = classes.length-1; i >= 0; i--) {
-                    $node.addClass(classes[i]);
-                }
-                $node.html($tmpl.html());
+                this.render();
             }
             
             if (opts.bindAll) {
@@ -478,6 +474,16 @@ define([
                 }
             }
             return this;
+        },
+
+        render: function(context) {
+            var i, $node = this.$node,
+                $tmpl = $(this._compiledHtml()),
+                classes = $tmpl[0].className.split(/\s+/);
+            for (i = classes.length-1; i >= 0; i--) {
+                $node.addClass(classes[i]);
+            }
+            $node.html($tmpl.html());
         },
 
         set: function(name, value) {
