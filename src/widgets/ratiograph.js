@@ -77,7 +77,7 @@ define([
             }
             if(updated.currentCount) {
                 if(self.options.totalCount < self.options.currentCount) {
-                    throw new Error('Current count cannot be less than the total count. ' +
+                    throw new Error('Total count cannot be less than the current count. ' +
                         'totalCount: ' + self.options.totalCount +
                         ' currentCount: ' + self.options.currentCount);
                 } else {
