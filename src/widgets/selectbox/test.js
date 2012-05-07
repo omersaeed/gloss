@@ -58,6 +58,8 @@ require([
         ]);
 
         equal(selectbox.$node.attr('name'), 'foo');
+
+        equal(selectbox.$node.attr('id'), selectbox.id);
     });
 
     asyncTest('selectbox with collection at instantiation time loads', function() {
