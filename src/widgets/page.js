@@ -11,13 +11,15 @@ define([
     'path!gloss:widgets/widget'
 ], function($, Widget) {
     return Widget.extend({
-        defaults: {
-            template: null
-        },
-
         create: function() {
-            var self = this;
-            this._super();
+            var self = this, $origNode;
+
+            if (this.node.tagName.toLowerCase() !== 'body') {
+                $origNode = this.$node.remove();
+                this.$node = $('body');
+                this.node = this.$node[0];
+                this.$node.attr('id', $origNode.attr('id'));
+            }
 
             self.load = $.Deferred();
             $(function() {
