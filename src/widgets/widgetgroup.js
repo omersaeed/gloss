@@ -25,11 +25,11 @@ define([
                 ['input[type=number]', NumberBox],
                 ['select,.select', SelectBox],
                 ['textarea', TextBox],
-                ['div[class~=radiogroup]', RadioGroup],
-                ['div[class~=togglegroup]', ToggleGroup],
-                ['div[class~=checkboxgroup]', CheckBoxGroup]
+                ['div.radiogroup', RadioGroup],
+                ['div.togglegroup', ToggleGroup],
+                ['div.checkboxgroup', CheckBoxGroup]
             ],
-            widgetSelector: 'button[name],div[class~=radiogroup],input[name],select[name],div.select[name],textarea[name],div[class~=togglegroup],div[class~=checkboxgroup]'
+            widgetSelector: 'button[name],div.radiogroup,input[name],select[name],div.select[name],textarea[name],div.togglegroup,div.checkboxgroup'
         },
 
         create: function() {
