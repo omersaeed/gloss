@@ -1,12 +1,13 @@
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/togglegroup',
-    'path!gloss:widgets/form',
-    'path!gloss:text!widgets/togglegroup/togglegroup.html'
+/*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
+define([
+    'component!vendor:jquery',
+    './../togglegroup',
+    './../form',
+    'text!./togglegroup.html'
 ], function($, ToggleGroup, Form, html) {
 
     test ('instantiate togglegroup from html', function(){
-        var tg, $tg = $(html)
+        var tg, $tg = $(html);
         tg = ToggleGroup($tg).appendTo('#qunit-fixture');
 
         ok(tg);
@@ -16,8 +17,9 @@ require([
 
         start();
     });
+
     test ('instantiate togglegroup from html sets value', function(){
-        var tg, $tg = $(html)
+        var tg, $tg = $(html);
         tg = ToggleGroup($tg).appendTo('#qunit-fixture');
 
         equal(tg.getValue(), 'third');
@@ -28,6 +30,7 @@ require([
 
         start();
     });
+
     test ('togglegroup on form is wigetized', function(){
         var $form = $('<form>').html(html),
             form = Form($form, {widgetize: true}).appendTo('#qunit-fixture');
@@ -37,6 +40,7 @@ require([
 
         start();
     });
+
     test('instantiate togglegroup with no html', function(){
         var tg;
         tg = ToggleGroup(undefined, {
@@ -57,8 +61,9 @@ require([
 
         start();
     });
+
     test('togglegroup visual', function(){
-        var tg, $tg = $(html)
+        var tg, $tg = $(html);
         tg = ToggleGroup($tg).appendTo('#qunit-fixture');
 
         ok(tg);

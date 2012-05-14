@@ -1,12 +1,12 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
-require([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/checkboxgroup',
-    'path!gloss:widgets/form',
-    'path!gloss:data/mock',
-    'path!gloss:test/api/v1/targetvolume',
-    'path!gloss:text!test/api/v1/test/fixtures/targetvolume.json'
+define([
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './../checkboxgroup',
+    './../form',
+    './../../data/mock',
+    './../../test/api/v1/targetvolume',
+    'text!./../../test/api/v1/test/fixtures/targetvolume.json'
 ], function($, _, CheckBoxGroup, Form, Mock, TargetVolume, targetvolume_json) {
 
     var valueMatchesCheckboxes = function(checkboxes, value) {

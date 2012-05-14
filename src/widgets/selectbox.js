@@ -1,11 +1,11 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/formwidget',
-    'path!gloss:widgets/collectionviewable',
-    'path!gloss:widgets/menu',
-    'path!gloss:css!widgets/selectbox/selectbox.css'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './widget',
+    './formwidget',
+    './collectionviewable',
+    './menu',
+    'css!./selectbox/selectbox.css'
 ], function($, _, Widget, FormWidget, CollectionViewable, Menu) {
     return FormWidget.extend({
         defaults: {

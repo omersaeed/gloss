@@ -1,9 +1,9 @@
 define([
-    'path!vendor:underscore',
-    'path!gloss:widgets/formwidget',
-    'path!gloss:widgets/collectionviewable',
-    'path!gloss:widgets/checkbox',
-    'path!gloss:tmpl!widgets/checkboxgroup/checkboxgroup.mtpl'
+    'component!vendor:underscore',
+    './formwidget',
+    './collectionviewable',
+    './checkbox',
+    'tmpl!./checkboxgroup/checkboxgroup.mtpl'
 ], function(_, FormWidget, CollectionViewable, CheckBox, template) {
     return FormWidget.extend({
         defaults: {

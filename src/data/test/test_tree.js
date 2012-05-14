@@ -1,14 +1,13 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
-require([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!vendor:t',
-    'path!gloss:test/api/v1/recordseries',
-    'path!gloss:data/tree',
-    'path!gloss:data/mock',
-    'path!mesh:model',
-    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json'
-], function($, _, t, RecordSeries, Tree, Mock, model, recordseries_tree) {
+define([
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    'component!vendor:t',
+    './../../test/api/v1/recordseries',
+    './../tree',
+    './../mock',
+    'text!./../../test/api/v1/test/fixtures/recordseries_tree.json'
+], function($, _, t, RecordSeries, Tree, Mock, recordseries_tree) {
 
     var recordseries = _.map(JSON.parse(recordseries_tree), function(item) {
             return item[1];

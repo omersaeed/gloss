@@ -1,7 +1,7 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/widget'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './widget'
 ], function($, _, Widget) {
     var inArray = $.inArray;
     return Widget.extend({

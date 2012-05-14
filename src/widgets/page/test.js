@@ -1,8 +1,9 @@
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/page',
-    'path!gloss:tmpl!widgets/page/noArgTest.mtpl',
-    'path!gloss:tmpl!widgets/page/argTest.mtpl'
+/*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
+define([
+    'component!vendor:jquery',
+    './../page',
+    'tmpl!./noArgTest.mtpl',
+    'tmpl!./argTest.mtpl'
 ], function ($, Page, NoArgTmpl, ArgTmpl) {
 
     test('Page instantiation test', function () {

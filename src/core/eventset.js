@@ -1,6 +1,6 @@
 define([
-    'path!vendor:jquery',
-    'path!bedrock:class'
+    'component!vendor:jquery',
+    'component!bedrock:class'
 ], function($, Class) {
     var slice = Array.prototype.slice;
     return Class.extend({

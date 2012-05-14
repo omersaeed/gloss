@@ -1,9 +1,9 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/radiogroup',
-    'path!gloss:widgets/form',
-    'path!gloss:text!widgets/radiogroup/radiogroup.html'
+define([
+    'component!vendor:jquery',
+    './../radiogroup',
+    './../form',
+    'text!./radiogroup.html'
 ], function($, RadioGroup, Form, html) {
     test('instatiate radiogroup from html', function() {
         var rg, $rg = $(html).appendTo('#qunit-fixture');

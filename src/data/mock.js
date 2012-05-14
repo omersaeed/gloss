@@ -1,10 +1,9 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!vendor:t',
-    // 'path!mesh:model',
-    'path!mesh:request',
-    'path!gloss:data/tree'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    'component!vendor:t',
+    'component!mesh:request',
+    './tree'
 ], function($, _, t, Request, Tree) {
 
     // mocked resources, i.e.:

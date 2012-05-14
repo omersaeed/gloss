@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/basemenu'
+define([
+    'component!vendor:jquery',
+    './../basemenu'
 ], function($, BaseMenu) {
 
     var showGrid = function() {

@@ -1,12 +1,12 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/statefulwidget',
-    'path!gloss:widgets/grid/row',
-    'path!gloss:widgets/draggable',
-    'path!gloss:widgets/tooltip',
-    'path!gloss:css!widgets/grid/grid.css'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './widget',
+    './statefulwidget',
+    './grid/row',
+    './draggable',
+    './tooltip',
+    'css!./grid/grid.css'
 ], function($, _, Widget, StatefulWidget, Row, Draggable, ToolTip) {
 
     var ResizeHandle = Widget.extend({

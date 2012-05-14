@@ -26,11 +26,11 @@
  */
 
 define([
-    'path!vendor:jquery',
-    'path!gloss:widgets/statefulwidget',
-    'path!gloss:widgets/formwidget',
-    'path!gloss:widgets/button',
-    'path!gloss:tmpl!widgets/togglegroup/togglegroup.mtpl'
+    'component!vendor:jquery',
+    './statefulwidget',
+    './formwidget',
+    './button',
+    'tmpl!./togglegroup/togglegroup.mtpl'
 ], function($, StatefulWidget, FormWidget, Button, tmpl) {
     return FormWidget.extend({
         defaults: {

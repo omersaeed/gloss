@@ -1,11 +1,11 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/form',
-    'path!gloss:widgets/textbox',
-    'path!gloss:text!widgets/grid/editable.html',
-    'path!gloss:css!widgets/grid/editable.css'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './../widget',
+    './../form',
+    './../textbox',
+    'text!./editable.html',
+    'css!./editable.css'
 ], function($, _, Widget, Form, TextBox, editableTmpl) {
     var RowForm = Form.extend({
         defaults: { widgetize: false },

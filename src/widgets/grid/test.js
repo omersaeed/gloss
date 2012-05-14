@@ -1,15 +1,15 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
-require([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/grid',
-    'path!gloss:widgets/grid/row',
-    'path!gloss:widgets/grid/editable',
-    'path!gloss:widgets/button',
-    'path!gloss:data/mock',
-    'path!gloss:test/api/v1/targetvolumeprofile',
-    'path!gloss:test/api/v1/recordseries',
-    'path!gloss:text!test/api/v1/test/fixtures/targetvolumeprofile.json'
+define([
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './../grid',
+    './row',
+    './editable',
+    './../button',
+    './../../data/mock',
+    './../../test/api/v1/targetvolumeprofile',
+    './../../test/api/v1/recordseries',
+    'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
 ], function($, _, Grid, Row, Editable, Button, Mock, TargetVolumeProfile,
     RecordSeries, tvpFixture) {
     var RowClass,

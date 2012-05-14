@@ -1,12 +1,12 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/selectbox',
-    'path!gloss:widgets/form',
-    'path!gloss:data/mock',
-    'path!gloss:test/api/v1/targetvolume',
-    'path!gloss:text!test/api/v1/test/fixtures/targetvolume.json',
-    'path!gloss:text!widgets/selectbox/selectbox.html'
+define([
+    'component!vendor:jquery',
+    './../selectbox',
+    './../form',
+    './../../data/mock',
+    './../../test/api/v1/targetvolume',
+    'text!./../../test/api/v1/test/fixtures/targetvolume.json',
+    'text!./selectbox.html'
 ], function($, SelectBox, Form, Mock, TargetVolume, targetvolume_json, html) {
 
     module("Select Box");

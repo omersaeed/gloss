@@ -1,7 +1,7 @@
 define([
-    'path!vendor:jquery',
-    'path!gloss:widgets/widget',
-    'path!gloss:css!widgets/tooltip/tooltip.css'
+    'component!vendor:jquery',
+    './widget',
+    'css!./tooltip/tooltip.css'
 ], function($, Widget) {
     return Widget.extend({
         defaults: {

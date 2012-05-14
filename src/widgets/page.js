@@ -7,8 +7,8 @@
  */
 
 define([
-    'path!vendor:jquery',
-    'path!gloss:widgets/widget'
+    'component!vendor:jquery',
+    './widget'
 ], function($, Widget) {
     return Widget.extend({
         create: function() {

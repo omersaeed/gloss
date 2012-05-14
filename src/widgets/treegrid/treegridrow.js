@@ -1,11 +1,10 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!vendor:t',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/grid/row',
-    'path!gloss:widgets/button'
-], function($, _, t, Widget, Row, Button) {
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    'component!vendor:t',
+    './../widget',
+    './../grid/row'
+], function($, _, t, Widget, Row) {
     return Row.extend({
         defaults: {
             node: null, // required

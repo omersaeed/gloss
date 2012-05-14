@@ -6,10 +6,10 @@
  */
 
 define([
-    'path!vendor:jquery',
-    'path!gloss:widgets/widget',
-    'path!gloss:tmpl!widgets/bargraph/bargraph.mtpl',
-    'path!gloss:css!widgets/bargraph/bargraph.css'
+    'component!vendor:jquery',
+    './widget',
+    'tmpl!./bargraph/bargraph.mtpl',
+    'css!./bargraph/bargraph.css'
 ], function ($, Widget, template) {
     return Widget.extend({
         defaults: {

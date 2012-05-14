@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
-require([
-    'path!vendor:jquery',
-    'path!gloss:tmpl!require/test/template.mtpl'
+define([
+    'component!vendor:jquery',
+    'tmpl!./template.mtpl'
 ], function($, tmpl) {
     test('template plugin compiled', function() {
         ok(tmpl);

@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/menu'
+define([
+    'component!vendor:jquery',
+    './../menu'
 ], function($, Menu) {
 
     test('Menu Check', function(){

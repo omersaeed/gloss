@@ -6,10 +6,10 @@
  */
 
 define([
-    'path!vendor:jquery',
-    'path!gloss:widgets/widget',
-    'path!gloss:text!widgets/ratiograph/ratiograph.html',
-    'path!gloss:css!widgets/ratiograph/ratiograph.css'
+    'component!vendor:jquery',
+    './widget',
+    'text!./ratiograph/ratiograph.html',
+    'css!./ratiograph/ratiograph.css'
 ], function ($, Widget, template) {
     return Widget.extend({
         defaults: {

@@ -1,21 +1,21 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
-require([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!vendor:t',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/button',
-    'path!gloss:widgets/grid/editable',
-    'path!gloss:widgets/treegrid',
-    'path!gloss:widgets/treegrid/treegridrow',
-    'path!gloss:widgets/treegrid/dragndroppable',
-    'path!mesh:model',
-    'path!gloss:data/tree',
-    'path!gloss:data/mock',
-    'path!gloss:test/api/v1/recordseries',
-    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json'
-], function($, _, t, Widget, Button, Editable, TreeGrid, TreeGridRow,
-    DragNDroppable, model, Tree, Mock, RecordSeries, recordseries_tree) {
+define([
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    'component!vendor:t',
+    'component!mesh:model',
+    './../widget',
+    './../button',
+    './../grid/editable',
+    './../treegrid',
+    './../treegrid/treegridrow',
+    './../treegrid/dragndroppable',
+    './../../data/tree',
+    './../../data/mock',
+    './../../test/api/v1/recordseries',
+    'text!./../../test/api/v1/test/fixtures/recordseries_tree.json'
+], function($, _, t, model, Widget, Button, Editable, TreeGrid, TreeGridRow,
+    DragNDroppable, Tree, Mock, RecordSeries, recordseries_tree) {
 
     var RowClass,
         showGrid = function() {

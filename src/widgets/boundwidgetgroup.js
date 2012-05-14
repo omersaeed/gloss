@@ -1,8 +1,8 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:core/eventset',
-    'path!gloss:widgets/widgetgroup'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './../core/eventset',
+    './widgetgroup'
 ], function($, _, EventSet, WidgetGroup) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({

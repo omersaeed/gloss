@@ -1,17 +1,17 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
-require([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!vendor:t',
-    'path!gloss:test/api/v1/targetvolume',
-    'path!gloss:test/api/v1/targetvolumeprofile',
-    'path!gloss:test/api/v1/fileplan',
-    'path!gloss:test/api/v1/recordseries',
-    'path!gloss:text!test/api/v1/test/fixtures/targetvolumeprofile.json',
-    'path!gloss:text!test/api/v1/test/fixtures/fileplan_tree.json',
-    'path!gloss:text!test/api/v1/test/fixtures/recordseries_tree.json',
-    'path!gloss:data/mock',
-    'path!gloss:data/tree'
+define([
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    'component!vendor:t',
+    './../../test/api/v1/targetvolume',
+    './../../test/api/v1/targetvolumeprofile',
+    './../../test/api/v1/fileplan',
+    './../../test/api/v1/recordseries',
+    'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json',
+    'text!./../../test/api/v1/test/fixtures/fileplan_tree.json',
+    'text!./../../test/api/v1/test/fixtures/recordseries_tree.json',
+    './../mock',
+    './../tree'
 ], function($, _, t, TargetVolume, TargetVolumeProfile, FilePlan, RecordSeries,
     targetvolumeprofile, fileplan_tree, recordseries_tree, Mock, Tree) {
 

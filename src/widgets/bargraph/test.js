@@ -1,7 +1,7 @@
-require([
-    'path!vendor:jquery',
-    'path!gloss:widgets/bargraph'
-//    'path!lookandfeel:'
+/*global test, asyncTest, ok, equal, deepEqual, start, module */
+define([
+    'component!vendor:jquery',
+    './../bargraph'
 ], function ($, BarGraph) {
 
     test('Details graph instantiation', function () {
