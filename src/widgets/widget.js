@@ -265,7 +265,7 @@ define([
         _compiledHtml: function(context) {
             context = context == null? this : context; 
             return _.isFunction(this.nodeTemplate)?
-                this.nodeTemplate(this) :
+                this.nodeTemplate(context) :
                 this.nodeTemplate;
         },
 

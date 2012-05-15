@@ -12,7 +12,7 @@
 // infrastructure
 define(function() {
     var compile = function(str) {
-        var value = "var out = ''; out+=" + "'" +
+        var value = "return (function(data) {var out = ''; out+=" + "'" +
             str.replace(/[\r\t\n]/g, " ")
                .replace(/'(?=[^%]*%>)/g,"\t")
                .split("'").join("\\'")
@@ -20,8 +20,8 @@ define(function() {
                .replace(/<%=(.+?)%>/g, "'; out += $1; out += '")
                .split("<%").join("';")
                .split("%>").join("out+='") +
-               "'; return out;";
-       return new Function("data", value);
+               "'; return out;}).call(typeof ctx !== 'undefined'? ctx : this, data);";
+       return new Function('data', 'ctx', value);
     };
 
     return {

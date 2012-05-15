@@ -1,10 +1,10 @@
 define([
-    'path!vendor:jquery',
-    'path!vendor:underscore',
-    'path!gloss:widgets/widget',
-    'path!gloss:widgets/button',
-    'path!gloss:widgets/draggable',
-    'path!gloss:css!widgets/modal/modal.css'
+    'component!vendor:jquery',
+    'component!vendor:underscore',
+    './widget',
+    './button',
+    './draggable',
+    'css!./modal/modal.css'
 ], function($, _, Widget, Button, Draggable) {
 
     return Widget.extend({

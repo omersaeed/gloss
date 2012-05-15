@@ -1,5 +1,5 @@
 define([
-    'path!vendor:jquery'
+    'component!vendor:jquery'
 ], function($) {
     var w;
     return {
