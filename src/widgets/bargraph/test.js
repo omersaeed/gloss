@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 define([
     'component!vendor:jquery',
-    './../multibargraph'
+    './../bargraph'
 ], function ($, BarGraph) {
 
     test('Details graph instantiation', function () {
