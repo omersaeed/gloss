@@ -14,12 +14,12 @@ define([
     return Widget.extend({
         defaults: {
             data: null,         /* list of the format: [
-                                 * {content: '...', value: '...'},
-                                 * {content: '...', value: '...'},
-                                 * {content: '...', value: '...'},
-                                 * ...
-                                 * ]
-                                 */
+             * {content: '...', values: ['...', '...']},
+             * {content: '...', values: ['...', '...']},
+             * {content: '...', values: ['...', '...']},
+             * ...
+             * ]
+             */
             barHeight: 10,      // height in px
             maxWidth: 100,      // width in px
             animationDuration: 1000
@@ -61,7 +61,9 @@ define([
                 max = 0;
 
             for(var i=data.length-1; i >= 0; i--) {
-                max = (data[i].value > max) ? data[i].value : max;
+                for(var j=data[i].values.length-1; j >=0; j-- ) {
+                    max = (data[i].values[j] > max) ? data[i].values[j] : max;
+                }
             }
             return max;
         },
