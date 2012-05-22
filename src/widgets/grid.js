@@ -48,18 +48,25 @@ define([
             self.options.rows = [];
             self.$table = self.$node.find('table');
             self.$tbody = self.$node.find('tbody');
-            if (!self.options.colModel) {
-                self.options.colModel =
-                    self.options.rowWidgetClass.prototype.defaults.colModel;
+            if (!self.options.nostyling) {
+                self.$node.addClass('standard');
             }
+            self.onPageClick('mouseup.unhighlight', self.onPageClickUnhighlight);
+            self.update();
+        },
+
+        _initRowsAndHeader: function() {
+            var self = this;
+            self.options.rows = [];
+
+            self.options.colModel =
+                self.options.rowWidgetClass.prototype.defaults.colModel;
+
             if (! self.col) {
                 self.col = _.reduce(self.options.colModel, function(cols, col) {
                     cols[col.name] = col;
                     return cols;
                 }, {});
-            }
-            if (!self.options.nostyling) {
-                self.$node.addClass('standard');
             }
             _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
                 self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
@@ -79,8 +86,6 @@ define([
                 });
             });
             self._buildHeader();
-            self.onPageClick('mouseup.unhighlight', self.onPageClickUnhighlight);
-            self.update();
         },
 
         _buildHeader: function() {
@@ -258,6 +263,16 @@ define([
                 this.$node
                     .addClass('fixed-height')
                     .outerHeight(this.options.height);
+            }
+            if (updated.rowWidgetClass) {
+                var self = this,
+                    tbody = this.$tbody[0],
+                    $tr = this.$table.find('thead tr');
+                for (var i=0; i < this.options.rows.length; i++) {
+                    tbody.removeChild(this.options.rows[i].node);
+                }
+                $tr.children().remove();
+                self._initRowsAndHeader();
             }
         }
     });
