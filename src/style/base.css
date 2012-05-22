@@ -21,3 +21,26 @@
 .clearfix:after { clear: both; }
 .clearfix { *zoom: 1; }
 
+/* horizontally/vertically center div of unknown size. works in IE8+.  markup:
+ *
+ * <div class=centered-block-container>
+ *   <div class=centered-block>
+ *     ...
+ *   </div>
+ * </div>
+ */
+.centered-block-container {
+  text-align: center;
+}
+.centered-block-container:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -0.25em;
+}
+.centered-block {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: left;
+}
