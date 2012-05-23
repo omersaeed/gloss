@@ -49,6 +49,7 @@ define([
             this.state.disabled = true;
             this.addState('disabled');
             this.propagate('disable');
+            this.$node.attr('disabled', true);
             if (tabindex > -1) {
                 this.$node.removeAttr('tabindex');
                 this._tabindex = tabindex;
@@ -59,6 +60,7 @@ define([
             this.state.disabled = false;
             this.removeState('disabled');
             this.propagate('enable');
+            this.$node.attr('disabled', false);
             if (this._tabindex != null) {
                 this.$node.attr('tabindex', this._tabindex);
                 delete this._tabindex;

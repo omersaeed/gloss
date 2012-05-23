@@ -70,16 +70,6 @@ define([
                 self.setValue($checked.val());
             }
         },
-        disable: function() {
-            this.$buttons.attr('disabled', true);
-            StatefulWidget.prototype.disable.call(this);
-            return this;
-        },
-        enable: function() {
-            this.$buttons.attr('disabled', false);
-            StatefulWidget.prototype.enable.call(this);
-            return this;
-        },
         getValue: function() {
             return this.value;
         },
