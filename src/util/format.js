@@ -1,4 +1,6 @@
-define([], function() {
+define([
+    'component!vendor:jquery'
+], function($) {
 
 	var bytes = function(bytes, options) {
 		var i, units, defaults = {
@@ -45,28 +47,9 @@ define([], function() {
 		return (num * 100).toFixed(1) + '%';
 	};
 
-	var number = function(number, decimals, dec_point, thousands_sep) {
+	var number = function(number, decimals, decimalPoint, thousandsSep) {
 		// http://kevin.vanzonneveld.net
 		// +   original by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-		// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
-		// +     bugfix by: Michael White (http://getsprink.com)
-		// +     bugfix by: Benjamin Lupton
-		// +     bugfix by: Allan Jensen (http://www.winternet.no)
-		// +    revised by: Jonas Raoni Soares Silva (http://www.jsfromhell.com)
-		// +     bugfix by: Howard Yeend
-		// +    revised by: Luke Smith (http://lucassmith.name)
-		// +     bugfix by: Diogo Resende
-		// +     bugfix by: Rival
-		// +      input by: Kheang Hok Chin (http://www.distantia.ca/)
-		// +   improved by: davook
-		// +   improved by: Brett Zamir (http://brett-zamir.me)
-		// +      input by: Jay Klehr
-		// +   improved by: Brett Zamir (http://brett-zamir.me)
-		// +      input by: Amir Habibi (http://www.residence-mixte.com/)
-		// +     bugfix by: Brett Zamir (http://brett-zamir.me)
-		// +   improved by: Theriault
-		// +      input by: Amirouche
-		// +   improved by: Kevin van Zonneveld (http://kevin.vanzonneveld.net)
 		// *     example 1: number_format(1234.56);
 		// *     returns 1: '1,235'
 		// *     example 2: number_format(1234.56, 2, ',', ' ');
@@ -97,8 +80,8 @@ define([], function() {
 		number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
 		var n = !isFinite(+number) ? 0 : +number,
 			prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
-			sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
-			dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
+			sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep,
+			dec = (typeof decimalPoint === 'undefined') ? '.' : decimalPoint,
 			s = '',
 			toFixedFix = function (n, prec) {
 				var k = Math.pow(10, prec);
