@@ -8,9 +8,10 @@
 define([
     'component!vendor:jquery',
     './widget',
+    './../util/format',
     'text!./ratiograph/ratiograph.html',
     'css!./ratiograph/ratiograph.css'
-], function ($, Widget, template) {
+], function ($, Widget, Format, template) {
     return Widget.extend({
         defaults: {
             animationDuration: 1000,
@@ -53,12 +54,12 @@ define([
                 top: (totalWidth - currentWidth) + 'px',
                 left: (totalHeight - currentHeight) + 'px'
             }
-            self.$currentCount.text(currentCount);
+            self.$currentCount.text(Format.number(currentCount));
             self.$currentView.animate(cssProps, self.options.animationDuration);
         },
         renderTotalCount: function() {
             var self = this;
-            self.$totalCount.text(self.options.totalCount);
+            self.$totalCount.text(Format.number(self.options.totalCount));
         },
         renderTotalView: function() {
             var self = this;
