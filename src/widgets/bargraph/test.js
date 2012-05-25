@@ -50,6 +50,23 @@ define([
         ok(bg);
     });
 
+    test('Details graph vertical layout test', function () {
+        var bg = BarGraph(undefined, {
+            verticalLayout: true
+        }).appendTo('#qunit-fixture');
+
+        var data = [
+            {name: "Outlook PST", values: [45, 55] },
+            {name: "Zip Archive", values: [25, 35] },
+            {name: "TGZ archive", values: [80, 90] },
+            {name: "WinRAR archive", values: [110, 120] }
+        ];
+
+        bg.set('data', data);
+
+        ok(bg);
+    });
+
     test('Details graph animation visual test', function () {
         var bg = BarGraph().appendTo($('body'));
 
