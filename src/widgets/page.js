@@ -42,6 +42,10 @@ define([
             var self = this,
                 template = self.options.template;
 
+            if ($.isFunction(template)) {
+                template = template();
+            }
+
             if(template !== null) {
                 $('body').prepend($(template));
             }
