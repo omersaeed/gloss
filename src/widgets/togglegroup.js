@@ -27,11 +27,10 @@
 
 define([
     'component!vendor:jquery',
-    './statefulwidget',
     './formwidget',
     './button',
     'tmpl!./togglegroup/togglegroup.mtpl'
-], function($, StatefulWidget, FormWidget, Button, tmpl) {
+], function($, FormWidget, Button, tmpl) {
     return FormWidget.extend({
         defaults: {
             items: null,         // list of the format: [
