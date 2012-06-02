@@ -1,7 +1,7 @@
 define([
-    'component!mesh:model',
-    'component!mesh:fields',
-    'component!mesh:request',
+    'mesh/model',
+    'mesh/fields',
+    'mesh/request',
     './recordseries'
 ], function(model, fields, Request, RecordSeries) {
 

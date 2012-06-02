@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './boundwidgetgroup'
 ], function($, BoundWidgetGroup) {
     return BoundWidgetGroup.extend({

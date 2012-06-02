@@ -1,7 +1,7 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
     './grid',
     './treegrid/treegridrow',
     'css!./treegrid/treegrid.css'

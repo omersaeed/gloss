@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget',
     'css!./basemenu/basemenu.css'
 ], function($, Widget) {

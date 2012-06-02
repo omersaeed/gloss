@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery'
+    'vendor/jquery'
 ], function($) {
 
 	var bytes = function(bytes, options) {

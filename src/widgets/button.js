@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './formwidget'
 ], function($, FormWidget) {
     return FormWidget.extend({

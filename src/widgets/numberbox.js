@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './textbox'
 ], function($, TextBox) {
     return TextBox.extend({

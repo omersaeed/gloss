@@ -1,6 +1,6 @@
 define([
-    'component!vendor:underscore',
-    'component!bedrock:class'
+    'vendor/underscore',
+    'bedrock/class'
 ], function(_, Class) {
     return Class.extend({
         hexRe: /^\s*#?(([0-9a-f]{3})|([0-9a-f]{6}))\s*$/i,

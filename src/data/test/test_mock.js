@@ -1,8 +1,8 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
     './../../test/api/v1/targetvolume',
     './../../test/api/v1/targetvolumeprofile',
     './../../test/api/v1/fileplan',

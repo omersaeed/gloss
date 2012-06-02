@@ -1,8 +1,8 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:jquery-ui',
-    'component!vendor:underscore',
-    'component!bedrock:class',
+    'vendor/jquery',
+    'vendor/jquery-ui',
+    'vendor/underscore',
+    'bedrock/class',
     'css!./../style/base.css'
 ], function($, ui, _, Class) {
     var isArray = _.isArray, isPlainObject = $.isPlainObject, slice = Array.prototype.slice;

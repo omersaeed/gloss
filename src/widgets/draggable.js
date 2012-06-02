@@ -1,7 +1,7 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!bedrock:class',
+    'vendor/jquery',
+    'vendor/underscore',
+    'bedrock/class',
     './widget',
     'css!./draggable/draggable.css'
 ], function($, _, Class, Widget) {

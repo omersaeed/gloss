@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './statefulwidget'
 ], function($, StatefulWidget) {
     return StatefulWidget.extend({

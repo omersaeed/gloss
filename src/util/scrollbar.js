@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery'
+    'vendor/jquery'
 ], function($) {
     var w;
     return {

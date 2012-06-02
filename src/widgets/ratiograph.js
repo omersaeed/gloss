@@ -6,7 +6,7 @@
  */
 
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget',
     './../util/format',
     'text!./ratiograph/ratiograph.html',

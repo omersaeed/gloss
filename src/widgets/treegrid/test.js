@@ -1,9 +1,9 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
-    'component!mesh:model',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
+    'mesh/model',
     './../widget',
     './../button',
     './../grid/editable',

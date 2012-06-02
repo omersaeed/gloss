@@ -1,6 +1,6 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './../page',
     'tmpl!./noArgTest.mtpl',
     'tmpl!./argTest.mtpl'

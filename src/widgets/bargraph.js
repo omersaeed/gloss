@@ -6,7 +6,7 @@
  */
 
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget',
     'tmpl!./bargraph/bargraph.mtpl',
     'tmpl!./bargraph/verticalbargraph.mtpl',

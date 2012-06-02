@@ -26,7 +26,7 @@
  */
 
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './formwidget',
     './button',
     'tmpl!./togglegroup/togglegroup.mtpl'

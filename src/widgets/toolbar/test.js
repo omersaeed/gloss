@@ -1,6 +1,6 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './../toolbar'
 ], function($, ToolBar) {
     test('instantiating toolbar using default template', function() {

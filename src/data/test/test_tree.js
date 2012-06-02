@@ -1,8 +1,8 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
     './../../test/api/v1/recordseries',
     './../tree',
     './../mock',

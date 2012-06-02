@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget',
     'css!./tooltip/tooltip.css'
 ], function($, Widget) {

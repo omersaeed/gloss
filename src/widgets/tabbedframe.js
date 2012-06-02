@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget',
     'css!./tabbedframe/tabbedframe.css'
 ], function($, Widget) {

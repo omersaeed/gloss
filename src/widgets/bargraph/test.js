@@ -1,6 +1,6 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './../bargraph'
 ], function ($, BarGraph) {
 

@@ -1,7 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module */
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
+    'vendor/jquery',
+    'vendor/underscore',
     './../grid',
     './row',
     './editable',

@@ -1,6 +1,6 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
+    'vendor/jquery',
+    'vendor/underscore',
     './form'
 ], function($, _, Form) {
     return Form.extend({

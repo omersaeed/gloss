@@ -1,5 +1,5 @@
 define([
-    'component!vendor:underscore',
+    'vendor/underscore',
     './formwidget',
     './collectionviewable',
     './checkbox',

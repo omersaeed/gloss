@@ -1,5 +1,5 @@
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './draggable'
 ], function($, Draggable) {
     return $.extend({}, Draggable, {

@@ -1,6 +1,6 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
+    'vendor/jquery',
+    'vendor/underscore',
     './../widget'
 ], function($, _, Widget) {
     // for the IE innerHTML bug workaround

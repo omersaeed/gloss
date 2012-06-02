@@ -1,8 +1,8 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
-    'component!mesh:request',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
+    'mesh/request',
     './tree'
 ], function($, _, t, Request, Tree) {
 

@@ -7,7 +7,7 @@
  */
 
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     './widget'
 ], function($, Widget) {
     return Widget.extend({

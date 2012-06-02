@@ -1,6 +1,6 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual */
 define([
-    'component!vendor:jquery',
+    'vendor/jquery',
     'tmpl!./template.mtpl'
 ], function($, tmpl) {
     test('template plugin compiled', function() {

@@ -1,7 +1,7 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
     './../widget',
     './../grid/row'
 ], function($, _, t, Widget, Row) {

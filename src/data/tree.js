@@ -1,11 +1,11 @@
 define([
-    'component!vendor:jquery',
-    'component!vendor:underscore',
-    'component!vendor:t',
-    'component!bedrock:class',
-    'component!bedrock:events',
-    'component!mesh:model',
-    'component!mesh:collection'
+    'vendor/jquery',
+    'vendor/underscore',
+    'vendor/t',
+    'bedrock/class',
+    'bedrock/events',
+    'mesh/model',
+    'mesh/collection'
 ], function($, _, t, Class, events, Model, collection) {
 
     var Node = Class.extend({
