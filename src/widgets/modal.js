@@ -47,7 +47,7 @@ define([
             }
 
             if (options.closeBtn) {
-                Button($('<button>X</button>').prependTo(self.$header))
+                Button($('<button>x</button>').prependTo(self.$header))
                     .on('click', self.close);
             }
 
