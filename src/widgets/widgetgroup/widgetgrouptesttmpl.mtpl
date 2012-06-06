@@ -1,0 +1,9 @@
+<form>
+  <fieldset name=fieldset1>
+    <button name=foo>Foo</button>
+  </fieldset>
+  <fieldset name=fieldset2>
+    <button name=bar>Bar</button>
+  </fieldset>
+  <button name=baz>Baz</button>
+</form>
