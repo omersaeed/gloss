@@ -1,0 +1,21 @@
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset {
+  list-style: none;  
+  margin: 0px;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset li{
+  float: left;
+  padding: 0 10px 0 0;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset li a{
+  text-decoration: none;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset .ui-multiselect-close{
+  float: right;
+}
+.ui-multiselect .ui-multiselect-menu .ui-checkbox-group {
+  overflow: auto;
+}
+.ui-multiselect .ui-multiselect-menu .ui-checkbox-group label{
+  display: block;
+}
+ 

@@ -1,0 +1,28 @@
+<div class=ui-multiselect>
+  <input type=button name=multiselect-btn class=ui-multiselect-btn value='Select Overlays for this Infoset'></input>
+  <div class=base-menu>
+    <div class=ui-multiselect-menu>
+      <ul class=ui-helper-reset>
+        <li>
+          <a class="ui-multiselect-all" href="#">
+            <span class="ui-icon ui-icon-check">&#x2714;</span>
+            <span>Check all</span>
+          </a>
+        </li>
+        <li>
+          <a class="ui-multiselect-none" href="#">
+            <span class="ui-icon ui-icon-closethick">&#x2716;</span>
+            <span>Uncheck all</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="ui-multiselect-close">
+            <span class="ui-icon ui-icon-circle-close">&#x2327;</span>
+          </a>
+        </li>
+      </ul>    
+      <div style="clear:both;" ></div>
+      <div class=ui-checkbox-group></div>
+    </div>    
+  </div>
+</div>
