@@ -37,6 +37,8 @@ define([
             if (self.options.widgets == null) {
                 self.options.widgets = {};
             }
+            self._groupedWidgets = {};
+            self._ungroupedWidgets = {};
             if (self.options.widgetize) {
                 self.widgetizeDescendents();
             }
@@ -66,14 +68,29 @@ define([
             });
         },
 
-        getValues: function() {
-            var self = this, values = {};
-            $.each(self.options.widgets, function(name, widget) {
-                if (widget.getValue) {
-                    values[name] = widget.getValue();
+        _getFieldset: function($node) {
+            while (($node = $node.parent())[0] !== this.node) {
+                if (/^fieldset$/i.test($node[0].tagName) && $node.attr('name')) {
+                    return $node;
                 }
-            });
-            return values;
+            }
+        },
+
+        getValues: function() {
+            var values = function(obj) {
+                return _.reduce(obj, function(memo, widget, name) {
+                    if (_.isFunction(widget.getValue)) {
+                        memo[name] = widget.getValue();
+                    }
+                    return memo;
+                }, {});
+            };
+            return $.extend(true,
+                    values(this._ungroupedWidgets),
+                    _.reduce(this._groupedWidgets, function(memo, group, name) {
+                        memo[name] = values(group);
+                        return memo;
+                    }, {}));
         },
 
         getWidget: function(name) {
@@ -83,7 +100,9 @@ define([
         widgetizeDescendents: function() {
             var self = this, map = this.options.widgetMap, widgets = this.options.widgets;
             self.$node.find(self.options.widgetSelector).each(function(i, node) {
-                var $node = $(node), name;
+                var name, fieldsetName,
+                    $node = $(node),
+                    $fieldset = self._getFieldset($node);
                 if (!self.registry.isWidget($node)) {
                     $.each(map, function(i, candidate) {
                         if ($node.is(candidate[0])) {
@@ -91,6 +110,14 @@ define([
                                 $node.find('input[type=radio]').attr('name') :
                                 $node.attr('name');
                             widgets[name] = candidate[1]($node);
+                            if ($fieldset) {
+                                fieldsetName = $fieldset.attr('name');
+                                self._groupedWidgets[fieldsetName] =
+                                        self._groupedWidgets[fieldsetName] || {};
+                                self._groupedWidgets[fieldsetName][name] = widgets[name];
+                            } else {
+                                self._ungroupedWidgets[name] = widgets[name];
+                            }
                         }
                     });
                 }
