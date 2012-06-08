@@ -97,10 +97,23 @@ define([
             return this.options.widgets[name];
         },
 
+        _addWidget: function(name, widget, fieldsetName) {
+            var self = this, widgets = this.options.widgets;
+
+            widgets[name] = widget;
+            if (fieldsetName) {
+                self._groupedWidgets[fieldsetName] =
+                        self._groupedWidgets[fieldsetName] || {};
+                self._groupedWidgets[fieldsetName][name] = widgets[name];
+            } else {
+                self._ungroupedWidgets[name] = widgets[name];
+            }
+        },
+
         widgetizeDescendents: function() {
             var self = this, map = this.options.widgetMap, widgets = this.options.widgets;
             self.$node.find(self.options.widgetSelector).each(function(i, node) {
-                var name, fieldsetName,
+                var name,
                     $node = $(node),
                     $fieldset = self._getFieldset($node);
                 if (!self.registry.isWidget($node)) {
@@ -109,14 +122,11 @@ define([
                             name = $node.hasClass('radiogroup')?
                                 $node.find('input[type=radio]').attr('name') :
                                 $node.attr('name');
-                            widgets[name] = candidate[1]($node);
+                                
                             if ($fieldset) {
-                                fieldsetName = $fieldset.attr('name');
-                                self._groupedWidgets[fieldsetName] =
-                                        self._groupedWidgets[fieldsetName] || {};
-                                self._groupedWidgets[fieldsetName][name] = widgets[name];
+                                self._addWidget(name, candidate[1]($node), $fieldset.attr('name'));
                             } else {
-                                self._ungroupedWidgets[name] = widgets[name];
+                                self._addWidget(name, candidate[1]($node));
                             }
                         }
                     });
