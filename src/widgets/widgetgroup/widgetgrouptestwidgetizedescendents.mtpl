@@ -1,0 +1,40 @@
+<form>
+
+  <button name=button1 value=button1>Button 1</button>
+  <input type=submit name=button2 value="Button 2"/>
+
+  <input type=checkbox name=checkbox1 />
+
+  <input type=text name=textbox1 />
+  <input type=password name=textbox2 />
+  <input type=search name=textbox3 />
+  <textarea name=textbox4>text box 4</textarea>
+
+  <input type=number name=numberbox1 />
+
+  <select name=selectbox1>
+    <option value=selectbox1option1>Option 1</option>
+    <option value=selectbox1option2>Option 2</option>
+  </select>
+
+  <div class=select name=selectbox2></div>
+
+  <div class=radiogroup name=radiogroup1>
+    <input type=radio name=radiogroup1 value=value1 />
+    <input type=radio name=radiogroup1 value=value2 />
+    <input type=radio name=radiogroup1 value=value3 />
+  </div>
+
+  <div class=togglegroup name=togglegroup1>
+    <button value=toggle1>Toggle 1</button>
+    <button value=toggle2>Toggle 2</button>
+    <button value=toggle3>Toggle 3</button>
+  </div>
+
+  <div class=checkboxgroup name=checkboxgroup1>
+    <input type=checkbox value=checkboxgroup1value1 />
+    <input type=checkbox value=checkboxgroup1value2 />
+    <input type=checkbox value=checkboxgroup1value3 />
+  </div>
+
+</form>
