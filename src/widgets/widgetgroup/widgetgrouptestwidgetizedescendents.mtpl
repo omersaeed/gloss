@@ -5,9 +5,14 @@
 
   <input type=checkbox name=checkbox1 />
 
+  <!--
+  note that we're setting both a label and a message list for the 'textbox1'
+  widget using the 'data-for' attribute
+  -->
   <div class=messagelist data-for=textbox1></div>
   <input type=text name=textbox1 />
   <label data-for=textbox1>Text box 1 label</label>
+
   <input type=password name=textbox2 />
   <input type=search name=textbox3 />
   <textarea name=textbox4>text box 4</textarea>
