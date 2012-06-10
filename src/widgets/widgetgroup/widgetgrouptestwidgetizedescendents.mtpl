@@ -1,3 +1,17 @@
+<!--
+
+when this form element is instantiated as a WidgetGroup (or something that
+inherits from WidgetGroup like BoundWidgetGroup or Form), it will automatically
+instantiate child widgets if the 'widgetize: true' option is set.
+
+the criteria for instantiating a child widget is:
+- it must have a 'name' attribute
+- it must match the one of the selectors from the 'widgetMap' attribute of the
+  WidgetGroup options.
+
+the markup below should serve as an example for this process
+
+-->
 <form>
 
   <button name=button1 value=button1>Button 1</button>
