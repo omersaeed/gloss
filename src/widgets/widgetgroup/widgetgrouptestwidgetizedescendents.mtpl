@@ -5,6 +5,7 @@
 
   <input type=checkbox name=checkbox1 />
 
+  <div class=messagelist data-for=textbox1></div>
   <input type=text name=textbox1 />
   <label data-for=textbox1>Text box 1 label</label>
   <input type=password name=textbox2 />

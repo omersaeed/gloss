@@ -73,5 +73,11 @@ define([
             );
     });
 
+    test('setting the messagelist for an input', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+
+        ok(wg.getWidget('textbox1').options.messageList);
+    });
+
     start();
 });
