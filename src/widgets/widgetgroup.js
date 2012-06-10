@@ -51,16 +51,20 @@ define([
                 }
             });
             self.$node.find('label[data-for]:not([for])').each(function(i, el) {
-                var $radio, $el = $(el),
+                var $el = $(el),
                     split = $el.attr('data-for').split(':'),
                     name = split[0],
                     value = split[1],
                     widget = self.options.widgets[name];
                 if (widget) {
                     if (value != null) {
-                        $radio = widget.$node
-                            .find('[type=radio][value=' + value + ']');
-                        $el.attr('for', $radio.attr('id'));
+                        if (widget instanceof RadioGroup) {
+                            $el.attr('for', widget.$node
+                                .find('[type=radio][value=' + value + ']').attr('id'));
+                        } else {
+                            $el.attr('for', widget.$node
+                                .find('[type=checkbox][value=' + value + ']').attr('id'));
+                        }
                     } else {
                         $el.attr('for', widget.id);
                     }
