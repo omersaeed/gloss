@@ -98,3 +98,21 @@ body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
 .fixed-height.grid {
   overflow: auto;
 }
+.grid table.grid thead th.sort-null .asc-arrow, 
+.grid table.grid thead th.sort-null .desc-arrow {
+    display: none;
+  }
+
+.grid table.grid thead th.sort-asc .asc-arrow {
+    display: static;
+  }
+.grid table.grid thead th.sort-asc .desc-arrow {
+    display: none;
+  }
+.grid table.grid thead th.sort-desc .desc-arrow {
+    display: static;
+  }
+.grid table.grid thead th.sort-desc .asc-arrow {
+    display: none;
+  }
+

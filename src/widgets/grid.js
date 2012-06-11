@@ -89,7 +89,8 @@ define([
         },
 
         _buildHeader: function() {
-            var $tr = this.$table.find('thead tr');
+            var $tr = this.$table.find('thead tr'),
+                self = this;
             _.each(this.options.colModel, function(col, i) {
                 var $tooltip = null, $helpIcon = null, $helpText = null;
                 if (col.help) {
@@ -132,10 +133,66 @@ define([
                     });
                     resizeHandle.$node.prependTo($th);
                 }
+                
+                if (col.sortable) {       
+                    var $orderIndicators = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');
+                    $th.append($orderIndicators);
+                    $th.addClass('sort-null');
+                    $th.on('click', function(evt) {
+                        if (col.order === 'asc') {
+                            col.order = 'desc';
+                        } else {
+                            col.order = 'asc';
+                        }
+                        self._sortData(self, col);
+                    });
+                    
+                 // initial sorting
+                    if (col.order !== undefined) {
+                        self._sortData(self, col);
+                    }
+                } 
                 $th.appendTo($tr);
             });
         },
 
+        _sortData: function(self, col, ignoreSameColumnSort) {
+            var $sortColHeader = self.$node.find('thead th.col-'+ col.name), 
+                $sortedColHeader = null;
+            // display sort-order indicator
+            if (self._sortedColumn) {
+                $sortedColHeader = self.$node.find('thead th.col-'+ self._sortedColumn.name);
+                $sortedColHeader.removeClass('sort-asc sort-desc').addClass('sort-null');
+            } 
+            $sortColHeader
+                .removeClass('sort-null')
+                .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
+            
+            // set will take care of sorting   
+            if (self.options.models) {
+                self._sortedColumn = col;
+                self.set('models', self.options.models);                                                        
+            }
+        },
+        
+        _compare: function(colName, colOrder) {
+            return function(a,b) {
+                var result = 0;
+                if (!a[colName] && !b[colName]) {
+                    result = 0;
+                } else if (!a[colName]) {
+                    result = -1;
+                } else if (!b[colName]) {
+                    result = 1;
+                }
+                result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
+                
+                result *= colOrder === 'asc'? 1 : -1;
+                
+                return result;
+            };
+        },
+        
         _setModels: function() {
             var startTime = new Date();
             var i, model, newRow, attachTbodyToTable = false,
@@ -155,7 +212,11 @@ define([
                 rowsLen = 0;
                 attachTbodyToTable = true;
             }
-
+            
+            if (this._sortedColumn){
+                models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
+            }
+            
             for (i = 0; i < len; i++) {
                 model = models[i];
                 if (i >= rowsLen) {
@@ -275,6 +336,7 @@ define([
                 self._initRowsAndHeader();
             }
         }
+        
     });
 });
 
