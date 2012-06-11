@@ -218,12 +218,116 @@ define([
             grid.options.rows[0].edit();
             grid.options.rows[0].form.$node.find('[name=name]').val('foo');
             grid.options.rows[0].form.trigger('submit');
-            setTimeout(function() {
-                equal(grid.options.rows[0].options.model.name, 'foo');
-                start();
-            }, 15);
+            
+            equal(grid.options.rows[0].options.model.name, 'foo');            
+            setTimeout(start, 15);
         });
     });
 
+    module('sortable grid', {
+        setup: function() {
+            var SortableRowClass,
+                sortableColModel = _.clone(RowClass.prototype.defaults.colModel);
+            _.each([1, 2, 3, 4], function(i) {
+                sortableColModel[i].sortable = true;
+            });
+            SortableRowClass = RowClass.extend({
+                defaults: {
+                    colModel: sortableColModel,
+                    modelClass: TargetVolumeProfile
+                }
+            });
+            this.grid = Grid(undefined, {
+                rowWidgetClass: SortableRowClass
+            });
+
+            this.collection = TargetVolumeProfile.collection();
+        }
+    });
+
+    asyncTest('sort column', function() {
+        var limit = 100, grid = this.grid, collection = this.collection,
+            prevModel = null,
+            dataModel = null;
+        grid.appendTo($('#qunit-fixture'));
+        
+        collection.load({limit: limit, offset: 0}).done(function(data) {
+            grid.set('models', data);
+            
+            $nameColTh = grid.$node.find('thead th.col-name');
+            $nameColTh.trigger('click');
+                        
+            equal(grid.options.models.length, limit);
+            verifyGridMatchesData(grid.options.models, grid, limit);                
+            _.each(grid.options.models, function(model, i){
+                if (prevModel) {
+                    equal( (model.name >= prevModel.name), true);
+                }   
+                prevModel = model; 
+                
+                dataModel = _.find(data, function(d) { return d.name === model.name});
+                equal(model.name, dataModel.name);
+                equal(model.tasks_option, dataModel.tasks_option);
+                equal(model.volume_id, dataModel.volume_id);
+                equal(model.security_attributes, dataModel.security_attributes);
+            });                
+            setTimeout(start, 15);
+
+            $nameColTh.trigger('click');
+            
+            verifyGridMatchesData(grid.options.models, grid, limit);                
+            _.each(grid.options.models, function(model, i){
+                if (prevModel) {
+                    equal( (model.name <= prevModel.name), true);
+                }   
+                prevModel = model;
+                
+                dataModel = _.find(data, function(d) { return d.name === model.name});
+                equal(model.name, dataModel.name);
+                equal(model.tasks_option, dataModel.tasks_option);
+                equal(model.volume_id, dataModel.volume_id);
+                equal(model.security_attributes, dataModel.security_attributes);
+            });                
+            setTimeout(start, 15);
+
+        });
+    });
+    
+    asyncTest('reset data with sorted column', function() {
+        var limit = 100, grid = this.grid, collection = this.collection,
+            prevModel = null,
+            dataModel = null;
+        grid.appendTo($('#qunit-fixture'));
+        
+        $.when(
+                collection.load({limit: limit, offset: 0}),
+                collection.load({limit: limit, offset: limit})
+            ).done(function(data1, data2) {
+            grid.set('models', data1[0]);
+            
+            $nameColTh = grid.$node.find('thead th.col-name');
+            $nameColTh.trigger('click');    // sort ascending                        
+            $nameColTh.trigger('click');    // sort descending
+            
+            grid.set('models', data2[0]);
+            
+            verifyGridMatchesData(grid.options.models, grid, limit);                
+            _.each(grid.options.models, function(model, i){
+                if (prevModel) {
+                    equal( (model.name <= prevModel.name), true);
+                }   
+                prevModel = model;
+                
+                dataModel = _.find(data2[0], function(d) { return d.name === model.name});
+                equal(model.name, dataModel.name);
+                equal(model.tasks_option, dataModel.tasks_option);
+                equal(model.volume_id, dataModel.volume_id);
+                equal(model.security_attributes, dataModel.security_attributes);
+            });                
+            setTimeout(start, 15);
+
+        });
+    });
+       
     start();
 });
