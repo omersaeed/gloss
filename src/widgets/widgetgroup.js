@@ -51,16 +51,20 @@ define([
                 }
             });
             self.$node.find('label[data-for]:not([for])').each(function(i, el) {
-                var $radio, $el = $(el),
+                var $el = $(el),
                     split = $el.attr('data-for').split(':'),
                     name = split[0],
                     value = split[1],
                     widget = self.options.widgets[name];
                 if (widget) {
                     if (value != null) {
-                        $radio = widget.$node
-                            .find('[type=radio][value=' + value + ']');
-                        $el.attr('for', $radio.attr('id'));
+                        if (widget instanceof RadioGroup) {
+                            $el.attr('for', widget.$node
+                                .find('[type=radio][value=' + value + ']').attr('id'));
+                        } else {
+                            $el.attr('for', widget.$node
+                                .find('[type=checkbox][value=' + value + ']').attr('id'));
+                        }
                     } else {
                         $el.attr('for', widget.id);
                     }
@@ -97,10 +101,23 @@ define([
             return this.options.widgets[name];
         },
 
+        _addWidget: function(name, widget, fieldsetName) {
+            var self = this, widgets = this.options.widgets;
+
+            widgets[name] = widget;
+            if (fieldsetName) {
+                self._groupedWidgets[fieldsetName] =
+                        self._groupedWidgets[fieldsetName] || {};
+                self._groupedWidgets[fieldsetName][name] = widgets[name];
+            } else {
+                self._ungroupedWidgets[name] = widgets[name];
+            }
+        },
+
         widgetizeDescendents: function() {
             var self = this, map = this.options.widgetMap, widgets = this.options.widgets;
             self.$node.find(self.options.widgetSelector).each(function(i, node) {
-                var name, fieldsetName,
+                var name,
                     $node = $(node),
                     $fieldset = self._getFieldset($node);
                 if (!self.registry.isWidget($node)) {
@@ -109,14 +126,11 @@ define([
                             name = $node.hasClass('radiogroup')?
                                 $node.find('input[type=radio]').attr('name') :
                                 $node.attr('name');
-                            widgets[name] = candidate[1]($node);
+                                
                             if ($fieldset) {
-                                fieldsetName = $fieldset.attr('name');
-                                self._groupedWidgets[fieldsetName] =
-                                        self._groupedWidgets[fieldsetName] || {};
-                                self._groupedWidgets[fieldsetName][name] = widgets[name];
+                                self._addWidget(name, candidate[1]($node), $fieldset.attr('name'));
                             } else {
-                                self._ungroupedWidgets[name] = widgets[name];
+                                self._addWidget(name, candidate[1]($node));
                             }
                         }
                     });

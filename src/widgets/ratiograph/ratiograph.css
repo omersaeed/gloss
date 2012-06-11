@@ -2,22 +2,18 @@
   background: #ffffff;
   border: 1px solid #909090;
 }
-
-.ratio-graph .total-count-cell h4 {
-	margin-top: 0;
-}
-
 .ratio-graph .current-count-view {
   position: relative;
   background: #909090;
   border: solid #909090;
   border-width: 0px 1px 1px 0px;
 }
-
-.ratio-graph .current-count-cell h4 {
-	margin-bottom: 0;
+.ratio-graph .total-count-cell h4 {
+  margin-top: 0;
 }
-
+.ratio-graph .current-count-cell h4 {
+  margin-bottom: 0;
+}
 .ratio-graph table td {
-	padding: 4px;
+  padding: 4px;
 }
