@@ -162,9 +162,11 @@ define([
             // display sort-order indicator
             if (self._sortedColumn) {
                 $sortedColHeader = self.$node.find('thead th.col-'+ self._sortedColumn.name);
-                $sortedColHeader.removeClass('sort-asc').removeClass('sort-desc').addClass('sort-null');
+                $sortedColHeader.removeClass('sort-asc sort-desc').addClass('sort-null');
             } 
-            $sortColHeader.removeClass('sort-null').addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
+            $sortColHeader
+                .removeClass('sort-null')
+                .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
             
             // set will take care of sorting   
             if (self.options.models) {
@@ -185,9 +187,7 @@ define([
                 }
                 result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
                 
-                if (colOrder === 'desc') {
-                    result = result * -1;
-                }
+                result *= colOrder === 'asc'? 1 : -1;
                 
                 return result;
             };
@@ -214,7 +214,7 @@ define([
             }
             
             if (this._sortedColumn){
-                models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order))
+                models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
             }
             
             for (i = 0; i < len; i++) {

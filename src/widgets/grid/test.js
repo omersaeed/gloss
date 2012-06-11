@@ -218,10 +218,9 @@ define([
             grid.options.rows[0].edit();
             grid.options.rows[0].form.$node.find('[name=name]').val('foo');
             grid.options.rows[0].form.trigger('submit');
-            setTimeout(function() {
-                equal(grid.options.rows[0].options.model.name, 'foo');
-                start();
-            }, 15);
+            
+            equal(grid.options.rows[0].options.model.name, 'foo');            
+            setTimeout(start, 15);
         });
     });
 
