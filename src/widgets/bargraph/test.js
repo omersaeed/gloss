@@ -74,7 +74,8 @@ define([
             {name: "Outlook PST", values: [45, 55] },
             {name: "Zip Archive", values: [25, 35] },
             {name: "TGZ archive", values: [80, 90] },
-            {name: "WinRAR archive", values: [110, 120] }
+            {name: "WinRAR archive", values: [110, 120] },
+            {name: "TAR archive", values: [100, 1] }
         ];
 
         bg.set('data', data);
