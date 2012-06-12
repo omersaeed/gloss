@@ -135,8 +135,8 @@ define([
                 }
                 
                 if (col.sortable) {       
-                    var $orderIndicators = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');
-                    $th.append($orderIndicators);
+                    var $orderSpans = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');                    
+                    col.resizable? $th.find('.buffer').append($orderSpans): $th.append($orderSpans);                      
                     $th.addClass('sort-null');
                     $th.on('click', function(evt) {
                         if (col.order === 'asc') {
@@ -145,14 +145,14 @@ define([
                             col.order = 'asc';
                         }
                         self._sortData(self, col);
-                    });
-                    
-                 // initial sorting
-                    if (col.order !== undefined) {
-                        self._sortData(self, col);
-                    }
+                    });                                   
                 } 
                 $th.appendTo($tr);
+                
+                // initial sorting
+                if (col.sortable && col.order !== undefined) {
+                    self._sortData(self, col);
+                }
             });
         },
 
@@ -168,9 +168,9 @@ define([
                 .removeClass('sort-null')
                 .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
             
-            // set will take care of sorting   
+            // set will take care of sorting
+            self._sortedColumn = col;
             if (self.options.models) {
-                self._sortedColumn = col;
                 self.set('models', self.options.models);                                                        
             }
         },
@@ -184,8 +184,9 @@ define([
                     result = -1;
                 } else if (!b[colName]) {
                     result = 1;
+                } else {               
+                    result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
                 }
-                result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
                 
                 result *= colOrder === 'asc'? 1 : -1;
                 
@@ -203,8 +204,13 @@ define([
                 rows = options.rows,
                 rowsLen = rows.length,
                 $tbody = this.$tbody,
-                tbody = $tbody[0];
+                tbody = $tbody[0],
+                selectedModel = null;
 
+            if (this._highlighted) {
+                selectedModel = this._highlighted.options.model;
+            }
+                        
             if (this._shouldFullyRender()) {
                 $tbody.remove();
                 $tbody = this.$tbody = $('<tbody></tbody>');
@@ -217,6 +223,8 @@ define([
                 models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
             }
             
+            this.unhighlight();
+            
             for (i = 0; i < len; i++) {
                 model = models[i];
                 if (i >= rowsLen) {
@@ -225,6 +233,10 @@ define([
                     rows.push(newRow);
                 } else {
                     this.setModel(rows[i], model);
+                }
+                
+                if (selectedModel && model === selectedModel) {
+                    this.highlight(rows[i]);
                 }
             }
 

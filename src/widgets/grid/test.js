@@ -248,13 +248,13 @@ define([
     asyncTest('sort column', function() {
         var limit = 100, grid = this.grid, collection = this.collection,
             prevModel = null,
-            dataModel = null;
+            dataModel = null,
+            $nameColTh = grid.$node.find('thead th.col-name');
         grid.appendTo($('#qunit-fixture'));
         
         collection.load({limit: limit, offset: 0}).done(function(data) {
             grid.set('models', data);
-            
-            $nameColTh = grid.$node.find('thead th.col-name');
+                        
             $nameColTh.trigger('click');
                         
             equal(grid.options.models.length, limit);
@@ -265,7 +265,9 @@ define([
                 }   
                 prevModel = model; 
                 
-                dataModel = _.find(data, function(d) { return d.name === model.name});
+                dataModel = _.find(data, function(d) { 
+                    return d.name === model.name;
+                });
                 equal(model.name, dataModel.name);
                 equal(model.tasks_option, dataModel.tasks_option);
                 equal(model.volume_id, dataModel.volume_id);
@@ -282,7 +284,9 @@ define([
                 }   
                 prevModel = model;
                 
-                dataModel = _.find(data, function(d) { return d.name === model.name});
+                dataModel = _.find(data, function(d) { 
+                    return d.name === model.name;
+                });
                 equal(model.name, dataModel.name);
                 equal(model.tasks_option, dataModel.tasks_option);
                 equal(model.volume_id, dataModel.volume_id);
@@ -296,7 +300,8 @@ define([
     asyncTest('reset data with sorted column', function() {
         var limit = 100, grid = this.grid, collection = this.collection,
             prevModel = null,
-            dataModel = null;
+            dataModel = null,
+            $nameColTh = grid.$node.find('thead th.col-name');
         grid.appendTo($('#qunit-fixture'));
         
         $.when(
@@ -305,7 +310,6 @@ define([
             ).done(function(data1, data2) {
             grid.set('models', data1[0]);
             
-            $nameColTh = grid.$node.find('thead th.col-name');
             $nameColTh.trigger('click');    // sort ascending                        
             $nameColTh.trigger('click');    // sort descending
             
@@ -318,12 +322,43 @@ define([
                 }   
                 prevModel = model;
                 
-                dataModel = _.find(data2[0], function(d) { return d.name === model.name});
+                dataModel = _.find(data2[0], function(d) { 
+                    return d.name === model.name;
+                });
                 equal(model.name, dataModel.name);
                 equal(model.tasks_option, dataModel.tasks_option);
                 equal(model.volume_id, dataModel.volume_id);
                 equal(model.security_attributes, dataModel.security_attributes);
             });                
+            setTimeout(start, 15);
+
+        });
+    });
+    
+    asyncTest('reset data with highlighted row and sorted colum', function() {
+        var limit = 100, grid = this.grid, collection = this.collection,
+            selectedModel = null,
+            $nameColTh = grid.$node.find('thead th.col-name');
+        grid.appendTo($('#qunit-fixture'));
+        
+        $.when(
+                collection.load({limit: limit, offset: 0}),
+                collection.load({limit: limit, offset: limit})
+            ).done(function(data1, data2) {
+            grid.set('models', data1[0]);
+            grid.highlight(grid.options.rows[0]);
+            
+            selectedModel = grid.highlighted().options.model;
+            
+            $nameColTh.trigger('click');    // sort ascending
+            equal(selectedModel.id, grid.highlighted().options.model.id);
+            
+            $nameColTh.trigger('click');    // sort descending
+            equal(selectedModel.id, grid.highlighted().options.model.id);
+            
+            grid.set('models', data2[0]);
+            equal(null, grid.highlighted());
+            
             setTimeout(start, 15);
 
         });
