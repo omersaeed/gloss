@@ -1,0 +1,9 @@
+<form>
+  <div class=messagelist></div>
+
+  <fieldset>
+    <label data-for=name>Name:</label>
+    <input name=name type=text />
+    <div class=messagelist data-for=name></div>
+  </fieldset>
+</form>

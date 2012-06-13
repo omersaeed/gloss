@@ -130,12 +130,15 @@ define([
         },
 
         processErrors: function(model, response) {
-            var self = this, messageList = this.options.messageList;
-            if (response.structural_errors) {
+            var self = this,
+                messageList = this.options.messageList,
+                globalErrors = response[0],
+                structuralErrors = response[1];
+            if (structuralErrors) {
                 if (self.options.structuralErrorHandler) {
-                    self.options.structuralErrorHandler(self, response.structural_errors);
+                    self.options.structuralErrorHandler(self, structuralErrors);
                 } else {
-                    $.each(response.structural_errors, function(field, errors) {
+                    $.each(structuralErrors, function(field, errors) {
                         var widget = self.getWidgetForField(field), messages;
                         if (isArray(errors)) {
                             messages = _.pluck(errors, 'message');
@@ -149,8 +152,8 @@ define([
                     });
                 }
             }
-            if (response.global_errors && messageList) {
-                messageList.append('invalid', _.pluck(response.global_errors, 'message'));
+            if (globalErrors && messageList) {
+                messageList.append('invalid', _.pluck(globalErrors, 'message'));
             }
         },
 
