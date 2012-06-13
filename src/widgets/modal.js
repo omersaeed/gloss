@@ -64,7 +64,7 @@ define([
             }
 
             if (options.height) {
-                $node.width(options.width);
+                $node.height(options.height);
 
                 if (options.position === 'center') {
                     $node.css({marginTop: -options.height/2 + 'px'});

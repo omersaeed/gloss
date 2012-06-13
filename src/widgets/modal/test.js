@@ -10,6 +10,33 @@ define([
         ok(m);
     });
 
+    test('modal height and width', function () {
+        var m = Modal(undefined, {
+            height: 207,
+            width: 208
+        }).appendTo('#qunit-fixture');
+
+        equal(m.$node.height(), 207);
+        equal(m.$node.width(), 208);
+    });
+
+    // test('modal within a modal', function() {
+    //     var outer = Modal(undefined, {
+    //             title: 'outer modal',
+    //             closeBtn: true
+    //         }).appendTo('body'),
+    //         inner = Modal(undefined, {
+    //             title: 'inner modal',
+    //             closeBtn: true
+    //         }).appendTo('body');
+
+    //     outer.open();
+    //     inner.open();
+
+    //     outer.close();
+    //     inner.close();
+    // });
+
     test('visual test', function () {
         var m = Modal(undefined, {
             title: 'Test Modal',
