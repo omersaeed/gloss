@@ -31,6 +31,14 @@ define([
             this.update();
         },
 
+        _onModelChange: function(eventType, model, changed) {
+            _.each(this.options.bindings, function(binding) {
+                if (changed[binding.field]) {
+                    binding.widgetInstance.setValue(model[binding.field]);
+                }
+            });
+        },
+
         bind: function(model) {
             this.resetWidgets();
             this.model = model;
@@ -57,6 +65,7 @@ define([
                 }
             });
             self.propagate('bind', self.model);
+            self.model.on('change', self._onModelChange);
             return this;
         },
 
@@ -73,12 +82,11 @@ define([
         },
 
         getModel: function() {
-            var model = this.model;
-            if (!model && this.options.modelClass) {
-                model = this.options.modelClass();
-                this.model = model;
+            if (!this.model && this.options.modelClass) {
+                this.model = this.options.modelClass();
+                this.bindModel();
             }
-            return model;
+            return this.model;
         },
 
         getModelValue: function(name) {

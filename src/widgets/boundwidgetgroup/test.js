@@ -10,7 +10,6 @@ define([
 
     var origAjax = Request.ajax(function(args) {
         var data = args.data;
-        console.log('ajax request made:',args);
         window.lastAjaxArgs = args;
         if (!data.name) {
             args.error({
@@ -55,6 +54,24 @@ define([
                 .test(bwg.getWidget('name').options.messageList.$node.text()));
             start();
         });
+    });
+
+    asyncTest('updates to model are propagated to bound widgets', function() {
+        var bwg = window.bwg = BoundWidgetGroup(template(), {
+                widgetize: true,
+                modelClass: TargetVolumeProfile,
+                bindings: [{widget: 'name', field: 'name'}]
+            }),
+            model = bwg.getModel(),
+            thisGuyIsCompletely = 'unscrupulous';
+
+        model.set('name', thisGuyIsCompletely);
+
+        setTimeout(function() {
+            equal(bwg.getWidget('name').getValue(), thisGuyIsCompletely);
+            equal(bwg.$node.find('[name=name]').val(), thisGuyIsCompletely);
+            start();
+        }, 0);
     });
 
     start();
