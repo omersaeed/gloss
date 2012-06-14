@@ -1,6 +1,5 @@
 define([
-    'vendor/jquery'
-], function ($) {
+], function () {
     return {
         defaults: {
         },
@@ -8,25 +7,23 @@ define([
             var self = this;
             self.currentDfd = [];
         },
-        executeQuery: function(queryObj, queryParams) {
-            var self = this,
-                paramsCopy = $.extend(true, {}, queryParams),
-                dfd;
+        executeQuery: function(dfd) {
+            var self = this;
 
-            dfd = queryObj.query(paramsCopy).execute().pipe(
+            dfd = dfd.pipe(
                 //Filter Success
                 function(value) {
                     if(dfd !== self.currentDfd[self.currentDfd.length-1]) {
-                        return dfd = $.Deferred().reject(value);
+                        return $.Deferred().reject();
                     }
                     self.currentDfd.length = 0;
-                    return(value);
+                    return this.resolve();
                 },
 
                 //Filter Failure
                 function(value) {
                     console.log('failure', value);
-                    return(value);
+                    return $.Deferred().reject(value);
                 }
             );
 
