@@ -1,5 +1,6 @@
 define([
-], function () {
+    'vendor/jquery'
+], function ($) {
     return {
         defaults: {
         },
