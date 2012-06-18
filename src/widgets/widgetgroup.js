@@ -117,6 +117,8 @@ define([
                     }
                 });
             }
+        },
+        
         getWidgets: function() {
             return $.extend({},
                     this._ungroupedWidgets,
