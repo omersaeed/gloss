@@ -117,6 +117,10 @@ define([
                     }
                 });
             }
+        getWidgets: function() {
+            return $.extend({},
+                    this._ungroupedWidgets,
+                    this._groupedWidgets);
         },
 
         _addWidget: function(name, widget, fieldsetName) {
