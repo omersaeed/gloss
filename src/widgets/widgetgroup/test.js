@@ -50,6 +50,10 @@ define([
 
         ok(wg.getWidget('checkboxgroup1') instanceof CheckBoxGroup,
             'checkboxgroup correctly widgetized');
+
+        ok(wg.getWidget('fieldset1widget1') instanceof TextBox);
+        ok(wg.getWidget('fieldset1widget2') instanceof TextBox);
+        ok(wg.getWidget('fieldset1widget3') instanceof TextBox);
     });
 
     test('set label "for" attribute', function() {
@@ -92,13 +96,14 @@ define([
         
         ok(_.size(widgets) === 14);
         ok(_.size(widgets.fieldset1) === 4);
-        ok(_.size(wg.options.widgets) === 17)
+        ok(_.size(wg.options.widgets) === 17);
         
     });
 
     test('setting values based on regex', function() {
         var wg = WidgetGroup($(html2), {widgetize: true});
-        wg.setWidgets('sample', /textbox[123]+/);
+        // wg.setWidgets('sample', /textbox[123]+/);
+        wg.setValues(/textbox[123]+/, 'sample');
 
         ok(wg.getWidget('textbox1').getValue() === 'sample');
         ok(wg.getWidget('textbox2').getValue() === 'sample');
@@ -108,10 +113,24 @@ define([
 
     test('setting values based on key', function() {
         var wg = WidgetGroup($(html2), {widgetize: true});
-        wg.setWidgets({textbox1: 'testA', textbox2: 'testB'});
+        // wg.setWidgets({textbox1: 'testA', textbox2: 'testB'});
+        wg.setValues({textbox1: 'testA', textbox2: 'testB'});
+        wg.getWidget('textbox3').setValue('negative test');
 
         ok(wg.getWidget('textbox1').getValue() === 'testA');
         ok(wg.getWidget('textbox2').getValue() === 'testB');
+        ok(wg.getWidget('textbox3').getValue() !== 'testB');
+    });
+
+    test('setting value based on (key, value) pari', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        wg.setValues(/textbox.*/, 'negative test');
+        wg.setValues('textbox1', 'testA');
+
+        ok(wg.getWidget('textbox1').getValue() === 'testA');
+        ok(wg.getWidget('textbox2').getValue() === 'negative test');
+        ok(wg.getWidget('textbox3').getValue() === 'negative test');
+
     });
 
     start();

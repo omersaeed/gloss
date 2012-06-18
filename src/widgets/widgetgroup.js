@@ -101,24 +101,30 @@ define([
             return this.options.widgets[name];
         },
 
-        setWidgets: function(val, regex) {
-            var self = this;
-            if (regex === undefined) {
-                _.each(val, function(val, key) {
-                    var widget = self.options.widgets[key];
-                    if(widget) {
-                        widget.setValue(val);
+        setValues: function(key, value) {
+            var regexp, params = {}, self = this;
+            if (_.isRegExp(key)) {
+                regexp = key;
+                _.each(self.getWidgets(), function(widget, name) {
+                    if (regexp.test(name)) {
+                        widget.setValue(value);
                     }
-                }) 
+                });
             } else {
-                _.each(self.options.widgets, function(widget, key) {
-                    if(key.match(regex)) {
-                        widget.setValue(val);
+                if (arguments.length > 1) {
+                    params[key] = value;
+                } else {
+                    params = key;
+                }
+                _.each(params, function(value, name) {
+                    if (self.getWidget(name)) {
+                        self.getWidget(name).setValue(value);
                     }
                 });
             }
+            return self;
         },
-        
+
         getWidgets: function() {
             return $.extend({},
                     this._ungroupedWidgets,
