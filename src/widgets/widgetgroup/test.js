@@ -96,5 +96,23 @@ define([
         
     });
 
+    test('setting values based on regex', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        wg.setWidgets('sample', /textbox[123]+/);
+
+        ok(wg.getWidget('textbox1').getValue() === 'sample');
+        ok(wg.getWidget('textbox2').getValue() === 'sample');
+        ok(wg.getWidget('textbox3').getValue() === 'sample');
+        ok(wg.getWidget('textbox4').getValue() !== 'sample');
+    });
+
+    test('setting values based on key', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        wg.setWidgets({textbox1: 'testA', textbox2: 'testB'});
+
+        ok(wg.getWidget('textbox1').getValue() === 'testA');
+        ok(wg.getWidget('textbox2').getValue() === 'testB');
+    });
+
     start();
 });

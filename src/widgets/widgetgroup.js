@@ -101,6 +101,22 @@ define([
             return this.options.widgets[name];
         },
 
+        setWidgets: function(val, regex) {
+            var self = this;
+            if (regex === undefined) {
+                _.each(val, function(val, key) {
+                    var widget = self.options.widgets[key];
+                    if(widget) {
+                        widget.setValue(val);
+                    }
+                }) 
+            } else {
+                _.each(self.options.widgets, function(widget, key) {
+                    if(key.match(regex)) {
+                        widget.setValue(val);
+                    }
+                });
+            }
         getWidgets: function() {
             return $.extend({},
                     this._ungroupedWidgets,
