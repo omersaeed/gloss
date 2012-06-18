@@ -101,6 +101,24 @@ define([
             return this.options.widgets[name];
         },
 
+        setWidgets: function(val, regex) {
+            var self = this;
+            if (regex === undefined) {
+                _.each(val, function(val, key) {
+                    var widget = self.options.widgets[key];
+                    if(widget) {
+                        widget.setValue(val);
+                    }
+                }) 
+            } else {
+                _.each(self.options.widgets, function(widget, key) {
+                    if(key.match(regex)) {
+                        widget.setValue(val);
+                    }
+                });
+            }
+        },
+
         _addWidget: function(name, widget, fieldsetName) {
             var self = this, widgets = this.options.widgets;
 
