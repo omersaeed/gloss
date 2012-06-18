@@ -101,6 +101,12 @@ define([
             return this.options.widgets[name];
         },
 
+        getWidgets: function() {
+            return $.extend({},
+                    this._ungroupedWidgets,
+                    this._groupedWidgets);
+        },
+
         _addWidget: function(name, widget, fieldsetName) {
             var self = this, widgets = this.options.widgets;
 
