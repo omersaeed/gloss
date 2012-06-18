@@ -63,4 +63,11 @@
     <label data-for="checkboxgroup1:value3">Value 3</label>
   </div>
 
+  <fieldset name=fieldset1>
+    <input type=text name=fieldset1widget1 />  
+    <input type=password name=fieldset1widget2 />
+    <input type=search name=fieldset1widget3 />
+    <textarea name=fieldset1widget4>text box 4</textarea>
+  </fieldset>
+  
 </form>

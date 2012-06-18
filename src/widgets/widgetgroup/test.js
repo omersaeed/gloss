@@ -1,6 +1,7 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/ 
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './../widgetgroup',
     './../button',
     './../checkbox',
@@ -12,7 +13,7 @@ define([
     './../checkboxgroup',
     'text!./widgetgrouptesttmpl.html',
     'text!./widgetgrouptestwidgetizedescendents.mtpl'
-], function($, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
+], function($, _, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
     RadioGroup, ToggleGroup, CheckBoxGroup, html, html2) {
 
     test('correctly group widgets', function() {
@@ -77,6 +78,22 @@ define([
         var wg = WidgetGroup($(html2), {widgetize: true});
 
         ok(wg.getWidget('textbox1').options.messageList);
+    });
+
+    test('testing getwidgets', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        var widgets = wg.getWidgets();
+        
+        ok(widgets.fieldset1 instanceof Object);
+        ok(widgets.fieldset1.fieldset1widget1 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget2 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget3 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget4 instanceof TextBox);   
+        
+        ok(_.size(widgets) === 14);
+        ok(_.size(widgets.fieldset1) === 4);
+        ok(_.size(wg.options.widgets) === 17)
+        
     });
 
     start();
