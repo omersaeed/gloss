@@ -105,7 +105,7 @@ define([
             var regexp, params = {}, self = this;
             if (_.isRegExp(key)) {
                 regexp = key;
-                _.each(self.getWidgets(), function(widget, name) {
+                _.each(self.getWidgets({flatList: true}), function(widget, name) {
                     if (regexp.test(name)) {
                         widget.setValue(value);
                     }
@@ -125,10 +125,10 @@ define([
             return self;
         },
 
-        getWidgets: function() {
-            return $.extend({},
-                    this._ungroupedWidgets,
-                    this._groupedWidgets);
+        getWidgets: function(params) {
+            return _.isObject(params) && params.flatList?
+                $.extend({}, this.options.widgets) :
+                $.extend({}, this._ungroupedWidgets, this._groupedWidgets);
         },
 
         _addWidget: function(name, widget, fieldsetName) {
