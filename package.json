@@ -6,7 +6,7 @@
     "Jordan McCoy",
     "Ralph Smith"
   ],
-  "version": "0.0.19",
+  "version": "0.0.20",
   "dependencies": {
     "siq-vendor-js": "0.0.x",
     "csi": "0.0.x",
