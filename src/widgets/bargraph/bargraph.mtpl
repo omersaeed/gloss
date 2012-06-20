@@ -1,13 +1,19 @@
 <table>
-  <% for(var i=0; i < data.length; i++) { %>
+  <% for(var i=0; i < data.data.length; i++) { %>
     <tr>
-      <td rowspan=<%= data[i].values.length+1 %>><%= data[i].name %></td>
-      <% for(var j=0; j < data[i].values.length; j++) { %>
+      <td rowspan=<%= data.data[i].values.length+1 %>><%= data.data[i].name %></td>
+      <% for(var j=0; j < data.data[i].values.length; j++) { %>
         <tr>
           <td class=graph-bar-cell>
-            <div class="graph-bar <%= 'graph-bar-' + j %>" style="width: 0px" value=<%= data[i].values[j] %>></div>
+            <div class="graph-bar <%= 'graph-bar-' + j %>" style="width: 0px" value=<%= data.data[i].values[j] %>></div>
           </td>
-          <td><%= data[i].values[j] %></td>
+          <td>
+            <% if(data.formatData) { %>
+              <%= data.Format.bytes(data.data[i].values[j]) %>
+            <% } else { %>
+              <%= data.Format.number(data.data[i].values[j]) %>
+            <% } %>
+          </td>
         </tr>
       <% } %>
     </tr>

@@ -8,10 +8,11 @@
 define([
     'vendor/jquery',
     './widget',
+    './../util/format',
     'tmpl!./bargraph/bargraph.mtpl',
     'tmpl!./bargraph/verticalbargraph.mtpl',
     'css!./bargraph/bargraph.css'
-], function ($, Widget, template, verticalTemplate) {
+], function ($, Widget, Format, template, verticalTemplate) {
     return Widget.extend({
         defaults: {
             data: null,         /* list of the format: [
@@ -22,6 +23,7 @@ define([
              * ]
              */
             verticalLayout: false,
+            formatData: false,
             barHeight: 10,      // height in px
             maxWidth: 100,      // width in px
             animationDuration: 1000
@@ -75,10 +77,17 @@ define([
 
             if(updated.data) {
                 if(self.options.data !== null){
-                    var $graphCells,
-                        $html = (self.options.verticalLayout) ?
-                                    $(verticalTemplate(self.options.data)) :
-                                    $(template(self.options.data));
+                    var $graphCells, $html,
+                        mtplParams = {
+                            data: self.options.data,
+                            formatData: self.options.formatData,
+                            Format: Format
+                        }
+
+
+                    $html = (self.options.verticalLayout) ?
+                        $(verticalTemplate(mtplParams)) :
+                        $(template(mtplParams));
 
                     // -- set initial size of the graph cell to max
                     $graphCells = $html.find('.graph-bar-cell');
