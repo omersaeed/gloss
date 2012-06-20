@@ -12,7 +12,12 @@ define([
     return FormWidget.extend({
         nodeTemplate: template,
         defaults: {            
-            populateEmptyNode: true
+            populateEmptyNode: true,
+            checkAllLabel: 'Check all',
+            uncheckAllLabel: 'Uncheck all',
+            selectBoxDefaultValue: '-- Select Values --'
+                
+                
         },
 
         create: function() {
@@ -22,8 +27,8 @@ define([
             self.selectBox = Button(self.$node.find('.ui-multiselect-btn'));
             self.selectBox.on('click', function(evt) {
                 self._toggleMenu(evt);
-            });
-            self._selectBoxDefaultValue = self.selectBox.getValue(); 
+            })
+            .setValue(self.options.selectBoxDefaultValue);
                 
             self.resetSelectAll = self.$node.find('.ui-multiselect-all');
             self.resetSelectAll.on('click', function(evt) {
@@ -46,7 +51,14 @@ define([
                 updateDisplay: true
             });
             
+            self.$node.find('.ui-multi-select-all-label').html(self.options.checkAllLabel);
+            self.$node.find('.ui-multi-select-none-label').html(self.options.uncheckAllLabel);
+            
             self.checkBoxGroup = CheckBoxGroup(self.$node.find('.ui-checkbox-group'));
+            
+            self.on('changed', function(evt){
+                self._displayCheckedValues();
+            });
             
             this.update();
         },
@@ -60,24 +72,25 @@ define([
         },
 
         setValue: function(array, silent) {
-            var array, value;
             this.checkBoxGroup.setValue(array, silent);
+            this._displayCheckedValues();
         },
         
-        _displayCheckedValues: function(){         
-            array = _.filter(
-                    _.map(this.checkboxes, function(cb) {
-                        return cb.getValue()? cb.options.value : null;
+        _displayCheckedValues: function(){ 
+            var value = null,
+                array = _.filter(
+                    _.map(this.checkBoxGroup.checkboxes, function(cb) {
+                        return cb.getValue()? cb.options.name : null;
                     }),
                     function(v) { return v !== null; }
                 );
-            if (array.length == 0){
-                value = self._selectBoxDefaultValue;
+            if (array.length === 0) {
+                value = this.options.selectBoxDefaultValue;
             }
             else {
                 value = array.join(", ");
-                if (value.length > self._selectBoxDefaultValue){
-                    value.substring(0, self._selectBoxDefaultValue.length -3) + '...'; 
+                if (value.length > this.options.selectBoxDefaultValue.length){
+                    value = value.substring(0, this.options.selectBoxDefaultValue.length -3) + '...'; 
                 }
             }
             this.selectBox.setValue(value);
@@ -90,6 +103,11 @@ define([
             this._super(updated);
             if (updated.models) {
                 self.checkBoxGroup.set('models', options.models);
+                _.each(self.checkBoxGroup.checkboxes, function (cb) {
+                    cb.on('change', function(evt) {
+                        self.trigger('changed');
+                    });
+                });                
             }            
         }
     }, {mixins: [CollectionViewable]});
