@@ -1,0 +1,9 @@
+.message-box .message-body {
+  padding: 10px 10px 30px 10px;
+  border-bottom: 1px solid #BBD;
+  max-width: 350px; 
+}
+.message-box button {
+  float: right;
+  margin: 5px 10px 10px 10px;
+}

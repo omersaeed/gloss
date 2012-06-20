@@ -1,6 +1,7 @@
-/*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/ 
+/*global test, asyncTest, ok, equal, notEqual, deepEqual, start, module, strictEqual, notStrictEqual, raises*/ 
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './../widgetgroup',
     './../button',
     './../checkbox',
@@ -12,7 +13,7 @@ define([
     './../checkboxgroup',
     'text!./widgetgrouptesttmpl.html',
     'text!./widgetgrouptestwidgetizedescendents.mtpl'
-], function($, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
+], function($, _, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
     RadioGroup, ToggleGroup, CheckBoxGroup, html, html2) {
 
     test('correctly group widgets', function() {
@@ -49,6 +50,10 @@ define([
 
         ok(wg.getWidget('checkboxgroup1') instanceof CheckBoxGroup,
             'checkboxgroup correctly widgetized');
+
+        ok(wg.getWidget('fieldset1widget1') instanceof TextBox);
+        ok(wg.getWidget('fieldset1widget2') instanceof TextBox);
+        ok(wg.getWidget('fieldset1widget3') instanceof TextBox);
     });
 
     test('set label "for" attribute', function() {
@@ -77,6 +82,75 @@ define([
         var wg = WidgetGroup($(html2), {widgetize: true});
 
         ok(wg.getWidget('textbox1').options.messageList);
+    });
+
+    test('testing getwidgets', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        var widgets = wg.getWidgets();
+        
+        ok(widgets.fieldset1 instanceof Object);
+        ok(widgets.fieldset1.fieldset1widget1 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget2 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget3 instanceof TextBox);
+        ok(widgets.fieldset1.fieldset1widget4 instanceof TextBox);   
+        
+        equal(_.size(widgets), 14);
+        equal(_.size(widgets.fieldset1), 4);
+        equal(_.size(wg.options.widgets), 17);
+        
+    });
+
+    test('testing getwidgets as flat list', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        var widgets = wg.getWidgets({flatList: true});
+        
+        ok(!widgets.fieldset1);
+        ok(widgets.fieldset1widget1 instanceof TextBox);
+        ok(widgets.fieldset1widget2 instanceof TextBox);
+        ok(widgets.fieldset1widget3 instanceof TextBox);
+        ok(widgets.fieldset1widget4 instanceof TextBox);   
+        
+        equal(_.size(widgets), 17);
+    });
+
+    test('setting values based on regex', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        // wg.setWidgets('sample', /textbox[123]+/);
+        wg.setValues(/textbox[123]+/, 'sample');
+
+        equal(wg.getWidget('textbox1').getValue(), 'sample');
+        equal(wg.getWidget('textbox2').getValue(), 'sample');
+        equal(wg.getWidget('textbox3').getValue(), 'sample');
+        notEqual(wg.getWidget('textbox4').getValue(), 'sample');
+
+        wg.setValues(/fieldset1widget\d/, 'sample 2');
+        equal(wg.getWidget('fieldset1widget1').getValue(), 'sample 2');
+        equal(wg.getWidget('fieldset1widget2').getValue(), 'sample 2');
+        equal(wg.getWidget('fieldset1widget3').getValue(), 'sample 2');
+        equal(wg.getWidget('fieldset1widget4').getValue(), 'sample 2');
+
+    });
+
+    test('setting values based on key', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        // wg.setWidgets({textbox1: 'testA', textbox2: 'testB'});
+        wg.setValues({textbox1: 'testA', textbox2: 'testB'});
+        wg.getWidget('textbox3').setValue('negative test');
+
+        ok(wg.getWidget('textbox1').getValue() === 'testA');
+        ok(wg.getWidget('textbox2').getValue() === 'testB');
+        ok(wg.getWidget('textbox3').getValue() !== 'testB');
+    });
+
+    test('setting value based on (key, value) pair', function() {
+        var wg = WidgetGroup($(html2), {widgetize: true});
+        wg.setValues(/textbox.*/, 'negative test');
+        wg.setValues('textbox1', 'testA');
+
+        ok(wg.getWidget('textbox1').getValue() === 'testA');
+        ok(wg.getWidget('textbox2').getValue() === 'negative test');
+        ok(wg.getWidget('textbox3').getValue() === 'negative test');
+
     });
 
     start();

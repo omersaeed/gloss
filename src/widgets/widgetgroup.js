@@ -101,6 +101,36 @@ define([
             return this.options.widgets[name];
         },
 
+        setValues: function(key, value) {
+            var regexp, params = {}, self = this;
+            if (_.isRegExp(key)) {
+                regexp = key;
+                _.each(self.getWidgets({flatList: true}), function(widget, name) {
+                    if (regexp.test(name)) {
+                        widget.setValue(value);
+                    }
+                });
+            } else {
+                if (arguments.length > 1) {
+                    params[key] = value;
+                } else {
+                    params = key;
+                }
+                _.each(params, function(value, name) {
+                    if (self.getWidget(name)) {
+                        self.getWidget(name).setValue(value);
+                    }
+                });
+            }
+            return self;
+        },
+
+        getWidgets: function(params) {
+            return _.isObject(params) && params.flatList?
+                $.extend({}, this.options.widgets) :
+                $.extend({}, this._ungroupedWidgets, this._groupedWidgets);
+        },
+
         _addWidget: function(name, widget, fieldsetName) {
             var self = this, widgets = this.options.widgets;
 
