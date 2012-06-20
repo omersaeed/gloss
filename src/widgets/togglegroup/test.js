@@ -62,6 +62,19 @@ define([
         start();
     });
 
+    test('togglegroup setValue', function() {
+        var tg = ToggleGroup($(html)).appendTo('#qunit-fixture');
+        tg.setValue('first');
+        equal(tg.getValue(), 'first');
+
+        tg.setValue('second');
+        equal(tg.getValue(), 'second');
+
+        raises(function() {
+            tg.setValue('not-an-option');
+        });
+    });
+
     test('togglegroup visual', function(){
         var tg, $tg = $(html);
         tg = ToggleGroup($tg).appendTo('#qunit-fixture');

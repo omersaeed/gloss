@@ -3,6 +3,7 @@
   top: 50%;
   left: 50%;
   border: 1px solid #747E84;
+  z-index: 1000000000;
 
           border-radius: 4px;
      -moz-border-radius: 4px;
@@ -33,6 +34,7 @@
   right: 0;
   bottom: 0;
   display: none;
+  z-index: 1000000000;
 }
 
 .modal-backdrop.transparent {

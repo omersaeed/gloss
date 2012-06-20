@@ -52,7 +52,7 @@ define([
             // -- interpolate width for max width
             width = $bar.attr('value') * self.lerpValue;
             cssProps = {
-                width: width + 'px'
+                width: ((width < 1) ? 1 : width) + 'px'
             }
             $bar.css('height', self.options.barHeight);
             $bar.animate(cssProps, self.options.animationDuration);

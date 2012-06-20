@@ -31,6 +31,14 @@ define([
             this.update();
         },
 
+        _onModelChange: function(eventType, model, changed) {
+            _.each(this.options.bindings, function(binding) {
+                if (changed[binding.field]) {
+                    binding.widgetInstance.setValue(model[binding.field]);
+                }
+            });
+        },
+
         bind: function(model) {
             this.resetWidgets();
             this.model = model;
@@ -57,6 +65,7 @@ define([
                 }
             });
             self.propagate('bind', self.model);
+            self.model.on('change', self._onModelChange);
             return this;
         },
 
@@ -73,12 +82,11 @@ define([
         },
 
         getModel: function() {
-            var model = this.model;
-            if (!model && this.options.modelClass) {
-                model = this.options.modelClass();
-                this.model = model;
+            if (!this.model && this.options.modelClass) {
+                this.model = this.options.modelClass();
+                this.bindModel();
             }
-            return model;
+            return this.model;
         },
 
         getModelValue: function(name) {
@@ -130,12 +138,15 @@ define([
         },
 
         processErrors: function(model, response) {
-            var self = this, messageList = this.options.messageList;
-            if (response.structural_errors) {
+            var self = this,
+                messageList = this.options.messageList,
+                globalErrors = response[0],
+                structuralErrors = response[1];
+            if (structuralErrors) {
                 if (self.options.structuralErrorHandler) {
-                    self.options.structuralErrorHandler(self, response.structural_errors);
+                    self.options.structuralErrorHandler(self, structuralErrors);
                 } else {
-                    $.each(response.structural_errors, function(field, errors) {
+                    $.each(structuralErrors, function(field, errors) {
                         var widget = self.getWidgetForField(field), messages;
                         if (isArray(errors)) {
                             messages = _.pluck(errors, 'message');
@@ -149,8 +160,8 @@ define([
                     });
                 }
             }
-            if (response.global_errors && messageList) {
-                messageList.append('invalid', _.pluck(response.global_errors, 'message'));
+            if (globalErrors && messageList) {
+                messageList.append('invalid', _.pluck(globalErrors, 'message'));
             }
         },
 

@@ -55,8 +55,8 @@ define([
                 self.$node.attr('tabindex', 0);
             }
             self.$node.append('<span class=arrow>&#x25bc;</span>');
-            self.$text = $('<span class=content>')
-                .html(self.entry? self.entry.content : '')
+            self.$text = $('<span class=content></span>')
+                .html(self.entry ? self.entry.content : '')
                 .appendTo(self.$node);
 
             self.$menu = $('<div>').hide().appendTo(self.$node);

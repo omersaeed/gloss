@@ -37,6 +37,8 @@ define([
             if (self.options.widgets == null) {
                 self.options.widgets = {};
             }
+            self._groupedWidgets = {};
+            self._ungroupedWidgets = {};
             if (self.options.widgetize) {
                 self.widgetizeDescendents();
             }
@@ -49,16 +51,20 @@ define([
                 }
             });
             self.$node.find('label[data-for]:not([for])').each(function(i, el) {
-                var $radio, $el = $(el),
+                var $el = $(el),
                     split = $el.attr('data-for').split(':'),
                     name = split[0],
                     value = split[1],
                     widget = self.options.widgets[name];
                 if (widget) {
                     if (value != null) {
-                        $radio = widget.$node
-                            .find('[type=radio][value=' + value + ']');
-                        $el.attr('for', $radio.attr('id'));
+                        if (widget instanceof RadioGroup) {
+                            $el.attr('for', widget.$node
+                                .find('[type=radio][value=' + value + ']').attr('id'));
+                        } else {
+                            $el.attr('for', widget.$node
+                                .find('[type=checkbox][value=' + value + ']').attr('id'));
+                        }
                     } else {
                         $el.attr('for', widget.id);
                     }
@@ -66,31 +72,96 @@ define([
             });
         },
 
-        getValues: function() {
-            var self = this, values = {};
-            $.each(self.options.widgets, function(name, widget) {
-                if (widget.getValue) {
-                    values[name] = widget.getValue();
+        _getFieldset: function($node) {
+            while (($node = $node.parent())[0] !== this.node) {
+                if (/^fieldset$/i.test($node[0].tagName) && $node.attr('name')) {
+                    return $node;
                 }
-            });
-            return values;
+            }
+        },
+
+        getValues: function() {
+            var values = function(obj) {
+                return _.reduce(obj, function(memo, widget, name) {
+                    if (_.isFunction(widget.getValue)) {
+                        memo[name] = widget.getValue();
+                    }
+                    return memo;
+                }, {});
+            };
+            return $.extend(true,
+                    values(this._ungroupedWidgets),
+                    _.reduce(this._groupedWidgets, function(memo, group, name) {
+                        memo[name] = values(group);
+                        return memo;
+                    }, {}));
         },
 
         getWidget: function(name) {
             return this.options.widgets[name];
         },
 
+        setValues: function(key, value) {
+            var regexp, params = {}, self = this;
+            if (_.isRegExp(key)) {
+                regexp = key;
+                _.each(self.getWidgets({flatList: true}), function(widget, name) {
+                    if (regexp.test(name)) {
+                        widget.setValue(value);
+                    }
+                });
+            } else {
+                if (arguments.length > 1) {
+                    params[key] = value;
+                } else {
+                    params = key;
+                }
+                _.each(params, function(value, name) {
+                    if (self.getWidget(name)) {
+                        self.getWidget(name).setValue(value);
+                    }
+                });
+            }
+            return self;
+        },
+
+        getWidgets: function(params) {
+            return _.isObject(params) && params.flatList?
+                $.extend({}, this.options.widgets) :
+                $.extend({}, this._ungroupedWidgets, this._groupedWidgets);
+        },
+
+        _addWidget: function(name, widget, fieldsetName) {
+            var self = this, widgets = this.options.widgets;
+
+            widgets[name] = widget;
+            if (fieldsetName) {
+                self._groupedWidgets[fieldsetName] =
+                        self._groupedWidgets[fieldsetName] || {};
+                self._groupedWidgets[fieldsetName][name] = widgets[name];
+            } else {
+                self._ungroupedWidgets[name] = widgets[name];
+            }
+        },
+
         widgetizeDescendents: function() {
             var self = this, map = this.options.widgetMap, widgets = this.options.widgets;
             self.$node.find(self.options.widgetSelector).each(function(i, node) {
-                var $node = $(node), name;
+                var name,
+                    $node = $(node),
+                    $fieldset = self._getFieldset($node);
                 if (!self.registry.isWidget($node)) {
                     $.each(map, function(i, candidate) {
                         if ($node.is(candidate[0])) {
                             name = $node.hasClass('radiogroup')?
                                 $node.find('input[type=radio]').attr('name') :
                                 $node.attr('name');
-                            widgets[name] = candidate[1]($node);
+                                
+                            if ($fieldset) {
+                                self._addWidget(name, candidate[1]($node), $fieldset.attr('name'));
+                            } else {
+                                self._addWidget(name, candidate[1]($node));
+                            }
                         }
                     });
                 }

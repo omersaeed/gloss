@@ -14,7 +14,13 @@ define([
         },
 
         create: function() {
+            var self = this;
             this._super();
+            this.$node.find('input[type=checkbox]').each(function(i, el) {
+                if (!self.registry.isWidget(el)) {
+                    (self.checkboxes = self.checkboxes || []).push(CheckBox(el));
+                }
+            });
             this.update();
         },
 
