@@ -24,14 +24,15 @@ define([
                 ['input[type=text],input[type=password],input[type=search]', TextBox],
                 ['input[type=submit],input[type=reset]', Button],
                 ['input[type=number]', NumberBox],
-                ['select,.select', SelectBox],
+                ['div.multiselect, select.multiselect, select[multiple]', MultiSelect],
+                ['select:not([multiple]),.select', SelectBox],
                 ['textarea', TextBox],
                 ['div.radiogroup', RadioGroup],
                 ['div.togglegroup', ToggleGroup],
                 ['div.checkboxgroup', CheckBoxGroup]
-                ['div.multiselect', MultiSelect]
+                
             ],
-            widgetSelector: 'button[name],div.radiogroup,input[name],select[name],div.select[name],textarea[name],div.togglegroup,div.checkboxgroup,div.multiselect'
+            widgetSelector: 'button[name],div.radiogroup,input[name],select[name],div.select[name],textarea[name],div.togglegroup,div.checkboxgroup,div.multiselect[name]'
         },
 
         create: function() {
