@@ -273,7 +273,6 @@ define([
                 equal(model.volume_id, dataModel.volume_id);
                 equal(model.security_attributes, dataModel.security_attributes);
             });                
-            setTimeout(start, 15);
 
             $nameColTh.trigger('click');
             
