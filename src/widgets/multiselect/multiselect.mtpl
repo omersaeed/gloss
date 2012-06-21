@@ -1,22 +1,22 @@
 <div class=ui-multiselect>
-  <input type=button class=ui-multiselect-btn></input>
+  <input type=button class="ui-multiselect-btn"></input>
   <div class=base-menu>
     <div class=ui-multiselect-menu>
       <ul class=ui-helper-reset>
         <li>
-          <a class=ui-multiselect-all href="#">
+          <a class=ui-multiselect-all href="javascript:void(0)">
             <span class="ui-icon ui-icon-check">&#x2714;</span>
             <span class=ui-multi-select-all-label></span>
           </a>
         </li>
         <li>
-          <a class=ui-multiselect-none href="#">
+          <a class=ui-multiselect-none href="javascript:void(0)">
             <span class="ui-icon ui-icon-closethick">&#x2716;</span>
             <span class=ui-multi-select-none-label></span>
           </a>
         </li>     
         <li class=li-multiselect-close>
-          <a href="#" class=ui-multiselect-close>
+          <a class=ui-multiselect-close href="javascript:void(0)">
             <span class="ui-icon ui-icon-circle-close">&#x2327;</span>
           </a>
         </li>

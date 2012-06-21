@@ -1,5 +1,6 @@
 .ui-multiselect .ui-multiselect-btn{
   white-space: normal;  
+  min-width: 200px;
 }
 .ui-multiselect .ui-multiselect-menu .ui-helper-reset {
   list-style: none;  

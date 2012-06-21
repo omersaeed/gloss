@@ -15,9 +15,9 @@ define([
             populateEmptyNode: true,
             checkAllLabel: 'Check all',
             uncheckAllLabel: 'Uncheck all',
-            selectBoxDefaultValue: '-- Select Values --'
-                
-                
+            selectBoxDefaultText: '-- Select Values --',
+            singleItemSelectionText: '1 item selected',
+            multipleItemsSelectionText: ' items selected'
         },
 
         create: function() {
@@ -28,7 +28,7 @@ define([
             self.selectBox.on('click', function(evt) {
                 self._toggleMenu(evt);
             })
-            .setValue(self.options.selectBoxDefaultValue);
+            .setValue(self.options.selectBoxDefaultText);
                 
             self.resetSelectAll = self.$node.find('.ui-multiselect-all');
             self.resetSelectAll.on('click', function(evt) {
@@ -55,8 +55,7 @@ define([
             self.$node.find('.ui-multi-select-none-label').html(self.options.uncheckAllLabel);
             
             self.checkBoxGroup = CheckBoxGroup(self.$node.find('.ui-checkbox-group'));
-            
-            self.on('changed', function(evt){
+            self.checkBoxGroup.on ('change', function(evt){
                 self._displayCheckedValues();
             });
             
@@ -73,41 +72,30 @@ define([
 
         setValue: function(array, silent) {
             this.checkBoxGroup.setValue(array, silent);
-            this._displayCheckedValues();
         },
         
         _displayCheckedValues: function(){ 
             var value = null,
-                array = _.filter(
-                    _.map(this.checkBoxGroup.checkboxes, function(cb) {
-                        return cb.getValue()? cb.options.name : null;
-                    }),
-                    function(v) { return v !== null; }
-                );
+                array = this.getValue();
             if (array.length === 0) {
-                value = this.options.selectBoxDefaultValue;
+                value = this.options.selectBoxDefaultText;
+            } else if (array.length === 1) {
+                value = this.options.singleItemSelectionText;
+            } else {
+                value = array.length + this.options.multipleItemsSelectionText;
             }
-            else {
-                value = array.join(", ");
-                if (value.length > this.options.selectBoxDefaultValue.length){
-                    value = value.substring(0, this.options.selectBoxDefaultValue.length -3) + '...'; 
-                }
-            }
+            
             this.selectBox.setValue(value);
         },
         
         updateWidget: function(updated) {
             var self = this, 
                 options = self.options;
-            
+                        
             this._super(updated);
-            if (updated.models) {
+            
+           if (updated.models) {
                 self.checkBoxGroup.set('models', options.models);
-                _.each(self.checkBoxGroup.checkboxes, function (cb) {
-                    cb.on('change', function(evt) {
-                        self.trigger('changed');
-                    });
-                });                
             }            
         }
     }, {mixins: [CollectionViewable]});
