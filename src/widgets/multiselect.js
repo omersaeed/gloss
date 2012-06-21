@@ -58,6 +58,7 @@ define([
             self.checkBoxGroup.on ('change', function(evt){
                 self._displayCheckedValues();
             });
+            self.checkBoxGroup.set('collection', self.options.collection);
             
             this.update();
         },
@@ -94,7 +95,11 @@ define([
                         
             this._super(updated);
             
-           if (updated.models) {
+            if (updated.collection) {
+                self.checkBoxGroup.set('collection', options.collection);
+            } 
+            
+            if (updated.models) {
                 self.checkBoxGroup.set('models', options.models);
             }            
         }
