@@ -26,12 +26,13 @@ define([
     test('Details graph visual test', function () {
         var bg = BarGraph(undefined, {
             data: [
-                {name: "Outlook PST", values: [100, 75] },
-                {name: "Zip Archive", values: [25, 80] },
-                {name: "TGZ archive", values: [75, 20] },
-                {name: "WinRAR archive", values: [50, 10] }
+                {name: "Outlook PST", values: [450, 550] },
+                {name: "Zip Archive", values: [250, 350] },
+                {name: "TGZ archive", values: [800, 900] },
+                {name: "WinRAR archive", values: [1100, 1200] },
+                {name: "TAR archive", values: [1000, 10] }
             ]
-        }).appendTo('#qunit-fixture');
+        }).appendTo('body');
 
         ok(bg);
     });
@@ -67,15 +68,18 @@ define([
         ok(bg);
     });
 
-    test('Details graph animation visual test', function () {
-        var bg = BarGraph().appendTo($('body'));
+    test('Details graph vertical (formatted data) animation visual test', function () {
+        var bg = BarGraph(undefined, {
+            verticalLayout: true,
+            formatData: true
+        }).appendTo('body');
 
         var data = [
-            {name: "Outlook PST", values: [45, 55] },
-            {name: "Zip Archive", values: [25, 35] },
-            {name: "TGZ archive", values: [80, 90] },
-            {name: "WinRAR archive", values: [110, 120] },
-            {name: "TAR archive", values: [100, 1] }
+            {name: "Outlook PST", values: [450, 550] },
+            {name: "Zip Archive", values: [250, 350] },
+            {name: "TGZ archive", values: [800, 900] },
+            {name: "WinRAR archive", values: [1100, 1200] },
+            {name: "TAR archive", values: [1000, 10] }
         ];
 
         bg.set('data', data);
