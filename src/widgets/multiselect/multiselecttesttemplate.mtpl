@@ -1,0 +1,6 @@
+<form>
+  <select name=my-multiselect2 multiple=true>
+    <option value=foo>Foo</option>
+    <option value=bar>Bar</option>
+  </select>
+</form>

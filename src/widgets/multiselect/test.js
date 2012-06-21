@@ -7,8 +7,8 @@ define([
     './../../data/mock',
     './../../test/api/v1/targetvolume',
     'text!./../../test/api/v1/test/fixtures/targetvolume.json',
-    'text!./multiselect.html'
-], function($, _, Multiselect, Form, Mock, TargetVolume, targetvolume_json, html) {
+    'tmpl!./multiselecttesttemplate.mtpl'
+], function($, _, Multiselect, Form, Mock, TargetVolume, targetvolume_json, tmpl) {
 
     var valueMatchesCheckboxes = function(checkboxes, value) {
         _.each(checkboxes, function(cb) {
@@ -76,16 +76,16 @@ define([
             form = Form($frm, {widgetize: true});
 
         ok(form.getWidget('my-multiselect1'));
+        ok(form.getWidget('my-multiselect1') instanceof Multiselect);
     });
     
     test('multiselect select correctly widgetized', function() {
-        var $form = $('<form>').html(html).appendTo('body'),
-        form = Form($form, {widgetize: true});
-
-        ok($form);
-        ok(form);
+        var form = Form($(tmpl()), {widgetize: true});
 
         form.appendTo($('body'));    
+
+        ok(form.getWidget('my-multiselect2'));
+        ok(form.getWidget('my-multiselect2') instanceof Multiselect);
     });
 
     test('multiselect instantiation without collection', function() {
