@@ -11,10 +11,11 @@ define([
     './../radiogroup',
     './../togglegroup',
     './../checkboxgroup',
+    './../multiselect',
     'text!./widgetgrouptesttmpl.html',
     'text!./widgetgrouptestwidgetizedescendents.mtpl'
 ], function($, _, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
-    RadioGroup, ToggleGroup, CheckBoxGroup, html, html2) {
+    RadioGroup, ToggleGroup, CheckBoxGroup, Multiselect, html, html2) {
 
     test('correctly group widgets', function() {
         var wg = WidgetGroup($(html), {widgetize: true});
@@ -54,6 +55,9 @@ define([
         ok(wg.getWidget('fieldset1widget1') instanceof TextBox);
         ok(wg.getWidget('fieldset1widget2') instanceof TextBox);
         ok(wg.getWidget('fieldset1widget3') instanceof TextBox);
+        
+        ok(wg.getWidget('my-multiselect1') instanceof Multiselect);
+        ok(wg.getWidget('my-multiselect2') instanceof Multiselect);        
     });
 
     test('set label "for" attribute', function() {
@@ -94,9 +98,9 @@ define([
         ok(widgets.fieldset1.fieldset1widget3 instanceof TextBox);
         ok(widgets.fieldset1.fieldset1widget4 instanceof TextBox);   
         
-        equal(_.size(widgets), 14);
+        equal(_.size(widgets), 16);
         equal(_.size(widgets.fieldset1), 4);
-        equal(_.size(wg.options.widgets), 17);
+        equal(_.size(wg.options.widgets), 19);
         
     });
 
@@ -110,7 +114,7 @@ define([
         ok(widgets.fieldset1widget3 instanceof TextBox);
         ok(widgets.fieldset1widget4 instanceof TextBox);   
         
-        equal(_.size(widgets), 17);
+        equal(_.size(widgets), 19);
     });
 
     test('setting values based on regex', function() {
@@ -152,6 +156,6 @@ define([
         ok(wg.getWidget('textbox3').getValue() === 'negative test');
 
     });
-
+        
     start();
 });

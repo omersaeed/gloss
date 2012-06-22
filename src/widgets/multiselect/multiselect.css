@@ -1,0 +1,31 @@
+.ui-multiselect .ui-multiselect-btn{
+  white-space: normal;  
+  min-width: 200px;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset {
+  list-style: none;  
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  line-height: 1.3;
+  text-decoration: none;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset li{
+  float: left;
+  padding: 0 10px 0 0;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset li a{
+  text-decoration: none;
+}
+.ui-multiselect .ui-multiselect-menu .ui-helper-reset li.li-multiselect-close{
+  float: right;
+  padding: 0 5px 0 0;
+}
+.ui-multiselect .ui-multiselect-menu .ui-checkbox-group {
+  overflow: auto;
+}
+.ui-multiselect .ui-multiselect-menu .ui-checkbox-group label{
+  display: block;
+}
+ 
