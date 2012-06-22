@@ -273,7 +273,6 @@ define([
                 equal(model.volume_id, dataModel.volume_id);
                 equal(model.security_attributes, dataModel.security_attributes);
             });                
-            setTimeout(start, 15);
 
             $nameColTh.trigger('click');
             
@@ -293,7 +292,6 @@ define([
                 equal(model.security_attributes, dataModel.security_attributes);
             });                
             setTimeout(start, 15);
-
         });
     });
     
@@ -361,6 +359,25 @@ define([
             
             setTimeout(start, 15);
 
+        });
+    });
+
+    asyncTest('highlighting already highlighted row doesnt trigger', function() {
+        var grid = this.grid,
+            collection = this.collection,
+            highlightEventCount = 0;
+
+        grid.on('highlight', function() { highlightEventCount++; });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[0]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 1);
+                start();
+            }, 100);
         });
     });
        
