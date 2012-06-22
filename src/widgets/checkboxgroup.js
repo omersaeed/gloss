@@ -70,7 +70,8 @@ define([
                     .find('input[type=checkbox]').each(function(i, el) {
                         checkboxes.push(CheckBox(el, {
                             value: options.entries[i].value,
-                            name: options.entries[i].name
+                            name: options.entries[i].name,
+                            initialValue: options.entries[i].checked
                         }));
                     });
             }

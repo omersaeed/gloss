@@ -1,0 +1,28 @@
+<div class=ui-multiselect>
+  <input type=button class="ui-multiselect-btn"></input>
+  <div class=base-menu>
+    <div class=ui-multiselect-menu>
+      <ul class=ui-helper-reset>
+        <li>
+          <a class=ui-multiselect-all href="javascript:void(0)">
+            <span class="ui-icon ui-icon-check">&#x2714;</span>
+            <span class=ui-multi-select-all-label></span>
+          </a>
+        </li>
+        <li>
+          <a class=ui-multiselect-none href="javascript:void(0)">
+            <span class="ui-icon ui-icon-closethick">&#x2716;</span>
+            <span class=ui-multi-select-none-label></span>
+          </a>
+        </li>     
+        <li class=li-multiselect-close>
+          <a class=ui-multiselect-close href="javascript:void(0)">
+            <span class="ui-icon ui-icon-circle-close">&#x2327;</span>
+          </a>
+        </li>
+      </ul>    
+      <div style="clear:both;" ></div>
+      <div class=ui-checkbox-group></div>
+    </div>    
+  </div>
+</div>

@@ -70,4 +70,12 @@
     <textarea name=fieldset1widget4>text box 4</textarea>
   </fieldset>
   
+  <div name=my-multiselect1 class=multiselect>
+  </div>
+  
+  <select name=my-multiselect2 multiple=true>
+    <option value=foo>Foo</option>
+    <option value=bar>Bar</option>
+  </select>
+  
 </form>
