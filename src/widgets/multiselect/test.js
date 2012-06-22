@@ -72,7 +72,7 @@ define([
 
     test('multiselect div correctly widgetized', function() {
         var $frm = $('<form><div name=my-multiselect1 class=multiselect></div></form>')
-                .appendTo('body'),
+                .appendTo('#qunit-fixture'),
             form = Form($frm, {widgetize: true});
 
         ok(form.getWidget('my-multiselect1'));
@@ -80,12 +80,15 @@ define([
     });
     
     test('multiselect select correctly widgetized', function() {
-        var form = Form($(tmpl()), {widgetize: true});
+        var form = Form($(tmpl()), {widgetize: true}),
+            wd = null;
 
-        form.appendTo($('body'));    
+        form.appendTo($('#qunit-fixture'));    
 
-        ok(form.getWidget('my-multiselect2'));
-        ok(form.getWidget('my-multiselect2') instanceof Multiselect);
+        wd = form.getWidget('my-multiselect2'); 
+        ok(wd);
+        ok(wd instanceof Multiselect);
+        deepEqual(wd.getValue(), ['foo', 'bar']);
     });
 
     test('multiselect instantiation without collection', function() {
