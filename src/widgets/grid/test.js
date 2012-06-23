@@ -228,8 +228,8 @@ define([
         setup: function() {
             var SortableRowClass,
                 sortableColModel = _.clone(RowClass.prototype.defaults.colModel);
-            _.each([1, 2, 3, 4], function(i) {
-                sortableColModel[i].sortable = true;
+            _.each(sortableColModel, function(colModel) {
+                colModel.sortable = true;
             });
             SortableRowClass = RowClass.extend({
                 defaults: {
