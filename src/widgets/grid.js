@@ -27,6 +27,10 @@ define([
             rowWidgetClass: Row,
             rows: null,
 
+            // set this to true to automatically bind row click events to
+            // .highlight() and make the cursor a pointer
+            highlightable: false,
+
             // because it's so expensive to change an element when it's already
             // in the dom, it's often faster to re-render the entire grid
             // (outside the dom) even though only a portion of it changed.
@@ -51,41 +55,15 @@ define([
             if (!self.options.nostyling) {
                 self.$node.addClass('standard');
             }
+
+            if (self.options.highlightable) {
+                self.on('mousedown.highlightable', 'tbody tr', function() {
+                    self._rowInstanceFromTrElement(this).highlight();
+                }).$node.addClass('highlightable');
+            }
+
             self.onPageClick('mouseup.unhighlight', self.onPageClickUnhighlight);
             self.update();
-        },
-
-        _initRowsAndHeader: function() {
-            var self = this;
-            self.options.rows = [];
-
-            self.options.colModel =
-                self.options.rowWidgetClass.prototype.defaults.colModel;
-
-            if (! self.col) {
-                self.col = _.reduce(self.options.colModel, function(cols, col) {
-                    cols[col.name] = col;
-                    return cols;
-                }, {});
-            }
-            _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
-                self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
-                    var i, l, $tr, row, rows = self.options.rows, $el = $(this);
-                    if ($el[0].tagName.toLowerCase() === 'tr') {
-                        $tr = $el;
-                    } else {
-                        $tr = $el.closest('tr');
-                    }
-                    for (i = 0, l = rows.length; i < l; i++) {
-                        row = rows[i];
-                        if (row.node === $tr[0]) {
-                            row[evt.callback](e);
-                            break;
-                        }
-                    }
-                });
-            });
-            self._buildHeader();
         },
 
         _buildHeader: function() {
@@ -156,25 +134,6 @@ define([
             });
         },
 
-        _sortData: function(self, col, ignoreSameColumnSort) {
-            var $sortColHeader = self.$node.find('thead th.col-'+ col.name), 
-                $sortedColHeader = null;
-            // display sort-order indicator
-            if (self._sortedColumn) {
-                $sortedColHeader = self.$node.find('thead th.col-'+ self._sortedColumn.name);
-                $sortedColHeader.removeClass('sort-asc sort-desc').addClass('sort-null');
-            } 
-            $sortColHeader
-                .removeClass('sort-null')
-                .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
-            
-            // set will take care of sorting
-            self._sortedColumn = col;
-            if (self.options.models) {
-                self.set('models', self.options.models);                                                        
-            }
-        },
-        
         _compare: function(colName, colOrder) {
             return function(a,b) {
                 var result = 0;
@@ -194,6 +153,45 @@ define([
             };
         },
         
+        _initRowsAndHeader: function() {
+            var self = this;
+            self.options.rows = [];
+
+            self.options.colModel =
+                self.options.rowWidgetClass.prototype.defaults.colModel;
+
+            if (! self.col) {
+                self.col = _.reduce(self.options.colModel, function(cols, col) {
+                    cols[col.name] = col;
+                    return cols;
+                }, {});
+            }
+            _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
+                self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
+                    var i, l, $tr, row, rows = self.options.rows, $el = $(this);
+                    if ($el[0].tagName.toLowerCase() === 'tr') {
+                        $tr = $el;
+                    } else {
+                        $tr = $el.closest('tr');
+                    }
+                    row = self._rowInstanceFromTrElement($tr[0]);
+                    if (row) {
+                        row[evt.callback](e);
+                    }
+                });
+            });
+            self._buildHeader();
+        },
+
+        _rowInstanceFromTrElement: function(el) {
+            var i, len, rows = this.options.rows || [];
+            for (i = 0, len = rows.length; i < len; i++) {
+                if (rows[i].node === el) {
+                    return rows[i];
+                }
+            }
+        },
+
         _setModels: function() {
             var startTime = new Date();
             var i, model, newRow, attachTbodyToTable = false,
@@ -260,6 +258,25 @@ define([
             return options.models.length - options.rows.length > options.tippingPoint;
         },
 
+        _sortData: function(self, col, ignoreSameColumnSort) {
+            var $sortColHeader = self.$node.find('thead th.col-'+ col.name), 
+                $sortedColHeader = null;
+            // display sort-order indicator
+            if (self._sortedColumn) {
+                $sortedColHeader = self.$node.find('thead th.col-'+ self._sortedColumn.name);
+                $sortedColHeader.removeClass('sort-asc sort-desc').addClass('sort-null');
+            } 
+            $sortColHeader
+                .removeClass('sort-null')
+                .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
+            
+            // set will take care of sorting
+            self._sortedColumn = col;
+            if (self.options.models) {
+                self.set('models', self.options.models);                                                        
+            }
+        },
+        
         add: function(newModels, idx) {
             var options = this.options, models = options.models;
             if (!_.isArray(newModels)) {
