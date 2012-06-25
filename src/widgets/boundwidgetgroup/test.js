@@ -11,7 +11,7 @@ define([
     var origAjax = Request.ajax(function(args) {
         var data = args.data;
         window.lastAjaxArgs = args;
-        if (!data.name) {
+        if (/some-invalid-chars/.test(JSON.parse(data).name)) {
             args.error({
                 getResponseHeader: function() {return 'application/json';},
                 responseText: JSON.stringify([[{
@@ -29,11 +29,46 @@ define([
         }
     });
 
-    asyncTest('boundwidgetgroup correctly handles errors', function() {
+    asyncTest('boundwidgetgroup correctly handles server-side errors', function() {
         var bwg = window.bwg = BoundWidgetGroup(template(), {
             widgetize: true,
             modelClass: TargetVolumeProfile,
-            bindings: [{widget: 'name', field: 'name'}]
+            bindings: [
+                {widget: 'name', field: 'name'},
+                {widget: 'volume_id', field: 'volume_id'}
+            ]
+        });
+
+        bwg.set({
+            messageList: MessageList(bwg.$node.find('.messagelist').first())
+        }).getModel().set({
+            name: 'some-invalid-chars', volume_id: 4
+        });
+
+        bwg.initiateUpdate(function(model) {
+            return model.save();
+        }).done(function() {
+            ok(false, 'save should have thrown an error');
+            start();
+        }).fail(function() {
+            ok(true, 'save correctly throws error');
+            bwg.processErrors.apply(bwg, arguments);
+            ok(/something went wrong server-side/
+                .test(bwg.options.messageList.$node.text()));
+            ok(/name must not be empty/
+                .test(bwg.getWidget('name').options.messageList.$node.text()));
+            start();
+        });
+    });
+
+    asyncTest('boundwidgetgroup correctly handles client-side errors', function() {
+        var bwg = window.bwg = BoundWidgetGroup(template(), {
+            widgetize: true,
+            modelClass: TargetVolumeProfile,
+            bindings: [
+                {widget: 'name', field: 'name'},
+                {widget: 'volume_id', field: 'volume_id'}
+            ]
         });
 
         bwg.set('messageList',
@@ -43,15 +78,12 @@ define([
             return model.set('name', bwg.getWidget('name').getValue()).save();
         }).done(function() {
             ok(false, 'save should have thrown an error');
-            bwg.processSubmit.apply(bwg, arguments);
             start();
         }).fail(function() {
             ok(true, 'save correctly throws error');
             bwg.processErrors.apply(bwg, arguments);
-            ok(/something went wrong server-side/
-                .test(bwg.options.messageList.$node.text()));
-            ok(/name must not be empty/
-                .test(bwg.getWidget('name').options.messageList.$node.text()));
+            ok(/missing/
+                .test(bwg.getWidget('volume_id').options.messageList.$node.text()));
             start();
         });
     });

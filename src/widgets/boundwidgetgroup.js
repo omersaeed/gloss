@@ -33,7 +33,7 @@ define([
 
         _onModelChange: function(eventType, model, changed) {
             _.each(this.options.bindings, function(binding) {
-                if (changed[binding.field]) {
+                if (typeof changed[binding.field] !== 'undefined') {
                     binding.widgetInstance.setValue(model[binding.field]);
                 }
             });
