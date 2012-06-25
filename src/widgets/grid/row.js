@@ -86,6 +86,8 @@ define([
                     td = tds[i];
                     if (col.rerender) {
                         this[col.rerender](col, td);
+                    } else if (col.render) {
+                        tds[i].innerHTML = this[col.render](col);
                     } else {
                         if (td.innerText != null) {
                             tds[i].innerText = model[colModel[i].name] || '';
