@@ -6,12 +6,14 @@ define([
     './row',
     './editable',
     './../button',
+    './../collectionviewable',
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     './../../test/api/v1/recordseries',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, Editable, Button, Mock, TargetVolumeProfile,
-    RecordSeries, tvpFixture) {
+], function($, _, Grid, Row, Editable, Button, CollectionViewable, Mock,
+    TargetVolumeProfile, RecordSeries, tvpFixture) {
+
     var RowClass,
         showGrid = function() {
             $('#qunit-fixture').css({position: 'static'});
@@ -29,6 +31,16 @@ define([
             newTvp = JSON.parse(JSON.stringify(dummy));
             newTvp[1].id = i + 1;
             newTvp[1].name = 'target volume profile ' + (i+1);
+            newTvp[1].tasks_option = [
+                'With a blow from the top-maul Ahab knocked off the steel head of the lance',
+                'and then handing to the mate the long iron rod remaining',
+                'bade him hold it upright, without its touching the deck',
+                'Then, with the maul, after repeatedly smiting the upper end of this iron rod',
+                'he placed the blunted needle endwise on the top of it',
+                'and less strongly hammered that, several times, the mate still holding the rod as before'
+            ][Math.floor(Math.random() * 5)];
+            newTvp[1].volume_id = i % 4 + 1;
+            newTvp[1].security_attributes = 'default ' + (i % 4 + 1);
             newFixture.push(newTvp);
         }
 
@@ -380,6 +392,113 @@ define([
             }, 100);
         });
     });
-       
+
+    module('row rendering');
+
+    var RowRenderingRowClass = Row.extend({
+        defaults: {
+            colModel: [
+                {name: 'name', label: 'Name', sortable: true},
+                {name: 'tasks_option', label: 'Tasks Option', sortable: true},
+                {
+                    name: 'volume_id',
+                    label: 'Volume ID',
+                    sortable: true,
+                    render: 'renderColVolumeId'
+                },
+                {
+                    name: 'security_attributes',
+                    label: 'Security Attributes',
+                    render: 'renderColSecurityAttributes',
+                    rerender: 'rerenderColSecurityAttributes',
+                    sortable: true
+                }
+            ]
+        },
+        renderColVolumeId: function(col) {
+            return '<b>Volume ' + this.options.model.volume_id + '</b>';
+        },
+        renderColSecurityAttributes: function(col) {
+            return '<b>' + this.options.model.security_attributes.toUpperCase() + '</b>';
+        },
+        rerenderColSecurityAttributes: function(col) {
+            this.$node.find('td.col-security_attributes b')
+                .text(this.options.model.security_attributes.toUpperCase());
+        }
+    });
+
+    var GridClass = Grid.extend({
+        defaults: {
+            rowWidgetClass: RowRenderingRowClass
+        }
+    }, {mixins: [CollectionViewable]});
+
+    var rowColumnEquals = function(grid, rowIdx, columnName, value, checkModel) {
+        var row = grid.options.rows[rowIdx];
+        checkModel = typeof checkModel === 'undefined'? true : false;
+        if (checkModel) {
+            equal(row.options.model[columnName], value);
+        }
+        equal(row.$node.find('td.col-' + columnName).text(), value);
+    };
+
+    asyncTest('re-render sorted row w/o render method', function() {
+        var grid = GridClass().set({
+                collection: TargetVolumeProfile.collection({query: {limit: 17}})
+            }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            grid.$node.find('th:first').trigger('click');
+            rowColumnEquals(grid, 0, 'name', 'target volume profile 1');
+            rowColumnEquals(grid, 1, 'name', 'target volume profile 10');
+            rowColumnEquals(grid, 2, 'name', 'target volume profile 11');
+            grid.$node.find('th:first').trigger('click');
+            rowColumnEquals(grid, 0, 'name', 'target volume profile 9');
+            rowColumnEquals(grid, 1, 'name', 'target volume profile 8');
+            rowColumnEquals(grid, 2, 'name', 'target volume profile 7');
+            start();
+        });
+    });
+
+    asyncTest('re-render sorted row w/ only render method', function() {
+        var grid = GridClass().set({
+                collection: TargetVolumeProfile.collection({query: {limit: 17}})
+            }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(2)'),
+                colName = 'volume_id';
+            $colHeader.trigger('click');
+            rowColumnEquals(grid, 0, colName, 'Volume 1', false);
+            rowColumnEquals(grid, 1, colName, 'Volume 1', false);
+            rowColumnEquals(grid, 2, colName, 'Volume 1', false);
+            $colHeader.trigger('click');
+            rowColumnEquals(grid, 0, colName, 'Volume 4', false);
+            rowColumnEquals(grid, 1, colName, 'Volume 4', false);
+            rowColumnEquals(grid, 2, colName, 'Volume 4', false);
+            start();
+        });
+    });
+
+    asyncTest('re-render sorted row w/ render and rerender method', function() {
+        var grid = GridClass().set({
+                collection: TargetVolumeProfile.collection({query: {limit: 17}})
+            }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(3)'),
+                colName = 'security_attributes';
+            $colHeader.trigger('click');
+            rowColumnEquals(grid, 0, colName, 'DEFAULT 1', false);
+            rowColumnEquals(grid, 1, colName, 'DEFAULT 1', false);
+            rowColumnEquals(grid, 2, colName, 'DEFAULT 1', false);
+            $colHeader.trigger('click');
+            rowColumnEquals(grid, 0, colName, 'DEFAULT 4', false);
+            rowColumnEquals(grid, 1, colName, 'DEFAULT 4', false);
+            rowColumnEquals(grid, 2, colName, 'DEFAULT 4', false);
+            start();
+        });
+    });
+
     start();
 });

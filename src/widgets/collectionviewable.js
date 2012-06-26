@@ -12,7 +12,7 @@ define([
                 options = self.options,
                 collection = options.collection,
                 collectionMap = options.collectionMap;
-            if (updated.collection && typeof options.collection !== 'undefined') {
+            if (updated.collection && typeof collection !== 'undefined') {
                 if (self.disable) {
                     self.disable();
                 }
