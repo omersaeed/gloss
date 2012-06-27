@@ -37,15 +37,43 @@ define([
         ok(m);
     });
 
-    test('Visual Test', function () {
+    test('MessageBox instantiation with event aliases', function () {
         var m = MessageBox(undefined, {
             title: 'Test MessageBox',
             body: 'Test Message Box With Both Buttons',
+            okBtn: 'Oks',
+            cancelBtn: 'Cancels',
+            okBtnEvent: 'okAlias',
+            cancelBtnEvent: 'cancelAlias'
+        }).appendTo('#qunit-fixture');
+        ok(m);
+    });
+
+    test('MessageBox instantiation with type', function () {
+        var m = MessageBox(undefined, {
+            title: 'Test MessageBox',
+            body: 'Test Message Box With Both Buttons',
+            okBtn: 'Oks',
+            cancelBtn: 'Cancels',
+            okBtnEvent: 'okAlias',
+            cancelBtnEvent: 'cancelAlias',
+            style: 'error'
+        }).appendTo('#qunit-fixture');
+        ok(m);
+    });
+
+    test('Visual Test', function () {
+        var m = MessageBox(undefined, {
+            title: 'Test MessageBox',
+            body: 'Test Message Box With Both Buttons and a message that is really long but absolutely meaningless. Trying to make it longer is of little to no use as well. ',
             okBtn: 'Ok',
-            cancelBtn: 'Cancel'
-        }).on('ok', function() {
+            cancelBtn: 'Cancel',
+            okBtnEvent: 'OkBtnAlias',
+            cancelBtnEvent: 'CancelBtnAlias',
+            style: 'error'
+        }).on('OkBtnAlias', function() {
             alert('Ok Pressed')
-        }).on('cancel', function() {
+        }).on('CancelBtnAlias', function() {
             alert('Cancel Pressed')
         }).appendTo('body');
 

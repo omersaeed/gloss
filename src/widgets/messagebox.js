@@ -12,7 +12,10 @@ define([
         defaults: {
             okBtn: '', // provide a label to have an ok button in the lower right corner
             cancelBtn: '', // provide a label to have a cancel button in the lower right corner
-            body: ''
+            body: '', // Message Body
+            okBtnEvent: 'ok', // to rename the button event, provide a name here
+            cancelBtnEvent: 'cancel', // to rename the button event, provide a name here
+            style: '' // provide a style here. the style will be directly applied to the messagebox icon class if provided. 
         },
         
         create: function() {
@@ -31,17 +34,20 @@ define([
                 Button($('<button>'+self.options.okBtn+'</button>').appendTo(self.$node))
                     .on('click', self.ok);
             }
+            if (self.options.style !== '') {
+                self.$node.find('.message-icon').addClass(self.options.style);
+            }
         },
         
         ok: function() {
             var self = this;
-            self.trigger('ok');
+            self.trigger(self.options.okBtnEvent);
             self.close();
         },
         
         cancel: function() {
             var self = this;
-            self.trigger('cancel');
+            self.trigger(self.options.cancelBtnEvent);
             self.close();
         }
     });    
