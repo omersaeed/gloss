@@ -84,12 +84,12 @@ define([
                 self._displayCheckedValues();
             });
             self.checkBoxGroup.set('collection', self.options.collection);
-            self.onPageClick('mousedown.onPageClick', self.onPageClickUnhighlight);
+            self.onPageClick('mousedown.onPageClick', self.onPageClickHide);
             
             this.update();
         },
         
-        onPageClickUnhighlight: function() {
+        onPageClickHide: function() {
             this.menu.hide();
             return false; // don't cancel the callback
         },
