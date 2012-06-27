@@ -8,10 +8,10 @@
   ],
   "version": "0.0.29",
   "dependencies": {
-    "siq-vendor-js": "0.0.x",
-    "csi": "0.0.x",
-    "siq-mesh": "0.0.x",
-    "bedrockjs": "0.0.x"
+    "csi": "git+ssh://git@github.com:siq/csi.git",
+    "siq-vendor-js": "git+ssh://git@github.com:siq/siq-vendor-js.git",
+    "bedrockjs": "git+ssh://git@github.com:siq/bedrockjs.git",
+    "siq-mesh": "git+ssh://git@github.com:siq/mesh.git"
   },
   "component": {
     "name": "gloss"
