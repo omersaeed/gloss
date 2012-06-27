@@ -1,4 +1,8 @@
 <div class=message-box>
-  <div class=message-body />
-  <div class='clear: both' />
+  <div class=message-body>
+    <div class=message-icon></div>
+    <div class=message-text />
+    <div class='clear: both' />
+  </div>
+  <div class=message-separator>
 </div>
