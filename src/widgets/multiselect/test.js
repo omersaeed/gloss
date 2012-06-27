@@ -91,27 +91,26 @@ define([
         deepEqual(wd.getValue(), ['foo', 'bar']);
     });
 
-    test('multiselect instantiation without collection', function() {
-      var ms = window.ms = Multiselect(undefined, {
-          models: [
-              {name: 'foo bar baz', id: 0},
-              {name: 'foo bar biggity iggity bazzle', id: 1},
-              {name: 'foo bar qwet', id: 2},
-              {name: 'foo bar ycvhdf', id: 3},
-              {name: 'foo bar vfdrf', id: 4},
-              {name: 'foo bar jnoi', id: 5},
-              {name: 'foo bar hu', id: 6},
-              {name: 'foo bar zrte', id: 7},
-              {name: 'foo bar xyr', id: 8},
-              {name: 'foo bar zji', id: 9}
-          ]
-      }).appendTo('body');
-     
-      setTimeout(function() {
-        ok(ms);
-        start();
-    }, 15);
-      
+    asyncTest('multiselect instantiation without collection', function() {
+        var ms = window.ms = Multiselect(undefined, {
+            models: [
+                {name: 'foo bar baz', id: 0},
+                {name: 'foo bar biggity iggity bazzle', id: 1},
+                {name: 'foo bar qwet', id: 2},
+                {name: 'foo bar ycvhdf', id: 3},
+                {name: 'foo bar vfdrf', id: 4},
+                {name: 'foo bar jnoi', id: 5},
+                {name: 'foo bar hu', id: 6},
+                {name: 'foo bar zrte', id: 7},
+                {name: 'foo bar xyr', id: 8},
+                {name: 'foo bar zji', id: 9}
+            ]
+        }).appendTo('body');
+
+        setTimeout(function() {
+            ok(ms);
+            start();
+        }, 15);
     });
         
     start();

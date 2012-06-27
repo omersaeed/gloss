@@ -4,9 +4,9 @@ define([
     './../toolbar'
 ], function($, ToolBar) {
     test('instantiating toolbar using default template', function() {
-        ToolBar(undefined, {
+        ok(ToolBar(undefined, {
             tabs: ['Dishwasher', 'Plausible Deniability']
-        }).prependTo('body');
+        }).prependTo('body'));
     });
 
     start();
