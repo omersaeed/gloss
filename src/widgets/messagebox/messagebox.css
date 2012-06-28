@@ -1,9 +1,50 @@
 .message-box .message-body {
-  padding: 10px 10px 30px 10px;
-  border-bottom: 1px solid #BBD;
-  max-width: 350px; 
+  padding-top: 10px;
+  padding-bottom: 30px;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 100%;
+  max-width: 450px; 
 }
+
+.message-box .message-separator {
+    border-bottom: 1px solid #BBD;
+}
+
+.message-box .message-text {
+  float: left;
+}
+
 .message-box button {
   float: right;
   margin: 5px 10px 10px 10px;
+}
+
+.message-box .message-icon {
+    margin-right: 10px;
+    float: left;
+}
+
+.message-box .error {
+  width: 48px;
+  height: 48px;
+  background-image:url('/static/components/lookandfeel/img/error-icon.png');
+}
+
+.message-box .warning {
+  width: 48px;
+  height: 48px;
+  background-image:url('/static/components/lookandfeel/img/warning-icon.png');
+}
+  
+.message-box .question {
+  width: 48px;
+  height: 48px;
+  background-image:url('/static/components/lookandfeel/img/question-icon.png');
+}
+  
+.message-box .information {
+  width: 48px;
+  height: 48px;
+  background-image:url('/static/components/lookandfeel/img/information-icon.png');
 }
