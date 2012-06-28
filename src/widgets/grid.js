@@ -18,6 +18,9 @@ define([
             this.$node.on('mousedown', function(evt) {
                 evt.preventDefault();
                 return false;
+            }).on('click', function(evt) {
+                evt.preventDefault();
+                return false;
             });
         }
     }, {mixins: [Draggable]});
@@ -99,10 +102,16 @@ define([
                     }
                     $th.append($buffer);
                     resizeHandle = ResizeHandle().on('dragend', function(evt, pos) {
-                        var thPos = $th.offset(),
+                        var total,
+                            thPos = $th.offset(),
                             diff = pos.clientX - thPos.left;
                         if (diff > 0) {
+                            self.$table.innerWidth(
+                                _.reduce($th.siblings(), function(total, th) {
+                                    return total + $(th).outerWidth();
+                                }, diff));
                             $th.outerWidth(diff);
+                            self.$table.css({tableLayout: 'fixed'});
                         } else {
                             if (resizeHandle.node.style.removeProperty) {
                                 resizeHandle.node.style.removeProperty('left');
@@ -114,7 +123,11 @@ define([
                 
                 if (col.sortable) {       
                     var $orderSpans = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');                    
-                    col.resizable? $th.find('.buffer').append($orderSpans): $th.append($orderSpans);                      
+                    if (col.resizable) {
+                        $th.find('.buffer').append($orderSpans);
+                    } else {
+                        $th.append($orderSpans);
+                    }
                     $th.addClass('sort-null');
                     $th.on('click', function(evt) {
                         if (col.order === 'asc') {

@@ -1,25 +1,4 @@
-/* @font: 11px Arial, Helvetica, clean-sans; */
-/* @color: #60676D; */
-/* @body-background: #F6F6F6; */
-/* @disabled-color: @color + #333; */
-/* @darker-color: @color - #333; */
-/* @invalid-color: #9B4C52; */
-/* @invalid-background: #FFF9FC; */
-/* @info-color: #2C739E; */
-/* @info-background: #D0E8F5; */
-/* @font: 11px Arial, Helvetica, clean-sans; */
-/* @color: #60676D; */
-/* @body-background: #F6F6F6; */
-/* @disabled-color: @color + #333; */
-/* @darker-color: @color - #333; */
-/* @invalid-color: #9B4C52; */
-/* @invalid-background: #FFF9FC; */
-/* @info-color: #2C739E; */
-/* @info-background: #D0E8F5; */
 .std-box-shadow {
-  box-shadow: 1px 1px 1px 0 #dadada;
-  -moz-box-shadow: 1px 1px 1px 0 #dadada;
-  -webkit-box-shadow: 1px 1px 1px 0 #dadada;
   box-shadow: 1px 1px 1px 0 #dadada;
   -moz-box-shadow: 1px 1px 1px 0 #dadada;
   -webkit-box-shadow: 1px 1px 1px 0 #dadada;
@@ -41,18 +20,9 @@ button.formwidget.button {
   background: #e5e5e5 linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
   background: #e5e5e5 -moz-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
   background: #e5e5e5 -webkit-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
-  background: #e5e5e5 linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
-  background: #e5e5e5 -moz-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
-  background: #e5e5e5 -webkit-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #c3c3c3 100%);
   box-shadow: 1px 1px 1px 0 #dadada;
   -moz-box-shadow: 1px 1px 1px 0 #dadada;
   -webkit-box-shadow: 1px 1px 1px 0 #dadada;
-  box-shadow: 1px 1px 1px 0 #dadada;
-  -moz-box-shadow: 1px 1px 1px 0 #dadada;
-  -webkit-box-shadow: 1px 1px 1px 0 #dadada;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -69,21 +39,12 @@ button.formwidget.button {
   background: #c3cdd7 linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
   background: #c3cdd7 -moz-linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
   background: #c3cdd7 -webkit-linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
-  background: #c3cdd7 linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
-  background: #c3cdd7 -moz-linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
-  background: #c3cdd7 -webkit-linear-gradient(top, #c3cdd7 0%, #bbc5cf 50%, #a1abb5 100%);
 }
 .button:active,
 .button.active {
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  background: #aab4be linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
-  background: #aab4be -moz-linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
-  background: #aab4be -webkit-linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
   background: #aab4be linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
   background: #aab4be -moz-linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
   background: #aab4be -webkit-linear-gradient(top, #aab4be 0%, #bbc5cf 50%, #c3cdd7 100%);
@@ -92,19 +53,13 @@ button.formwidget.button {
 .button.disabled:hover,
 .button.disabled.hover,
 button.button.formwidget.disabled {
-  border: 1px solid #939aa0;
-  color: #939aa0;
+  border: 1px solid #82898f;
+  color: #82898f;
   cursor: default;
   background-color: #e5e5e5;
   background: #e5e5e5 linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
   background: #e5e5e5 -moz-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
   background: #e5e5e5 -webkit-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
-  background: #e5e5e5 linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
-  background: #e5e5e5 -moz-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
-  background: #e5e5e5 -webkit-linear-gradient(top, #e5e5e5 0%, #dddddd 50%, #d4d4d4 100%);
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
@@ -124,12 +79,6 @@ select,
   border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  box-shadow: 1px 1px 1px 0 #dadada;
-  -moz-box-shadow: 1px 1px 1px 0 #dadada;
-  -webkit-box-shadow: 1px 1px 1px 0 #dadada;
   box-shadow: 1px 1px 1px 0 #dadada;
   -moz-box-shadow: 1px 1px 1px 0 #dadada;
   -webkit-box-shadow: 1px 1px 1px 0 #dadada;
@@ -161,21 +110,18 @@ select.disabled:active,
 .selectbox.disabled:hover,
 .selectbox.disabled.active,
 .selectbox.disabled:active {
-  border: 1px solid #939aa0;
-  color: #939aa0;
+  border: 1px solid #82898f;
+  color: #82898f;
   cursor: default;
 }
 select.invalid,
 .selectbox.invalid {
-  border: 1px solid #9b4c52 !important;
-  color: #9b4c52 !important;
-  background-color: #fff9fc;
+  border: 1px solid #bb0000 !important;
+  color: #bb0000 !important;
+  background-color: #ffffff;
 }
 .selectbox.open {
   border-bottom: 0;
-  border-radius: 4px 4px 0 0;
-  -moz-border-radius: 4px 4px 0 0;
-  -webkit-border-radius: 4px 4px 0 0;
   border-radius: 4px 4px 0 0;
   -moz-border-radius: 4px 4px 0 0;
   -webkit-border-radius: 4px 4px 0 0;
@@ -183,9 +129,6 @@ select.invalid,
 select .menu,
 .selectbox .menu {
   border-top: 1px solid #a4abb1;
-  border-radius: 0 0 4px 4px;
-  -moz-border-radius: 0 0 4px 4px;
-  -webkit-border-radius: 0 0 4px 4px;
   border-radius: 0 0 4px 4px;
   -moz-border-radius: 0 0 4px 4px;
   -webkit-border-radius: 0 0 4px 4px;
@@ -203,9 +146,6 @@ select.selectbox.open {
   border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
 }
 .textbox,
 .textarea {
@@ -215,12 +155,6 @@ select.selectbox.open {
   border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  box-shadow: 1px 1px 1px 0 #dadada;
-  -moz-box-shadow: 1px 1px 1px 0 #dadada;
-  -webkit-box-shadow: 1px 1px 1px 0 #dadada;
   box-shadow: 1px 1px 1px 0 #dadada;
   -moz-box-shadow: 1px 1px 1px 0 #dadada;
   -webkit-box-shadow: 1px 1px 1px 0 #dadada;
@@ -243,18 +177,15 @@ select.selectbox.open {
 }
 .textbox.disabled,
 .textarea.disabled {
-  border: 1px solid #939aa0;
-  color: #939aa0;
-  box-shadow: none;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
+  border: 1px solid #82898f;
+  color: #82898f;
   box-shadow: none;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
 }
 .textbox.invalid,
 .textarea.invalid {
-  border: 1px solid #9b4c52 !important;
-  color: #9b4c52 !important;
-  background-color: #fff9fc;
+  border: 1px solid #bb0000 !important;
+  color: #bb0000 !important;
+  background-color: #ffffff;
 }
