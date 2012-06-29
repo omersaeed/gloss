@@ -19,6 +19,7 @@
 .grid table.grid thead tr th span.buffer {
   margin: 0 5px;
   display: block;
+  line-height: 28px;
 }
 .grid table.grid thead tr th span.help {
   margin-left: 5px;
@@ -26,11 +27,10 @@
 }
 .grid table.grid thead tr th .resize-handle {
   width: 5px;
-  height: 100%;
   cursor: col-resize;
   border-left: 2px solid #60676d;
   float: right;
-  height: 12px;
+  height: 28px;
   margin-right: -4px;
 }
 .grid table.grid thead tr th .resize-handle.dragging {
@@ -47,13 +47,6 @@ body.dragging-element .grid table.grid thead tr td {
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -o-user-select: none;
-  user-select: none;
 }
 body.dragging-element .grid.standard table.grid tbody tr:hover,
 body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
@@ -62,6 +55,7 @@ body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
 .grid.standard table.grid {
   width: 100%;
 }
+.grid.standard table.grid thead th,
 .grid.standard table.grid tbody tr {
   height: 28px;
 }
@@ -98,21 +92,19 @@ body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
 .fixed-height.grid {
   overflow: auto;
 }
-.grid table.grid thead th.sort-null .asc-arrow, 
+.grid table.grid thead th.sort-null .asc-arrow,
 .grid table.grid thead th.sort-null .desc-arrow {
-    display: none;
-  }
-
+  display: none;
+}
 .grid table.grid thead th.sort-asc .asc-arrow {
-    display: static;
-  }
+  display: static;
+}
 .grid table.grid thead th.sort-asc .desc-arrow {
-    display: none;
-  }
+  display: none;
+}
 .grid table.grid thead th.sort-desc .desc-arrow {
-    display: static;
-  }
+  display: static;
+}
 .grid table.grid thead th.sort-desc .asc-arrow {
-    display: none;
-  }
-
+  display: none;
+}
