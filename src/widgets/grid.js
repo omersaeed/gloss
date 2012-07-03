@@ -34,6 +34,15 @@ define([
             // .highlight() and make the cursor a pointer
             highlightable: false,
 
+            // when the grid renders a list of models, if `highlightable` is
+            // true, then it will check each of them for the field specified by
+            // `highlightableField`, and if it is truthy, it will render it as
+            // a highlighted field
+            //
+            // set this to 'null' to disable automatically setting values on
+            // the model when a row is highlighted
+            highlightableGridModelField: '_selected',
+
             // because it's so expensive to change an element when it's already
             // in the dom, it's often faster to re-render the entire grid
             // (outside the dom) even though only a portion of it changed.
@@ -218,7 +227,9 @@ define([
                 tbody = $tbody[0],
                 selectedModel = null;
 
-            if (this._highlighted) {
+            // track what was highlighted ONLY IF it's not being tracked in the
+            // models, i.e. this.options.highlightableGridModelField is null
+            if (this._highlighted && options.highlightableGridModelField == null) {
                 selectedModel = this._highlighted.options.model;
             }
                         
@@ -234,7 +245,9 @@ define([
                 models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
             }
             
-            this.unhighlight();
+            if (options.highlightableGridModelField == null) {
+                this.unhighlight();
+            }
             
             for (i = 0; i < len; i++) {
                 model = models[i];
@@ -246,7 +259,16 @@ define([
                     this.setModel(rows[i], model);
                 }
                 
+                // if the highlighted row is NOT being tracked at the model
+                // level (only being tracked by the grid), then highlight the
+                // row
                 if (selectedModel && model === selectedModel) {
+                    this.highlight(rows[i]);
+
+                // if the highlighted row IS being tracked at the model level,
+                // then use that to set the highlight
+                } else if (options.highlightableGridModelField &&
+                           model[options.highlightableGridModelField]) {
                     this.highlight(rows[i]);
                 }
             }
@@ -311,6 +333,10 @@ define([
                 this.unhighlight();
                 whichRow.$node.addClass('highlight');
                 this._highlighted = whichRow;
+                if (this.options.highlightableGridModelField) {
+                    whichRow.options.model.set(
+                        this.options.highlightableGridModelField, true);
+                }
                 this.trigger('highlight');
             }
             return this;
@@ -353,6 +379,10 @@ define([
         unhighlight: function() {
             if (this._highlighted) {
                 this._highlighted.$node.removeClass('highlight');
+                if (this.options.highlightableGridModelField) {
+                    this._highlighted.options.model.set(
+                        this.options.highlightableGridModelField, false);
+                }
                 delete this._highlighted;
                 this.trigger('unhighlight');
             }
