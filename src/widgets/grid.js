@@ -219,7 +219,7 @@ define([
             var i, model, newRow, attachTbodyToTable = false,
                 options = this.options,
                 rowWidgetClass = options.rowWidgetClass,
-                models = options.models,
+                models = options.models || [],
                 len = models.length,
                 rows = options.rows,
                 rowsLen = rows.length,
@@ -245,9 +245,7 @@ define([
                 models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
             }
             
-            if (options.highlightableGridModelField == null) {
-                this.unhighlight();
-            }
+            this.unhighlight({modifyModel: false});
             
             for (i = 0; i < len; i++) {
                 model = models[i];
@@ -289,8 +287,8 @@ define([
         },
 
         _shouldFullyRender: function() {
-            var options = this.options;
-            return options.models.length - options.rows.length > options.tippingPoint;
+            var options = this.options, models = options.models;
+            return !models || models.length - options.rows.length > options.tippingPoint;
         },
 
         _sortData: function(self, col, ignoreSameColumnSort) {
@@ -376,10 +374,13 @@ define([
             row.set('model', model);
         },
 
-        unhighlight: function() {
+        unhighlight: function(params) {
+            if (!params) {
+                params = {modifyModel: true};
+            }
             if (this._highlighted) {
                 this._highlighted.$node.removeClass('highlight');
-                if (this.options.highlightableGridModelField) {
+                if (this.options.highlightableGridModelField && params.modifyModel) {
                     this._highlighted.options.model.set(
                         this.options.highlightableGridModelField, false);
                 }
