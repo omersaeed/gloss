@@ -219,7 +219,7 @@ define([
             var i, model, newRow, attachTbodyToTable = false,
                 options = this.options,
                 rowWidgetClass = options.rowWidgetClass,
-                models = options.models,
+                models = options.models || [],
                 len = models.length,
                 rows = options.rows,
                 rowsLen = rows.length,
@@ -287,8 +287,8 @@ define([
         },
 
         _shouldFullyRender: function() {
-            var options = this.options;
-            return options.models.length - options.rows.length > options.tippingPoint;
+            var options = this.options, models = options.models;
+            return !models || models.length - options.rows.length > options.tippingPoint;
         },
 
         _sortData: function(self, col, ignoreSameColumnSort) {
