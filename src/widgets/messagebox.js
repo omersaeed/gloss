@@ -25,7 +25,7 @@ define([
             this._super();
                
             // Append message body
-            self.$node.find('.message-body').append(self.options.body);
+            self.$node.find('.message-text').append(self.options.body);
             
             if (self.options.cancelBtn !== '') {
                 Button($('<button class="'+self.options.cancelBtnClass+'">'+self.options.cancelBtn+'</button>').appendTo(self.$node.find('.buttons')))
@@ -39,6 +39,7 @@ define([
             }
             if (self.options.style !== '') {
                 self.$node.find('.message-icon').addClass(self.options.style);
+                self.$node.find('.message-text').addClass('message-body-with-icon');
             }
         },
         
