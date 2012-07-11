@@ -144,13 +144,13 @@ define([
         ).done(function(data1, data2, data3) {
             var $rows, models;
 
-            grid.set('models', data1[0]);
-            verifyGridMatchesData(data1[0], grid, limit);
+            grid.set('models', data1);
+            verifyGridMatchesData(data1, grid, limit);
 
             $rows = grid.$node.find('tbody tr');
 
-            grid.set('models', data2[0]);
-            verifyGridMatchesData(data2[0], grid, limit);
+            grid.set('models', data2);
+            verifyGridMatchesData(data2, grid, limit);
 
             grid.$node.find('tbody tr').each(function(i, tr) {
                 equal(tr, $rows[i], 'table row was unnecessarily re-renderd');
@@ -160,14 +160,14 @@ define([
                 });
             });
 
-            grid.set('models', data3[0]);
-            verifyGridMatchesData(data3[0], grid, limit);
+            grid.set('models', data3);
+            verifyGridMatchesData(data3, grid, limit);
 
-            grid.set('models', data1[0]);
-            verifyGridMatchesData(data1[0], grid, limit);
+            grid.set('models', data1);
+            verifyGridMatchesData(data1, grid, limit);
 
-            grid.set('models', data1[0]);
-            verifyGridMatchesData(data1[0], grid, limit);
+            grid.set('models', data1);
+            verifyGridMatchesData(data1, grid, limit);
 
             setTimeout(start, 15);
         });
@@ -334,12 +334,12 @@ define([
                 collection.load({limit: limit, offset: 0}),
                 collection.load({limit: limit, offset: limit})
             ).done(function(data1, data2) {
-            grid.set('models', data1[0]);
+            grid.set('models', data1);
             
             $nameColTh.trigger('click');    // sort ascending                        
             $nameColTh.trigger('click');    // sort descending
             
-            grid.set('models', data2[0]);
+            grid.set('models', data2);
             
             verifyGridMatchesData(grid.options.models, grid, limit);                
             _.each(grid.options.models, function(model, i){
@@ -348,7 +348,7 @@ define([
                 }   
                 prevModel = model;
                 
-                dataModel = _.find(data2[0], function(d) { 
+                dataModel = _.find(data2, function(d) { 
                     return d.name === model.name;
                 });
                 equal(model.name, dataModel.name);
@@ -371,7 +371,7 @@ define([
                 collection.load({limit: limit, offset: 0}),
                 collection.load({limit: limit, offset: limit})
             ).done(function(data1, data2) {
-            grid.set('models', data1[0]);
+            grid.set('models', data1);
             grid.highlight(grid.options.rows[0]);
             
             selectedModel = grid.highlighted().options.model;
@@ -382,7 +382,7 @@ define([
             $nameColTh.trigger('click');    // sort descending
             equal(selectedModel.id, grid.highlighted().options.model.id);
             
-            grid.set('models', data2[0]);
+            grid.set('models', data2);
             equal(null, grid.highlighted());
             
             setTimeout(start, 15);
