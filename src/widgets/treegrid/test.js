@@ -190,6 +190,9 @@ define([
                     equal($(el).find('.expand').text(), childText);
                 }
             });
+            if (treegrid.$tbody.find('tr:visible').length !== tree.root.children.length) {
+                throw Error('visible length doesnt match data length');
+            }
             equal(treegrid.$tbody.find('tr:visible').length, tree.root.children.length);
             treegrid.expandAll();
             equal(treegrid.$tbody.find('tr:visible').length, expectedLength);

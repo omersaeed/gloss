@@ -1,14 +1,16 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './widget',
     'css!./tooltip/tooltip.css'
-], function($, Widget) {
+], function($, _, Widget) {
     return Widget.extend({
         defaults: {
             animation: null,
             position: {my: 'left top', at: 'left bottom'},
             postDelay: 500,
             preDelay: 0,
+            width: null,
             target: null
         },
         create: function() {
@@ -74,6 +76,14 @@ define([
                     'mouseenter', this._initiateShow));
                 this._handledEvents.push(Widget.attachHandler(options.target,
                     'mouseleave', this._initiateHide));
+            }
+
+            if (options.width) {
+                if (_.isNumber(this.options.width)) {
+                    this.$node.width(this.options.width);
+                } else {
+                    this.$node.css({width: ''});
+                }
             }
         },
         _initiateHide: function(event) {
