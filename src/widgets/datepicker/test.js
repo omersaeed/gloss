@@ -56,10 +56,15 @@ define([
 
     module('datepicker');
 
-    var openDatePicker = function(datePicker) {
-            datePicker.$node.find('input').trigger('focus');
+    var openDatePicker = function(datePicker, options) {
+            if (options && options.method === 'click') {
+                datePicker.$node.find('input').trigger('click').trigger('focus');
+            } else {
+                datePicker.$node.find('input').trigger('focus');
+            }
         },
         dateIsSelected = function(datePicker, date) {
+            date = _.isString(date)? moment(date) : date;
             if (datePicker.getValue() == null || date == null) {
                 ok(datePicker.getValue() == null && date == null);
                 equal(datePicker.monthView.$node.find('td.selected').length, 0);
@@ -68,15 +73,36 @@ define([
             }
             equal(datePicker.getValue(), date.format('YYYY-MM-DD'));
             datePicker.monthView.$node.find('td').each(function(i, el) {
-                if ((new RegExp(date.date().toString())).test($(el).text())) {
-                    ok($(el).hasClass('selected'));
+                if ((new RegExp('^' + date.date().toString() + '$')).test($(el).text().trim())) {
+                    ok($(el).hasClass('selected'), [
+                        'expected el to be selected,' +
+                        'date: ', date.format('YYYY-MM-DD'), ', ' + 
+                        'el.class:' + el.className + ', ' + 
+                        'text: ' + $(el).text()].join());
                 } else {
-                    ok(!$(el).hasClass('selected'));
+                    ok(!$(el).hasClass('selected'), [
+                        'expected el NOT to be selected,' +
+                        'date: ', date.format('YYYY-MM-DD'), ', ' + 
+                        'el.class:' + el.className + ', ' + 
+                        'text: ' + $(el).text()].join());
                 }
             });
             equal(datePicker.$node.find('input[type=text]').val(),
                     date.format('YYYY-MM-DD'));
+        },
+        clickOnDate = function(datePicker, date) {
+            var dfd = $.Deferred();
+            date = _.isString(date)? moment(date) : date;
+            datePicker.$node
+                .find('td:contains('+date.date()+')').trigger('click').end()
+                .find('input[type=text]').trigger('blur');
+            setTimeout(function() {dfd.resolve();}, 0);
+            return dfd;
+        },
+        clickOutsideOfPicker = function() {
+            $('body div:first').trigger('mousedown');
         };
+
 
     test('instantiation', function() {
         // var $node = $('<div>').appendTo('#qunit-fixture');
@@ -106,16 +132,18 @@ define([
         equal(dp.options.date.format('YYYY-MM-DD'), '2012-06-13');
     });
 
-    test('clicking a day sets the selected date', function() {
+    asyncTest('clicking a day sets the selected date', function() {
         var dp = DatePicker(undefined, {date: moment('2012-07-13')});
         openDatePicker(dp);
 
-        dp.monthView.$node.find('td:contains(14)').trigger('click');
-        dateIsSelected(dp, moment('2012-07-14'));
+        clickOnDate(dp, '2012-07-14').done(function() {
+            dateIsSelected(dp, moment('2012-07-14'));
 
-        dp.monthView.$node.find('td:contains(28)').trigger('click');
-        dateIsSelected(dp, moment('2012-07-28'));
-
+            clickOnDate(dp, '2012-07-28').done(function() {
+                dateIsSelected(dp, moment('2012-07-28'));
+                start();
+            });
+        });
     });
 
     module('datepicker input');
@@ -124,12 +152,13 @@ define([
         var dp = DatePicker(undefined, {date: moment('2012-07-13')});
 
         openDatePicker(dp);
-        dp.$node.find('input[type=text]').val('2012-07-12').trigger('blur');
+        dp.$node.find('input[type=text]').val('2012-07-12')
+            .trigger($.Event('keydown', {which: 9}));
         dateIsSelected(dp, moment('2012-07-12'));
 
         openDatePicker(dp);
         dp.$node.find('input[type=text]').val('2012-07-28')
-            .trigger($.Event('keyup', {which: 13}));
+            .trigger($.Event('keydown', {which: 13}));
         dateIsSelected(dp, moment('2012-07-28'));
     });
 
@@ -137,17 +166,52 @@ define([
         var dp = DatePicker(undefined, {date: moment('2012-07-13')});
 
         openDatePicker(dp);
-        dp.$node.find('input[type=text]').val('asdfasdf').trigger('blur');
+        dp.$node.find('input[type=text]').val('asdfasdf')
+            .trigger($.Event('keydown', {which: 9}));
         dateIsSelected(dp, null);
 
         openDatePicker(dp);
-        dp.$node.find('input[type=text]').val('2012-07-12').trigger('blur');
+        dp.$node.find('input[type=text]').val('2012-07-12')
+            .trigger($.Event('keydown', {which: 9}));
         dateIsSelected(dp, moment('2012-07-12'));
 
         openDatePicker(dp);
         dp.$node.find('input[type=text]').val('asdfasdf')
-            .trigger($.Event('keyup', {which: 13}));
+            .trigger($.Event('keydown', {which: 13}));
         dateIsSelected(dp, moment('2012-07-12'));
+    });
+
+    module('random @$$ corner cases');
+
+    asyncTest('open and click a date, click outside, reopen and click another date', function() {
+        var $node = $('<div>').appendTo('#qunit-fixture'), dp = DatePicker($node, {
+            date: moment('2012-07-13')
+        });
+
+        setTimeout(function() {
+            openDatePicker(dp, 'click');
+            clickOnDate(dp, '2012-07-02').done(function() {
+                clickOutsideOfPicker();
+                dateIsSelected(dp, '2012-07-02');
+
+                openDatePicker(dp, 'click');
+                clickOnDate(dp, '2012-07-03').done(function() {
+                    dateIsSelected(dp, '2012-07-03');
+                    start();
+                });
+            });
+        }, 0);
+    });
+
+    asyncTest('selecting a date then clicking right arrow doesnt show selection', function() {
+        var dp = DatePicker(undefined, {date: moment('2012-07-13')});
+        openDatePicker(dp);
+        clickOnDate(dp, '2012-07-14').done(function() {
+            dp.menu.$node.find('h4 .right').trigger('click');
+            equal(dp.options.date.format('YYYY-MM-DD'), '2012-08-14');
+            equal(dp.$node.find('td.selected').length, 0);
+            start();
+        });
     });
 
     start();

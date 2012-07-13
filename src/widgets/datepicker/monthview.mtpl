@@ -8,7 +8,7 @@
           <td class="<%=
                   dayOfMonth === date.date()? 'current ' : ' '
                 %><%=
-                  self._selectedInMonth === dayOfMonth?  'selected ' : ' '
+                  self._selectedDate === dayOfMonth?  'selected ' : ' '
                 %><%=
                   dayOfMonth > 0 && dayOfMonth <= self._num?  '' : 'empty'
                 %>">

@@ -41,10 +41,11 @@ define([
 
             self.input = TextBox(self.$node.children('input[type=text]'))
                 .on('blur', self._verifyInputValue)
-                .on('focus', self.menu.show)
-                .on('keyup', function(evt) {
-                    if (Widget.identifyKeyEvent(evt) === 'enter') {
+                .on('focus click', self.menu.show)
+                .on('keydown', function(evt) {
+                    if (Widget.identifyKeyEvent(evt) in {enter:'', tab:''}) {
                         self._verifyInputValue();
+                        self.menu.hide();
                     }
                 });
 
@@ -58,19 +59,17 @@ define([
         },
         _verifyInputValue: function(evt) {
             var inputDate = moment(this.input.getValue(), this.options.format);
-            if (!inputDate) {
-                return;
+            if (inputDate) {
+                this.setValue(inputDate.format('YYYY-MM-DD') !== invalidDate?
+                        inputDate : this.getValue());
             }
-            this.setValue(inputDate.format('YYYY-MM-DD') !== invalidDate?
-                    inputDate : this.getValue());
-            this.menu.hide();
         },
         getValue: function() {
             return this.options._selected &&
                 this.options._selected.format(this.options.format);
         },
         setValue: function(date) {
-            date = _.isString(date)? moment(date, this.options.format) : date;
+            date = moment(date || null);
             this.set('_selected', date);
             this.input.setValue(date && date.format(this.options.format));
         },
@@ -82,6 +81,9 @@ define([
             }
             if (updated._selected) {
                 this.monthView.set('_selected', selected);
+                if (selected) {
+                    this.set('date', moment(selected));
+                }
             }
         }
     });
@@ -106,6 +108,10 @@ define([
         },
         updateWidget: function(updated) {
             var date = this.options.date, selected = this.options._selected;
+
+            this._selectedDate = DatePicker.sameMonth(date, selected)?
+                selected.date() : null;
+
             if (updated.date && date) {
                 this._num = DatePicker.numDaysInMonth(date);
                 this._first = moment(
@@ -115,8 +121,6 @@ define([
                 this.render();
             }
             if (updated._selected) {
-                this._selectedInMonth =
-                    DatePicker.sameMonth(date, selected) && selected.date();
                 this.render();
             }
         }
