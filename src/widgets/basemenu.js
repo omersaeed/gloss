@@ -37,11 +37,11 @@ define([
         show: function(params) {
             var $node = this.$node, options = this.options, self = this;
             if(this.shown) {
-                return;
+                return this;
             } else if(!this.constructed) {
                 this._constructMenu();
                 if(!this.constructed) {
-                    return;
+                    return this;
                 }
             }
 
