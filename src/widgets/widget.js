@@ -424,12 +424,42 @@ define([
             registry.remove(this);
         },
 
-        onPageClick: function(name, callback) {
+        // Widget.onPageClick([event name], callback, [opts])
+        //
+        // assign a callback to be executed when the user clicks anywhere
+        // _outside_ of the widget.
+        //
+        // defaults:
+        //
+        //  - event: the default event is 'mousedown.onPageClick'
+        //  - also by default the click is only executed once, this can be
+        //    adjusted by either:
+        //      - return 'false' from the callback will not cancel it, i.o.w.
+        //        if you only want to cancel the callback based on a certain
+        //        condition in the event context, you can return true/false.
+        //        also returning nothing (undefined) is treated the same as
+        //        returning true, which will cancel the callback
+        //      - set opts.once to false.  if this is false then the return
+        //        value doesn't matter
+        //
+        // examples:
+        //
+        //     myWidget.onPageClick(function() { /* ... */ });
+        //     myWidget.onPageClick('mouseup.myHandler', function() { /* ... */ });
+        //     myWidget.onPageClick(function() { /* ... */ }, {once: false});
+        //     myWidget.onPageClick('click.handleIt', function() { /* ... */ }, {once: false});
+        onPageClick: function(name, callback, opts) {
             var $node = this.$node;
-            if (!callback) {
+            if (arguments.length === 1) {
+                callback = name;
+                name = 'mousedown.onPageClick';
+                opts = {};
+            } else if (arguments.length === 2 && _.isFunction(name)) {
+                opts = callback;
                 callback = name;
                 name = 'mousedown.onPageClick';
             }
+            opts = $.extend({once: true}, opts);
             name += '_' + this.id;
             setTimeout(function() {
                 var $doc = $(document).on(name, function handler(evt) {
@@ -438,7 +468,7 @@ define([
                             returnedFalse = !ret && typeof ret !== 'undefined',
                             defaultPrevented = evt.isDefaultPrevented();
 
-                        if (!returnedFalse && !defaultPrevented) {
+                        if (!returnedFalse && !defaultPrevented && opts.once) {
                             $doc.off(name, handler);
                         }
                     }
