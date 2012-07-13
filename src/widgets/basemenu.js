@@ -18,6 +18,9 @@ define([
 
             self.$node.addClass('base-menu').hide();
         },
+        isShown: function() {
+            return this.shown;
+        },
         hide: function() {
             var $node = this.$node, options = this.options;
             if(!this.shown) {
