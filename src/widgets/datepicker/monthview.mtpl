@@ -1,0 +1,23 @@
+<% var date = this.options.date, self = this; %>
+<table>
+  <tbody>
+    <% _.each(_.range(this._numRows), function(i) { %>
+      <tr>
+        <% _.each(_.range(7), function(j) { %>
+          <% var idx = i*7 + j, dayOfMonth = idx - self._first.day() + 1; %>
+          <td class="<%=
+                  dayOfMonth === date.date()? 'current ' : ' '
+                %><%=
+                  self._selectedInMonth === dayOfMonth?  'selected ' : ' '
+                %><%=
+                  dayOfMonth > 0 && dayOfMonth <= self._num?  '' : 'empty'
+                %>">
+            <% if (dayOfMonth > 0 && dayOfMonth <= self._num) { %>
+              <%= dayOfMonth %>
+            <% } %>
+          </td>
+        <% }); %>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

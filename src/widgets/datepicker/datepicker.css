@@ -1,0 +1,27 @@
+.datepicker h4 {
+  text-align: center;
+}
+
+.datepicker h4 .left,
+.datepicker h4 .right {
+  cursor:pointer;
+  font-size: 14px;
+  display: inline-block;
+  width: 20px;
+}
+
+.datepicker h4 .right {
+  float: right;
+}
+
+.datepicker h4 .left {
+  float: left;
+}
+
+.datepicker .monthview td {
+  cursor: pointer;
+}
+
+.datepicker .monthview td.empty {
+  cursor: default;
+}
