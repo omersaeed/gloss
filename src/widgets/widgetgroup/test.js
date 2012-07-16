@@ -12,10 +12,12 @@ define([
     './../togglegroup',
     './../checkboxgroup',
     './../multiselect',
+    './../datepicker',
     'text!./widgetgrouptesttmpl.html',
     'text!./widgetgrouptestwidgetizedescendents.mtpl'
 ], function($, _, WidgetGroup, Button, CheckBox, TextBox, NumberBox, SelectBox,
-    RadioGroup, ToggleGroup, CheckBoxGroup, Multiselect, html, html2) {
+    RadioGroup, ToggleGroup, CheckBoxGroup, Multiselect, DatePicker, html,
+    html2) {
 
     test('correctly group widgets', function() {
         var wg = WidgetGroup($(html), {widgetize: true});
@@ -28,36 +30,35 @@ define([
 
     test('correctly widgetize descendents', function() {
         var wg = WidgetGroup($(html2), {widgetize: true});
-        ok(wg.getWidget('button1') instanceof Button);
-        ok(wg.getWidget('button2') instanceof Button);
+        ok(wg.getWidget('button1') instanceof Button, 'button 1');
+        ok(wg.getWidget('button2') instanceof Button, 'button 2');
 
-        ok(wg.getWidget('checkbox1') instanceof CheckBox);
+        ok(wg.getWidget('checkbox1') instanceof CheckBox, 'checkbox');
 
-        ok(wg.getWidget('textbox1') instanceof TextBox);
-        ok(wg.getWidget('textbox2') instanceof TextBox);
-        ok(wg.getWidget('textbox3') instanceof TextBox);
-        ok(wg.getWidget('textbox4') instanceof TextBox);
+        ok(wg.getWidget('textbox1') instanceof TextBox, 'textbox 1');
+        ok(wg.getWidget('textbox2') instanceof TextBox, 'textbox 2');
+        ok(wg.getWidget('textbox3') instanceof TextBox, 'textbox 3');
+        ok(wg.getWidget('textbox4') instanceof TextBox, 'textbox 4');
 
-        ok(wg.getWidget('numberbox1') instanceof NumberBox);
+        ok(wg.getWidget('numberbox1') instanceof NumberBox, 'numberbox');
 
-        ok(wg.getWidget('selectbox1') instanceof SelectBox);
-        ok(wg.getWidget('selectbox2') instanceof SelectBox);
+        ok(wg.getWidget('selectbox1') instanceof SelectBox, 'selectbox 1');
+        ok(wg.getWidget('selectbox2') instanceof SelectBox, 'selectbox 2');
 
-        ok(wg.getWidget('radiogroup1') instanceof RadioGroup,
-            'radiogroup correctly widgetized');
+        ok(wg.getWidget('radiogroup1') instanceof RadioGroup, 'radiogroup');
 
-        ok(wg.getWidget('togglegroup1') instanceof ToggleGroup,
-            'togglegroup correctly widgetized');
+        ok(wg.getWidget('togglegroup1') instanceof ToggleGroup, 'togglegroup');
 
-        ok(wg.getWidget('checkboxgroup1') instanceof CheckBoxGroup,
-            'checkboxgroup correctly widgetized');
+        ok(wg.getWidget('checkboxgroup1') instanceof CheckBoxGroup, 'checkboxgroup');
 
-        ok(wg.getWidget('fieldset1widget1') instanceof TextBox);
-        ok(wg.getWidget('fieldset1widget2') instanceof TextBox);
-        ok(wg.getWidget('fieldset1widget3') instanceof TextBox);
+        ok(wg.getWidget('fieldset1widget1') instanceof TextBox, 'filedset textbox 1');
+        ok(wg.getWidget('fieldset1widget2') instanceof TextBox, 'filedset textbox 2');
+        ok(wg.getWidget('fieldset1widget3') instanceof TextBox, 'filedset textbox 3');
         
-        ok(wg.getWidget('my-multiselect1') instanceof Multiselect);
-        ok(wg.getWidget('my-multiselect2') instanceof Multiselect);        
+        ok(wg.getWidget('my-multiselect1') instanceof Multiselect, 'multiselect 1');
+        ok(wg.getWidget('my-multiselect2') instanceof Multiselect, 'multiselect 2');        
+
+        ok(wg.getWidget('date') instanceof DatePicker, 'datepicker');
     });
 
     test('set label "for" attribute', function() {
@@ -98,9 +99,9 @@ define([
         ok(widgets.fieldset1.fieldset1widget3 instanceof TextBox);
         ok(widgets.fieldset1.fieldset1widget4 instanceof TextBox);   
         
-        equal(_.size(widgets), 16);
+        equal(_.size(widgets), 17);
         equal(_.size(widgets.fieldset1), 4);
-        equal(_.size(wg.options.widgets), 19);
+        equal(_.size(wg.options.widgets), 20);
         
     });
 
@@ -114,7 +115,7 @@ define([
         ok(widgets.fieldset1widget3 instanceof TextBox);
         ok(widgets.fieldset1widget4 instanceof TextBox);   
         
-        equal(_.size(widgets), 19);
+        equal(_.size(widgets), 20);
     });
 
     test('setting values based on regex', function() {
