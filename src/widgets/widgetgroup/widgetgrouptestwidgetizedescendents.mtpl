@@ -63,6 +63,8 @@
     <label data-for="checkboxgroup1:value3">Value 3</label>
   </div>
 
+  <div class=datepicker name=date></div>
+
   <fieldset name=fieldset1>
     <input type=text name=fieldset1widget1 />  
     <input type=password name=fieldset1widget2 />
