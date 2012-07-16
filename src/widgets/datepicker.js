@@ -32,7 +32,7 @@ define([
                     var date = self.options.date,
                         forward = $(this).hasClass('right');
                     self.set('date', date.add('months', forward? 1 : -1));
-                }).on('click', '.monthview td', function() {
+                }).on('mouseup', '.monthview td', function() {
                     var selectedDate = self.monthView.tdElToDate(this);
                     if (selectedDate) {
                         self.setValue(selectedDate);
@@ -72,6 +72,7 @@ define([
             date = moment(date || null);
             this.set('_selected', date);
             this.input.setValue(date && date.format(this.options.format));
+            return this;
         },
         updateWidget: function(updated) {
             var date = this.options.date, selected = this.options._selected;

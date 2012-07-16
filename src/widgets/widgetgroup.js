@@ -11,9 +11,10 @@ define([
     './selectbox',
     './textbox',
     './messagelist',
-    './multiselect'
+    './multiselect',
+    './datepicker'
 ], function($, _, Widget, Button, NumberBox, CheckBox, RadioGroup, ToggleGroup,
-    CheckBoxGroup, SelectBox, TextBox, MessageList, MultiSelect) {
+    CheckBoxGroup, SelectBox, TextBox, MessageList, MultiSelect, DatePicker) {
     return Widget.extend({
         defaults: {
             widgets: null,
@@ -29,10 +30,11 @@ define([
                 ['textarea', TextBox],
                 ['div.radiogroup', RadioGroup],
                 ['div.togglegroup', ToggleGroup],
-                ['div.checkboxgroup', CheckBoxGroup]
+                ['div.checkboxgroup', CheckBoxGroup],
+                ['.datepicker', DatePicker]
                 
             ],
-            widgetSelector: 'button[name],div.radiogroup,input[name],select[name],div.select[name],textarea[name],div.togglegroup,div.checkboxgroup,div.multiselect[name]'
+            widgetSelector: 'button[name],.datepicker,div.radiogroup,input[name],select[name],div.select[name],textarea[name],div.togglegroup,div.checkboxgroup,div.multiselect[name]'
         },
 
         create: function() {
