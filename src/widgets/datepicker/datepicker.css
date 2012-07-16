@@ -1,0 +1,49 @@
+.datepicker h4 {
+  text-align: center;
+}
+
+.datepicker h4 .left,
+.datepicker h4 .right {
+  cursor:pointer;
+  font-size: 14px;
+  display: inline-block;
+  width: 20px;
+}
+
+.datepicker h4 .left:hover,
+.datepicker h4 .right:hover {
+  background-color: black;
+  color: white;
+}
+
+.datepicker h4 .right {
+  float: right;
+}
+
+.datepicker h4 .left {
+  float: left;
+}
+
+.datepicker .monthview td {
+  cursor: pointer;
+}
+
+.datepicker .monthview td:hover {
+  cursor: pointer;
+  background-color: black;
+  color: white;
+}
+
+.datepicker .monthview td.selected {
+  cursor: pointer;
+  background-color: #aaa;
+}
+
+.datepicker .monthview td.empty {
+  cursor: default;
+}
+
+.datepicker .monthview td.empty:hover {
+  background-color: white;
+  color: black;
+}

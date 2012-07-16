@@ -18,6 +18,9 @@ define([
 
             self.$node.addClass('base-menu').hide();
         },
+        isShown: function() {
+            return this.shown;
+        },
         hide: function() {
             var $node = this.$node, options = this.options;
             if(!this.shown) {
@@ -37,11 +40,11 @@ define([
         show: function(params) {
             var $node = this.$node, options = this.options, self = this;
             if(this.shown) {
-                return;
+                return this;
             } else if(!this.constructed) {
                 this._constructMenu();
                 if(!this.constructed) {
-                    return;
+                    return this;
                 }
             }
 
