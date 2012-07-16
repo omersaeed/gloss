@@ -6,10 +6,10 @@ define([
     './formwidget',
     './basemenu',
     './textbox',
-    'text!./datepicker/datepicker.html',
+    'tmpl!./datepicker/datepicker.mtpl',
     'tmpl!./datepicker/monthview.mtpl',
     'css!./datepicker/datepicker.css'
-], function($, _, moment, Widget, FormWidget, BaseMenu, TextBox, widgetMarkup,
+], function($, _, moment, Widget, FormWidget, BaseMenu, TextBox, widgetTemplate,
     monthViewTemplate) {
     var invalidDate = moment('asdfasdf', 'YYYY-MM-DD').format('YYYY-MM-DD');
 
@@ -19,7 +19,7 @@ define([
             format: 'YYYY-MM-DD',
             populateEmptyNode: true
         },
-        nodeTemplate: widgetMarkup,
+        nodeTemplate: widgetTemplate,
         create: function() {
             var self = this;
 

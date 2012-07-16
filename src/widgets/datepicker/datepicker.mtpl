@@ -1,5 +1,5 @@
 <div>
-  <input type=text />
+  <input type=text placeholder="<%=this.options.format%>" />
   <div class=datepicker-menu>
     <h4>
       <span class=left>&lt;</span>
