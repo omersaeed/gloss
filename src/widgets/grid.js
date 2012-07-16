@@ -283,7 +283,7 @@ define([
             if (attachTbodyToTable) {
                 this.$table.__append__($tbody);
             }
-            console.log('render time for',this.id,':',new Date() - startTime);
+            // console.log('render time for',this.id,':',new Date() - startTime);
         },
 
         _shouldFullyRender: function() {
