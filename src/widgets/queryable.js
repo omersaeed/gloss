@@ -2,8 +2,7 @@ define([
     'vendor/jquery',
     'vendor/underscore'
 ], function ($, _) {
-    var _currentDfd,
-        remove = function(array, obj) {
+    var remove = function(array, obj) {
         var idx = _.indexOf(array, obj);
         if (idx >= -1) {
             array.splice(idx, 1);
@@ -18,13 +17,13 @@ define([
 
                 //Filter Success
                 function(value) {
-                    if(dfd !== _currentDfd) {
+                    if(dfd !== self._currentDfd) {
                         remove(self._currentDfds, dfd);
                         return $.Deferred().reject();
                     }
                     // self._currentDfds.length = 0;
                     remove(self._currentDfds, dfd);
-                    _currentDfd = undefined;
+                    self._currentDfd = undefined;
                     return this.resolve();
                 },
 
@@ -36,7 +35,7 @@ define([
             );
 
             (self._currentDfds = self._currentDfds || []).push(dfd);
-            _currentDfd = dfd;
+            self._currentDfd = dfd;
             return dfd;
         }
     };
