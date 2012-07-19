@@ -17,12 +17,13 @@ define([
 
                 //Filter Success
                 function(value) {
-                    if(dfd !== _.last(self._currentDfds)) {
+                    if(dfd !== self._currentDfd) {
                         remove(self._currentDfds, dfd);
                         return $.Deferred().reject();
                     }
                     // self._currentDfds.length = 0;
                     remove(self._currentDfds, dfd);
+                    self._currentDfd = undefined;
                     return this.resolve();
                 },
 
@@ -34,6 +35,7 @@ define([
             );
 
             (self._currentDfds = self._currentDfds || []).push(dfd);
+            self._currentDfd = dfd;
             return dfd;
         }
     };
