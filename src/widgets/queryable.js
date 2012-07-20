@@ -19,7 +19,7 @@ define([
                 function(value) {
                     if(dfd !== self._currentDfd) {
                         remove(self._currentDfds, dfd);
-                        return $.Deferred().reject();
+                        return $.Deferred().reject({noAction: true});
                     }
                     // self._currentDfds.length = 0;
                     remove(self._currentDfds, dfd);
