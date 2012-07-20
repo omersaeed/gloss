@@ -1,7 +1,7 @@
 <table>
   <% for(var i=0; i < data.data.length; i++) { %>
     <tr>
-      <td rowspan=<%= data.data[i].values.length+1 %>><%= data.data[i].name %></td>
+      <td rowspan=<%= data.data[i].values.length+1 %> title="<%= data.data[i].name %>"><%= data.data[i].name %></td>
       <% for(var j=0; j < data.data[i].values.length; j++) { %>
         <tr>
           <td class=graph-bar-cell>
