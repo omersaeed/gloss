@@ -1,2 +1,8 @@
 .test
 node_modules
+src/require/test/test_tmpl-*.js
+src/require/test/test_tmpl-*.css
+src/widgets/treegrid/test-*.js
+src/widgets/treegrid/test-*.css
+src/widgets/widgetgroup/test-*.js
+src/widgets/widgetgroup/test-*.css
