@@ -157,22 +157,30 @@ define([
         },
 
         _compare: function(colName, colOrder) {
+            var self = this;
             return function(a,b) {
-                var result = 0;
-                if (!a[colName] && !b[colName]) {
+                var result = 0, aVal, bVal;
+                aVal = self._getColumnValue(a,colName);
+                bVal = self._getColumnValue(b,colName);
+                
+                if (typeof aVal === 'undefined' && typeof bVal === 'undefined') {
                     result = 0;
-                } else if (!a[colName]) {
+                } else if (typeof aVal === 'undefined') {
                     result = -1;
-                } else if (!b[colName]) {
+                } else if (typeof bVal === 'undefined') {
                     result = 1;
                 } else {               
-                    result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
+                    result = ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
                 }
-                
+
                 result *= colOrder === 'asc'? 1 : -1;
                 
                 return result;
             };
+        },
+
+        _getColumnValue: function(model, colName) {
+            return model[colName];
         },
         
         _initRowsAndHeader: function() {
