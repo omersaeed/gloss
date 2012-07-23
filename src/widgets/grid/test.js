@@ -215,6 +215,38 @@ define([
         });
     });
 
+
+    asyncTest('Hide Column, Show Column, Toggle Column ', function() {
+        var limit = 100, grid = this.grid, collection = this.collection;
+        grid.appendTo($('#qunit-fixture'));
+        collection.load({limit: limit, offset: 0}).done(function(data) {
+            grid.set('models', data);
+            verifyGridMatchesData(data, grid, limit);
+            
+            // Hide Column
+            grid.hideColumn('volume_id');
+            ok(grid.$node.hasClass('hide-col-volume_id'));
+
+            // Show Column
+            grid.showColumn('volume_id');
+            ok(!grid.$node.hasClass('hide-col-volume_id'));
+
+            // Toggle Column
+            grid.toggleColumn('volume_id');
+            grid.toggleColumn('security_attributes');
+            ok(grid.$node.hasClass('hide-col-volume_id'));
+            ok(grid.$node.hasClass('hide-col-security_attributes'));
+
+            //toggle columns to show these columns 
+            grid.toggleColumn('volume_id');
+            grid.toggleColumn('security_attributes');
+            ok(!grid.$node.hasClass('hide-col-volume_id'));
+            ok(!grid.$node.hasClass('hide-col-security_attributes'));
+
+            setTimeout(start, 15);
+        });
+    });
+
     module('editable grid', {
         setup: function() {
             var EditableRowClass,
