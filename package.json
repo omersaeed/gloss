@@ -13,7 +13,7 @@
     "bedrockjs": "git+ssh://git@github.com:siq/bedrockjs.git",
     "siq-mesh": "git+ssh://git@github.com:siq/mesh.git"
   },
-  "component": {
+  "csi": {
     "name": "gloss"
   },
   "devDependencies": {},
