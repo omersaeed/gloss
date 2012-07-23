@@ -20,7 +20,7 @@ define([
 		for (i in units)
 			if (bytes < Math.pow(2, i))
 				return (bytes / Math.pow(2, i-10)).toFixed(1) + units[i];
-		return (bytes / Math.pow(2, 30)).toFixed(1) + units[60];
+		return (bytes / Math.pow(2, 50)).toFixed(1) + units[60];
 	};
 
     var inverse_bytes = function(s) {
