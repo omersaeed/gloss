@@ -27,15 +27,20 @@ define([
         statusOk = {status: 200};
 
     var urlToResourceInfo = function(url) {
-        var parsed = url.match(urlRe),
-            id = parseInt(parsed[4], 10),
-            ret = {
-                name: parsed[2],
-                version: parsed[1],
-                id: ! _.isNaN(id)? id : parsed[4],
-                slug: '/api/v' + parsed[1] + '/' + parsed[2],
-                param: parsed[6]
-            };
+        var parsed = url.match(urlRe), id, ret;
+
+        if (! parsed) {
+            return {};
+        }
+
+        id = parseInt(parsed[4], 10);
+        ret = {
+            name: parsed[2],
+            version: parsed[1],
+            id: ! _.isNaN(id)? id : parsed[4],
+            slug: '/api/v' + parsed[1] + '/' + parsed[2],
+            param: parsed[6]
+        };
 
         if (ret.param != null) {
             ret.slug += '/' + ret.param;
