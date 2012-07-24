@@ -8,17 +8,22 @@ define([
             collectionMap: function(models) {return models;}
         },
         __updateWidget__: function(updated) {
-            var self = this,
+            var state, self = this,
                 options = self.options,
                 collection = options.collection,
                 collectionMap = options.collectionMap;
+            self._collectionViewableState = self._collectionViewableState || {};
+            state = self._collectionViewableState;
             if (updated.collection && typeof collection !== 'undefined') {
                 if (self.disable) {
                     self.disable();
                 }
                 if (collection) {
                     collection.load(options.collectionLoadArgs).done(function() {
-                        var startingValue = _.isFunction(self.getValue)?  self.getValue() : null;
+                        var startingValue = _.isFunction(self.getValue)?
+                            self.getValue() : null;
+
+                        state._loadResolved = true;
 
                         self.set('models', collectionMap(collection.models));
                         _.each(self.options.entries, function(entry) {
@@ -34,7 +39,11 @@ define([
                     
                     // Add listener on the collection to handle further updates 
                     collection.on('update', function(evtName, collection) {
-                        self.set('models', collection.models);
+                        if ((state._loadResolved && state._updateFired) ||
+                            !state._loadResolved) {
+                            self.set('models', collection.models);
+                        }
+                        state._updateFired = true;
                     });
 
                 } else {
