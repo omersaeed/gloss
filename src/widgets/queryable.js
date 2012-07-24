@@ -13,27 +13,43 @@ define([
         executeQuery: function(dfd) {
             var self = this;
 
-            dfd = dfd.pipe(
+//            self.dfd = $.Deferred();
+//
+//            dfd.then(function(value) {
+//                if(dfd !== self._currentDfd) {
+//                    remove(self._currentDfds, dfd);
+//                    return;
+//                }
+//                remove(self._currentDfds, dfd);
+//                self._currentDfd = undefined;
+//                return self.dfd.resolve(value);
+//
+//            }, function(value) {
+//                remove(self._currentDfds, dfd);
+//                return self.dfd.reject(value);
+//            });
+//            (self._currentDfds = self._currentDfds || []).push(dfd);
+//            self._currentDfd = dfd;
+//            return self.dfd;
 
+            dfd = dfd.pipe(
                 //Filter Success
                 function(value) {
                     if(dfd !== self._currentDfd) {
                         remove(self._currentDfds, dfd);
-                        return $.Deferred().reject({noAction: true});
+                        return $.Deferred();
                     }
                     // self._currentDfds.length = 0;
                     remove(self._currentDfds, dfd);
                     self._currentDfd = undefined;
                     return this.resolve();
                 },
-
                 //Filter Failure
                 function(value) {
                     remove(self._currentDfds, dfd);
-                    return $.Deferred().reject(value);
+                    return this.reject();
                 }
             );
-
             (self._currentDfds = self._currentDfds || []).push(dfd);
             self._currentDfd = dfd;
             return dfd;
