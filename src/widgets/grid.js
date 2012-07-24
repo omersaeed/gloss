@@ -440,7 +440,8 @@ define([
 
         _generateHideColumnCSS: function() {
             var self= this,
-                hideColumnCss = '';
+                hideColumnCss = '',
+                $lastStyleElement = $('style:last');
                 
             if (self.hideColumnCssGenerated) {
                 return;
@@ -450,7 +451,14 @@ define([
                 hideColumnCss = hideColumnCss + '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name + ' { display: none; } ';
             });
             
-            $('<style>').text(hideColumnCss).appendTo('head');
+            // if a style tag exists in the dom then append CSS to the last element otherwise create a new tag for the CSS
+            if ($lastStyleElement && $lastStyleElement.length > 0) {
+                $lastStyleElement.html( $lastStyleElement.html() + hideColumnCss);
+            } else {
+                $('<style>').text(hideColumnCss).appendTo('head');
+            }
+            
+            
             self.hideColumnCssGenerated = true;
         }
         
