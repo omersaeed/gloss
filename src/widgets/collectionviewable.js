@@ -30,12 +30,13 @@ define([
                         if (self.enable) {
                             self.enable();
                         }
-
-                        // handle any future updates
-                        collection.on('update', function(evtName, collection) {
-                            self.set('models', collection.models);
-                        });
                     });
+                    
+                    // Add listener on the collection to handle further updates 
+                    collection.on('update', function(evtName, collection) {
+                        self.set('models', collection.models);
+                    });
+
                 } else {
                     self.set('models', []);
                 }
