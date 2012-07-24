@@ -82,21 +82,17 @@ define([
             return this;
         },
 
-        _setNestedValues: function(collection, name, value) {
-            var self = this, collectionContext = collection, nesting = name.split(".");
+        _setObjectValue: function(object, name, value) {
+            var context = object, nesting = name.split(".");
             var nestingLength = nesting.length, index = 1;
-            for(element in nesting) {
-                if(!collectionContext[nesting[element]] && index < nestingLength) {
-                    collectionContext[nesting[element]] = {};
+            for(index = 0; index < nesting.length-1; ++index) {
+                item = nesting[index];
+                if(!context[item]) {
+                    context[item] = {};
                 }
-                if(index < nestingLength) {
-                    collectionContext = collectionContext[nesting[element]];
-                }
-                if(index === nestingLength) {
-                    collectionContext[nesting[element]] = value;
-                }
-                index++;
-            };
+                context = context[item];
+            }
+            context[nesting[nesting.length-1]] = value;
         },
 
         getBoundValues: function() {
@@ -107,7 +103,8 @@ define([
                     // Instead of extending . .. 
                     //$.extend(values, self.toModelObject(binding.mapping || binding.field,
                     //    widget.getValue()));
-                    self._setNestedValues(values, binding.field, widget.getValue());
+                    // TODO: Need to understand the context of mapping
+                    self._setObjectValue(values, binding.field, widget.getValue());
                 }
             });
             return values;
