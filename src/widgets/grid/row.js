@@ -79,7 +79,9 @@ define([
                 options = this.options,
                 colModel = options.colModel,
                 tds = this.node.childNodes,
-                model = options.model;
+                model = options.model,
+                grid = options.grid;
+            
             for (i = 0, len = colModel.length; i < len; i++) {
                 col = colModel[i];
                 if (!col.modelIndependent) {
@@ -90,9 +92,9 @@ define([
                         tds[i].innerHTML = this[col.render](col);
                     } else {
                         if (td.innerText != null) {
-                            tds[i].innerText = model[colModel[i].name] || '';
+                            tds[i].innerText = grid.getColumnValue(model, colModel[i].name) || '';
                         } else {
-                            tds[i].textContent = model[colModel[i].name] || '';
+                            tds[i].textContent = grid.getColumnValue(model, colModel[i].name) || '';
                         }
                     }
                 }
@@ -114,7 +116,7 @@ define([
         },
 
         renderCol: function(col) {
-            return this.options.model[col.name];
+            return this.options.grid.getColumnValue(this.options.model, col.name);
         },
 
         // this is an optimized version of set that doesn't re-set the model if

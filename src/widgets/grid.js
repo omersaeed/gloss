@@ -160,8 +160,8 @@ define([
             var self = this;
             return function(a,b) {
                 var result = 0, aVal, bVal;
-                aVal = self._getColumnValue(a,colName);
-                bVal = self._getColumnValue(b,colName);
+                aVal = self.getColumnValue(a,colName);
+                bVal = self.getColumnValue(b,colName);
                 
                 if (typeof aVal === 'undefined' && typeof bVal === 'undefined') {
                     result = 0;
@@ -179,8 +179,20 @@ define([
             };
         },
 
-        _getColumnValue: function(model, colName) {
-            return model[colName];
+        getColumnValue: function(model, colName) {
+            var self = this, 
+                col = self.col[colName],
+                model_property = col.model_property ? col.model_property : col.name,
+                value;
+
+            if(_.isFunction(model_property)) {
+                value = model_property(model);
+            } else {
+                // TODO: handle hierarchical attributes, use newly defined method in bedrock   
+                value = model[model_property]; 
+            }
+            
+            return value;
         },
         
         _initRowsAndHeader: function() {
@@ -196,6 +208,7 @@ define([
                     return cols;
                 }, {});
             }
+                        
             _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
                 self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
                     var i, l, $tr, row, rows = self.options.rows, $el = $(this);
