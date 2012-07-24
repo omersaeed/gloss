@@ -30,11 +30,24 @@ define([
             }
             this.update();
         },
-
+        
+        _getBoundField: function(binding) {
+            if(isString(binding)) {
+                return binding;
+            } else if(binding.field) {
+                return binding.field;
+            } else {
+                return null;
+            }
+        },
+        
         _onModelChange: function(eventType, model, changed) {
-            _.each(this.options.bindings, function(binding) {
-                if (typeof changed[binding.field] !== 'undefined') {
-                    binding.widgetInstance.setValue(model[binding.field]);
+            var self = this;
+            _.each(self.options.bindings, function(binding) {
+                //Changed to get the correct field.
+                boundField = self._getBoundField(binding);
+                if (typeof changed[boundField] !== 'undefined') {
+                    binding.widgetInstance.setValue(model[boundField]);
                 }
             });
         },
@@ -69,13 +82,32 @@ define([
             return this;
         },
 
+        _setNestedValues: function(collection, name, value) {
+            var self = this, collectionContext = collection, nesting = name.split(".");
+            var nestingLength = nesting.length, index = 1;
+            for(element in nesting) {
+                if(!collectionContext[nesting[element]] && index < nestingLength) {
+                    collectionContext[nesting[element]] = {};
+                }
+                if(index < nestingLength) {
+                    collectionContext = collectionContext[nesting[element]];
+                }
+                if(index === nestingLength) {
+                    collectionContext[nesting[element]] = value;
+                }
+                index++;
+            };
+        },
+
         getBoundValues: function() {
             var self = this, values = {};
             $.each(self.options.bindings, function(i, binding) {
                 var widget = binding.widgetInstance;
                 if (widget) {
-                    $.extend(values, self.toModelObject(binding.mapping || binding.field,
-                        widget.getValue()));
+                    // Instead of extending . .. 
+                    //$.extend(values, self.toModelObject(binding.mapping || binding.field,
+                    //    widget.getValue()));
+                    self._setNestedValues(values, binding.field, widget.getValue());
                 }
             });
             return values;
@@ -205,9 +237,9 @@ define([
             this.mark = null;
             return this;
         },
-
+        
         toModelObject: function(name, value) {
-            var mapping = this.options.mappings[name], model = {};
+            var self = this, mapping = this.options.mappings[name], model = {};
             if (isPlainObject(mapping)) {
                 $.each(mapping, function(attr, field) {
                     model[field] = value[attr];
