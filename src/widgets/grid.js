@@ -180,37 +180,19 @@ define([
         },
 
         getColumnValue: function(model, colName) {
-            var self = this, 
-                col = self.col[colName],
+            var col = this.col[colName],
                 modelProperty = col.modelProperty ? col.modelProperty : col.name,
                 value;
 
-            if(_.isFunction(modelProperty)) {
+            if (_.isFunction(modelProperty)) {
                 value = modelProperty(model);
             } else {
-                // TODO: use bedrock utility function here
-                value = self._getObjectValue(model, modelProperty); 
+                value = model.getAttributeValue(modelProperty); 
             }
             
             return value;
         },
-        
-        // TODO: Temp Code: remove this function and use bedrock utility function
-        _getObjectValue: function(model, name) {
-            var context = model, 
-                nesting = name.split("."),
-                index, item;
-            
-            for(index = 0; index < nesting.length-1; ++index) {
-                item = nesting[index];
-                if (!context[item]) {
-                    return;
-                }
-                context = context[item];
-            }
-            return context[nesting[nesting.length-1]];
-        },
-        
+                
         _initRowsAndHeader: function() {
             var self = this;
             self.options.rows = [];
