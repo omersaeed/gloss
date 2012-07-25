@@ -47,7 +47,7 @@ define([
                 //Changed to get the correct field.
                 boundField = self._getBoundField(binding);
                 if (typeof changed[boundField] !== 'undefined') {
-                    binding.widgetInstance.setValue(model[boundField]);
+                    binding.widgetInstance.setValue(self.getAttributeValue(model, boundField));
                 }
             });
         },
@@ -63,6 +63,7 @@ define([
             var self = this, widgets = this.options.widgets;
             $.each(self.options.bindings, function(i, binding) {
                 if (binding.bound !== false) {
+                    //TODO: Need to know what binding.mapping does.
                     var name = binding.mapping || binding.field;
                     if (name != null) {
                         var value = self.getModelValue(name);
@@ -82,19 +83,6 @@ define([
             return this;
         },
 
-        _setObjectValue: function(object, name, value) {
-            var context = object, nesting = name.split(".");
-            var nestingLength = nesting.length, index = 1;
-            for(index = 0; index < nesting.length-1; ++index) {
-                item = nesting[index];
-                if(!context[item]) {
-                    context[item] = {};
-                }
-                context = context[item];
-            }
-            context[nesting[nesting.length-1]] = value;
-        },
-
         getBoundValues: function() {
             var self = this, values = {};
             $.each(self.options.bindings, function(i, binding) {
@@ -104,7 +92,7 @@ define([
                     //$.extend(values, self.toModelObject(binding.mapping || binding.field,
                     //    widget.getValue()));
                     // TODO: Need to understand the context of mapping
-                    self._setObjectValue(values, binding.field, widget.getValue());
+                    self.setAttributeValue(values, binding.field, widget.getValue());
                 }
             });
             return values;
