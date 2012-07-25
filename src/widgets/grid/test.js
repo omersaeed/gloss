@@ -215,6 +215,55 @@ define([
         });
     });
 
+
+    var _isVisible = function(grid, colName, visible) {
+            var neg = function(negate, value) {return negate? !value : value;};
+            ok(neg(visible, grid.$node.hasClass('hide-col-' + colName)));
+            ok(neg(!visible, grid.$table.find('td.col-' + colName).is(':visible')));
+        },
+        isVisible = function(grid, colName) {
+            return _isVisible(grid, colName, true);
+        },
+        isNotVisible = function(grid, colName) {
+            return _isVisible(grid, colName, false);
+        };
+    asyncTest('Hide Column, Show Column, Toggle Column ', function() {
+        var limit = 100, grid = this.grid, collection = this.collection;
+
+        // make sure the page has loaded, since the `.is(':visible')` check
+        // will fail otherwise
+        $(function() {
+            grid.appendTo($('#qunit-fixture'));
+            collection.load({limit: limit, offset: 0}).done(function(data) {
+                grid.set('models', data);
+                verifyGridMatchesData(data, grid, limit);
+                
+                // Hide Column
+                isVisible(grid, 'volume_id');
+                grid.hideColumn('volume_id');
+                isNotVisible(grid, 'volume_id');
+
+                // Show Column
+                grid.showColumn('volume_id');
+                isVisible(grid, 'volume_id');
+
+                // Toggle Column
+                grid.toggleColumn('volume_id');
+                grid.toggleColumn('security_attributes');
+                isNotVisible(grid, 'volume_id');
+                isNotVisible(grid, 'security_attributes');
+
+                //toggle columns to show these columns 
+                grid.toggleColumn('volume_id');
+                grid.toggleColumn('security_attributes');
+                isVisible(grid, 'volume_id');
+                isVisible(grid, 'security_attributes');
+
+                setTimeout(start, 15);
+            });
+        });
+    });
+
     module('editable grid', {
         setup: function() {
             var EditableRowClass,

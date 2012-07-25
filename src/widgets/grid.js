@@ -410,6 +410,56 @@ define([
                 $tr.children().remove();
                 self._initRowsAndHeader();
             }
+        },
+
+        showColumn: function(colName) {
+            var self= this;
+            self._generateHideColumnCSS();
+            if (self.$node.hasClass('hide-col-'+ colName)) {
+                self.$node.removeClass('hide-col-'+ colName);
+            }
+        },
+        
+        hideColumn: function(colName) {
+            var self= this;
+            self._generateHideColumnCSS();
+            if (!self.$node.hasClass('hide-col-'+ colName)) {
+                self.$node.addClass('hide-col-'+ colName);
+            }
+        },
+        
+        toggleColumn: function(colName) {
+            var self= this;
+            self._generateHideColumnCSS();
+            if (!self.$node.hasClass('hide-col-'+ colName)) {
+                self.hideColumn(colName);
+            } else {
+                self.showColumn(colName);
+            }
+        },
+
+        _generateHideColumnCSS: function() {
+            var self= this,
+                hideColumnCss = '',
+                $lastStyleElement = $('style:last');
+                
+            if (self.hideColumnCssGenerated) {
+                return;
+            }
+                
+            _.each(self.options.colModel, function(col, i) {
+                hideColumnCss = hideColumnCss + '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name + ' { display: none; } ';
+            });
+            
+            // if a style tag exists in the dom then append CSS to the last element otherwise create a new tag for the CSS
+            if ($lastStyleElement && $lastStyleElement.length > 0) {
+                $lastStyleElement.html( $lastStyleElement.html() + hideColumnCss);
+            } else {
+                $('<style>').text(hideColumnCss).appendTo('head');
+            }
+            
+            
+            self.hideColumnCssGenerated = true;
         }
         
     });
