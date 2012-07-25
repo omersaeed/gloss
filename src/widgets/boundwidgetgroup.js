@@ -47,7 +47,7 @@ define([
                 //Changed to get the correct field.
                 boundField = self._getBoundField(binding);
                 if (typeof changed[boundField] !== 'undefined') {
-                    binding.widgetInstance.setValue(self.getAttributeValue(model, boundField));
+                    binding.widgetInstance.setValue(model.getAttributeValue(boundField));
                 }
             });
         },
@@ -92,7 +92,7 @@ define([
                     //$.extend(values, self.toModelObject(binding.mapping || binding.field,
                     //    widget.getValue()));
                     // TODO: Need to understand the context of mapping
-                    self.setAttributeValue(values, binding.field, widget.getValue());
+                    values.setValue(binding.field, widget.getValue());
                 }
             });
             return values;
