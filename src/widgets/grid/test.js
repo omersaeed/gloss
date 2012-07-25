@@ -565,5 +565,55 @@ define([
         });
     });
 
+    module('multiselect grid', {
+        setup: function() {
+            this.grid = Grid(undefined, {
+                rowWidgetClass: RowClass,
+                multiselect: true
+            });
+
+            this.collection = TargetVolumeProfile.collection();
+        }
+    });
+
+    asyncTest('highlighting multiple rows', function() {
+        var grid = this.grid,
+            collection = this.collection,
+            highlightEventCount = 0;
+
+        grid.on('highlight', function() { highlightEventCount++; });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[2]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 2);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting multiple rows in duplicate', function() {
+        var grid = this.grid,
+            collection = this.collection,
+            highlightEventCount = 0;
+
+        grid.on('highlight', function() { highlightEventCount++; });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[2]);
+            grid.highlight(grid.options.rows[4]);
+            grid.highlight(grid.options.rows[2]);
+            setTimeout(function() {
+                equal(highlightEventCount, 3);
+                start();
+            }, 100);
+        });
+    });
+
     start();
 });
