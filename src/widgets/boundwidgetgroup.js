@@ -30,11 +30,11 @@ define([
             }
             this.update();
         },
-        
+
         _onModelChange: function(eventType, model, changed) {
             _.each(this.options.bindings, function(binding) {
                 if (typeof changed[binding.field] !== 'undefined') {
-                    binding.widgetInstance.setValue(model[binding.field]);                
+                    binding.widgetInstance.setValue(model[binding.field]);
                 }
             });
         },
@@ -205,7 +205,7 @@ define([
             this.mark = null;
             return this;
         },
-        
+
         toModelObject: function(name, value) {
             var mapping = this.options.mappings[name], model = {};
             if (isPlainObject(mapping)) {
