@@ -88,10 +88,11 @@ define([
             $.each(self.options.bindings, function(i, binding) {
                 var widget = binding.widgetInstance;
                 if (widget) {
+                    $.extend(values, self.toModelObject(binding.mapping || binding.field,
+                        widget.getValue()));
                     // Instead of extending . .. 
-                    //$.extend(values, self.toModelObject(binding.mapping || binding.field,
-                    //    widget.getValue()));
                     // TODO: Need to understand the context of mapping
+                    // And be able to update mesh model to correctly update model object
                     values.setValue(binding.field, widget.getValue());
                 }
             });
