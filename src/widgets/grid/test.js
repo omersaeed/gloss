@@ -78,10 +78,10 @@ define([
         onClickSetChildren: function(evt) {
             console.log('set children clicked:',this,evt);
         },
-        renderColGrab: function(col) {
+        renderColGrab: function(col, value) {
             return '<button type="button" class="button grab">m</button>';
         },
-        renderColSetChildren: function(col) {
+        renderColSetChildren: function(col, value) {
             return '<button type=button class="button set-children">Set children</button>';
         }
     });
@@ -431,15 +431,15 @@ define([
                 }
             ]
         },
-        renderColVolumeId: function(col) {
-            return '<b>Volume ' + this.options.model.volume_id + '</b>';
+        renderColVolumeId: function(col, value) {
+            return '<b>Volume ' + value + '</b>';
         },
-        renderColSecurityAttributes: function(col) {
-            return '<b>' + this.options.model.security_attributes.toUpperCase() + '</b>';
+        renderColSecurityAttributes: function(col, value) {
+            return '<b>' + value.toUpperCase() + '</b>';
         },
-        rerenderColSecurityAttributes: function(col) {
+        rerenderColSecurityAttributes: function(col, td, value) {
             this.$node.find('td.col-security_attributes b')
-                .text(this.options.model.security_attributes.toUpperCase());
+                .text(value.toUpperCase());
         }
     });
 
