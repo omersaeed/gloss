@@ -32,6 +32,7 @@ define([
 
             // set this to true to automatically bind row click events to
             // .highlight() and make the cursor a pointer
+            multiselect: false,
             highlightable: false,
 
             // when the grid renders a list of models, if `highlightable` is
@@ -64,14 +65,21 @@ define([
             self.options.rows = [];
             self.$table = self.$node.find('table');
             self.$tbody = self.$node.find('tbody');
+            this._highlighted = [];
+            this._lastHighlighted = undefined;
             if (!self.options.nostyling) {
                 self.$node.addClass('standard');
             }
 
             if (self.options.highlightable) {
-                self.on('mousedown.highlightable', 'tbody tr', function() {
-                    self._rowInstanceFromTrElement(this).highlight();
+                self.on('mousedown.highlightable', 'tbody tr', function(evt) {
+                    self._rowInstanceFromTrElement(this).highlight(evt);
                 }).$node.addClass('highlightable');
+                
+                self.on('dblclick', 'tbody tr', function(evt) {
+                    self.unhighlight();
+                    self._rowInstanceFromTrElement(this).highlight(evt);
+                });
             }
 
             self.onPageClick('mouseup.unhighlight', self.onPageClickUnhighlight);
@@ -225,12 +233,14 @@ define([
                 rowsLen = rows.length,
                 $tbody = this.$tbody,
                 tbody = $tbody[0],
-                selectedModel = null;
+                selectedModels = [];
 
             // track what was highlighted ONLY IF it's not being tracked in the
             // models, i.e. this.options.highlightableGridModelField is null
-            if (this._highlighted && options.highlightableGridModelField == null) {
-                selectedModel = this._highlighted.options.model;
+            if (this._highlighted.length > 0 && options.highlightableGridModelField == null) {
+                for(var i = 0; i < this._highlighted.length; ++i) {
+                    selectedModels.push(this._highlighted[i].options.model);
+                }
             }
                         
             if (this._shouldFullyRender()) {
@@ -260,7 +270,7 @@ define([
                 // if the highlighted row is NOT being tracked at the model
                 // level (only being tracked by the grid), then highlight the
                 // row
-                if (selectedModel && model === selectedModel) {
+                if (selectedModels.indexOf(model) !== -1) {
                     this.highlight(rows[i]);
 
                 // if the highlighted row IS being tracked at the model level,
@@ -326,24 +336,96 @@ define([
             ));
         },
 
-        highlight: function(whichRow) {
-            if (this.highlighted() !== whichRow) {
-                this.unhighlight();
-                whichRow.$node.addClass('highlight');
-                this._highlighted = whichRow;
-                if (this.options.highlightableGridModelField) {
-                    whichRow.options.model.set(
-                        this.options.highlightableGridModelField, true);
+        highlight: function(whichRow, evt) {
+            if(this._highlighted.indexOf(whichRow) == -1) {
+                if (this.options.multiselect) {
+                    // !evt is there to cater for cases where the call is triggered from code. 
+                    if(!evt || evt.ctrlKey) {
+                        this._ctrlSelectRow(whichRow);
+                    } else if(evt.shiftKey && this._lastHighlighted) {
+                        this._shiftSelectRow(whichRow);
+                    } else {
+                        this._selectRow(whichRow);
+                    }
+                } else {
+                    this._selectRow(whichRow);
                 }
-                this.trigger('highlight');
+            } else {
+                if(evt && evt.shiftKey) {
+                    this._shiftSelectRow(whichRow);
+                } else if(evt && !(evt.shiftKey || evt.ctrlKey) && this._highlighted.length > 1) {
+                    this._selectRow(whichRow);
+                }
             }
             return this;
         },
 
+        _ctrlSelectRow: function(whichRow) {
+            this._highlighted.push(whichRow); 
+            this._lastHighlighted = whichRow;
+            whichRow.$node.addClass('highlight');
+            if (this.options.highlightableGridModelField) {
+                whichRow.options.model.set(this.options.highlightableGridModelField, true);
+            }
+            this.trigger('highlight');                
+        },
+        
+        _shiftSelectRow: function(whichRow) {
+            var startIdx = this.options.rows.indexOf(whichRow);
+            var endIdx = this.options.rows.indexOf(this._lastHighlighted);
+            this._lastHighlighted = whichRow;
+            if(startIdx > endIdx) {
+                var e = endIdx;
+                endIdx = startIdx;
+                startIdx = e;
+            } 
+            var rowSelected = false; 
+            for(var i = startIdx; i <= endIdx; ++i) {
+                currRow = this.options.rows[i];
+                
+                if(this._highlighted.indexOf(currRow) == -1) {
+                    this._highlighted.push(currRow); 
+                    rowSelected = true;
+                    currRow.$node.addClass('highlight');
+                    if (this.options.highlightableGridModelField) {
+                        currRow.options.model.set(
+                            this.options.highlightableGridModelField, true);
+                    }
+                }
+            }
+            if(rowSelected) {
+                this.trigger('highlight');                
+            }
+        },
+        
+        _selectRow: function(whichRow) {
+            this.unhighlight();
+            this._highlighted = [whichRow];
+            this._lastHighlighted = whichRow;
+            whichRow.$node.addClass('highlight');
+            if (this.options.highlightableGridModelField) {
+                whichRow.options.model.set(
+                    this.options.highlightableGridModelField, true);
+            }
+            this.trigger('highlight');                
+        },
+        
         highlighted: function() {
-            return this._highlighted;
+            if(this.options.multiselect) {
+                return this._highlighted;
+            } else {
+                if(this._highlighted.length === 1) {
+                    return this._highlighted[0];
+                } else {
+                    return;
+                }
+            }
         },
 
+        lastHighlighted: function() {
+            return this._lastHighlighted;
+        },
+ 
         makeRow: function(model, index) {
             return this.options.rowWidgetClass(undefined, {
                 model: model,
@@ -355,6 +437,7 @@ define([
 
         onPageClickUnhighlight: function() {
             this.unhighlight();
+            this._lastUnhighlighted = undefined;
             return false; // don't cancel the callback
         },
 
@@ -378,15 +461,15 @@ define([
             if (!params) {
                 params = {modifyModel: true};
             }
-            if (this._highlighted) {
-                this._highlighted.$node.removeClass('highlight');
+            for(var i = 0; i < this._highlighted.length; ++i) {
+                this._highlighted[i].$node.removeClass('highlight');
                 if (this.options.highlightableGridModelField && params.modifyModel) {
-                    this._highlighted.options.model.set(
+                    this._highlighted[i].options.model.set(
                         this.options.highlightableGridModelField, false);
                 }
-                delete this._highlighted;
-                this.trigger('unhighlight');
             }
+            this._highlighted = [];
+            this.trigger('unhighlight');
             return this;
         },
 
