@@ -31,21 +31,8 @@ define([
             this.update();
         },
         
-        _getBoundField: function(binding) {
-            if(isString(binding)) {
-                return binding;
-            } else if(binding.field) {
-                return binding.field;
-            } else {
-                return null;
-            }
-        },
-        
         _onModelChange: function(eventType, model, changed) {
-            var self = this;
             _.each(self.options.bindings, function(binding) {
-                //Changed to get the correct field.
-                boundField = self._getBoundField(binding);
                 if (typeof changed[boundField] !== 'undefined') {
                     binding.widgetInstance.setValue(model.getAttributeValue(boundField));
                 }
@@ -63,7 +50,6 @@ define([
             var self = this, widgets = this.options.widgets;
             $.each(self.options.bindings, function(i, binding) {
                 if (binding.bound !== false) {
-                    //TODO: Need to know what binding.mapping does.
                     var name = binding.mapping || binding.field;
                     if (name != null) {
                         var value = self.getModelValue(name);
@@ -88,11 +74,8 @@ define([
             $.each(self.options.bindings, function(i, binding) {
                 var widget = binding.widgetInstance;
                 if (widget) {
-                    // Instead of extending . .. 
-                    //$.extend(values, self.toModelObject(binding.mapping || binding.field,
-                    //    widget.getValue()));
-                    // TODO: Need to understand the context of mapping
-                    values.setValue(binding.field, widget.getValue());
+                    $.extend(values, self.toModelObject(binding.mapping || binding.field,
+                        widget.getValue()));
                 }
             });
             return values;
@@ -224,7 +207,7 @@ define([
         },
         
         toModelObject: function(name, value) {
-            var self = this, mapping = this.options.mappings[name], model = {};
+            var mapping = this.options.mappings[name], model = {};
             if (isPlainObject(mapping)) {
                 $.each(mapping, function(attr, field) {
                     model[field] = value[attr];
