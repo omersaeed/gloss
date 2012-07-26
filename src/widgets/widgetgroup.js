@@ -49,7 +49,7 @@ define([
             }
             $.each(self.options.widgets, function(name, widget) {
                 if (widget.options.messageList === null) {
-                    var candidate = self.$node.find('.messagelist[data-for=' + name + ']');
+                    var candidate = self.$node.find('.messagelist[data-for="' + name + '"]');
                     if (candidate.length === 1) {
                         widget.set('messageList', MessageList(candidate));
                     }
