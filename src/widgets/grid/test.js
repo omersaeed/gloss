@@ -566,7 +566,6 @@ define([
         });
     });
 
-    
     module('Grid modelProperty');
 
     var modelPropertyAjax = function(params) {
@@ -711,6 +710,204 @@ define([
                 modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', (9 - i) * 123);
             });
             start();
+        });
+    });
+
+    module('multiselect grid', {
+        setup: function() {
+            this.collection = TargetVolumeProfile.collection();
+        }
+    });
+
+    asyncTest('highlighting rows one by one', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[2]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 2);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting multiple rows one by one', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 3);
+                equal(grid.$node.find('.highlight').length, 3);
+                start();
+            }, 100);            
+        });
+    });
+
+    asyncTest('highlighting multiple rows in duplicate', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+        
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlightMore(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightMore(grid.options.rows[2]);
+            setTimeout(function() {
+                equal(highlightEventCount, 3);
+                equal(grid.$node.find('.highlight').length, 3);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 4);
+                equal(grid.$node.find('.highlight').length, 5);
+                start();
+            }, 100);
+        });
+    });
+    
+    asyncTest('highlighting a row range then select one in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 5);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range then select one more in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 4);
+                equal(grid.$node.find('.highlight').length, 5);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range then select one new ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[6]);
+            setTimeout(function() {
+                equal(highlightEventCount, 5);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
         });
     });
 
