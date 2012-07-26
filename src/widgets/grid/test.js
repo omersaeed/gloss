@@ -572,6 +572,7 @@ define([
     });
 
     asyncTest('highlighting rows one by one', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -597,6 +598,7 @@ define([
     });
 
     asyncTest('highlighting multiple rows one by one', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -623,6 +625,7 @@ define([
     });
 
     asyncTest('highlighting multiple rows in duplicate', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -650,6 +653,7 @@ define([
     });
 
     asyncTest('highlighting a row range', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -676,6 +680,7 @@ define([
     });
     
     asyncTest('highlighting a row range then select one in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -703,6 +708,7 @@ define([
     });
 
     asyncTest('highlighting a row range then select one more in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
@@ -730,6 +736,7 @@ define([
     });
 
     asyncTest('highlighting a row range then select one new ', function() {
+        TargetVolumeProfile.models.clear();
         var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
             collection = TargetVolumeProfile.collection(),
             highlightEventCount = 0;
