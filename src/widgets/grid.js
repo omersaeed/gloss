@@ -73,12 +73,12 @@ define([
 
             if (self.options.highlightable) {
                 self.on('mousedown.highlightable', 'tbody tr', function(evt) {
-                    self._rowInstanceFromTrElement(this).highlight(evt);
+                    self._handleHighlightEvt(self._rowInstanceFromTrElement(this), evt);
                 }).$node.addClass('highlightable');
                 
                 self.on('dblclick', 'tbody tr', function(evt) {
                     self.unhighlight();
-                    self._rowInstanceFromTrElement(this).highlight(evt);
+                    self._handleHighlightEvt(self._rowInstanceFromTrElement(this), evt);
                 });
             }
 
@@ -271,13 +271,13 @@ define([
                 // level (only being tracked by the grid), then highlight the
                 // row
                 if (selectedModels.indexOf(model) !== -1) {
-                    this.highlight(rows[i]);
+                    this.highlightMore(rows[i]);
 
                 // if the highlighted row IS being tracked at the model level,
                 // then use that to set the highlight
                 } else if (options.highlightableGridModelField &&
                            model[options.highlightableGridModelField]) {
-                    this.highlight(rows[i]);
+                    this.highlightMore(rows[i]);
                 }
             }
 
@@ -336,41 +336,44 @@ define([
             ));
         },
 
-        highlight: function(whichRow, evt) {
+        _handleHighlightEvt: function(whichRow, evt) {
             if(this._highlighted.indexOf(whichRow) == -1) {
                 if (this.options.multiselect) {
                     // !evt is there to cater for cases where the call is triggered from code. 
                     if(!evt || evt.ctrlKey) {
-                        this._ctrlSelectRow(whichRow);
+                        this.highlightMore(whichRow);
                     } else if(evt.shiftKey && this._lastHighlighted) {
-                        this._shiftSelectRow(whichRow);
+                        this.highlightRange(whichRow);
                     } else {
-                        this._selectRow(whichRow);
+                        this.highlight(whichRow);
                     }
                 } else {
-                    this._selectRow(whichRow);
+                    this.highlight(whichRow);
                 }
             } else {
                 if(evt && evt.shiftKey) {
-                    this._shiftSelectRow(whichRow);
+                    this.highlightRange(whichRow);
                 } else if(evt && !(evt.shiftKey || evt.ctrlKey) && this._highlighted.length > 1) {
-                    this._selectRow(whichRow);
+                    this.highlight(whichRow);
                 }
             }
             return this;
         },
 
-        _ctrlSelectRow: function(whichRow) {
-            this._highlighted.push(whichRow); 
-            this._lastHighlighted = whichRow;
-            whichRow.$node.addClass('highlight');
-            if (this.options.highlightableGridModelField) {
-                whichRow.options.model.set(this.options.highlightableGridModelField, true);
+        highlightMore: function(whichRow) {
+            if(this._highlighted.indexOf(whichRow) == -1) {
+                this._highlighted.push(whichRow); 
+                this._lastHighlighted = whichRow;
+                whichRow.$node.addClass('highlight');
+                if (this.options.highlightableGridModelField) {
+                    whichRow.options.model.set(this.options.highlightableGridModelField, true);
+                }
+                this.trigger('highlight');
             }
-            this.trigger('highlight');                
+            return this;
         },
         
-        _shiftSelectRow: function(whichRow) {
+        highlightRange: function(whichRow) {
             var startIdx = this.options.rows.indexOf(whichRow);
             var endIdx = this.options.rows.indexOf(this._lastHighlighted);
             this._lastHighlighted = whichRow;
@@ -396,9 +399,13 @@ define([
             if(rowSelected) {
                 this.trigger('highlight');                
             }
+            return this;
         },
         
-        _selectRow: function(whichRow) {
+        highlight: function(whichRow) {
+            if((this._highlighted.indexOf(whichRow) !== -1) && this._highlighted.length == 1) {
+                return this;
+            }
             this.unhighlight();
             this._highlighted = [whichRow];
             this._lastHighlighted = whichRow;
@@ -408,6 +415,7 @@ define([
                     this.options.highlightableGridModelField, true);
             }
             this.trigger('highlight');                
+            return this;
         },
         
         highlighted: function() {

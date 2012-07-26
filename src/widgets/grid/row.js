@@ -99,8 +99,8 @@ define([
             }
         },
 
-        highlight: function(evt) {
-            this.options.grid.highlight(this, evt);
+        highlight: function() {
+            this.options.grid.highlight(this);
             return this;
         },
 
