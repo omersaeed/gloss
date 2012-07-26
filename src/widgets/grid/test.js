@@ -10,9 +10,10 @@ define([
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     './../../test/api/v1/recordseries',
+    'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
 ], function($, _, Grid, Row, Editable, Button, CollectionViewable, Mock,
-    TargetVolumeProfile, RecordSeries, tvpFixture) {
+    TargetVolumeProfile, RecordSeries, Example, tvpFixture) {
 
     var RowClass,
         showGrid = function() {
@@ -78,10 +79,10 @@ define([
         onClickSetChildren: function(evt) {
             console.log('set children clicked:',this,evt);
         },
-        renderColGrab: function(col) {
+        renderColGrab: function(col, value) {
             return '<button type="button" class="button grab">m</button>';
         },
-        renderColSetChildren: function(col) {
+        renderColSetChildren: function(col, value) {
             return '<button type=button class="button set-children">Set children</button>';
         }
     });
@@ -480,15 +481,15 @@ define([
                 }
             ]
         },
-        renderColVolumeId: function(col) {
-            return '<b>Volume ' + this.options.model.volume_id + '</b>';
+        renderColVolumeId: function(col, value) {
+            return '<b>Volume ' + value + '</b>';
         },
-        renderColSecurityAttributes: function(col) {
-            return '<b>' + this.options.model.security_attributes.toUpperCase() + '</b>';
+        renderColSecurityAttributes: function(col, value) {
+            return '<b>' + value.toUpperCase() + '</b>';
         },
-        rerenderColSecurityAttributes: function(col) {
+        rerenderColSecurityAttributes: function(col, td, value) {
             this.$node.find('td.col-security_attributes b')
-                .text(this.options.model.security_attributes.toUpperCase());
+                .text(value.toUpperCase());
         }
     });
 
@@ -561,6 +562,154 @@ define([
             rowColumnEquals(grid, 0, colName, 'DEFAULT 4', false);
             rowColumnEquals(grid, 1, colName, 'DEFAULT 4', false);
             rowColumnEquals(grid, 2, colName, 'DEFAULT 4', false);
+            start();
+        });
+    });
+
+    
+    module('Grid modelProperty');
+
+    var modelPropertyAjax = function(params) {
+            var num = params.data.limit? params.data.limit : 10;
+    
+            setTimeout(function() {
+                var split, ret = _.reduce(_.range(num), function(memo, i) {
+                    var server = {
+                        name: 'item ' + i, 
+                        status_information: {   
+                            status: 'Status ' + i,
+                            message: 'Status Message for item ' + i,
+                            storage_summary: [{
+                                    name: 'root',
+                                    object_count: (i * 123)  
+                                }
+                            ]
+                        }
+                    };
+                    memo.resources.push(server);
+                    return memo;
+                }, {total: num, resources: []});
+                params.success(ret, 200, {});
+            }, 50);
+        },
+        ModelPropertyRowClass = Row.extend({
+            defaults: {
+                colModel: [
+                    {name: 'name', label: 'Name', sortable: true},
+                    {
+                        name: 'status', 
+                        label: 'Status', 
+                        sortable: true,
+                        modelProperty: 'status_information.status'
+                    },
+                    {
+                        name: 'message', 
+                        label: 'Status Message', 
+                        sortable: true,
+                        modelProperty: 'status_information.message',
+                        render: 'renderColStatusMessage',
+                        rerender: 'rerenderColStatusMessage'
+                    },
+                    {
+                        name: 'object_count',
+                        label: 'Object Count',
+                        sortable: true,
+                        modelProperty: function (model) {
+                            return model.status_information.storage_summary[0].object_count; 
+                        }
+                    }
+                ]
+            },
+            renderColStatusMessage: function(col, value) {
+                return '<b>' + value + '</b>';
+            },
+            rerenderColStatusMessage: function(col, td, value) {
+                this.$node.find('td.col-message b')
+                    .text(value);
+            }
+        }),
+        ModelPropertyGridClass = Grid.extend({
+            defaults: {
+                rowWidgetClass: ModelPropertyRowClass
+            }
+        }, {mixins: [CollectionViewable]});
+
+    var modelPropertyRowColumnEquals = function(grid, rowIdx, columnName, modelProperty, value, checkModel) {
+        var row = grid.options.rows[rowIdx];
+        checkModel = typeof checkModel === 'undefined'? true : false;
+        if (checkModel) {
+            if ( modelProperty !== 'object_count') {
+                equal(row.options.model.prop(modelProperty), value);
+            } else {
+                equal(row.options.model.status_information.storage_summary[0].object_count, value);
+            }
+        }
+        equal(row.$node.find('td.col-' + columnName).text(), value);
+    };
+        
+    asyncTest(' Grid rendering ', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            grid.$node.find('th:first').trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'name', 'name', 'item ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'status', 'status_information.status', 'Status ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', i * 123);
+            });
+            start();
+        });
+    });
+    
+    asyncTest('Sorting on nested attribute with simple string as modelProperty', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(2)');
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + (i));
+            });
+            
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + (9 - i));
+            });
+            start();
+        });
+
+    });
+
+    asyncTest('Sorting on nested attribute with function as modelProperty', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(3)');
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', i * 123);
+            });
+            
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', (9 - i) * 123);
+            });
             start();
         });
     });

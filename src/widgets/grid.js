@@ -157,24 +157,42 @@ define([
         },
 
         _compare: function(colName, colOrder) {
+            var self = this;
             return function(a,b) {
-                var result = 0;
-                if (!a[colName] && !b[colName]) {
+                var result = 0, aVal, bVal;
+                aVal = self.getColumnValue(a,colName);
+                bVal = self.getColumnValue(b,colName);
+                
+                if (typeof aVal === 'undefined' && typeof bVal === 'undefined') {
                     result = 0;
-                } else if (!a[colName]) {
+                } else if (typeof aVal === 'undefined') {
                     result = -1;
-                } else if (!b[colName]) {
+                } else if (typeof bVal === 'undefined') {
                     result = 1;
                 } else {               
-                    result = ((a[colName] < b[colName]) ? -1 : ((a[colName] > b[colName]) ? 1 : 0));
+                    result = ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
                 }
-                
+
                 result *= colOrder === 'asc'? 1 : -1;
                 
                 return result;
             };
         },
-        
+
+        getColumnValue: function(model, colName) {
+            var col = this.col[colName],
+                modelProperty = col.modelProperty ? col.modelProperty : col.name,
+                value;
+
+            if (_.isFunction(modelProperty)) {
+                value = modelProperty(model);
+            } else {
+                value = model.prop(modelProperty); 
+            }
+            
+            return value;
+        },
+                
         _initRowsAndHeader: function() {
             var self = this;
             self.options.rows = [];
@@ -188,6 +206,7 @@ define([
                     return cols;
                 }, {});
             }
+                        
             _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
                 self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
                     var i, l, $tr, row, rows = self.options.rows, $el = $(this);
