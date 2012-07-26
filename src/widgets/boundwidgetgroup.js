@@ -59,6 +59,7 @@ define([
             return this;
         },
 
+        // Omer: Implied binding via name.
         bindModel: function() {
             var self = this, widgets = this.options.widgets;
             $.each(self.options.bindings, function(i, binding) {
