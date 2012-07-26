@@ -639,8 +639,7 @@ define([
         checkModel = typeof checkModel === 'undefined'? true : false;
         if (checkModel) {
             if ( modelProperty !== 'object_count') {
-                // TODO: update name of this function to match it in bedrock 
-                equal(row.options.model.getAttributeValue(modelProperty), value);
+                equal(row.options.model.prop(modelProperty), value);
             } else {
                 equal(row.options.model.status_information.storage_summary[0].object_count, value);
             }

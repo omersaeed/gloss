@@ -188,7 +188,7 @@ define([
                 value = modelProperty(model);
             } else {
                 // TODO: update name of this function to match it in bedrock 
-                value = model.getAttributeValue(modelProperty); 
+                value = model.prop(modelProperty); 
             }
             
             return value;
