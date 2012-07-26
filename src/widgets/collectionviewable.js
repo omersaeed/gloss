@@ -41,7 +41,7 @@ define([
                     collection.on('update', function(evtName, collection) {
                         if ((state._loadResolved && state._updateFired) ||
                             !state._loadResolved) {
-                            self.set('models', collection.models);
+                            self.set('models', collectionMap(collection.models));
                         }
                         state._updateFired = true;
                     });
