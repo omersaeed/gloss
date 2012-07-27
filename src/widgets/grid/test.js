@@ -982,7 +982,7 @@ define([
                     grid.set('models', []);
 
                     // this could also have been a call to:
-                    //    grid.set('models', grid.options.models);
+                    //    grid.set('models', grid.options.collection.models);
                     collection.trigger('update');
 
                     setTimeout(function() {
