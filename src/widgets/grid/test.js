@@ -3,6 +3,7 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'bedrock/class',
+    'mesh/model',
     './../grid',
     './row',
     './editable',
@@ -13,8 +14,9 @@ define([
     './../../test/api/v1/recordseries',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Class, Grid, Row, Editable, Button, CollectionViewable, Mock,
-    TargetVolumeProfile, RecordSeries, Example, tvpFixture) {
+], function($, _, Class, Model, Grid, Row, Editable, Button,
+    CollectionViewable, Mock, TargetVolumeProfile, RecordSeries, Example,
+    tvpFixture) {
 
     var RowClass,
         showGrid = function() {
@@ -910,6 +912,90 @@ define([
                 start();
             }, 100);
         });
+    });
+
+    var CollectionViewableGrid = Grid.extend({
+        }, {mixins: [CollectionViewable]}),
+        dummyAjax = function(params) {
+            var num = params.data.limit? params.data.limit : 10;
+
+            setTimeout(function() {
+                var split, ret = _.reduce(_.range(num), function(memo, i) {
+                    memo.resources.push({name: 'item ' + i});
+                    return memo;
+                }, {total: 10, resources: []});
+                params.success(ret, 200, {});
+            }, 0);
+        };
+
+    asyncTest('collectionviewable', function() {
+        Example.models.clear();
+        var grid = CollectionViewableGrid(undefined, {
+                rowWidgetClass: RowClass
+            }).appendTo('#qunit-fixture'),
+            collection = Example.collection({limit: 5});
+
+        collection.query.request.ajax = dummyAjax;
+
+        $('#qunit-fixture').css({position: 'static'});
+
+        // set the collection, since CollectionViewable is mixed in, this will
+        // call collection.load() in CollectionViewable.__updateWidget__
+        grid.set('collection', collection);
+
+        // give everything the chance to propagate
+        setTimeout(function() {
+
+            // when our colleciton is (a) loaded initially and (b) subsequently
+            // updated, CollectionViewable calls self.set('models', ...)  --
+            // 'self' here is 'grid', and self.set('models', ...) ends up in
+            // Grid.updateWidget, which calls grid.render().  so now the rows
+            // will be the same as the models in the collection
+            equal(grid.options.rows.length, 5);
+
+            // add a model to the collection, which will trigger the 'update'
+            // event on the collection
+            collection.add(Example.models.get(2000).set('name', 'added model'));
+
+            setTimeout(function() {
+
+                // the update event in CollectionViewable.__updateWidget__
+                // called grid.set('models', ...), which called Grid.render
+                // (like in the initial load), so once again, the grid reflects
+                // the state of the collection
+                equal(grid.options.rows.length, 6);
+
+                // update a model, which will end up firing an 'update' event
+                // on the collection
+                collection.first().set('name', 'reset name');
+
+                setTimeout(function() {
+
+                    // even though this calls grid.set('models', ...), which
+                    // triggers Grid.render, an attempt at optimization ignores
+                    // the change since the model objects are all the same.
+                    ok(!/reset name/i.test(grid.options.rows[0].$node.text()),
+                        'name model has not been updated even though the model was');
+
+                    // so if we actually want to re-render, we set models to an
+                    // empty list first, and then trigger a change event.
+                    grid.set('models', []);
+
+                    // this could also have been a call to:
+                    //    grid.set('models', grid.options.models);
+                    collection.trigger('update');
+
+                    setTimeout(function() {
+
+                        // and now the grid correctly reflects the state of the
+                        // collection
+                        ok(/reset name/i.test(grid.options.rows[0].$node.text()),
+                            'name model has not been updated even though the model was');
+                        start();
+                    }, 15);
+                }, 15);
+            }, 15);
+        }, 15);
     });
 
     start();

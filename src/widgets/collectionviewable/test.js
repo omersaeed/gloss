@@ -80,6 +80,7 @@ define([
         });
 
     asyncTest('setting collection does not set models twice', function() {
+        Example.models.clear();
         var collection = Example.collection(), grid, previousCount;
 
         collection.query.request.ajax = dummyAjax;
@@ -98,6 +99,31 @@ define([
             equal(grid.updateCount, previousCount+1);
             start();
         }, 100);
+    });
+
+    asyncTest('setting loaded collection does not set models twice', function() {
+        Example.models.clear();
+        var collection = Example.collection(), grid, previousCount;
+
+        collection.query.request.ajax = dummyAjax;
+
+        collection.load().done(function() {
+            grid = CountingGridClass(undefined, {collection: collection});
+
+            // instantiating the grid may have triggered a 'models' update.  it
+            // wasn't caused by collectionviewable, and it didn't actually set any
+            // models, so we'll record the count here and compare that later
+            previousCount = grid.updateCount;
+
+            // set a timeout long enough to allow the collection to load
+            setTimeout(function() {
+
+                // ensure that the models have only been set once
+                equal(grid.updateCount, previousCount+1);
+                start();
+            }, 100);
+        });
+
     });
 
     var secondCallHasResolved = false,
@@ -131,6 +157,7 @@ define([
         };
 
     asyncTest('out of order loads still set update listener', function() {
+        Example.models.clear();
         var collection = Example.collection(), grid;
 
         collection.query.request.ajax = outOfOrderAjax;
