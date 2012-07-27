@@ -27,7 +27,7 @@ define([
                 options.backdrop? 'modal' : 'modal without-backdrop');
 
             if (options.backdrop) {
-                self.$backdrop = $('<div class=modal-backdrop></div>');
+                self.$backdrop = $('<div class="modal-backdrop hidden"></div>');
                 if (options.backdrop === 'transparent') {
                     self.$backdrop.addClass('transparent');
                 }
@@ -80,10 +80,14 @@ define([
         },
 
         open: function() {
+            var self = this;
+
             if (! this.$backdrop.parent().length && this.$node.parent().length) {
                 this.$backdrop.insertBefore(this.$node);
             }
-            this.$backdrop.show();
+
+            this.$backdrop.removeClass('hidden').addClass('showing');
+            setTimeout(function() {self.$backdrop.removeClass('showing');}, 0);
 
             this.$node.addClass('invisible').show();
 
@@ -128,7 +132,7 @@ define([
 
         close: function() {
             this.propagate('hide');
-            this.$backdrop.hide();
+            this.$backdrop.addClass('hidden');
             this.$node.hide();
             $(document).off('keyup.modal');
             this.trigger('hide');
