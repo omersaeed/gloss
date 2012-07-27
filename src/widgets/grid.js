@@ -208,12 +208,10 @@ define([
             self.options.colModel =
                 self.options.rowWidgetClass.prototype.defaults.colModel;
 
-            if (! self.col) {
-                self.col = _.reduce(self.options.colModel, function(cols, col) {
-                    cols[col.name] = col;
-                    return cols;
-                }, {});
-            }
+            self.col = _.reduce(self.options.colModel, function(cols, col) {
+                cols[col.name] = col;
+                return cols;
+            }, {});
                         
             _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
                 self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
