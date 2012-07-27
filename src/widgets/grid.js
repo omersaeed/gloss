@@ -1,13 +1,14 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'bedrock/class',
     './widget',
     './statefulwidget',
     './grid/row',
     './draggable',
     './tooltip',
     'css!./grid/grid.css'
-], function($, _, Widget, StatefulWidget, Row, Draggable, ToolTip) {
+], function($, _, Class, Widget, StatefulWidget, Row, Draggable, ToolTip) {
 
     var ResizeHandle = Widget.extend({
         defaults: {
@@ -195,7 +196,7 @@ define([
             if (_.isFunction(modelProperty)) {
                 value = modelProperty(model);
             } else {
-                value = model.prop(modelProperty); 
+                value = Class.prop(model, modelProperty); 
             }
             
             return value;

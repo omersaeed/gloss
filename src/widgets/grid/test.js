@@ -2,6 +2,7 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'bedrock/class',
     './../grid',
     './row',
     './editable',
@@ -12,7 +13,7 @@ define([
     './../../test/api/v1/recordseries',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, Editable, Button, CollectionViewable, Mock,
+], function($, _, Class, Grid, Row, Editable, Button, CollectionViewable, Mock,
     TargetVolumeProfile, RecordSeries, Example, tvpFixture) {
 
     var RowClass,
@@ -638,7 +639,7 @@ define([
         checkModel = typeof checkModel === 'undefined'? true : false;
         if (checkModel) {
             if ( modelProperty !== 'object_count') {
-                equal(row.options.model.prop(modelProperty), value);
+                equal(Class.prop(row.options.model, modelProperty), value);
             } else {
                 equal(row.options.model.status_information.storage_summary[0].object_count, value);
             }
