@@ -28,6 +28,8 @@ define([
             if (this.options.mappings == null) {
                 this.options.mappings = {};
             }
+            this.options.bindings = $.extend(true, {}, this.options.bindings);
+            this.options.mappings = $.extend(true, {}, this.options.mappings);
             this.update();
         },
 
