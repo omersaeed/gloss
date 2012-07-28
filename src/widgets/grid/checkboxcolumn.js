@@ -58,7 +58,7 @@ define([
         rowChecked: function(evt, grid) {
             $(this.events[0].selector).attr('checked', false);
         },
-        _render: function(col, model) {
+        _render: function(col, colValue, model) {
             if(model._checked) {
                 return '<input class=checkbox-column type=checkbox checked />';
             }
@@ -66,7 +66,7 @@ define([
 
 
         },
-        _rerender: function(col, td, model) {
+        _rerender: function(col, td, colValue, model) {
             if(model._checked) {
                 td.innerHTML = '<input class=checkbox-column type=checkbox checked />';
                 return

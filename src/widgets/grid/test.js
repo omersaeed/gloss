@@ -2,6 +2,8 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'bedrock/class',
+    'mesh/model',
     './../grid',
     './row',
     './editable',
@@ -11,9 +13,11 @@ define([
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     './../../test/api/v1/recordseries',
+    'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, Editable, CheckBoxColumn, Button, CollectionViewable, Mock,
-    TargetVolumeProfile, RecordSeries, tvpFixture) {
+], function($, _, Class, Model, Grid, Row, Editable, CheckBoxColumn, Button,
+    CollectionViewable, Mock, TargetVolumeProfile, RecordSeries, Example,
+    tvpFixture) {
 
     var RowClass,
         showGrid = function() {
@@ -79,10 +83,10 @@ define([
         onClickSetChildren: function(evt) {
             console.log('set children clicked:',this,evt);
         },
-        renderColGrab: function(col) {
+        renderColGrab: function(col, value) {
             return '<button type="button" class="button grab">m</button>';
         },
-        renderColSetChildren: function(col) {
+        renderColSetChildren: function(col, value) {
             return '<button type=button class="button set-children">Set children</button>';
         }
     });
@@ -481,15 +485,15 @@ define([
                 }
             ]
         },
-        renderColVolumeId: function(col) {
-            return '<b>Volume ' + this.options.model.volume_id + '</b>';
+        renderColVolumeId: function(col, value) {
+            return '<b>Volume ' + value + '</b>';
         },
-        renderColSecurityAttributes: function(col) {
-            return '<b>' + this.options.model.security_attributes.toUpperCase() + '</b>';
+        renderColSecurityAttributes: function(col, value) {
+            return '<b>' + value.toUpperCase() + '</b>';
         },
-        rerenderColSecurityAttributes: function(col) {
+        rerenderColSecurityAttributes: function(col, td, value) {
             this.$node.find('td.col-security_attributes b')
-                .text(this.options.model.security_attributes.toUpperCase());
+                .text(value.toUpperCase());
         }
     });
 
@@ -702,6 +706,435 @@ define([
                 start();
             }, 0);
         });
+    });
+
+    module('Grid modelProperty');
+
+    var modelPropertyAjax = function(params) {
+            var num = params.data.limit? params.data.limit : 10;
+    
+            setTimeout(function() {
+                var split, ret = _.reduce(_.range(num), function(memo, i) {
+                    var server = {
+                        name: 'item ' + i, 
+                        status_information: {   
+                            status: 'Status ' + i,
+                            message: 'Status Message for item ' + i,
+                            storage_summary: [{
+                                    name: 'root',
+                                    object_count: (i * 123)  
+                                }
+                            ]
+                        }
+                    };
+                    memo.resources.push(server);
+                    return memo;
+                }, {total: num, resources: []});
+                params.success(ret, 200, {});
+            }, 50);
+        },
+        ModelPropertyRowClass = Row.extend({
+            defaults: {
+                colModel: [
+                    {name: 'name', label: 'Name', sortable: true},
+                    {
+                        name: 'status', 
+                        label: 'Status', 
+                        sortable: true,
+                        modelProperty: 'status_information.status'
+                    },
+                    {
+                        name: 'message', 
+                        label: 'Status Message', 
+                        sortable: true,
+                        modelProperty: 'status_information.message',
+                        render: 'renderColStatusMessage',
+                        rerender: 'rerenderColStatusMessage'
+                    },
+                    {
+                        name: 'object_count',
+                        label: 'Object Count',
+                        sortable: true,
+                        modelProperty: function (model) {
+                            return model.status_information.storage_summary[0].object_count; 
+                        }
+                    }
+                ]
+            },
+            renderColStatusMessage: function(col, value) {
+                return '<b>' + value + '</b>';
+            },
+            rerenderColStatusMessage: function(col, td, value) {
+                this.$node.find('td.col-message b')
+                    .text(value);
+            }
+        }),
+        ModelPropertyGridClass = Grid.extend({
+            defaults: {
+                rowWidgetClass: ModelPropertyRowClass
+            }
+        }, {mixins: [CollectionViewable]});
+
+    var modelPropertyRowColumnEquals = function(grid, rowIdx, columnName, modelProperty, value, checkModel) {
+        var row = grid.options.rows[rowIdx];
+        checkModel = typeof checkModel === 'undefined'? true : false;
+        if (checkModel) {
+            if ( modelProperty !== 'object_count') {
+                equal(Class.prop(row.options.model, modelProperty), value);
+            } else {
+                equal(row.options.model.status_information.storage_summary[0].object_count, value);
+            }
+        }
+        equal(row.$node.find('td.col-' + columnName).text(), value);
+    };
+        
+    asyncTest(' Grid rendering ', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            grid.$node.find('th:first').trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'name', 'name', 'item ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'status', 'status_information.status', 'Status ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + i);
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', i * 123);
+            });
+            start();
+        });
+    });
+    
+    asyncTest('Sorting on nested attribute with simple string as modelProperty', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(2)');
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + (i));
+            });
+            
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'message', 'status_information.message', 'Status Message for item ' + (9 - i));
+            });
+            start();
+        });
+
+    });
+
+    asyncTest('Sorting on nested attribute with function as modelProperty', function() {
+        var collection = Example.collection(), grid;
+        collection.query.request.ajax = modelPropertyAjax;
+        
+        grid = ModelPropertyGridClass().set({
+            collection: collection
+        }).appendTo('#qunit-fixture');
+
+        grid.options.collection.load().done(function() {
+            var $colHeader = grid.$node.find('th:eq(3)');
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', i * 123);
+            });
+            
+            $colHeader.trigger('click');
+            _.each(collection.models, function(model, i) {
+                modelPropertyRowColumnEquals(grid, i, 'object_count', 'object_count', (9 - i) * 123);
+            });
+            start();
+        });
+    });
+
+    module('multiselect grid', {
+        setup: function() {
+            this.collection = TargetVolumeProfile.collection();
+        }
+    });
+
+    asyncTest('highlighting rows one by one', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[2]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 2);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting multiple rows one by one', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+
+            setTimeout(function() {
+                equal(highlightEventCount, 3);
+                equal(grid.$node.find('.highlight').length, 3);
+                start();
+            }, 100);            
+        });
+    });
+
+    asyncTest('highlighting multiple rows in duplicate', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+        
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlightMore(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightMore(grid.options.rows[2]);
+            setTimeout(function() {
+                equal(highlightEventCount, 3);
+                equal(grid.$node.find('.highlight').length, 3);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 4);
+                equal(grid.$node.find('.highlight').length, 5);
+                start();
+            }, 100);
+        });
+    });
+    
+    asyncTest('highlighting a row range then select one in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 5);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range then select one more in duplicate ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[0]);
+            setTimeout(function() {
+                equal(highlightEventCount, 4);
+                equal(grid.$node.find('.highlight').length, 5);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row range then select one new ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) { 
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++; 
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.highlightMore(grid.options.rows[4]);
+            grid.highlightRange(grid.options.rows[0]);
+            grid.highlight(grid.options.rows[6]);
+            setTimeout(function() {
+                equal(highlightEventCount, 5);
+                equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    var CollectionViewableGrid = Grid.extend({
+        }, {mixins: [CollectionViewable]}),
+        dummyAjax = function(params) {
+            var num = params.data.limit? params.data.limit : 10;
+
+            setTimeout(function() {
+                var split, ret = _.reduce(_.range(num), function(memo, i) {
+                    memo.resources.push({name: 'item ' + i});
+                    return memo;
+                }, {total: 10, resources: []});
+                params.success(ret, 200, {});
+            }, 0);
+        };
+
+    asyncTest('collectionviewable', function() {
+        Example.models.clear();
+        var grid = CollectionViewableGrid(undefined, {
+                rowWidgetClass: RowClass
+            }).appendTo('#qunit-fixture'),
+            collection = Example.collection({limit: 5});
+
+        collection.query.request.ajax = dummyAjax;
+
+        $('#qunit-fixture').css({position: 'static'});
+
+        // set the collection, since CollectionViewable is mixed in, this will
+        // call collection.load() in CollectionViewable.__updateWidget__
+        grid.set('collection', collection);
+
+        // give everything the chance to propagate
+        setTimeout(function() {
+
+            // when our colleciton is (a) loaded initially and (b) subsequently
+            // updated, CollectionViewable calls self.set('models', ...)  --
+            // 'self' here is 'grid', and self.set('models', ...) ends up in
+            // Grid.updateWidget, which calls grid.render().  so now the rows
+            // will be the same as the models in the collection
+            equal(grid.options.rows.length, 5);
+
+            // add a model to the collection, which will trigger the 'update'
+            // event on the collection
+            collection.add(Example.models.get(2000).set('name', 'added model'));
+
+            setTimeout(function() {
+
+                // the update event in CollectionViewable.__updateWidget__
+                // called grid.set('models', ...), which called Grid.render
+                // (like in the initial load), so once again, the grid reflects
+                // the state of the collection
+                equal(grid.options.rows.length, 6);
+
+                // update a model, which will end up firing an 'update' event
+                // on the collection
+                collection.models[0].set('name', 'reset name');
+
+                setTimeout(function() {
+
+                    // even though this calls grid.set('models', ...), which
+                    // triggers Grid.render, an attempt at optimization ignores
+                    // the change since the model objects are all the same.
+                    ok(!/reset name/i.test(grid.options.rows[0].$node.text()),
+                        'name model has not been updated even though the model was');
+
+                    // so if we actually want to re-render, we set models to an
+                    // empty list first, and then trigger a change event.
+                    grid.set('models', []);
+
+                    // this could also have been a call to:
+                    //    grid.set('models', grid.options.collection.models);
+                    collection.trigger('update');
+
+                    setTimeout(function() {
+
+                        // and now the grid correctly reflects the state of the
+                        // collection
+                        ok(/reset name/i.test(grid.options.rows[0].$node.text()),
+                            'name model has not been updated even though the model was');
+                        start();
+                    }, 15);
+                }, 15);
+            }, 15);
+        }, 15);
     });
 
     start();

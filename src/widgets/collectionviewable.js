@@ -38,10 +38,10 @@ define([
                     });
                     
                     // Add listener on the collection to handle further updates 
-                    collection.on('update', function(evtName, collection) {
+                    collection.on('update', function(evtName, theCollection) {
                         if ((state._loadResolved && state._updateFired) ||
                             !state._loadResolved) {
-                            self.set('models', collection.models);
+                            self.set('models', collectionMap(collection.models));
                         }
                         state._updateFired = true;
                     });

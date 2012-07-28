@@ -34,7 +34,8 @@ define([
         template: _.template([
             '<% for (var i = 0, len = colModel.length, col; col = colModel[i], i < len; i++) { %>',
                 '<td class="col-<%= col.name %><%= i===0? " first" : "" %><%= col.noLeftBorder? " no-left-border" : "" %>">',
-                    '<%= _.isString(col.render)? this[col.render](col, model) : col.render(col, model) %>',
+//                    '<%= _.isString(col.render)? this[col.render](col, model) : col.render(col, model) %>',
+                    '<%= _.isString(col.render)? this[col.render](col, grid.getColumnValue(model, col.name), model) : col.render(col, grid.getColumnValue(model, col.name), model) %>',
                 '</td>',
             '<% } %>'
         ].join('')),
@@ -79,24 +80,29 @@ define([
                 options = this.options,
                 colModel = options.colModel,
                 tds = this.node.childNodes,
-                model = options.model;
+                model = options.model,
+                grid = options.grid;
+            
             for (i = 0, len = colModel.length; i < len; i++) {
                 col = colModel[i];
                 if (!col.modelIndependent) {
                     td = tds[i];
                     if (col.rerender) {
-                        if(typeof col.render === 'function') {
-                            col.rerender(col, td, model);
+                        if(typeof col.rerender === 'function') {
+//                            col.rerender(col, td, model);
+                            col.rerender(col, td, grid.getColumnValue(model, col.name), model);
                         } else {
-                            this[col.rerender](col, td, model);
+//                            this[col.rerender](col, td, model);
+                            this[col.rerender](col, td, grid.getColumnValue(model, col.name), model);
                         }
                     } else if (col.render) {
-                        tds[i].innerHTML = this[col.render](col, model);
+//                        tds[i].innerHTML = this[col.render](col, model);
+                            tds[i].innerHTML = this[col.render](col, grid.getColumnValue(model, col.name));
                     } else {
                         if (td.innerText != null) {
-                            tds[i].innerText = model[colModel[i].name] || '';
+                            tds[i].innerText = grid.getColumnValue(model, col.name) || '';
                         } else {
-                            tds[i].textContent = model[colModel[i].name] || '';
+                            tds[i].textContent = grid.getColumnValue(model, col.name) || '';
                         }
                     }
                 }
@@ -117,8 +123,8 @@ define([
             }
         },
 
-        renderCol: function(col) {
-            return this.options.model[col.name];
+        renderCol: function(col, value) {
+            return value;
         },
 
         // this is an optimized version of set that doesn't re-set the model if

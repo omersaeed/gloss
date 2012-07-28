@@ -27,10 +27,12 @@
 
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './formwidget',
     './button',
     'tmpl!./togglegroup/togglegroup.mtpl'
-], function($, FormWidget, Button, tmpl) {
+], function($, _, FormWidget, Button, tmpl) {
+
     return FormWidget.extend({
         defaults: {
             items: null,         // list of the format: [
@@ -41,55 +43,70 @@ define([
             initialValue: null
         },
         create: function() {
-            var self = this, $checked;
+            var self = this;
+
             self._super();
 
             if(self.options.items !== null) {
                 self.$node.append($(tmpl(self.options.items)));
             }
-            self.buttons = {};
-            self.$buttons = self.$node.children();
-            self.value = null;
+
+            self.buttons = self.$node.children().map(function(i, el) {
+                return Button(el).on('click', function(evt) {
+                    self.setValue(self.buttons[i].getValue());
+                });
+            });
+
+            _.first(self.buttons).$node.addClass('first');
+            _.last(self.buttons).$node.addClass('last');
 
             self.$node.addClass('togglegroup');
-            self.$buttons.each(function(i, element) {
-                var $button = Button($(element)).$node;
-                self.buttons[$button.val()] = $button;
-            });
-            self.$buttons.first().addClass('first');
-            self.$buttons.last().addClass('last');
 
-            self.$buttons.on('click', function(event) {
-                event.stopPropagation();
-                self.setValue($(this).val());
-            });
             if(self.options.initialValue != null) {
                 self.setValue(self.options.initialValue, true);
-            } else if (($checked = self.$buttons.filter('[checked]')).length) {
-                self.setValue($checked.val());
+            } else {
+                _.every(self.buttons, function(button) {
+                    if (button.$node.attr('checked')) {
+                        return !self.setValue(button.getValue()); // break
+                    }
+                    return true; // continue loop until we find checked btn
+                });
             }
+        },
+        _enable: function(enable, which) {
+            _.each(this.buttons, function(button) {
+                if (which[button.getValue()]) {
+                    button[enable? 'enable' : 'disable']();
+                }
+            });
+            return this;
+        },
+        enable: function(which) {
+            return which == null? this._super() : this._enable(true, which);
+        },
+        disable: function(which) {
+            return which == null? this._super() : this._enable(false, which);
         },
         getValue: function() {
-            return this.value;
+            var button = _.find(this.buttons, function(button) {
+                return button.$node.prop('checked');
+            });
+            return button? button.getValue() : null;
         },
         setValue: function(value, silent) {
-            if(value == null) {
-                value = this.options.initialValue;
+            var changed = false;
+            _.each(this.buttons, function(button) {
+                var checked = button.$node.prop('checked'),
+                    valueFound = button.getValue() === value,
+                    method = valueFound? 'addClass' : 'removeClass';
+                changed = !!checked !== !!valueFound? true : changed;
+                button.$node.prop('checked', valueFound)[method]('checked');
+            });
+
+            if (!silent && changed) {
+                this.trigger('change');
             }
-            if(value !== this.value) {
-                if(this.value != null) {
-                    this.buttons[this.value].prop('checked', false);
-                    this.buttons[this.value].removeClass('checked');
-                }
-                this.value = value;
-                if(value != null) {
-                    this.buttons[value].prop('checked', true);
-                    this.buttons[this.value].addClass('checked');
-                }
-                if(!silent) {
-                    this.trigger('change');
-                }
-            }
+
             return this;
         }
     });
