@@ -5,13 +5,14 @@ define([
     './../grid',
     './row',
     './editable',
+    './checkboxcolumn',
     './../button',
     './../collectionviewable',
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     './../../test/api/v1/recordseries',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, Editable, Button, CollectionViewable, Mock,
+], function($, _, Grid, Row, Editable, CheckBoxColumn, Button, CollectionViewable, Mock,
     TargetVolumeProfile, RecordSeries, tvpFixture) {
 
     var RowClass,
@@ -562,6 +563,144 @@ define([
             rowColumnEquals(grid, 1, colName, 'DEFAULT 4', false);
             rowColumnEquals(grid, 2, colName, 'DEFAULT 4', false);
             start();
+        });
+    });
+
+    module('Checkable grid');
+
+    var CheckableRowClass = Row.extend({
+        defaults: {
+            colModel: [
+                CheckBoxColumn(),
+                {name: 'name', label: 'Name', sortable: true, order: 'asc'},
+                {
+                    name: 'volume_id',
+                    label: 'Volume ID',
+                    sortable: true,
+                    render: 'renderColVolumeId'
+                },
+                {
+                    name: 'security_attributes',
+                    label: 'Security Attributes',
+                    render: 'renderColSecurityAttributes',
+                    rerender: 'rerenderColSecurityAttributes',
+                    sortable: true
+                }
+            ]
+        },
+        renderColVolumeId: function(col) {
+            return '<b>Volume ' + this.options.model.volume_id + '</b>';
+        },
+        renderColSecurityAttributes: function(col) {
+            return '<b>' + this.options.model.security_attributes.toUpperCase() + '</b>';
+        },
+        rerenderColSecurityAttributes: function(col) {
+            this.$node.find('td.col-security_attributes b')
+                .text(this.options.model.security_attributes.toUpperCase());
+        }
+    });
+
+    var CheckableGrid = Grid.extend({
+        defaults: {
+            rowWidgetClass: CheckableRowClass
+        }
+    }, {mixins: [CollectionViewable]});
+
+    var allRowsSelected = function(grid) {
+        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+        for(var i=0, l=$checkedColTds.length; i < l; i++) {
+            if(!$($checkedColTds[i]).attr('checked')) {
+                return false;
+            }
+        }
+        return true;
+    };
+    var noRowsSelected = function(grid) {
+        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+        for(var i=0, l=$checkedColTds.length; i < l; i++) {
+            if($($checkedColTds[i]).attr('checked')) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    asyncTest('checkable grid from collection', function() {
+        var limit = 100,
+            grid = CheckableGrid();
+
+        grid.set({
+            collection: TargetVolumeProfile.collection()
+        });
+
+        grid.appendTo($('#qunit-fixture'));
+//        grid.appendTo($('body'));
+        ok(grid);
+
+        grid.options.collection.load().done(function() {
+            var $checkedColTh = grid.$node.find('th.col-_checked .checkbox-column'),
+                $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+
+            // no rows checked
+            ok(noRowsSelected(grid));
+
+            // all rows checked
+            $checkedColTh.trigger('click');
+            setTimeout(function() {
+                ok(allRowsSelected(grid));
+
+                // uncheck one row also unchecks header
+                var thCheckBox = grid.$node.find('th.col-_checked .checkbox-column'),
+                    tdCheckBox = $(grid.$node.find('td.col-_checked .checkbox-column')[0]);
+                tdCheckBox.trigger('click');
+                equal(tdCheckBox.attr('checked'), undefined);
+                equal(thCheckBox.attr('checked'), undefined);
+
+                // rechecking row doesn't recheck header
+                tdCheckBox.trigger('click');
+                equal(tdCheckBox.attr('checked'), 'checked');
+                equal(thCheckBox.attr('checked'), undefined);
+
+                start();
+            }, 0);
+        });
+    });
+    asyncTest('checkable grid from model', function() {
+        var limit = 100, grid = CheckableGrid(), collection = TargetVolumeProfile.collection();
+
+        grid.appendTo($('#qunit-fixture'));
+//        grid.appendTo($('body'));
+//        collection.load({limit: limit, offset: 0}).done(function(data) {
+        collection.load().done(function(data) {
+
+            grid.set('models', data);
+            ok(grid);
+
+            var $checkedColTh = grid.$node.find('th.col-_checked .checkbox-column'),
+                $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+
+            // no rows checked
+            ok(noRowsSelected(grid));
+
+            // all rows checked
+            $checkedColTh.trigger('click');
+            setTimeout(function() {
+                ok(allRowsSelected(grid));
+
+                // uncheck one row also unchecks header
+                var thCheckBox = grid.$node.find('th.col-_checked .checkbox-column'),
+                    tdCheckBox = $(grid.$node.find('td.col-_checked .checkbox-column')[0]);
+                tdCheckBox.trigger('click');
+                equal(tdCheckBox.attr('checked'), undefined);
+                equal(thCheckBox.attr('checked'), undefined);
+
+                // rechecking row doesn't recheck header
+                tdCheckBox.trigger('click');
+                equal(tdCheckBox.attr('checked'), 'checked');
+                equal(thCheckBox.attr('checked'), undefined);
+
+                start();
+            }, 0);
         });
     });
 

@@ -34,7 +34,7 @@ define([
         template: _.template([
             '<% for (var i = 0, len = colModel.length, col; col = colModel[i], i < len; i++) { %>',
                 '<td class="col-<%= col.name %><%= i===0? " first" : "" %><%= col.noLeftBorder? " no-left-border" : "" %>">',
-                    '<%= _.isString(col.render)? this[col.render](col) : col.render(col) %>',
+                    '<%= _.isString(col.render)? this[col.render](col, model) : col.render(col, model) %>',
                 '</td>',
             '<% } %>'
         ].join('')),
@@ -85,9 +85,13 @@ define([
                 if (!col.modelIndependent) {
                     td = tds[i];
                     if (col.rerender) {
-                        this[col.rerender](col, td);
+                        if(typeof col.render === 'function') {
+                            col.rerender(col, td, model);
+                        } else {
+                            this[col.rerender](col, td, model);
+                        }
                     } else if (col.render) {
-                        tds[i].innerHTML = this[col.render](col);
+                        tds[i].innerHTML = this[col.render](col, model);
                     } else {
                         if (td.innerText != null) {
                             tds[i].innerText = model[colModel[i].name] || '';

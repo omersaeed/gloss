@@ -91,7 +91,7 @@ define([
 
                 var resizeHandle,
                     thText = (!col.resizable && col.label) || '',
-                    $th = $('<th>').text(thText).addClass('col-'+col.name);
+                    $th = $('<th>').html(thText).addClass('col-'+col.name);
                 if (i === 0) {
                     $th.addClass('first');
                 }
@@ -182,6 +182,13 @@ define([
             self.options.colModel =
                 self.options.rowWidgetClass.prototype.defaults.colModel;
 
+            _.each(self.options.colModel, function(col) {
+                _.each(col.events, function(evt) {
+                    self.on(evt.on, (evt.selector || ''), function(e) {
+                        col[evt.callback](e, self);
+                    });
+                });
+            });
             if (! self.col) {
                 self.col = _.reduce(self.options.colModel, function(cols, col) {
                     cols[col.name] = col;
