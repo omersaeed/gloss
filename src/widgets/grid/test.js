@@ -1106,7 +1106,7 @@ define([
 
                 // update a model, which will end up firing an 'update' event
                 // on the collection
-                collection.models[0].set('name', 'reset name');
+                collection.first().set('name', 'reset name');
 
                 setTimeout(function() {
 
