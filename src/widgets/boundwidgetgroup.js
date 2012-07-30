@@ -1,10 +1,10 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'bedrock/class',
     './../core/eventset',
-    './widgetgroup',
-    'bedrock/class'
-], function($, _, EventSet, WidgetGroup, Class) {
+    './widgetgroup'
+], function($, _, Class, EventSet, WidgetGroup) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({
         defaults: {
