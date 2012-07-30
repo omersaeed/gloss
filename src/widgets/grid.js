@@ -76,7 +76,7 @@ define([
                 self.on('mousedown.highlightable', 'tbody tr', function(evt) {
                     self._handleHighlightEvt(self._rowInstanceFromTrElement(this), evt);
                 }).$node.addClass('highlightable');
-                
+
                 self.on('dblclick', 'tbody tr', function(evt) {
                     self.unhighlight();
                     self._handleHighlightEvt(self._rowInstanceFromTrElement(this), evt);
@@ -100,7 +100,7 @@ define([
 
                 var resizeHandle,
                     thText = (!col.resizable && col.label) || '',
-                    $th = $('<th>').text(thText).addClass('col-'+col.name);
+                    $th = $('<th>').html(thText).addClass('col-'+col.name);
                 if (i === 0) {
                     $th.addClass('first');
                 }
@@ -138,9 +138,9 @@ define([
                     });
                     resizeHandle.$node.prependTo($th);
                 }
-                
-                if (col.sortable) {       
-                    var $orderSpans = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');                    
+
+                if (col.sortable) {
+                    var $orderSpans = $(' <span class=asc-arrow>&#x25b2;</span><span class=desc-arrow>&#x25bc;</span>');
                     if (col.resizable) {
                         $th.find('.buffer').append($orderSpans);
                     } else {
@@ -154,10 +154,10 @@ define([
                             col.order = 'asc';
                         }
                         self._sortData(self, col);
-                    });                                   
-                } 
+                    });
+                }
                 $th.appendTo($tr);
-                
+
                 // initial sorting
                 if (col.sortable && col.order !== undefined) {
                     self._sortData(self, col);
@@ -171,19 +171,19 @@ define([
                 var result = 0, aVal, bVal;
                 aVal = self.getColumnValue(a,colName);
                 bVal = self.getColumnValue(b,colName);
-                
+
                 if (typeof aVal === 'undefined' && typeof bVal === 'undefined') {
                     result = 0;
                 } else if (typeof aVal === 'undefined') {
                     result = -1;
                 } else if (typeof bVal === 'undefined') {
                     result = 1;
-                } else {               
+                } else {
                     result = ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
                 }
 
                 result *= colOrder === 'asc'? 1 : -1;
-                
+
                 return result;
             };
         },
@@ -196,12 +196,12 @@ define([
             if (_.isFunction(modelProperty)) {
                 value = modelProperty(model);
             } else {
-                value = Class.prop(model, modelProperty); 
+                value = Class.prop(model, modelProperty);
             }
-            
+
             return value;
         },
-                
+
         _initRowsAndHeader: function() {
             var self = this;
             self.options.rows = [];
@@ -209,11 +209,19 @@ define([
             self.options.colModel =
                 self.options.rowWidgetClass.prototype.defaults.colModel;
 
+            _.each(self.options.colModel, function(col) {
+                _.each(col.events, function(evt) {
+                    self.on(evt.on, (evt.selector || ''), function(e) {
+                        col[evt.callback](e, self);
+                    });
+                });
+            });
+
             self.col = _.reduce(self.options.colModel, function(cols, col) {
                 cols[col.name] = col;
                 return cols;
             }, {});
-                        
+
             _.each(self.options.rowWidgetClass.prototype.defaults.events, function(evt) {
                 self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
                     var i, l, $tr, row, rows = self.options.rows, $el = $(this);
@@ -260,7 +268,7 @@ define([
                     selectedModels.push(this._highlighted[i].options.model);
                 }
             }
-                        
+
             if (this._shouldFullyRender()) {
                 $tbody.remove();
                 $tbody = this.$tbody = $('<tbody></tbody>');
@@ -268,13 +276,13 @@ define([
                 rowsLen = 0;
                 attachTbodyToTable = true;
             }
-            
+
             if (this._sortedColumn){
                 models = models.sort(this._compare(this._sortedColumn.name, this._sortedColumn.order));
             }
-            
+
             this.unhighlight({modifyModel: false});
-            
+
             for (i = 0; i < len; i++) {
                 model = models[i];
                 if (i >= rowsLen) {
@@ -284,7 +292,7 @@ define([
                 } else {
                     this.setModel(rows[i], model);
                 }
-                
+
                 // if the highlighted row is NOT being tracked at the model
                 // level (only being tracked by the grid), then highlight the
                 // row
@@ -320,24 +328,24 @@ define([
         },
 
         _sortData: function(self, col, ignoreSameColumnSort) {
-            var $sortColHeader = self.$node.find('thead th.col-'+ col.name), 
+            var $sortColHeader = self.$node.find('thead th.col-'+ col.name),
                 $sortedColHeader = null;
             // display sort-order indicator
             if (self._sortedColumn) {
                 $sortedColHeader = self.$node.find('thead th.col-'+ self._sortedColumn.name);
                 $sortedColHeader.removeClass('sort-asc sort-desc').addClass('sort-null');
-            } 
+            }
             $sortColHeader
                 .removeClass('sort-null')
                 .addClass(col.order === 'asc'? 'sort-asc': 'sort-desc');
-            
+
             // set will take care of sorting
             self._sortedColumn = col;
             if (self.options.models) {
-                self.set('models', self.options.models);                                                        
+                self.set('models', self.options.models);
             }
         },
-        
+
         add: function(newModels, idx) {
             var options = this.options, models = options.models;
             if (!_.isArray(newModels)) {
@@ -357,7 +365,7 @@ define([
         _handleHighlightEvt: function(whichRow, evt) {
             if(this._highlighted.indexOf(whichRow) == -1) {
                 if (this.options.multiselect) {
-                    // !evt is there to cater for cases where the call is triggered from code. 
+                    // !evt is there to cater for cases where the call is triggered from code.
                     if(!evt || evt.ctrlKey) {
                         this.highlightMore(whichRow);
                     } else if(evt.shiftKey && this._lastHighlighted) {
@@ -380,7 +388,7 @@ define([
 
         highlightMore: function(whichRow) {
             if(this._highlighted.indexOf(whichRow) == -1) {
-                this._highlighted.push(whichRow); 
+                this._highlighted.push(whichRow);
                 this._lastHighlighted = whichRow;
                 whichRow.$node.addClass('highlight');
                 if (this.options.highlightableGridModelField) {
@@ -390,7 +398,7 @@ define([
             }
             return this;
         },
-        
+
         highlightRange: function(whichRow) {
             var startIdx = this.options.rows.indexOf(whichRow);
             var endIdx = this.options.rows.indexOf(this._lastHighlighted);
@@ -399,13 +407,13 @@ define([
                 var e = endIdx;
                 endIdx = startIdx;
                 startIdx = e;
-            } 
-            var rowSelected = false; 
+            }
+            var rowSelected = false;
             for(var i = startIdx; i <= endIdx; ++i) {
                 currRow = this.options.rows[i];
-                
+
                 if(this._highlighted.indexOf(currRow) == -1) {
-                    this._highlighted.push(currRow); 
+                    this._highlighted.push(currRow);
                     rowSelected = true;
                     currRow.$node.addClass('highlight');
                     if (this.options.highlightableGridModelField) {
@@ -415,11 +423,11 @@ define([
                 }
             }
             if(rowSelected) {
-                this.trigger('highlight');                
+                this.trigger('highlight');
             }
             return this;
         },
-        
+
         highlight: function(whichRow) {
             if((this._highlighted.indexOf(whichRow) !== -1) && this._highlighted.length == 1) {
                 return this;
@@ -432,10 +440,10 @@ define([
                 whichRow.options.model.set(
                     this.options.highlightableGridModelField, true);
             }
-            this.trigger('highlight');                
+            this.trigger('highlight');
             return this;
         },
-        
+
         highlighted: function() {
             if(this.options.multiselect) {
                 return this._highlighted;
@@ -451,7 +459,7 @@ define([
         lastHighlighted: function() {
             return this._lastHighlighted;
         },
- 
+
         makeRow: function(model, index) {
             return this.options.rowWidgetClass(undefined, {
                 model: model,
