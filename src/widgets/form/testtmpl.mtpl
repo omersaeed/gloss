@@ -11,5 +11,9 @@
     <input type=number name=volume_id />
     <div class=messagelist data-for=volume_id></div>
 
+    <label data-for=additionalinfo.alias>Volume ID:</label>
+    <input type=text name=additionalinfo.alias />
+    <div class=messagelist data-for=additionalinfo.alias></div>
+
   </fieldset>
 </form>

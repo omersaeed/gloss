@@ -1,9 +1,10 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'bedrock/class',
     './../core/eventset',
     './widgetgroup'
-], function($, _, EventSet, WidgetGroup) {
+], function($, _, Class, EventSet, WidgetGroup) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({
         defaults: {
@@ -36,7 +37,7 @@ define([
         _onModelChange: function(eventType, model, changed) {
             _.each(this.options.bindings, function(binding) {
                 if (typeof changed[binding.field] !== 'undefined') {
-                    binding.widgetInstance.setValue(model[binding.field]);
+                    binding.widgetInstance.setValue(Class.prop(model, binding.field));
                 }
             });
         },
@@ -76,8 +77,9 @@ define([
             $.each(self.options.bindings, function(i, binding) {
                 var widget = binding.widgetInstance;
                 if (widget) {
-                    $.extend(values, self.toModelObject(binding.mapping || binding.field,
-                        widget.getValue()));
+                    name = binding.mapping || binding.field;
+                    tmpModel = self.toModelObject(name, widget.getValue());
+                    Class.prop(values, name, Class.prop(tmpModel, name));
                 }
             });
             return values;
@@ -101,14 +103,14 @@ define([
             if (isPlainObject(mapping)) {
                 value = {};
                 $.each(mapping, function(attr, field) {
-                    value[attr] = model[field];
+                    value[attr] = Class.prop(model, field);
                 });
             } else if (isFunction(mapping)) {
                 value = mapping('getValue', model, name);
             } else if (isString(mapping)) {
                 value = model[mapping];
             } else {
-                value = model[name];
+                value = Class.prop(model, name);
             }
             return value;
         },
@@ -212,14 +214,14 @@ define([
             var mapping = this.options.mappings[name], model = {};
             if (isPlainObject(mapping)) {
                 $.each(mapping, function(attr, field) {
-                    model[field] = value[attr];
+                    Class.prop(model, field, value[attr]);
                 });
             } else if (isFunction(mapping)) {
                 model = mapping('toObject', name, value);
             } else if (isString(mapping)) {
-                model[mapping] = value;
+                Class.prop(model, mapping, value);
             } else {
-                model[name] = value;
+                Class.prop(model, name, value);
             }
             return model;
         },

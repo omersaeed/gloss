@@ -1,7 +1,8 @@
 define([
     'vendor/jquery',
+    'bedrock/class',
     './boundwidgetgroup'
-], function($, BoundWidgetGroup) {
+], function($, Class, BoundWidgetGroup) {
     return BoundWidgetGroup.extend({
         nodeTemplate: '<form>',
 
@@ -26,12 +27,19 @@ define([
             return this;
         },
 
-        updateModel: function() {
+        getValues: function() {
             var values = this.getBoundValues();
             if (this.options.staticValues) {
-                $.extend(values, this.options.staticValues);
+                // Do proper binding for static values as well.
+                $.each(this.options.staticValues, function(key, value) {
+                    Class.prop(values, key, value);
+                });
             }
-            return this.getModel().set(values).save();
+            return values;
+        },
+        
+        updateModel: function() {
+            return this.getModel().set(this.getValues()).save();
         }
     });
 });
