@@ -27,7 +27,7 @@ define([
             return this;
         },
 
-        getInternalValues: function() {
+        getFieldValues: function() {
             var values = this.getBoundValues();
             if (this.options.staticValues) {
                 // Do proper binding for static values as well.
@@ -39,7 +39,7 @@ define([
         },
         
         updateModel: function() {
-            return this.getModel().set(this.getInternalValues()).save();
+            return this.getModel().set(this.getFieldValues()).save();
         }
     });
 });

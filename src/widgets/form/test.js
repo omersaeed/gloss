@@ -54,7 +54,7 @@ define([
         
         var frm = myFrm()
         frm.getModel().set('name', 'DudeA');
-        vals = frm.getValues();
+        vals = frm.getFieldValues();
         setTimeout(function() {
             equal(vals.name,'DudeA');
             equal(vals.volume_id,'10');
