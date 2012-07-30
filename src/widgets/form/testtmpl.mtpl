@@ -1,0 +1,15 @@
+<form>
+  <div class=messagelist></div>
+
+  <fieldset>
+
+    <label data-for=name>Name:</label>
+    <input name=name type=text />
+    <div class=messagelist data-for=name></div>
+
+    <label data-for=name>Volume ID:</label>
+    <input type=number name=volume_id />
+    <div class=messagelist data-for=volume_id></div>
+
+  </fieldset>
+</form>
