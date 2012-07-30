@@ -27,7 +27,7 @@ define([
             return this;
         },
 
-        updateModel: function() {
+        getValues: function() {
             var values = this.getBoundValues();
             if (this.options.staticValues) {
                 // Do proper binding for static values as well.
@@ -35,7 +35,11 @@ define([
                     Class.prop(values, key, value);
                 });
             }
-            return this.getModel().set(values).save();
+            return values;
+        },
+        
+        updateModel: function() {
+            return this.getModel().set(this.getValues()).save();
         }
     });
 });

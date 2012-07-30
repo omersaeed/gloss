@@ -29,6 +29,40 @@ define([
         }
     });
 
+    
+    asyncTest('test static binding', function() {
+        
+        var myFrm =  Form.extend({        
+            nodeTemplate: template,
+
+            defaults: {
+                modelClass: TargetVolumeProfile,
+                collection: null,
+                bindings: [
+                   {
+                       widget: 'name', 
+                       field: 'name'
+                   }
+                ],
+                staticValues: {
+                    "volume_id":'10',
+                    "additionalinfo.alias": "Alias1"
+                },
+                widgetize: true
+            }
+        });
+        
+        var frm = myFrm()
+        frm.getModel().set('name', 'DudeA');
+        vals = frm.getValues();
+        setTimeout(function() {
+            equal(vals.name,'DudeA');
+            equal(vals.volume_id,'10');
+            equal(vals.additionalinfo.alias,'Alias1');
+            start();
+        }, 0);
+    });
+
     asyncTest('updates to model are propagated to bound widgets', function() {
         
         var myFrm =  Form.extend({        
@@ -56,7 +90,6 @@ define([
         setTimeout(function() {
             equal(vals1.name, 'DudeA');
             equal(vals2.name, 'DudeB');
-//            equal(vals1.name, vals2.name);
             start();
         }, 0);
     });
