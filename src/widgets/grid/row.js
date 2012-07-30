@@ -34,7 +34,7 @@ define([
         template: _.template([
             '<% for (var i = 0, len = colModel.length, col; col = colModel[i], i < len; i++) { %>',
                 '<td class="col-<%= col.name %><%= i===0? " first" : "" %><%= col.noLeftBorder? " no-left-border" : "" %>">',
-                    '<%= _.isString(col.render)? this[col.render](col) : col.render(col) %>',
+                    '<%= _.isString(col.render)? this[col.render](col, grid.getColumnValue(model, col.name)) : col.render(col, grid.getColumnValue(model, col.name)) %>',
                 '</td>',
             '<% } %>'
         ].join('')),
@@ -79,20 +79,22 @@ define([
                 options = this.options,
                 colModel = options.colModel,
                 tds = this.node.childNodes,
-                model = options.model;
+                model = options.model,
+                grid = options.grid;
+            
             for (i = 0, len = colModel.length; i < len; i++) {
                 col = colModel[i];
                 if (!col.modelIndependent) {
                     td = tds[i];
                     if (col.rerender) {
-                        this[col.rerender](col, td);
+                        this[col.rerender](col, td, grid.getColumnValue(model, col.name));
                     } else if (col.render) {
-                        tds[i].innerHTML = this[col.render](col);
+                        tds[i].innerHTML = this[col.render](col, grid.getColumnValue(model, col.name));
                     } else {
                         if (td.innerText != null) {
-                            tds[i].innerText = model[colModel[i].name] || '';
+                            tds[i].innerText = grid.getColumnValue(model, col.name) || '';
                         } else {
-                            tds[i].textContent = model[colModel[i].name] || '';
+                            tds[i].textContent = grid.getColumnValue(model, col.name) || '';
                         }
                     }
                 }
@@ -113,8 +115,8 @@ define([
             }
         },
 
-        renderCol: function(col) {
-            return this.options.model[col.name];
+        renderCol: function(col, value) {
+            return value;
         },
 
         // this is an optimized version of set that doesn't re-set the model if
