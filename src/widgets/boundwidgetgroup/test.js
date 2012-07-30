@@ -1,11 +1,13 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
 define([
     'mesh/request',
+    'mesh/tests/example',
+    'bedrock/class',
     './../messagelist',
     './../boundwidgetgroup',
     'tmpl!./testtmpl.mtpl',
     './../../test/api/v1/targetvolumeprofile'
-], function(Request, MessageList, BoundWidgetGroup, template,
+], function(Request, Example, Class, MessageList, BoundWidgetGroup, template,
     TargetVolumeProfile) {
 
     var origAjax = Request.ajax(function(args) {
@@ -92,16 +94,22 @@ define([
         var bwg = window.bwg = BoundWidgetGroup(template(), {
                 widgetize: true,
                 modelClass: TargetVolumeProfile,
-                bindings: [{widget: 'name', field: 'name'}]
+                bindings: [{widget: 'name', field: 'name'}, {widget: 'additional_info.alias', field: 'additional_info.alias'}]
             }),
             model = bwg.getModel(),
             thisGuyIsCompletely = 'unscrupulous';
+            andIsKnownAs  = 'don';
 
-        model.set('name', thisGuyIsCompletely);
-
+        model.prop('additional_info.alias', andIsKnownAs);
+        model.prop('name', thisGuyIsCompletely);
+        bwg.bindModel();
+        
         setTimeout(function() {
             equal(bwg.getWidget('name').getValue(), thisGuyIsCompletely);
             equal(bwg.$node.find('[name=name]').val(), thisGuyIsCompletely);
+            equal(bwg.getWidget('additional_info.alias').getValue(), andIsKnownAs);
+            equal(bwg.$node.find('[name="additional_info.alias"]').val(), andIsKnownAs);
+            
             start();
         }, 0);
     });
