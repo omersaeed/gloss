@@ -93,7 +93,7 @@ define([
 
         getModelValue: function(name) {
             var model = this.model, mapping, value;
-            if (model === null || name === null) {
+            if (model == null || name == null) {
                 return;
             }
 
