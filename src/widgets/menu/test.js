@@ -21,5 +21,22 @@ define([
         ok(options.entries.length === 4, "number of entries");
     });
 
+    test('Menu handlers', function(){
+        var menu = Menu($('<div></div>'), {
+                entries: [
+                    {content: "Directory",  value: 'directory'}
+                ]
+            }).appendTo('#qunit-fixture'),
+            options = menu.options,
+            selected = 0;
+
+        menu.show();
+        options.entries[0].onselect = function() {
+            selected = 1;
+        }
+        options.entries[0].onselect();
+        ok(selected === 1);
+    });
+
     start();
 });
