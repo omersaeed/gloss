@@ -19,7 +19,7 @@ define([
 
 		for (i in units)
 			if (bytes < Math.pow(2, i))
-				return (bytes / Math.pow(2, i-10)).toFixed(1) + units[i];
+				return (bytes / Math.pow(2, i-10)).toFixed(2) + units[i];
 		return (bytes / Math.pow(2, 50)).toFixed(1) + units[60];
 	};
 
