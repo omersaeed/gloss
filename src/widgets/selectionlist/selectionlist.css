@@ -84,16 +84,16 @@
 }
 
 .selectionlist .controls .first-page {
-  background: transparent url(/static/img/widgets/first-page.png) no-repeat left;
+  background: transparent url(first-page.png) no-repeat left;
 }
 .selectionlist .controls .prev-page {
-  background: transparent url(/static/img/widgets/prev-page.png) no-repeat left;
+  background: transparent url(prev-page.png) no-repeat left;
 }
 .selectionlist .controls .next-page {
-  background: transparent url(/static/img/widgets/next-page.png) no-repeat left;
+  background: transparent url(next-page.png) no-repeat left;
 }
 .selectionlist .controls .last-page {
-  background: transparent url(/static/img/widgets/last-page.png) no-repeat left;
+  background: transparent url(last-page.png) no-repeat left;
 }
 
 .selectionlist .controls input[type=text] {
