@@ -1,0 +1,18 @@
+<div class=pageable>
+  <ul class=controls>
+    <li>
+      <select class=page-size-selector></select>
+    </li>
+    <li>
+      <button class=first-page></button>
+      <button class=prev-page></button>
+    </li>
+    <li class=current-page>
+      Page <input type=text> of <span class=total-pages></span>
+    </li>
+    <li class=last>
+      <button class=next-page></button>
+      <button class=last-page></button>
+    </li>
+  </ul>
+</div>
