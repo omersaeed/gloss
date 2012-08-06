@@ -14,6 +14,7 @@ define([
         defaults: {   
             entries: null, 
             populateEmptyNode: true,
+            showQuickSelectTootlbar: true,
             checkAllLabel: 'Check all',
             uncheckAllLabel: 'Uncheck all',
             selectBoxDefaultText: '-- Select Values --',
@@ -85,6 +86,10 @@ define([
             });
             self.checkBoxGroup.set('collection', self.options.collection);
             self.onPageClick('mousedown.onPageClick', self.onPageClickHide);
+            
+            if (!self.options.showQuickSelectTootlbar) {
+                self.$node.find('.ui-helper-reset').hide();
+            }
             
             this.update();
         },

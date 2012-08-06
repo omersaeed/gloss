@@ -1,6 +1,6 @@
 <div class=ui-multiselect>
-  <input type=button class="ui-multiselect-btn"></input>
-  <div class=base-menu>
+  <input type=button class="ui-multiselect-btn multiselect-components"></input>
+  <div class="base-menu multiselect-components" >
     <div class=ui-multiselect-menu>
       <ul class=ui-helper-reset>
         <li>
