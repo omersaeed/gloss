@@ -51,7 +51,8 @@ define([
         disable: function() {
             var self = this;
             self.visible = true;
-            if(self.spinner) { 
+            // checking for .el will prevent multiple spin calls that will break spin.js
+            if(self.spinner && !self.spinner.el) {
                 if(!self.options.target) {
                     self.spinner.spin(self.node);
                 } else {
