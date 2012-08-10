@@ -27,7 +27,11 @@ define([
         afterInit: function() {
             var self = this;
 
-            self.$node.append($(template()));
+            self.$pageable = $(template());
+            // wait for the node to be in the DOM so we can insert after the parent
+            setTimeout(function () {
+                self.$pageable.insertAfter(self.$node.parent());
+            }, 100);
 
             self._init = true;
             self.offset = 0;
@@ -35,16 +39,16 @@ define([
             self.pages = 0;
             self.total = 0;
 
-            self.$pageSize = self.$node.find('.pageable .page-size-selector');
+            self.$pageSize = self.$pageable.find('.page-size-selector');
             $.each(self.options.pageSizes, function(i, size) {
                 self.$pageSize.append($('<option>').attr('value', size).text(size));
             });
-            self.$firstPage = self.$node.find('.pageable .first-page');
-            self.$prevPage = self.$node.find('.pageable .prev-page');
-            self.$nextPage = self.$node.find('.pageable .next-page');
-            self.$lastPage = self.$node.find('.pageable .last-page');
-            self.$currentPage = self.$node.find('.pageable .current-page input');
-            self.$totalPages = self.$node.find('.pageable .total-pages');
+            self.$firstPage = self.$pageable.find('.first-page');
+            self.$prevPage = self.$pageable.find('.prev-page');
+            self.$nextPage = self.$pageable.find('.next-page');
+            self.$lastPage = self.$pageable.find('.last-page');
+            self.$currentPage = self.$pageable.find('.current-page input');
+            self.$totalPages = self.$pageable.find('.total-pages');
 
             self.$pageSize.val(self.options.pageSize);
             self.$pageSize.change(function(event) {
@@ -62,16 +66,16 @@ define([
                 }
             });
 
-            self.$node.find('.first-page').click(function(event) {
+            self.$pageable.find('.first-page').click(function(event) {
                 self.jump(1);
             });
-            self.$node.find('.prev-page').click(function(event) {
+            self.$pageable.find('.prev-page').click(function(event) {
                 self.jump(self.page - 1);
             });
-            self.$node.find('.next-page').click(function(event) {
+            self.$pageable.find('.next-page').click(function(event) {
                 self.jump(self.page + 1);
             });
-            self.$node.find('.last-page').click(function(event) {
+            self.$pageable.find('.last-page').click(function(event) {
                 self.jump(self.pages);
             });
             self.refresh();
