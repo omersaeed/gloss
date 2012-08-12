@@ -73,7 +73,7 @@ define([
         },
 
         getBoundValues: function() {
-            var self = this, values = {};
+            var self = this, values = {}, name, tmpModel;
             $.each(self.options.bindings, function(i, binding) {
                 var widget = binding.widgetInstance;
                 if (widget) {
