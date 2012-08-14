@@ -52,11 +52,11 @@ define([
                     var _set = _.isArray(pushed)?
                         function(childModel, pushedAttrs) {
                             _.each(pushedAttrs, function(pushedAttr) {
-                                childModel.set(pushedAttr, model[pushedAttr], true);
+                                childModel.set(pushedAttr, model[pushedAttr], {silent: true});
                             });
                         } : 
                         function(childModel, pushedAttr) {
-                            childModel.set(pushedAttr, model[pushedAttr], true);
+                            childModel.set(pushedAttr, model[pushedAttr], {silent: true});
                         };
                     t.dfs(self.children || [], function() {
                         _set(this.model, pushed);
@@ -89,10 +89,10 @@ define([
                 n.level = (par || node).level + 1;
             });
             if (node.model.set) {
-                node.model.set('parent_id', this.model.id, true);
+                node.model.set('parent_id', this.model.id, {silent: true});
             }
             if (setIsparent) {
-                this.model.set('isparent', true, true);
+                this.model.set('isparent', true, {silent: true});
             }
         },
 
@@ -179,7 +179,7 @@ define([
             this.children.remove(idx);
             if (!this.children.length) {
                 delete this.children;
-                this.model.set('isparent', false, true);
+                this.model.set('isparent', false, {silent: true});
                 this._loaded = this._loadedRecursive = true;
             }
         },
@@ -525,7 +525,7 @@ define([
         updateNewRecordSeriesFromResponse: function(response) {
             var deltas = this.deltas(false, true);
             _.each(this.deltas(false, true), function(delta, i) {
-                delta._node.model.set('id', response[i].id, true);
+                delta._node.model.set('id', response[i].id, {silent: true});
             });
             return this;
         },

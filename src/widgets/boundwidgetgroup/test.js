@@ -97,12 +97,12 @@ define([
                 bindings: [{widget: 'name', field: 'name'}, {widget: 'additional_info.alias', field: 'additional_info.alias'}]
             }),
             model = bwg.getModel(),
-            thisGuyIsCompletely = 'unscrupulous';
+            thisGuyIsCompletely = 'unscrupulous',
             andIsKnownAs  = 'don';
 
         model.prop('additional_info.alias', andIsKnownAs);
         model.prop('name', thisGuyIsCompletely);
-        bwg.bindModel();
+        // bwg.bindModel();
         
         setTimeout(function() {
             equal(bwg.getWidget('name').getValue(), thisGuyIsCompletely);

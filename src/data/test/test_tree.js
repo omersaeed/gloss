@@ -327,13 +327,13 @@ define([
                 changeCount++;
             });
             node.moveTo(newParent, 0).done(function() {
-                equal(changeCount, 1);
-                equal(updateCount, 1); // one 'update' from expanding the node
-                equal(changeArgs.length, 4);
-                equal(changeArgs[0], 'change');
-                ok(changeArgs[1] === node);
-                equal(changeArgs[2], 'move');
-                ok(changeArgs[3] === newParent);
+                equal(changeCount, 1, 'change count');
+                equal(updateCount, 1, 'update count'); // one 'update' from expanding the node
+                equal(changeArgs.length, 4, 'number of arguments for change evt');
+                equal(changeArgs[0], 'change', 'first change evt arg');
+                ok(changeArgs[1] === node, 'second change evt arg');
+                equal(changeArgs[2], 'move', 'third change evt arg');
+                ok(changeArgs[3] === newParent, 'fourth change evt arg');
                 start();
             });
         });

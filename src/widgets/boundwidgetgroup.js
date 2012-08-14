@@ -37,7 +37,7 @@ define([
         _onModelChange: function(eventType, model, changed) {
             _.each(this.options.bindings, function(binding) {
                 if (typeof changed[binding.field] !== 'undefined') {
-                    binding.widgetInstance.setValue(Class.prop(model, binding.field));
+                    binding.widgetInstance.setValue(model.prop(binding.field));
                 }
             });
         },
@@ -79,7 +79,7 @@ define([
                 if (widget) {
                     name = binding.mapping || binding.field;
                     tmpModel = self.toModelObject(name, widget.getValue());
-                    Class.prop(values, name, Class.prop(tmpModel, name));
+                    Class.nestedProp(values, name, Class.nestedProp(tmpModel, name));
                 }
             });
             return values;
@@ -103,14 +103,14 @@ define([
             if (isPlainObject(mapping)) {
                 value = {};
                 $.each(mapping, function(attr, field) {
-                    value[attr] = Class.prop(model, field);
+                    value[attr] = model.prop(field);
                 });
             } else if (isFunction(mapping)) {
                 value = mapping('getValue', model, name);
             } else if (isString(mapping)) {
                 value = model[mapping];
             } else {
-                value = Class.prop(model, name);
+                value = model.prop(name);
             }
             return value;
         },
@@ -211,19 +211,19 @@ define([
         },
 
         toModelObject: function(name, value) {
-            var mapping = this.options.mappings[name], model = {};
+            var mapping = this.options.mappings[name], modelIsh = {};
             if (isPlainObject(mapping)) {
                 $.each(mapping, function(attr, field) {
-                    Class.prop(model, field, value[attr]);
+                    Class.nestedProp(modelIsh, field, value[attr]);
                 });
             } else if (isFunction(mapping)) {
-                model = mapping('toObject', name, value);
+                modelIsh = mapping('toObject', name, value);
             } else if (isString(mapping)) {
-                Class.prop(model, mapping, value);
+                Class.nestedProp(modelIsh, mapping, value);
             } else {
-                Class.prop(model, name, value);
+                Class.nestedProp(modelIsh, name, value);
             }
-            return model;
+            return modelIsh;
         },
 
         unbind: function() {
@@ -282,6 +282,19 @@ define([
                 if (binding.action) {
                     return binding.action(model);
                 } else {
+                    // 'model' no longer has the 'push' method.  this existed
+                    // during recordsiq, but there were no unit tests, and
+                    // model underwent a drastic refactoring, so this was not
+                    // updated along with the changes.
+                    //
+                    // right now, it appears that this function is used for
+                    // 2-way binding, which was in use in the recordsiq app,
+                    // but has not been used in BoundWidgetGroup since the
+                    // refactoring of model.
+                    //
+                    // either way, if this function were to be used, it would
+                    // break, but without unit tests or an understanding of
+                    // what's going on, i don't want to remove it.
                     return model.push(self.toModelObject(binding.mapping || binding.field,
                         binding.widgetInstance.getValue()));
                 }

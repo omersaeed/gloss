@@ -32,7 +32,7 @@ define([
             if (this.options.staticValues) {
                 // Do proper binding for static values as well.
                 $.each(this.options.staticValues, function(key, value) {
-                    Class.prop(values, key, value);
+                    Class.nestedProp(values, key, value);
                 });
             }
             return values;

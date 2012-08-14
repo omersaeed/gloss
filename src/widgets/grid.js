@@ -196,7 +196,7 @@ define([
             if (_.isFunction(modelProperty)) {
                 value = modelProperty(model);
             } else {
-                value = Class.prop(model, modelProperty);
+                value = model.prop(modelProperty);
             }
 
             return value;
