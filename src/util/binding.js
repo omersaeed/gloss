@@ -1,6 +1,13 @@
 define([
-    'bedrock/class'
-], function(Class) {
+    'vendor/underscore',
+    'vendor/t',
+    'bedrock/class',
+    'bedrock/settable',
+    './../widgets/widget',
+    './../widgets/formwidget'
+], function(_, t, Class, Settable, Widget, FormWidget) {
+    var textContent = document.createElement('span').textContent?
+        'textContent' : 'innerText';
 
     // # Binding
     //
@@ -80,8 +87,133 @@ define([
     //    widget and the model field corresponding to the widget's element's
     //    'name' attribute
     //
+    // ### stuff that `Binding` does not support
+    //
+    //  - changing the UI (either the `widget` or the `el`): i mean.. this
+    //    would be kind of silly, right?
+    //
     // [formwidget]: https://github.com/siq/gloss/blob/master/src/widgets/formwidget.js
     //
     return Class.extend({
-    });
+        _settableOnChange: '_onOptionsChange',
+
+        init: function(options) {
+            var explicitBindings = options.bindings;
+
+            _.bindAll(this, '_onModelChange');
+
+            delete (options = _.extend({}, options)).bindings;
+
+            this.set(options);
+
+            this._setBindings(explicitBindings);
+        },
+
+        _onModelChange: function(eventName, model, changed) {
+            var self = this, bindings = self.get('bindings');
+
+            if (!bindings) {
+                return;
+            }
+
+            _.each(changed, function(___, prop) {
+                if (bindings[prop]) {
+                    self._setUIFromModelForBinding(prop);
+                }
+            });
+        },
+
+        _onOptionsChange: function(changed, opts) {
+            if (changed.model) {
+                this.get('model').on('change', this._onModelChange);
+                if (this.previous('model')) {
+                    this.previous('model').off('change', this._onModelChange);
+                }
+                this._setUIFromModel();
+            }
+
+            if (changed.el || changed.widget) {
+                if (this.get('el') && this.get('widget')) {
+                    throw Error(
+                        'Binding object has either `widget` or `el`, not both');
+                }
+
+            }
+        },
+
+        // this walks through the DOM element (either from `widgt` or `el`) and
+        // sets up bindings for everything it finds.  this is where we
+        // implement the algorithm for 'automatic binding'
+        _setBindings: function(explicitBindings) {
+            var el, widget, bindings = {},
+                root =  (widget = this.get('widget'))? widget.node :
+                        (el = this.get('el'))? el.jquery && el[0] :
+                        el,
+
+                // set up the binding, overriding any automatically discovered
+                // settings w/ the explicit settings
+                setUpBinding = function(bindings, name, newBinding, explicit) {
+                    bindings[name] = explicit && explicit[name]?
+                        _.extend(newBinding, explicit[name]) : newBinding;
+                };
+
+            t.dfs(root, function(el, parentEl, ctrl) {
+                var id, widget, name, newBinding,
+                    dataBind = el.getAttribute('data-bind');
+                    
+                if (dataBind) {
+                    setUpBinding(bindings, dataBind, {el: el},
+                        explicitBindings);
+
+                    // dont traverse any further into this DOM node
+                    ctrl.cutoff = true;
+
+                } else if (
+                    (widget = Widget.registry.get(el.getAttribute('id'))) &&
+                    widget instanceof FormWidget) {
+
+                    setUpBinding(bindings, widget.$node.attr('name'),
+                                {widget: widget}, explicitBindings);
+                }
+            });
+
+            // add any bindings that were in the explicitBindings, but not
+            // discovered during the automatic binding
+            bindings = _.reduce(explicitBindings, function(bindings, binding, name) {
+                if (!bindings[name]) {
+                    if (binding.el && binding.el.jquery) {
+                        binding.el = binding.el[0];
+                    }
+                    bindings[name] = binding;
+                }
+                return bindings;
+            }, bindings);
+
+            this.set('bindings', bindings);
+
+            this._setUIFromModel();
+        },
+
+        // update the UI with all of the values from the model
+        _setUIFromModel: function() {
+            var self = this;
+            _.each(self.get('bindings') || [], function(___, prop) {
+                self._setUIFromModelForBinding(prop);
+            });
+        },
+
+        // update the UI with the value from the model for a specific binding
+        // (i.e. just update one field)
+        _setUIFromModelForBinding: function(binding) {
+            var bindings = this.get('bindings');
+            if (bindings[binding].el) {
+                bindings[binding].el[textContent] =
+                    this.get('model').get(binding) || '';
+            } else if (bindings[binding].widget) {
+                bindings[binding].widget.$el.text(
+                        this.get('model').get(binding) || '');
+            }
+        }
+
+    }, {mixins: [Settable]});
 });
