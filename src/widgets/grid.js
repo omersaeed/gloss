@@ -196,7 +196,11 @@ define([
             if (_.isFunction(modelProperty)) {
                 value = modelProperty(model);
             } else {
-                value = model.prop(modelProperty);
+                if (model.prop) {
+                    value = model.prop(modelProperty);
+                } else {
+                    value = Class.nestedProp(model);
+                }
             }
 
             return value;
