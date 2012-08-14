@@ -199,7 +199,7 @@ define([
                 if (model.prop) {
                     value = model.prop(modelProperty);
                 } else {
-                    value = Class.nestedProp(model);
+                    value = Class.nestedProp(model, modelProperty);
                 }
             }
 
