@@ -4,21 +4,9 @@ define([
     'css!./collectionpageable/collectionpageable.css'
 ], function ($, template) {
 
-    var generator = function(collection, options) {
-        var deferred = $.Deferred(),
-            query = {offset: options.offset, limit: options.limit};
-
-        collection.load(query).done(function(results) {
-            deferred.resolve(collection.total, results);
-        });
-        return deferred;
-    };
-
     return {
         defaults:{
             collection: undefined,
-            collectionLoadArgs: null,
-            collectionMap: function(models) {return models;},
             paging: true,
             pageSize: 25,
             pageSizes: [25, 50, 75, 100]
@@ -92,25 +80,22 @@ define([
         },
 
         refresh: function(reset) {
-            var self = this, paging = self.options.paging;
+            var self = this,
+                limit = self.options.pageSize;
+
+            if(!self._init) {
+                return;
+            }
             if(reset) {
                 self.reset();
             }
-            if (self.disable) {
-                self.disable();
-            }
-            self._load().done(function(total) {
-                var limit = self.options.pageSize;
-                if(self.total != total) {
-                    self.total = total;
-                    self.pages = Math.ceil(self.total / limit);
-                    self.$totalPages.text(self.pages);
-                }
-                self.$currentPage.val(self.page);
-                if (self.enable) {
-                    self.enable();
-                }
+            self._updatePagerBar();
+            self.offset = limit * (self.page - 1);
+            self.set('collectionLoadArgs', {
+                offset: self.offset,
+                limit: limit
             });
+
             return this;
         },
 
@@ -121,112 +106,41 @@ define([
             this.total = 0;
         },
 
-        _load: function() {
+        _updatePagerBar: function() {
             var self = this,
-                limit = self.options.pageSize,
-                collection = self.options.collection,
-                collectionMap = self.options.collectionMap,
-                collectionLoadArgs = self.options.collectionLoadArgs,
-                deferred, loadOptions, state;
+                options = self.options,
+                collection = options.collection,
+                total = collection.total,
+                limit = self.options.pageSize;
 
-            self._collectionViewableState = self._collectionViewableState || {};
-            state = self._collectionViewableState;
-
-            self.offset = limit * (self.page - 1);
-            loadOptions = $.extend(
-                true,
-                {
-                    offset: self.offset,
-                    limit: limit
-                },
-                collectionLoadArgs
-            );
-
-            deferred = $.Deferred();
-            if(!collection) {
-                self.set('models', []);
-                return deferred.resolve(self.total);
+            if(self.total != total) {
+                self.total = total;
+                self.pages = Math.ceil(self.total / limit);
+                self.$totalPages.text(self.pages);
             }
-
-            generator(collection, loadOptions).done(function(total, items) {
-                var startingValue = _.isFunction(self.getValue)?
-                    self.getValue() : null;
-
-                state._loadResolved = true;
-
-                self.set('models', collectionMap(items));
-                _.each(self.options.entries, function(entry) {
-                    // use type coercion in case it's an int
-                    if (_.isFunction(self.setValue) && entry.value == startingValue) {
-                        self.setValue(startingValue);
-                    }
-                });
-                deferred.resolve(total);
-            });
-
-            return deferred;
+            self.$currentPage.val(self.page);
         },
 
         __updateWidget__: function(updated) {
             var state, self = this,
                 options = self.options,
-                collection = options.collection,
-                collectionMap = options.collectionMap;
+                collection = options.collection;
+
             self._collectionViewableState = self._collectionViewableState || {};
             state = self._collectionViewableState;
-            if (updated.collection && typeof collection !== 'undefined') {
-                if(options.paging) {
-                    if(!collection || !this._init) {
-                        return;
-                    }
-                    self.refresh();
 
-                    // Add listener on the collection to handle further updates
-                    collection.on('update', function(evtName, theCollection) {
-                        if ((state._loadResolved && state._updateFired) ||
-                            !state._loadResolved) {
-                                self.refresh();
-                        }
-                        state._updateFired = true;
-                    });
+            if (updated.collection && typeof collection !== 'undefined') {
+                if(!collection) {
                     return;
                 }
-
-                // basic collection viewable functionality
-                if (self.disable) {
-                    self.disable();
-                }
-                if (collection) {
-                    collection.load(options.collectionLoadArgs).done(function() {
-                        var startingValue = _.isFunction(self.getValue)?
-                            self.getValue() : null;
-
-                        state._loadResolved = true;
-
-                        self.set('models', collectionMap(collection.models));
-                        _.each(self.options.entries, function(entry) {
-                            // use type coercion in case it's an int
-                            if (_.isFunction(self.setValue) && entry.value == startingValue) {
-                                self.setValue(startingValue);
-                            }
-                        });
-                        if (self.enable) {
-                            self.enable();
-                        }
-                    });
-
-                    // Add listener on the collection to handle further updates
-                    collection.on('update', function(evtName, theCollection) {
-                        if ((state._loadResolved && state._updateFired) ||
-                            !state._loadResolved) {
-                            self.set('models', collectionMap(collection.models));
-                        }
-                        state._updateFired = true;
-                    });
-
-                } else {
-                    self.set('models', []);
-                }
+                // Add listener on the collection to handle further updates
+                collection.on('update', function(evtName, theCollection) {
+                    if ((state._loadResolved && state._updateFired) ||
+                        !state._loadResolved) {
+                        self.refresh();
+                    }
+                    state._updateFired = true;
+                });
             }
         }
     };

@@ -5,11 +5,12 @@ define([
     './../grid',
     './../grid/row',
     './../collectionpageable',
+    './../collectionviewable',
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, Pageable, Mock, TargetVolumeProfile,
+], function($, _, Grid, Row, Pageable, CollectionViewable, Mock, TargetVolumeProfile,
             Example, tvpFixture) {
 
     var RowClass = Row.extend({
@@ -21,7 +22,7 @@ define([
         }),
         GridClass = Grid.extend({
             defaults: {rowWidgetClass: RowClass}
-        }, {mixins: [Pageable]});
+        }, {mixins: [CollectionViewable, Pageable]});
 
     function makeHugeFixture(origFixture) {
         var i, newTvp, copy = JSON.parse(JSON.stringify(origFixture)),
@@ -51,11 +52,17 @@ define([
     Mock(TargetVolumeProfile, makeHugeFixture(JSON.parse(tvpFixture)));
 //    Mock(TargetVolumeProfile, JSON.parse(tvpFixture));
 
+    module('collection pageable', {
+        setup: function() {
+            this.grid = GridClass(undefined, {
+                collection: TargetVolumeProfile.collection()
+            });
+
+            this.collection = TargetVolumeProfile.collection();
+        }
+    });
     asyncTest('setting collection correctly populates grid', function() {
-        var grid = GridClass(undefined, {
-            paging: true,
-            collection: TargetVolumeProfile.collection()
-        }).appendTo('body');
+        var grid = this.grid.appendTo('body');
 
         ok(grid);
         // we can assume that the collection will load after 100 ms since it's
@@ -67,15 +74,11 @@ define([
     });
 
     asyncTest('next page', function() {
-        var grid = GridClass(undefined, {
-            paging: true,
-            collection: TargetVolumeProfile.collection()
-        }).appendTo('#quint-fixture');
+        var grid = this.grid.appendTo('#quint-fixture');
 
         ok(grid);
         grid.$nextPage.click();
-        // we can assume that the collection will load after 100 ms since it's
-        // mocked up.
+
         setTimeout(function() {
             equal(parseInt(grid.$currentPage.val()), grid.page);
             equal(grid.$currentPage.val(), 2);
@@ -84,15 +87,11 @@ define([
     });
 
     asyncTest('last page', function() {
-        var grid = GridClass(undefined, {
-            paging: true,
-            collection: TargetVolumeProfile.collection()
-        }).appendTo('#quint-fixture');
+        var grid = this.grid.appendTo('#quint-fixture');
 
         ok(grid);
         grid.$lastPage.click();
-        // we can assume that the collection will load after 100 ms since it's
-        // mocked up.
+
         setTimeout(function() {
             equal(parseInt(grid.$currentPage.val()), grid.page);
             equal(grid.$currentPage.val(), 40);
@@ -101,15 +100,11 @@ define([
     });
 
     asyncTest('previous page', function() {
-        var grid = GridClass(undefined, {
-            paging: true,
-            collection: TargetVolumeProfile.collection()
-        }).appendTo('#quint-fixture');
+        var grid = this.grid.appendTo('#quint-fixture');
 
         ok(grid);
         grid.$lastPage.click();
-        // we can assume that the collection will load after 100 ms since it's
-        // mocked up.
+
         setTimeout(function() {
             equal(parseInt(grid.$currentPage.val()), grid.page);
             equal(grid.$currentPage.val(), 40);
@@ -123,20 +118,42 @@ define([
     });
 
     asyncTest('first page', function() {
-        var grid = GridClass(undefined, {
-            paging: true,
-            collection: TargetVolumeProfile.collection()
-        }).appendTo('#quint-fixture');
+        var grid = this.grid.appendTo('#quint-fixture');
 
         ok(grid);
         grid.$firstPage.click();
-        // we can assume that the collection will load after 100 ms since it's
-        // mocked up.
+
         setTimeout(function() {
             equal(parseInt(grid.$currentPage.val()), grid.page);
             equal(grid.$currentPage.val(), 1);
             start();
         }, 100);
+    });
+
+    /* This test for the case when you're last page only contains
+    *  25 items but your page size it 75. That worked fine but
+    *  when you click the previous page the limit and offset was
+    *  not being referenced properly and the previous page would
+    *  only show 25 item when it should show 75.
+    **/
+    asyncTest('edge case on out of range paging', function() {
+        var grid = this.grid.appendTo('#quint-fixture');
+
+        ok(grid);
+        grid.$pageSize.val(75);
+        grid.$pageSize.trigger('change');
+        grid.$lastPage.click();
+
+        equal(parseInt(grid.$currentPage.val()), grid.page);
+        equal(grid.$currentPage.val(), 14);
+        equal(grid.options.collection.currentPage().length, 25);
+
+        grid.$prevPage.click()
+        equal(grid.options.pageSize, 75);
+        equal(grid.options.collection.currentPage().length, grid.options.pageSize);
+        grid.$nextPage.click()
+        equal(grid.options.collection.currentPage().length, 25);
+        start();
     });
 
     start();
