@@ -8,13 +8,12 @@ define([
             collectionMap: function(models) {return models;}
         },
         _updateCollection: function() {
-            var state, self = this,
+            var self = this,
+                state = self._collectionViewableState,
                 options = self.options,
                 collection = options.collection,
                 collectionMap = options.collectionMap;
 
-            self._collectionViewableState = self._collectionViewableState || {};
-            state = self._collectionViewableState;
             if(typeof collection !== 'undefined') {
                 if (self.disable) {
                     self.disable();
@@ -37,7 +36,23 @@ define([
                             self.enable();
                         }
                     });
+                } else {
+                    self.set('models', []);
+                }
+            }
+        },
+        __updateWidget__: function(updated) {
+            var self = this, state,
+                options = self.options,
+                collection = options.collection,
+                collectionMap = options.collectionMap;
 
+            self._collectionViewableState = self._collectionViewableState || {};
+            state = self._collectionViewableState;
+
+            if (updated.collection) {
+                self._updateCollection();
+                if(collection) {
                     // Add listener on the collection to handle further updates
                     collection.on('update', function(evtName, theCollection) {
                         if ((state._loadResolved && state._updateFired) ||
@@ -46,17 +61,7 @@ define([
                         }
                         state._updateFired = true;
                     });
-
-                } else {
-                    self.set('models', []);
                 }
-            }
-        },
-        __updateWidget__: function(updated) {
-            var self = this,
-                options = self.options;
-            if (updated.collection) {
-                self._updateCollection();
             }
             if (updated.collectionLoadArgs && options.collectionLoadArgs) {
                 self._updateCollection();
