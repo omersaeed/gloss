@@ -66,7 +66,10 @@ define([
             self.$pageable.find('.last-page').click(function(event) {
                 self.jump(self.pages);
             });
-            self.refresh();
+
+            if(self.options.collection) {
+                self.refresh();
+            }
         },
 
         jump: function(page) {

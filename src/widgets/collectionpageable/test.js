@@ -156,6 +156,13 @@ define([
         start();
     });
 
+    asyncTest('instantiate with no collection', function() {
+        var grid = GridClass().appendTo('#quint-fixture');
+
+        ok(grid);
+        start();
+    });
+
     start();
 
 });
