@@ -1102,7 +1102,10 @@ define([
                 // called grid.set('models', ...), which called Grid.render
                 // (like in the initial load), so once again, the grid reflects
                 // the state of the collection
-                equal(grid.options.rows.length, 6);
+                // *UPDATE*: A limit was set initially so the collection will
+                // be updated but the rows displayed will reflect the limit set.
+                equal(grid.options.rows.length, 5);
+                equal(collection.models.length, 6);
 
                 // update a model, which will end up firing an 'update' event
                 // on the collection
@@ -1133,6 +1136,49 @@ define([
                         start();
                     }, 15);
                 }, 15);
+            }, 15);
+        }, 15);
+    });
+
+    asyncTest('collectionviewable w/o limit', function() {
+        Example.models.clear();
+        var grid = CollectionViewableGrid(undefined, {
+                rowWidgetClass: RowClass
+            }).appendTo('#qunit-fixture'),
+            collection = Example.collection();
+
+        collection.query.request.ajax = dummyAjax;
+
+        $('#qunit-fixture').css({position: 'static'});
+
+        // set the collection, since CollectionViewable is mixed in, this will
+        // call collection.load() in CollectionViewable.__updateWidget__
+        grid.set('collection', collection);
+
+        // give everything the chance to propagate
+        setTimeout(function() {
+
+            // when our colleciton is (a) loaded initially and (b) subsequently
+            // updated, CollectionViewable calls self.set('models', ...)  --
+            // 'self' here is 'grid', and self.set('models', ...) ends up in
+            // Grid.updateWidget, which calls grid.render().  so now the rows
+            // will be the same as the models in the collection
+            equal(grid.options.rows.length, 10);
+
+            // add a model to the collection, which will trigger the 'update'
+            // event on the collection
+            collection.add(Example.models.get(2000).set('name', 'added model'));
+
+            setTimeout(function() {
+
+                // the update event in CollectionViewable.__updateWidget__
+                // called grid.set('models', ...), which called Grid.render
+                // (like in the initial load), and because no limit was set
+                // once again, the grid reflects the state of the collection
+                equal(grid.options.rows.length, 11);
+                equal(collection.models.length, 11);
+
+                start();
             }, 15);
         }, 15);
     });

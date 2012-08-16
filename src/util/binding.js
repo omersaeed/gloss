@@ -100,7 +100,7 @@ define([
         init: function(options) {
             var explicitBindings = options.bindings;
 
-            _.bindAll(this, '_onModelChange');
+            _.bindAll(this, '_onModelChange', '_onUIChange');
 
             delete (options = _.extend({}, options)).bindings;
 
@@ -141,20 +141,38 @@ define([
             }
         },
 
+        _onUIChange: function(bindingName, binding, widget) {
+            if (!this.get('bindings')[bindingName]) {
+                // this probably means we need to clean up a 'change' event
+                // handler for some widget that we used to have a 2-way binding
+                // for
+                throw Error(
+                    'binding receiving events for unknown field:'+bindingName);
+            }
+            this.get('model').set(bindingName, widget.getValue());
+        },
+
         // this walks through the DOM element (either from `widgt` or `el`) and
         // sets up bindings for everything it finds.  this is where we
         // implement the algorithm for 'automatic binding'
         _setBindings: function(explicitBindings) {
-            var el, widget, bindings = {},
-                root =  (widget = this.get('widget'))? widget.node :
-                        (el = this.get('el'))? el.jquery && el[0] :
+            var el, widget, self = this,
+                bindings = {},
+                root =  (widget = self.get('widget'))? widget.node :
+                        (el = self.get('el'))? el.jquery && el[0] :
                         el,
 
                 // set up the binding, overriding any automatically discovered
                 // settings w/ the explicit settings
                 setUpBinding = function(bindings, name, newBinding, explicit) {
+                    var widget = newBinding.widget;
                     bindings[name] = explicit && explicit[name]?
                         _.extend(newBinding, explicit[name]) : newBinding;
+                    if (widget) {
+                        widget.on('change', function() {
+                            self._onUIChange(name, newBinding, widget);
+                        });
+                    }
                 };
 
             t.dfs(root, function(el, parentEl, ctrl) {
@@ -174,6 +192,9 @@ define([
 
                     setUpBinding(bindings, widget.$node.attr('name'),
                                 {widget: widget}, explicitBindings);
+
+                    // dont traverse any further into this DOM node
+                    ctrl.cutoff = true;
                 }
             });
 
@@ -189,9 +210,9 @@ define([
                 return bindings;
             }, bindings);
 
-            this.set('bindings', bindings);
+            self.set('bindings', bindings);
 
-            this._setUIFromModel();
+            self._setUIFromModel();
         },
 
         // update the UI with all of the values from the model
@@ -205,13 +226,18 @@ define([
         // update the UI with the value from the model for a specific binding
         // (i.e. just update one field)
         _setUIFromModelForBinding: function(binding) {
-            var bindings = this.get('bindings');
+            var bindings = this.get('bindings'),
+                widget = bindings[binding].widget,
+                value = this.get('model').get(binding) || '';
             if (bindings[binding].el) {
                 bindings[binding].el[textContent] =
                     this.get('model').get(binding) || '';
-            } else if (bindings[binding].widget) {
-                bindings[binding].widget.$el.text(
-                        this.get('model').get(binding) || '');
+            } else if (widget) {
+                if (widget.setValue) {
+                    widget.setValue(value);
+                } else {
+                    widget.$node.text(value);
+                }
             }
         }
 

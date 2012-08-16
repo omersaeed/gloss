@@ -22,7 +22,7 @@ define([
             widgetMap: [
                 ['button', Button],
                 ['input[type=checkbox]', CheckBox],
-                ['input[type=text],input[type=password],input[type=search]', TextBox],
+                ['input[type=text],input[type=password],input[type=search],input[type=email]', TextBox],
                 ['input[type=submit],input[type=reset]', Button],
                 ['input[type=number]', NumberBox],
                 ['div.multiselect, select.multiselect, select[multiple]', MultiSelect],
