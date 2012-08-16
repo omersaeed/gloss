@@ -300,7 +300,7 @@ define([
                 // if the highlighted row is NOT being tracked at the model
                 // level (only being tracked by the grid), then highlight the
                 // row
-                if (selectedModels.indexOf(model) !== -1) {
+                if (_.indexOf(selectedModels, model) !== -1) {
                     this.highlightMore(rows[i]);
 
                 // if the highlighted row IS being tracked at the model level,
@@ -367,7 +367,7 @@ define([
         },
 
         _handleHighlightEvt: function(whichRow, evt) {
-            if(this._highlighted.indexOf(whichRow) == -1) {
+            if(_.indexOf(this._highlighted, whichRow) == -1) {
                 if (this.options.multiselect) {
                     // !evt is there to cater for cases where the call is triggered from code.
                     if(!evt || evt.ctrlKey) {
@@ -391,7 +391,7 @@ define([
         },
 
         highlightMore: function(whichRow) {
-            if(this._highlighted.indexOf(whichRow) == -1) {
+            if(_.indexOf(this._highlighted, whichRow) == -1) {
                 this._highlighted.push(whichRow);
                 this._lastHighlighted = whichRow;
                 whichRow.$node.addClass('highlight');
@@ -404,8 +404,8 @@ define([
         },
 
         highlightRange: function(whichRow) {
-            var startIdx = this.options.rows.indexOf(whichRow);
-            var endIdx = this.options.rows.indexOf(this._lastHighlighted);
+            var startIdx = _.indexOf(this.options.rows, whichRow);
+            var endIdx = _.indexOf(this.options.rows, this._lastHighlighted);
             this._lastHighlighted = whichRow;
             if(startIdx > endIdx) {
                 var e = endIdx;
@@ -416,7 +416,7 @@ define([
             for(var i = startIdx; i <= endIdx; ++i) {
                 currRow = this.options.rows[i];
 
-                if(this._highlighted.indexOf(currRow) == -1) {
+                if(_.indexOf(this._highlighted, currRow) == -1) {
                     this._highlighted.push(currRow);
                     rowSelected = true;
                     currRow.$node.addClass('highlight');
@@ -433,7 +433,7 @@ define([
         },
 
         highlight: function(whichRow) {
-            if((this._highlighted.indexOf(whichRow) !== -1) && this._highlighted.length == 1) {
+            if((_.indexOf(this._highlighted, whichRow) !== -1) && this._highlighted.length == 1) {
                 return this;
             }
             this.unhighlight();
