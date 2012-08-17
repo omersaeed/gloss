@@ -572,15 +572,17 @@ define([
                 
             _.each(self.options.colModel, function(col, i) {
                 hideColumnCss = hideColumnCss + '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name + ' { display: none; } ';
+
+                // IE doesn't like style tags to we'll handle adding rules in IE right here.
                 ieHideColumnCss.selector = '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name;
                 ieHideColumnCss.rule = 'display:none';
-                if(!ss.insertRule) { //IE
+                if(!ss.insertRule) {
                     ss.addRule(ieHideColumnCss.selector, ieHideColumnCss.rule, -1);
                 }
             });
             
             // if a style tag exists in the dom then append CSS to the last element otherwise create a new tag for the CSS
-            if ($lastStyleElement && $lastStyleElement.length > 0) {
+            if (ss.insertRule && $lastStyleElement && $lastStyleElement.length > 0) {
                 $lastStyleElement.html( $lastStyleElement.html() + hideColumnCss);
             } else {
                 if(ss.insertRule) {
