@@ -562,7 +562,9 @@ define([
         _generateHideColumnCSS: function() {
             var self= this,
                 hideColumnCss = '',
-                $lastStyleElement = $('style:last');
+                ieHideColumnCss = {selector: '', rule: ''},
+                $lastStyleElement = $('style:last'),
+                ss = document.styleSheets[document.styleSheets.length-1];
                 
             if (self.hideColumnCssGenerated) {
                 return;
@@ -570,16 +572,21 @@ define([
                 
             _.each(self.options.colModel, function(col, i) {
                 hideColumnCss = hideColumnCss + '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name + ' { display: none; } ';
+                ieHideColumnCss.selector = '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name;
+                ieHideColumnCss.rule = 'display:none';
+                if(!ss.insertRule) { //IE
+                    ss.addRule(ieHideColumnCss.selector, ieHideColumnCss.rule, -1);
+                }
             });
             
             // if a style tag exists in the dom then append CSS to the last element otherwise create a new tag for the CSS
             if ($lastStyleElement && $lastStyleElement.length > 0) {
                 $lastStyleElement.html( $lastStyleElement.html() + hideColumnCss);
             } else {
-                $('<style>').text(hideColumnCss).appendTo('head');
+                if(ss.insertRule) {
+                    $('<style>').text(hideColumnCss).appendTo('head');
+                }
             }
-            
-            
             self.hideColumnCssGenerated = true;
         }
         
