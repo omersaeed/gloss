@@ -37,7 +37,7 @@ define([
             }
             return values;
         },
-        
+
         updateModel: function() {
             return this.getModel().set(this.getFieldValues()).save();
         }
