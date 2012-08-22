@@ -2,19 +2,20 @@
   display: inline-block;
   min-width: 40px;
   border: 1px solid;
+  overflow-y: hidden;
 }
 
 .selectbox .content {
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  margin-right: 20px;
+  margin-right: 2.5em;
 }
 
 .selectbox .arrow {
   font-size: .75em;
-  margin: 0 0.5em;
-  padding-left: 0.5em;
+  margin: 0 0 0 1em;
+  padding: 0 1em;
   border-left: 1px solid;
   float: right;
 }

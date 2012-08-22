@@ -71,7 +71,7 @@ define([
                     }
                 }
             });
-            
+
             self.update();
             self.on('click', self.toggle);
             self.on('keydown', self.onKeyEvent);
@@ -92,7 +92,7 @@ define([
                 if(this.open) {
 
                 } else {
-                    
+
                 }
             } else if(key === 'down' && offset < (this.options.entries.length - 1)) {
 
@@ -125,12 +125,12 @@ define([
                 Widget.onPageClick(self.$node, function() {
                     self.toggle(false);
                 });
-                self.$node.addClass('open');
+                self.$node.addClass('open').find('.arrow').html('&#x25b2;');
                 self.menu.show();
                 self.opened = true;
             } else if(!open && self.opened) {
                 self.menu.hide();
-                self.$node.removeClass('open');
+                self.$node.removeClass('open').find('.arrow').html('&#x25bc;');
                 self.opened = false;
                 self.node.focus();
             }
