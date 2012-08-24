@@ -10,6 +10,7 @@
   text-overflow: ellipsis;
   display: block;
   margin-right: 4em;
+  margin-top: -1px;
 }
 
 .selectbox .arrow {
