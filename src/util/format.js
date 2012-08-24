@@ -9,7 +9,7 @@ define([
 		options = $.extend({}, defaults, options || {});
 		bytes = parseInt(bytes, 10);
 		units = {
-			10: options.units === 'short'? ' B' :  ' Bytes',
+			10: options.units === 'short'? ' bytes' :  ' Bytes',
 			20: options.units === 'short'? ' KB' : ' Kilobytes',
 			30: options.units === 'short'? ' MB' : ' Megabytes',
 			40: options.units === 'short'? ' GB' : ' Gigabytes',
