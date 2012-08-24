@@ -9,12 +9,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   display: block;
-  margin-right: 2.5em;
+  margin-right: 3em;
 }
 
 .selectbox .arrow {
   font-size: .75em;
-  margin: 0 0 0 1em;
+  margin: 0;
   padding: 0 1em;
   border-left: 1px solid;
   float: right;
