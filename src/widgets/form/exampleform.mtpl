@@ -1,0 +1,6 @@
+<form>
+  <div class=messagelist></div>
+
+  <div class=messagelist data-for=required_field></div>
+  <input type=text name=required_field value=foo />
+</form>
