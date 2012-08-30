@@ -11,7 +11,6 @@ define([
     'css!./datepicker/datepicker.css'
 ], function($, _, moment, Widget, FormWidget, BaseMenu, TextBox, widgetTemplate,
     monthViewTemplate) {
-    var invalidDate = moment('asdfasdf', 'YYYY-MM-DD').format('YYYY-MM-DD');
 
     var DatePicker = FormWidget.extend({
         defaults: {
@@ -40,12 +39,16 @@ define([
                 });
 
             self.input = TextBox(self.$node.children('input[type=text]'))
-                .on('blur', self._verifyInputValue)
+                .on('blur', self._updateValue)
                 .on('focus click', self.menu.show)
                 .on('keydown', function(evt) {
                     if (Widget.identifyKeyEvent(evt) in {enter:'', tab:''}) {
-                        self._verifyInputValue();
+                        self._updateValue();
                         self.menu.hide();
+                    }
+                }).on('keyup', function(evt) {
+                    if (!(Widget.identifyKeyEvent(evt) in {enter:'', tab:''})) {
+                        self._updateValue(evt, {dontUpdateDisplay: true});
                     }
                 });
 
@@ -57,21 +60,36 @@ define([
 
             self.update();
         },
-        _verifyInputValue: function(evt) {
-            var inputDate = moment(this.input.getValue(), this.options.format);
+        _updateValue: function(evt, opts) {
+            // input date will be (a) 'null' if this.input.getValue() returns
+            // null, or (b) a moment object based on some date
+            //
+            // if it's a moment object, and it failed to successfully parse
+            // this.input.getValue(), then it will be a valid date, but
+            // inputDate.isValid() will return false
+            var inputDate = moment(this.input.getValue());
+            opts = opts || {};
             if (inputDate) {
-                this.setValue(inputDate.format('YYYY-MM-DD') !== invalidDate?
-                        inputDate : this.getValue());
+                if (inputDate.isValid()) {
+                    this.setValue(inputDate, opts);
+                } else {
+                    this.setValue(this.getValue(), opts);
+                }
+            } else {
+                this.setValue(null, opts);
             }
         },
         getValue: function() {
             return this.options._selected &&
                 this.options._selected.format(this.options.format);
         },
-        setValue: function(date) {
+        setValue: function(date, opts) {
             date = moment(date || null);
-            this.set('_selected', date);
-            this.input.setValue(date && date.format(this.options.format));
+            opts = opts || {};
+            this.set('_selected', date, {silent: opts.dontUpdateDisplay});
+            if (!opts.dontUpdateDisplay) {
+                this.input.setValue(date && date.format(this.options.format));
+            }
             return this;
         },
         updateWidget: function(updated) {
@@ -131,7 +149,7 @@ define([
     // the 'date' params is an instance of moment
     DatePicker.numDaysInMonth = function(date) {
         return (/8|3|5|10/).test(date.month())?  // 30 days has sept, apr, june, & nov
-            30 : 
+            30 :
             date.month() !== 1?
                 31 :                            // all the rest have 31...
                 (date.isLeapYear()? 29 : 28);   // except feb

@@ -6,9 +6,13 @@ define([
     './../datepicker'
 ], function($, _, moment, DatePicker) {
 
+    var yyyy = moment().format('YYYY'), mm = moment().format('MM');
+
     test('DatePicker.numDaysInMonth', function() {
         _.each([31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31], function(days, i) {
-            equal(DatePicker.numDaysInMonth(moment((i+1).toString(), 'M')), days);
+            // get the first day of month 'i' (on a non-leap-year)
+            var firstDayOfMonth = moment('2001-' + (i+1) + '-01', 'YYYY-MM-DD');
+            equal(DatePicker.numDaysInMonth(firstDayOfMonth), days);
         });
         equal(DatePicker.numDaysInMonth(moment('2000 2', 'YYYY MM')), 29);
     });
@@ -105,11 +109,9 @@ define([
 
 
     test('instantiation', function() {
-        // var $node = $('<div>').appendTo('#qunit-fixture');
-        // ok(DatePicker($node));
-        var $node = $('<div>').appendTo('body');
+        var $node = $('<div>').appendTo('#qunit-fixture');
         ok(DatePicker($node).menu.show());
-        ok(DatePicker().appendTo('#qunit-fixture'));
+        ok(DatePicker());
     });
 
     test('clicking input box opens the datepicker', function() {
@@ -163,7 +165,9 @@ define([
     });
 
     test('invalid value in the input is reset', function() {
-        var dp = DatePicker(undefined, {date: moment('2012-07-13')});
+        var dp = DatePicker()
+            .appendTo($('#qunit-fixture'))
+            .set('date', moment('2012-07-13'));
 
         openDatePicker(dp);
         dp.$node.find('input[type=text]').val('asdfasdf')
@@ -212,6 +216,44 @@ define([
             equal(dp.$node.find('td.selected').length, 0);
             start();
         });
+    });
+
+    // see DAQ-223
+    asyncTest('calling getValue w/o bluring after keyboard entry', function() {
+        var dp = DatePicker().appendTo('#qunit-fixture');
+        openDatePicker(dp);
+        clickOnDate(dp, yyyy+'-'+mm+'-14').done(function() {
+            dp.$node.find('input').focus();
+            setTimeout(function() {
+                dp.$node.find('input')
+                    .val('2010-'+mm+'-14')
+                    .trigger($.Event('keyup', {which: 48}));
+                setTimeout(function() {
+                    equal(dp.getValue(), '2010-'+mm+'-14');
+                    start();
+                }, 15);
+            }, 15);
+        });
+    });
+
+    module('testing by hand');
+
+    test('make a datepicker', function() {
+        var $dpDiv = $('<div class=dpdiv></div>').appendTo('body'),
+            dp = DatePicker().appendTo($dpDiv),
+            $display = $('<div>value: <span class=display></span></div>')
+                .appendTo('body')
+                .find('.display');
+
+        $dpDiv.height(250);
+
+        dp.on('change keyup mouseup', function() {
+            setTimeout(function() {
+                $display.html(dp.getValue());
+            }, 0);
+        });
+
+        ok(dp);
     });
 
     start();
