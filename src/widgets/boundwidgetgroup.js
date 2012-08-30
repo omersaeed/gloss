@@ -3,8 +3,9 @@ define([
     'vendor/underscore',
     'bedrock/class',
     './../core/eventset',
-    './widgetgroup'
-], function($, _, Class, EventSet, WidgetGroup) {
+    './widgetgroup',
+    'strings'
+], function($, _, Class, EventSet, WidgetGroup, strings) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({
         defaults: {
@@ -145,7 +146,15 @@ define([
             var self = this,
                 messageList = this.options.messageList,
                 globalErrors = response && response[0],
-                structuralErrors = response && response[1];
+                structuralErrors = response && response[1],
+                tokensToStrings = function(errors) {
+                    return _.map(errors, function(error) {
+                        return error.message ||
+                            (strings.errors && error.token in strings.errors?
+                                strings.errors[error.token] :
+                                error.token);
+                    });
+                };
             if (structuralErrors) {
                 if (self.options.structuralErrorHandler) {
                     self.options.structuralErrorHandler(self, structuralErrors);
@@ -166,7 +175,7 @@ define([
             }
             if (messageList) {
                 if (globalErrors) {
-                    messageList.append('invalid', _.pluck(globalErrors, 'message'));
+                    messageList.append('invalid', tokensToStrings(globalErrors));
                 } else if (xhr && xhr.status === 500) {
                     messageList.append('invalid', xhr.statusText); // empty 500
                 } else {
