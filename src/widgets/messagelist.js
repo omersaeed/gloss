@@ -1,7 +1,6 @@
 define([
     'vendor/jquery',
-    './widget',
-    'css!./messagelist/messages.css'
+    './widget'
 ], function($, Widget) {
     return Widget.extend({
         create: function() {
