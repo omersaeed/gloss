@@ -3,8 +3,9 @@ define([
     'vendor/underscore',
     'bedrock/class',
     './../core/eventset',
-    './widgetgroup'
-], function($, _, Class, EventSet, WidgetGroup) {
+    './widgetgroup',
+    'strings'
+], function($, _, Class, EventSet, WidgetGroup, strings) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({
         defaults: {
@@ -132,20 +133,28 @@ define([
                         deferred.resolve(model);
                     });
                 },
-                function(response) {
+                function(response, xhr) {
                     self.stopUpdating(function() {
-                        deferred.reject(model, response);
+                        deferred.reject(model, response, xhr);
                     });
                 }
             );
             return deferred;
         },
 
-        processErrors: function(model, response) {
+        processErrors: function(model, response, xhr) {
             var self = this,
                 messageList = this.options.messageList,
-                globalErrors = response[0],
-                structuralErrors = response[1];
+                globalErrors = response && response[0],
+                structuralErrors = response && response[1],
+                tokensToStrings = function(errors) {
+                    return _.map(errors, function(error) {
+                        return error.message ||
+                            (strings.errors && error.token in strings.errors?
+                                strings.errors[error.token] :
+                                error.token);
+                    });
+                };
             if (structuralErrors) {
                 if (self.options.structuralErrorHandler) {
                     self.options.structuralErrorHandler(self, structuralErrors);
@@ -164,8 +173,15 @@ define([
                     });
                 }
             }
-            if (globalErrors && messageList) {
-                messageList.append('invalid', _.pluck(globalErrors, 'message'));
+            if (messageList) {
+                if (globalErrors) {
+                    messageList.append('invalid', tokensToStrings(globalErrors));
+                } else if (xhr && xhr.status === 500) {
+                    messageList.append('invalid', xhr.statusText); // empty 500
+                } else {
+                    // don't know how we could get here...
+                    messageList.append('invalid', 'there was an error');
+                }
             }
         },
 

@@ -516,21 +516,26 @@ define([
             $node.html($tmpl.html());
         },
 
-        set: function(name, value) {
-            var options;
+        set: function(name, value, opts) {
+            var params;
             if (name != null) {
                 if (typeof name === 'string') {
-                    options = {};
-                    options[name] = value;
+                    params = {};
+                    params[name] = value;
                 } else {
-                    options = name;
+                    params = name;
+                    opts = value;
                 }
             } else {
                 return this;
             }
 
-            recursiveMerge(this.options, options);
-            this.update(options);
+            opts = opts || {};
+
+            recursiveMerge(this.options, params);
+            if (!opts.silent) {
+                this.update(params);
+            }
             return this;
         },
 
