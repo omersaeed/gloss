@@ -1,13 +1,13 @@
 <table>
   <% for(var i=0; i < data.data.length; i++) { %>
     <tr>
-      <td rowspan=<%= data.data[i].values.length+1 %> title="<%= data.data[i].name %>"><%= data.data[i].name %></td>
+      <td class=graph-bar-title rowspan=<%= data.data[i].values.length+1 %> title="<%= data.data[i].name %>"><%= data.data[i].name %></td>
       <% for(var j=0; j < data.data[i].values.length; j++) { %>
         <tr>
           <td class=graph-bar-cell>
             <div class="graph-bar <%= 'graph-bar-' + j %>" style="width: 0px" value=<%= data.data[i].values[j] %>></div>
           </td>
-          <td>
+          <td class=graph-bar-data>
             <% if(data.formatData) { %>
               <%= data.Format.bytes(data.data[i].values[j]) %>
             <% } else { %>
