@@ -108,3 +108,7 @@ body.dragging-element .grid.standard table.grid tbody tr:hover:nth-child(odd) {
 .grid table.grid thead th.sort-desc .asc-arrow {
   display: none;
 }
+.grid table.grid thead th .buffer {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
