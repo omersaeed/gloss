@@ -72,6 +72,12 @@ define([
                     return true; // continue loop until we find checked btn
                 });
             }
+
+            self.on('mouseover', 'button', function() {
+                $(this).prev().addClass('left-of-hover');
+            }).on('mouseout', 'button', function() {
+                $(this).prev().removeClass('left-of-hover');
+            });
         },
         _enable: function(enable, which) {
             _.each(this.buttons, function(button) {
