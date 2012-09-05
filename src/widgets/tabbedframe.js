@@ -1,8 +1,9 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './widget',
     'css!./tabbedframe/tabbedframe.css'
-], function($, Widget) {
+], function($, _, Widget) {
     return Widget.extend({
         defaults: {
             initialPane: 0
@@ -39,13 +40,46 @@ define([
             self.$tabs.find('button').first().addClass('first');
             self.$tabs.find('button').last().addClass('last');
 
-            self.$tabs.on('click', 'button', function(event) {
-                self.open($(this).data('idx'));
+            self.$tabs.on('click', 'button', function(evt) {
+                if (!$(this).hasClass('disable')) {
+                    self.open($(this).data('idx'));
+                }
             });
 
             self.idx = null;
             self.open(self.options.initialPane);
         },
+        _enable: function(which) {
+            var self = this;
+            _.each(_.range(self.length), function(i) {
+                var tab = self.tabs[i];
+                if (typeof which[i] !== 'undefined') {
+                    if (which[i]) {
+                        tab.button.removeClass('disable');
+                    } else {
+                        tab.button.addClass('disable');
+                    }
+                }
+            });
+            return this;
+        },
+
+        // 'which' is an object that has a true/false value for each of the tab
+        // indices that are to be disabled. for example, if you'd like to
+        // disable tabs 1 and 3:
+        //
+        //   myTabbedFrame.disable({1: true, 3: true});
+        disable: function(which) {
+            return this._enable(_.reduce(which, function(memo, val, index) {
+                memo[index] = !val;
+                return memo;
+            }, {}));
+        },
+
+        enable: function(which) {
+            return this._enable(which);
+        },
+
         open: function(idx) {
             var self = this, current = this.tabs[this.idx], target = this.tabs[idx];
             if(target == null || target.idx === this.idx) {
