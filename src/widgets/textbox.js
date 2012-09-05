@@ -4,6 +4,7 @@ define([
     './formwidget',
     'css!./textbox/textbox.css'
 ], function($, _, FormWidget) {
+
     var placeholderSupported = (function() {
             var supported;
             return function() {
@@ -14,6 +15,7 @@ define([
                 return supported;
             };
         })(),
+
         // got this from http://stackoverflow.com/a/512542/5377
         setCursorPosition = function(node, pos) {
             if (node.setSelectionRange) {
