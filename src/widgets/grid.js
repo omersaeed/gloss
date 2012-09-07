@@ -2,13 +2,14 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'bedrock/class',
+    'gloss/util/styleUtils',
     './widget',
     './statefulwidget',
     './grid/row',
     './draggable',
     './tooltip',
     'css!./grid/grid.css'
-], function($, _, Class, Widget, StatefulWidget, Row, Draggable, ToolTip) {
+], function($, _, Class, StyleUtils, Widget, StatefulWidget, Row, Draggable, ToolTip, CssUtils) {
 
     var ResizeHandle = Widget.extend({
         defaults: {
@@ -561,9 +562,7 @@ define([
 
         _generateHideColumnCSS: function() {
             var self= this,
-                hideColumnCss = '',
-                ieHideColumnCss = {selector: '', rule: ''},
-                $lastStyleElement = $('style:last'),
+                hideColumnCss = [],
                 ss = document.styleSheets[document.styleSheets.length-1];
                 
             if (self.hideColumnCssGenerated) {
@@ -571,24 +570,11 @@ define([
             }
                 
             _.each(self.options.colModel, function(col, i) {
-                hideColumnCss = hideColumnCss + '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name + ' { display: none; } ';
-
-                // IE doesn't like style tags to we'll handle adding rules in IE right here.
-                ieHideColumnCss.selector = '#' + self.id + '.hide-col-'+ col.name + ' .col-' + col.name;
-                ieHideColumnCss.rule = 'display:none';
-                if(!ss.insertRule) {
-                    ss.addRule(ieHideColumnCss.selector, ieHideColumnCss.rule, -1);
-                }
+                hideColumnCss.push(['#' + self.id + '.hide-col-'+ col.name + 
+                                    ' .col-' + col.name, ['display', 'none']]);
             });
             
-            // if a style tag exists in the dom then append CSS to the last element otherwise create a new tag for the CSS
-            if (ss.insertRule && $lastStyleElement && $lastStyleElement.length > 0) {
-                $lastStyleElement.html( $lastStyleElement.html() + hideColumnCss);
-            } else {
-                if(ss.insertRule) {
-                    $('<style>').text(hideColumnCss).appendTo('head');
-                }
-            }
+            StyleUtils.addStyleRules(hideColumnCss);
             self.hideColumnCssGenerated = true;
         }
         
