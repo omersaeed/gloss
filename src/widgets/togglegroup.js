@@ -22,7 +22,10 @@
  *
  *      ToggleGroup($node);
  *
-
+ * in the case where you want to taggle between buttons that are not in the
+ * DOM structure above, you can inherit and override the _getButtonNodes()
+ * method, which returns a jquery collection of elements that will be used for
+ * the toggles (i.e. buttons).
  */
 
 define([
@@ -51,7 +54,7 @@ define([
                 self.$node.append($(tmpl(self.options.items)));
             }
 
-            self.buttons = self.$node.children().map(function(i, el) {
+            self.buttons = self._getButtonNodes().map(function(i, el) {
                 return Button(el).on('click', function(evt) {
                     self.setValue(self.buttons[i].getValue());
                 });
@@ -86,6 +89,9 @@ define([
                 }
             });
             return this;
+        },
+        _getButtonNodes: function() {
+            return this.$node.children();
         },
         enable: function(which) {
             return which == null? this._super() : this._enable(true, which);
