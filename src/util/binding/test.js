@@ -9,10 +9,11 @@ define([
     'text!./testDataBindingAttribute.html',
     'text!./testWidgetGroup.html',
     'text!./testMixedBinding.html'
-], function($, _, moment, Model, WidgetGroup, Binding, testDataBindHtml,
+], function($, _, moment, model, WidgetGroup, Binding, testDataBindHtml,
     testWidgetGroup, testMixedBinding) {
 
-    var assertThatModelMatchesUI = function(binding, opts) {
+    var Model = model.Model.extend(),
+        assertThatModelMatchesUI = function(binding, opts) {
         var model = binding.get('model'), modelValue, widgetValue;
         opts = opts || {};
         _.each(binding.get('bindings'), function(b, name) {
@@ -43,19 +44,19 @@ define([
 
     test('explicit binding', function() {
         var $el = $('<span class=bound-field></span>').appendTo('#qunit-fixture'),
-            myModel = Model.Model({myField: 'foo'}),
+            myModel = Model({myField: 'foo'}),
             binding = Binding({
                 model: myModel,
                 bindings: {
-                                                                          
+
                     // this is the model's field name, '.' is expanded to
                     // nested model fields
                     'myField': {
-                                                                          
+
                         // any HTML snippet, either jQuery collection or
                         // bare HTMLElement
                         el: $el
-                                                                          
+
                     }
                 }
             });
@@ -72,7 +73,7 @@ define([
 
     test('automatic binding to some fields in an HTML snippet', function() {
         var $el = $(testDataBindHtml).appendTo('#qunit-fixture'),
-            myModel = Model.Model({field1: 'before set'}),
+            myModel = Model({field1: 'before set'}),
             binding = Binding({
                 el: $el,
                 model: myModel
@@ -92,7 +93,7 @@ define([
     test('automatic binding to widget', function() {
         var $el = $(testWidgetGroup).appendTo('#qunit-fixture'),
             wg = WidgetGroup($el, {widgetize: true}),
-            myModel = Model.Model({email: 'foo@example.com'}),
+            myModel = Model({email: 'foo@example.com'}),
             binding = Binding({widget: wg, model: myModel});
 
         equal(_.keys(binding.get('bindings')).length, 3);
@@ -115,7 +116,7 @@ define([
     test('automatic binding to widget and HTML w/ `data-bind` attrs', function() {
         var $el = $(testMixedBinding).appendTo('#qunit-fixture'),
             wg = WidgetGroup($el, {widgetize: true}),
-            myModel = Model.Model({
+            myModel = Model({
                 email: 'foo@example.com',
                 birthday: '1985-05-11'
             }),
@@ -125,7 +126,7 @@ define([
             if (changed.firstname || changed.lastname) {
                 myModel.set('fullname',
                     (myModel.get('firstname') || '') +
-                    ' ' + 
+                    ' ' +
                     (myModel.get('lastname') || ''));
             }
         });
@@ -147,7 +148,7 @@ define([
 
     test('nested attribute', function() {
         var $el = $('<span class=bound-field></span>').appendTo('#qunit-fixture'),
-            myModel = Model.Model({
+            myModel = Model({
                 myModelField: {
                     subField: 'foo'
                 }
@@ -155,15 +156,15 @@ define([
             binding = Binding({
                 model: myModel,
                 bindings: {
-                                                                          
+
                     // this is the model's field name, '.' is expanded to
                     // nested model fields
                     'myModelField.subField': {
-                                                                          
+
                         // any HTML snippet, either jQuery collection or
                         // bare HTMLElement
                         el: $el
-                                                                          
+
                     }
                 }
             });

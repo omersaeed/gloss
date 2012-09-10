@@ -6,9 +6,10 @@ define([
     'bedrock/events',
     'mesh/model',
     'mesh/collection'
-], function($, _, t, Class, events, Model, collection) {
+], function($, _, t, Class, events, model, collection) {
 
-    var Node = Class.extend({
+    var Model = model.Model.extend(),
+        Node = Class.extend({
         defaults: {
             // this is the argument that is used to instantiate the collection
             collectionArgs: { },
@@ -21,7 +22,7 @@ define([
         init: function(model, options) {
             var self = this;
 
-            self.model = model || Model.Model();
+            self.model = model || Model();
             self.options = $.extend(true, {}, self.defaults, options);
 
             // set the parent via the options in the constructor, but then
@@ -54,7 +55,7 @@ define([
                             _.each(pushedAttrs, function(pushedAttr) {
                                 childModel.set(pushedAttr, model[pushedAttr], {silent: true});
                             });
-                        } : 
+                        } :
                         function(childModel, pushedAttr) {
                             childModel.set(pushedAttr, model[pushedAttr], {silent: true});
                         };
@@ -371,7 +372,7 @@ define([
 
         init: function(options) {
             this.options = $.extend(true, {}, this.defaults, options);
-            this.root = Node(Model.Model(), {
+            this.root = Node(Model(), {
                 collectionArgs: $.extend(true, {}, this.options.collectionArgs),
                 tree: this
             });
@@ -399,7 +400,7 @@ define([
 
         deltas: function(asTree, includeNodeRef) {
             var flat = [], ret, self = this, root = self.root;
-           
+
             ret = t.dfs(self.root, {order: 'post'}, function(node, par, ctrl, ret) {
                 var filePlanId = self.options.collectionArgs.query.file_plan_id,
                     result = {

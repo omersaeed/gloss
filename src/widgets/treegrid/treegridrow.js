@@ -14,8 +14,8 @@ define([
             indentText: '&nbsp;&nbsp;&nbsp;&nbsp;'
         },
 
-        __new__: function() {
-            var i, l, col, defaults = this.defaults, colModel = defaults.colModel;
+        __new__: function(constructor, base, prototype) {
+            var i, l, col, defaults = prototype.defaults, colModel = defaults.colModel;
             if (colModel) {
                 for (i = 0, l = colModel.length; i < l; i++) {
                     col = colModel[i];
@@ -36,7 +36,11 @@ define([
                 selector: '.expand',
                 callback: 'onClickExpand'
             });
-            this._super.apply(this, arguments);
+
+            // we need to run the Widget.prototype.__new__ method as well so
+            // that the derived class's 'defaults' is extended with this
+            // class's 'defaults'
+            Widget.prototype.__new__.apply(this, arguments);
         },
 
         create: function() {

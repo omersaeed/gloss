@@ -376,7 +376,7 @@ define([
 
             this.options = opts = recursiveMerge({}, this.defaults, options);
 
-            BaseWidget.prototype.init.call(this, node);
+            this._super.apply(this, arguments);
 
             $node = this.$node;
 
