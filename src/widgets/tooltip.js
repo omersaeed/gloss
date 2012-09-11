@@ -30,7 +30,11 @@ define([
             }
             this._postDelayed = false;
 
-            this.$node.hide();
+            if ($.isArray(this.options.animation)) {
+                this.$node.fadeOut.apply(this.$node, this.options.animation);
+            } else {
+                this.$node.hide();
+            }
             this.visible = false;
             return this;
         },
@@ -58,7 +62,7 @@ define([
             this.place(position);
 
             if($.isArray(options.animation)) {
-                this.$node.show.apply(this.$node, options.animation);
+                this.$node.fadeIn.apply(this.$node, options.animation);
             } else {
                 this.$node.show();
             }
