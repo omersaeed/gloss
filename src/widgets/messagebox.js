@@ -17,23 +17,20 @@ define([
             cancelBtnEvent: 'cancel', // to rename the button event, provide a name here
             okBtnClass: 'ok', // to rename the OK button class, provide a name here
             cancelBtnClass: 'cancel', // to rename Cancel button class, provide a name here
-            style: '' // provide a style here. the style will be directly applied to the messagebox icon class if provided. 
+            style: '' // provide a style here. the style will be directly applied to the messagebox icon class if provided.
         },
-        
+
         create: function() {
             var self = this;
             this._super();
-               
-            // Append message body
-            self.$node.find('.message-text').append(self.options.body);
-            
+
             if (self.options.cancelBtn !== '') {
                 Button($('<button class="'+self.options.cancelBtnClass+'">'+self.options.cancelBtn+'</button>').appendTo(self.$node.find('.buttons')))
                     .on('click', self.cancel);
             }
 
             if (self.options.okBtn !== '') {
-                Button($('<button class="'+self.options.okBtnClass+'">'+ 
+                Button($('<button class="'+self.options.okBtnClass+'">'+
                         self.options.okBtn+'</button>').appendTo(self.$node.find('.buttons')))
                     .on('click', self.ok);
             }
@@ -41,18 +38,25 @@ define([
                 self.$node.find('.message-icon').addClass(self.options.style);
                 self.$node.find('.message-text').addClass('message-body-with-icon');
             }
+            self.update();
         },
-        
+
         ok: function() {
             var self = this;
             self.trigger(self.options.okBtnEvent);
             self.close();
         },
-        
+
         cancel: function() {
             var self = this;
             self.trigger(self.options.cancelBtnEvent);
             self.close();
+        },
+        updateWidget: function(updated) {
+            if (updated.body) {
+                // Append message body
+                this.$node.find('.message-text').html(this.options.body);
+            }
         }
-    });    
+    });
 });
