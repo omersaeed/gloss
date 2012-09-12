@@ -1,27 +1,45 @@
 define([
     'vendor/jquery',
-    'bedrock/class'
-], function ($, Class) {
+    'vendor/underscore',
+    'bedrock/class',
+    'bedrock/settable'
+], function ($, _, Class, Settable) {
+
+    var tmpl = function(tmpl) {
+        return function(model, gridInstance, prop, nameAttr) {
+            var val;
+            prop = prop || '_checked';
+            val = model.get? model.get(prop) : model[prop];
+            return tmpl.replace('%s', val || '').replace('%n', nameAttr);
+        };
+    };
 
     return Class.extend({
 
-        init: function(node) {
-            this.name = '_checked';
-            this.label = "<input class=checkbox-column type=checkbox />";
-            this.events = [
-                {
-                    on: 'click',
-                    selector: 'th.col-_checked .checkbox-column',
-                    callback: 'headerChecked'
-                },
-                {
-                    on: 'click',
-                    selector: 'td.col-_checked .checkbox-column',
-                    callback: 'rowChecked'
-                }
-            ],
-            this.render = this._render;
-            this.rerender = this._rerender;
+        defaults: {
+            name: '_checked',
+            checkboxTemplate: tmpl('<input type=checkbox class=checkbox-column %s />'),
+            radioTemplate: tmpl('<input type=radio name="%n" class=checkbox-column %s />'),
+            type: 'checkbox' // set to 'radio' for radio buttons
+        },
+
+        events: [
+            {
+                on: 'click',
+                selector: 'th.col-_checked .checkbox-column',
+                callback: 'headerChecked'
+            },
+            {
+                on: 'click',
+                selector: 'td.col-_checked .checkbox-column',
+                callback: 'rowChecked'
+            }
+        ],
+
+        init: function(opts) {
+            this.set($.extend(true, {
+                nameAttr: _.uniqueId('grid-checkbox-column')
+            }, this.defaults, opts));
         },
         headerChecked: function(evt, grid) {
             // add retard timeout otherwise .trigger in testing screws things up
@@ -58,20 +76,19 @@ define([
         rowChecked: function(evt, grid) {
             $(this.events[0].selector).attr('checked', false);
         },
-        _render: function(col, colValue, model) {
-            if(model._checked) {
-                return '<input class=checkbox-column type=checkbox checked />';
-            }
-            return '<input class=checkbox-column type=checkbox />';
-
-
+        render: function(col, colValue, model) {
+            return this.get('tmpl')(model, this.get('nameAttr'));
         },
-        _rerender: function(col, td, colValue, model) {
-            if(model._checked) {
-                td.innerHTML = '<input class=checkbox-column type=checkbox checked />';
-                return
+        rerender: function(col, td, colValue, model) {
+            td.innerHTML = this.render(col, colValue, model);
+        },
+        _settableProperty: null,
+        _settableOnChange: function(changed) {
+            if (changed.type) {
+                this.set('tmpl', this.get(this.get('type') + 'Template'));
+                this.set('label', this.get('type') === 'checkbox'?
+                        this.render(null, null, {}) : '');
             }
-            td.innerHTML = '<input class=checkbox-column type=checkbox />';
         }
-    });
+    }, {mixins: [Settable]});
 });
