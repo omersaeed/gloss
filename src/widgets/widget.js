@@ -362,7 +362,23 @@ define([
                         prototype._updateWidgetMixins.push(mixin.__updateWidget__);
                     }
                     if (mixin.defaults) {
-                        prototype.defaults = recursiveMerge(prototype.defaults, mixin.defaults);
+                        var intermediate = {},
+                            addedKeys = _.difference(
+                                _.keys(prototype.defaults),
+                                _.keys(base.prototype.defaults)),
+                            overriddenKeys = _.intersection(addedKeys, _.keys(mixin.defaults));
+
+                        recursiveMerge(intermediate, prototype.defaults, mixin.defaults);
+                        for (var k in overriddenKeys) {
+                            if (overriddenKeys.hasOwnProperty(k)) {
+                                if (isPlainObject(prototype.defaults[overriddenKeys[k]])) {
+                                    recursiveMerge(intermediate[overriddenKeys[k]], prototype.defaults[overriddenKeys[k]]);
+                                } else {
+                                    intermediate[overriddenKeys[k]] = prototype.defaults[overriddenKeys[k]];
+                                }
+                            }
+                        }
+                        prototype.defaults = intermediate;
                     }
                 }
             }
