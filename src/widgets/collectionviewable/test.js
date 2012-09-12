@@ -26,6 +26,7 @@ define([
     Mock(TargetVolumeProfile, JSON.parse(tvpFixture));
 
     asyncTest('setting collection correctly populates grid', function() {
+        TargetVolumeProfile.models.clear();
         var grid = GridClass(undefined, {
             collection: TargetVolumeProfile.collection()
         });
@@ -39,6 +40,7 @@ define([
     });
 
     asyncTest('setting collection to null clears grid', function() {
+        TargetVolumeProfile.models.clear();
         var grid = GridClass(undefined, {
             collection: TargetVolumeProfile.collection()
         });
@@ -46,6 +48,30 @@ define([
             equal(grid.options.rows.length, 10);
             grid.set('collection', null);
             equal(grid.options.rows.length, 0);
+            start();
+        });
+    });
+
+    asyncTest('collectionMap is called in the context of the object', function() {
+        TargetVolumeProfile.models.clear();
+        var collectionMapRan = false,
+            GridClass2 = GridClass.extend({
+                defaults: {
+                    collectionMap: function(models) {
+                        ok(_.isFunction(this.someRandomMethod),
+                            'context in collectionMap is the instance');
+                        collectionMapRan = true;
+                        return models;
+                    }
+                },
+                someRandomMethod: function() {}
+            }),
+            grid = GridClass2(null, {
+                collection: TargetVolumeProfile.collection()
+            });
+
+        grid.options.collection.load().done(function() {
+            equal(collectionMapRan, true);
             start();
         });
     });

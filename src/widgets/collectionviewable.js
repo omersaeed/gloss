@@ -25,7 +25,8 @@ define([
 
                         state._loadResolved = true;
 
-                        self.set('models', collectionMap(collection.currentPage()));
+                        self.set('models',
+                            collectionMap.call(self, collection.currentPage()));
                         _.each(self.options.entries, function(entry) {
                             // use type coercion in case it's an int
                             if (_.isFunction(self.setValue) && entry.value == startingValue) {
@@ -57,7 +58,8 @@ define([
                     collection.on('update', function(evtName, theCollection) {
                         if ((state._loadResolved && state._updateFired) ||
                             !state._loadResolved) {
-                            self.set('models', collectionMap(collection.currentPage()));
+                            self.set('models',
+                                collectionMap.call(self, collection.currentPage()));
                         }
                         state._updateFired = true;
                     });
