@@ -96,8 +96,11 @@ define([
                             this[col.rerender](col, td, grid.getColumnValue(model, col.name), model);
                         }
                     } else if (col.render) {
-//                        tds[i].innerHTML = this[col.render](col, model);
-                            tds[i].innerHTML = this[col.render](col, grid.getColumnValue(model, col.name));
+                        if (_.isFunction(col.render)) {
+                            tds[i].innerHTML = col.render(col, grid.getColumnValue(model, col.name), model);
+                        } else {
+                            tds[i].innerHTML = this[col.render](col, grid.getColumnValue(model, col.name), model);
+                        }
                     } else {
                         if (td.innerText != null) {
                             tds[i].innerText = grid.getColumnValue(model, col.name) || '';
