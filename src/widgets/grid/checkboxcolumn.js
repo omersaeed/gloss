@@ -20,7 +20,8 @@ define([
             name: '_checked',
             checkboxTemplate: tmpl('<input type=checkbox class=checkbox-column %s />'),
             radioTemplate: tmpl('<input type=radio name="%n" class=checkbox-column %s />'),
-            type: 'checkbox' // set to 'radio' for radio buttons
+            type: 'checkbox', // set to 'radio' for radio buttons
+            state: null // set to 'checked' for dafualt checked state
         },
 
         events: [
@@ -37,6 +38,10 @@ define([
         ],
 
         init: function(opts) {
+            if(opts && opts.state === 'checked') {
+                opts.checkboxTemplate = tmpl('<input type=checkbox checked=checked class=checkbox-column %s />');
+                opts.radioTemplate = tmpl('<input type=radio checked=checked name="%n" class=checkbox-column %s />');
+            }
             this.set($.extend(true, {
                 nameAttr: _.uniqueId('grid-checkbox-column')
             }, this.defaults, opts));
