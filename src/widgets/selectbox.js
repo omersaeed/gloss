@@ -33,7 +33,10 @@ define([
                 self.$node.children().each(function(i, el) {
                     var $el = $(el),
                         entries = options.entries = options.entries || [];
-                    entries.push({content: $el.text(), value: $el.val()});
+                    entries.push({
+                        content: $el.text(),
+                        value: $el.val()
+                    });
                     if ($el.is(':selected')) {
                         self.entry = _.last(entries);
                     }
@@ -56,6 +59,7 @@ define([
             }
             self.$node.append('<span class=arrow>&#x25bc;</span>');
             self.$text = $('<span class=content></span>')
+                .attr('title', self.entry && (self.entry.title || self.entry.content))
                 .html(self.entry ? self.entry.content : '')
                 .appendTo(self.$node);
 
@@ -109,7 +113,9 @@ define([
             }
             if(value != null) {
                 this.entry = value;
-                this.$text.html(this.entry.content);
+                this.$text
+                    .attr('title', this.entry.title || this.entry.content)
+                    .html(this.entry.content);
                 if(!silent) {
                     this.trigger('change');
                 }

@@ -62,6 +62,23 @@ define([
         equal(selectbox.$node.attr('id'), selectbox.id);
     });
 
+    test('selectbox should show tooltip for overflowing text', function() {
+        var text = 'some really long friggin description of what is going on this has to be overkill omg who is the ux designer in this place',
+            sb1 = SelectBox(null, {
+                entries: [{
+                    content: text,
+                    value: 'overkill'
+                }],
+                width: 100
+            }).appendTo('#qunit-fixture'),
+            sb2 = SelectBox(
+                $('<select><option value=overkill>'+text+'</option></select>')
+            ).appendTo('#qunit-fixture');
+
+        equal(sb1.$node.find('span.content').attr('title'), text);
+        equal(sb2.$node.find('span.content').attr('title'), text);
+    });
+
     asyncTest('selectbox with collection at instantiation time loads', function() {
         var sb = SelectBox(undefined, {
             collection: TargetVolume.collection()
