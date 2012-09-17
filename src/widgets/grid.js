@@ -3,13 +3,15 @@ define([
     'vendor/underscore',
     'bedrock/class',
     'gloss/util/styleUtils',
+    'gloss/util/sort',
     './widget',
     './statefulwidget',
     './grid/row',
     './draggable',
     './tooltip',
     'css!./grid/grid.css'
-], function($, _, Class, StyleUtils, Widget, StatefulWidget, Row, Draggable, ToolTip, CssUtils) {
+], function($, _, Class, StyleUtils, sort, Widget, StatefulWidget, Row,
+    Draggable, ToolTip, CssUtils) {
 
     var ResizeHandle = Widget.extend({
         defaults: {
@@ -180,7 +182,7 @@ define([
                 } else if (typeof bVal === 'undefined') {
                     result = 1;
                 } else {
-                    result = ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
+                    result = sort.userFriendly(aVal, bVal);
                 }
 
                 result *= colOrder === 'asc'? 1 : -1;
