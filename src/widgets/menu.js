@@ -14,13 +14,12 @@ define([
         create: function() {
             var self = this;
             self._super();
-            
+
             self.$node.addClass('menu').hide();
             self.$entries = $('<ul>').appendTo(self.$node);
 
             self.$node.on('click', 'li', function(event) {
                 self.select($(this).data('entry'));
-                return false;
             });
         },
         select: function(entry) {
