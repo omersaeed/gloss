@@ -214,14 +214,6 @@ define([
             self.options.colModel =
                 self.options.rowWidgetClass.prototype.defaults.colModel;
 
-            _.each(self.options.colModel, function(col) {
-                _.each(col.events, function(evt) {
-                    self.on(evt.on, (evt.selector || ''), function(e) {
-                        col[evt.callback](e, self);
-                    });
-                });
-            });
-
             self.col = _.reduce(self.options.colModel, function(cols, col) {
                 cols[col.name] = col;
                 return cols;
@@ -241,6 +233,7 @@ define([
                     }
                 });
             });
+            self._setColModelEvents(self.options.rows);
             self._buildHeader();
         },
 
@@ -251,6 +244,19 @@ define([
                     return rows[i];
                 }
             }
+        },
+
+        _setColModelEvents: function(rows) {
+            var self = this;
+            _.each(rows, function(row) {
+                _.each(self.options.colModel, function(col) {
+                    _.each(col.events, function(evt) {
+                        self.on(evt.on, (evt.selector || ''), function(e) {
+                            col[evt.callback](e, self, row);
+                        });
+                    });
+                });
+            });
         },
 
         _setModels: function() {
@@ -324,6 +330,7 @@ define([
             if (attachTbodyToTable) {
                 this.$table.__append__($tbody);
             }
+            this._setColModelEvents(rows);
             // console.log('render time for',this.id,':',new Date() - startTime);
         },
 
