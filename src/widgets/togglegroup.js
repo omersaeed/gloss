@@ -83,6 +83,7 @@ define([
             });
         },
         _enable: function(enable, which) {
+            this.$node.removeAttr('disabled');
             _.each(this.buttons, function(button) {
                 if (which[button.getValue()]) {
                     button[enable? 'enable' : 'disable']();
