@@ -2,6 +2,7 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    './../widget',
     './../grid',
     './../grid/row',
     './../collectionviewable',
@@ -9,8 +10,8 @@ define([
     './../../test/api/v1/targetvolumeprofile',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Grid, Row, CollectionViewable, Mock, TargetVolumeProfile,
-    Example, tvpFixture) {
+], function($, _, Widget, Grid, Row, CollectionViewable, Mock,
+    TargetVolumeProfile, Example, tvpFixture) {
 
     var RowClass = Row.extend({
             defaults: {
@@ -215,6 +216,43 @@ define([
                     start();
                 }, 15);
             }, 15);
+        });
+    });
+
+    asyncTest('resetting collection clears event handlers', function() {
+        Example.models.clear();
+        var w, count = 0,
+            MyWidget = Widget.extend({
+                updateWidget: function(updated) {
+                    if (updated.models) {
+                        count++;
+                    }
+                }
+            }, {mixins: [CollectionViewable]}),
+            c1 = window.c1 = Example.collection(),
+            c2 = window.c2 = Example.collection();
+
+        c1.query.request.ajax = dummyAjax;
+        c2.query.request.ajax = dummyAjax;
+
+        // load both of these b/c sometimes we get an extra (mostly harmless)
+        // call to `.set('models', ...)` if we don't
+        c1.load();
+        c2.load();
+
+        w = MyWidget(null).set({collection: c1});
+
+        c1.load().then(function() {
+            equal(count, 1, 'first load from c1 should set models');
+            w.set('collection', c2);
+            c2.load().then(function() {
+                equal(count, 2, 'first load from c2 should set models');
+                c1.trigger('update');
+                setTimeout(function() {
+                    equal(count, 2, 'triggering update on c1 shouldnt set models');
+                    start();
+                }, 50);
+            });
         });
     });
 
