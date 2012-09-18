@@ -43,7 +43,7 @@ define([
             }
         },
         __updateWidget__: function(updated) {
-            var self = this, state,
+            var self = this, state, cb,
                 options = self.options,
                 collection = options.collection,
                 collectionMap = options.collectionMap;
@@ -52,10 +52,17 @@ define([
             state = self._collectionViewableState;
 
             if (updated.collection) {
+
+                // first the cleanup
+                if (self._collectionViewableLast) {
+                    self._collectionViewableLast.off('update', cb);
+                }
+                self._collectionViewableLast = collection;
+
                 self._updateCollection();
                 if(collection) {
                     // Add listener on the collection to handle further updates
-                    collection.on('update', function(evtName, theCollection) {
+                    collection.on('update', cb = function(evtName, theCollection) {
                         if ((state._loadResolved && state._updateFired) ||
                             !state._loadResolved) {
                             self.set('models',

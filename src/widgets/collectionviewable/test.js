@@ -232,8 +232,7 @@ define([
             c1 = window.c1 = Example.collection(),
             c2 = window.c2 = Example.collection();
 
-        c1.query.request.ajax = dummyAjax;
-        c2.query.request.ajax = dummyAjax;
+        c1.query.request.ajax = c2.query.request.ajax = dummyAjax;
 
         // load both of these b/c sometimes we get an extra (mostly harmless)
         // call to `.set('models', ...)` if we don't
