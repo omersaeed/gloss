@@ -1,6 +1,11 @@
 define([
     'vendor/underscore'
 ], function(_) {
+    var normalize = function(text) {
+        return text.toString().toLowerCase()
+            .replace(/^\W+/, '').replace(/\W+$/, '');
+    };
+
     return {
         // this function is a comparator intended to be passed to Array#sort()
         //
@@ -26,8 +31,8 @@ define([
                 return 1;
             }
             if (!_.isNumber(a) || !_.isNumber(b)) {
-                a = a.toString().replace(/^\W+/, '').replace(/\W+$/, '');
-                b = b.toString().replace(/^\W+/, '').replace(/\W+$/, '');
+                a = normalize(a);
+                b = normalize(b);
             }
             return ((a < b) ? -1 : ((a > b) ? 1 : 0));
         }
