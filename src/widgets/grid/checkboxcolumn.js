@@ -47,23 +47,29 @@ define([
             }, this.defaults, opts));
         },
 
-        headerChecked: function(evt, grid, row) {
+        headerChecked: function(evt, grid) {
             var models,
+                collection = grid.options.collection,
                 checked = $(evt.target).attr('checked') ? true : false;
 
             var rows = grid.options.rows;
             for(var i=0, l=rows.length; i < l; i++) {
-                rows[i].$node.find('.checkbox-column').prop('checked', checked);
-                rows[i].set('_checked', checked);
+                rows[i].$node.find('.checkbox-column').attr('checked', checked);
+                // set models silently
+                rows[i].options.model.set('_checked', checked, {silent: true});
             }
+            // fire one change event
+            collection.trigger('change');
         },
 
         rowChecked: function(evt, grid, row) {
-            var checked = $(evt.target).attr('checked') ? true : false;
+            var $header = grid.$node.find('th.col-_checked [type=checkbox]'),
+                checked = $(evt.target).attr('checked') ? true : false;
+
             // uncheck the header
-            $(this.events[0].selector).attr('checked', false);
+            $header.attr('checked', false);
             // set the model property
-            row.set('_checked', checked);
+            row.options.model.set('_checked', checked);
         },
 
         render: function(col, colValue, model) {

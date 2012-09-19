@@ -611,21 +611,49 @@ define([
     }, {mixins: [CollectionViewable]});
 
     var allRowsSelected = function(grid) {
-        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column'),
+            models = grid.options.models;
+
         for(var i=0, l=$checkedColTds.length; i < l; i++) {
             if(!$($checkedColTds[i]).prop('checked')) {
                 return false;
             }
         }
+        // check the model props
+        if (!allModelsChecked(models)) return false;
         return true;
     };
     var noRowsSelected = function(grid) {
-        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+        var $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column'),
+            models = grid.options.models;
+
+        // check the el props
         for(var i=0, l=$checkedColTds.length; i < l; i++) {
-            if($($checkedColTds[i]).prop('checked')) {
+            
+            if ($($checkedColTds[i]).prop('checked')) {
                 return false;
             }
         }
+        // check the model props
+        if (!noModelsChecked(models)) return false;
+        return true;
+    };
+    var allModelsChecked = function(models) {
+        models.forEach(function(model) {
+            var checked = model.get('_checked');
+            if ((checked == null) || (checked === false)) {
+                return false;
+            }
+        });
+        return true;
+    };
+    var noModelsChecked = function(models) {
+        models.forEach(function(model) {
+            var checked = model.get('_checked');
+            if ((checked != null) && (checked !== false)) {
+                return false;
+            }
+        });
         return true;
     };
     var simulateCheckboxClick = function($el) {
@@ -674,6 +702,36 @@ define([
             }, 50);
         });
     });
+
+    asyncTest('checkable grid listen to collection changes', function() {
+        TargetVolumeProfile.models.clear();
+        var limit = 10,
+            grid = CheckableGrid(),
+            collection = TargetVolumeProfile.collection({query: {limit: limit}});
+
+        grid.set({
+            collection: collection
+        });
+
+        grid.appendTo($('#qunit-fixture'));
+        // grid.appendTo($('body'));
+        ok(grid, 'grid instantiated');
+
+        collection.on('update change', function() {
+            var models = grid.options.models;
+            ok(allModelsChecked(models), 'all rows selected after checking header checkbox');
+        });
+
+        collection.load().done(function() {
+            var $checkedColTh = grid.$node.find('th.col-_checked .checkbox-column'),
+                $checkedColTds = grid.$node.find('td.col-_checked .checkbox-column');
+
+            // all row checked
+            simulateCheckboxClick($checkedColTh);
+            start();
+        });
+    });
+
     asyncTest('checkable grid from model', function() {
         var limit = 50, grid = CheckableGrid(), collection = TargetVolumeProfile.collection();
 

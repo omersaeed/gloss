@@ -235,8 +235,8 @@ define([
                     }
                 });
             });
-            self._setColModelEvents(self.options.rows);
             self._buildHeader();
+            self._setColModelEvents(self.options.rows);
         },
 
         _rowInstanceFromTrElement: function(el) {
@@ -253,7 +253,7 @@ define([
             _.each(rows, function(row) {
                 _.each(self.options.colModel, function(col) {
                     _.each(col.events, function(evt) {
-                        self.on(evt.on, (evt.selector || ''), function(e) {
+                        self.on(evt.on, ('#' + row.id + ' ' + evt.selector || ''), function(e) {
                             col[evt.callback](e, self, row);
                         });
                     });
