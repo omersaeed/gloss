@@ -18,6 +18,13 @@ define([
         //     "def"
         //
         userFriendly: function(a, b) {
+            if (a == null && b == null) {
+                return 0;
+            } else if (a == null) {
+                return -1;
+            } else if (b == null) {
+                return 1;
+            }
             if (!_.isNumber(a) || !_.isNumber(b)) {
                 a = a.toString().replace(/^\W+/, '').replace(/\W+$/, '');
                 b = b.toString().replace(/^\W+/, '').replace(/\W+$/, '');
