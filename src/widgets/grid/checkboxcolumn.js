@@ -38,7 +38,7 @@ define([
         ],
 
         init: function(opts) {
-            if(opts && opts.state === 'checked') {
+            if (opts && opts.state === 'checked') {
                 opts.checkboxTemplate = tmpl('<input type=checkbox checked=checked class=checkbox-column %s />');
                 opts.radioTemplate = tmpl('<input type=radio checked=checked name="%n" class=checkbox-column %s />');
             }
@@ -54,7 +54,7 @@ define([
                 checked = $(evt.target).attr('checked') ? true : false,
                 rows = grid.options.rows;
 
-            for(var i=0, l=rows.length; i < l; i++) {
+            for (var i=0, l=rows.length; i < l; i++) {
                 rows[i].$node.find('.checkbox-column').attr('checked', checked);
                 // set models silently
                 rows[i].options.model.set('_checked', checked, {silent: true});

@@ -714,8 +714,8 @@ define([
             collection: collection
         });
 
-        // grid.appendTo($('#qunit-fixture'));
-        grid.appendTo($('body'));
+        grid.appendTo($('#qunit-fixture'));
+        // grid.appendTo($('body'));
         ok(grid, 'grid instantiated');
 
         collection.on('update change', function() {
