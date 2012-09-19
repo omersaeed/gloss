@@ -18,12 +18,11 @@ define([
         //     "def"
         //
         userFriendly: function(a, b) {
-            var normA, normB;
             if (!_.isNumber(a) || !_.isNumber(b)) {
-                normA = a.toString().replace(/^\W+/, '').replace(/\W+$/, '');
-                normB = b.toString().replace(/^\W+/, '').replace(/\W+$/, '');
+                a = a.toString().replace(/^\W+/, '').replace(/\W+$/, '');
+                b = b.toString().replace(/^\W+/, '').replace(/\W+$/, '');
             }
-            return ((normA < normB) ? -1 : ((normA > normB) ? 1 : 0));
+            return ((a < b) ? -1 : ((a > b) ? 1 : 0));
         }
     };
 });
