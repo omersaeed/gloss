@@ -707,19 +707,22 @@ define([
         TargetVolumeProfile.models.clear();
         var limit = 10,
             grid = CheckableGrid(),
-            collection = TargetVolumeProfile.collection({query: {limit: limit}});
+            collection = TargetVolumeProfile.collection({query: {limit: limit}}),
+            callCount = 0;
 
         grid.set({
             collection: collection
         });
 
-        grid.appendTo($('#qunit-fixture'));
-        // grid.appendTo($('body'));
+        // grid.appendTo($('#qunit-fixture'));
+        grid.appendTo($('body'));
         ok(grid, 'grid instantiated');
 
         collection.on('update change', function() {
             var models = grid.options.models;
-            ok(allModelsChecked(models), 'all rows selected after checking header checkbox');
+            // ok(allModelsChecked(models), 'all rows selected after checking header checkbox');
+            ok(allRowsSelected(grid), 'all rows selected after checking header checkbox');
+            callCount++;
         });
 
         collection.load().done(function() {
@@ -728,7 +731,11 @@ define([
 
             // all row checked
             simulateCheckboxClick($checkedColTh);
-            start();
+            setTimeout(function() {
+                // I don't know why but the simiulated click causes two calls
+                equal(callCount, 2, 'callback event once');
+                start();
+            }, 500);
         });
     });
 

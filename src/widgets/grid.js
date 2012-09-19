@@ -250,12 +250,21 @@ define([
 
         _setColModelEvents: function(rows) {
             var self = this;
-            _.each(rows, function(row) {
-                _.each(self.options.colModel, function(col) {
-                    _.each(col.events, function(evt) {
-                        self.on(evt.on, ('#' + row.id + ' ' + evt.selector || ''), function(e) {
-                            col[evt.callback](e, self, row);
-                        });
+            _.each(self.options.colModel, function(col) {
+                _.each(col.events, function(evt) {
+                    self.on(evt.on, 'tr ' + (evt.selector || ''), function(e) {
+                        var $tr, row, rows = self.options.rows, $el = $(this);
+                        if ($el[0].tagName.toLowerCase() === 'tr') {
+                            $tr = $el;
+                        } else {
+                            $tr = $el.closest('tr');
+                        }
+                        row = self._rowInstanceFromTrElement($tr[0]);
+                        if (row) {
+                            col[evt.callback].apply(row, arguments);
+                        } else {
+                            col[evt.callback].apply(self, arguments);
+                        }
                     });
                 });
             });
