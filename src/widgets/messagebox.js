@@ -42,9 +42,11 @@ define([
         },
 
         ok: function() {
-            var self = this;
-            self.trigger(self.options.okBtnEvent);
-            self.close();
+            var self = this, evt;
+            self.trigger(evt = $.Event(self.options.okBtnEvent));
+            if (!evt.isDefaultPrevented()) {
+                self.close();
+            }
         },
 
         cancel: function() {
