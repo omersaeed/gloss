@@ -1,6 +1,7 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    './widget',
     './formwidget',
     './collectionviewable',
     './button',
@@ -8,7 +9,27 @@ define([
     './basemenu',
     'tmpl!./multiselect/multiselect.mtpl',
     'css!./multiselect/multiselect.css'
-], function($, _, FormWidget, CollectionViewable, Button, CheckBoxGroup, BaseMenu, template) {
+], function($, _, Widget, FormWidget, CollectionViewable, Button,
+    CheckBoxGroup, BaseMenu, template) {
+
+    var BaseMenuUnderRoundedCorners = BaseMenu.extend({
+        _getWidth: function() {
+            var left = 0, right = 0, w = this.options.width;
+            if (w instanceof Widget) {
+                left = parseInt(w.$node.css('border-bottom-left-radius') || 0, 10);
+                right = parseInt(w.$node.css('border-bottom-right-radius') || 0, 10);
+            }
+            return this._super() - left - right;
+        },
+        _getPosition: function() {
+            var left = 0, w = this.options.width;
+            if (w instanceof Widget) {
+                left = parseInt(w.$node.css('border-bottom-left-radius') || 0, 10);
+            }
+            return $.extend({offset: left + ' 0'}, this.options.position);
+        }
+    });
+
     return FormWidget.extend({
         nodeTemplate: template,
         defaults: {
@@ -26,7 +47,8 @@ define([
         },
 
         create: function() {
-            var self = this, options = self.options, $replacement;
+            var $replacement, self = this, options = self.options;
+
             this._super();
 
             if (options.entries == null) {
@@ -71,9 +93,9 @@ define([
                 self.menu.hide();
             });
 
-            self.menu = BaseMenu(self.$node.find('.base-menu'), {
+            self.menu = BaseMenuUnderRoundedCorners(self.$node.find('.base-menu'), {
+                width: self.selectBox,
                 position: {my: 'left top', at: 'left bottom', of: self.$node},
-                width: self.$node,
                 updateDisplay: true
             });
 

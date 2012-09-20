@@ -37,6 +37,17 @@ define([
             this.trigger('hide');
             return this;
         },
+        _getPosition: function() {
+            return this.options.position;
+        },
+        _getWidth: function() {
+            var options = this.options, $node = this.$node;
+            if(options.width instanceof Widget) {
+                return Widget.measureMatchingWidth($node, options.width.$node);
+            } else if(options.width != null) {
+                return options.width;
+            }
+        },
         show: function(params) {
             var $node = this.$node, options = this.options, self = this;
             if(this.shown) {
@@ -48,12 +59,7 @@ define([
                 }
             }
 
-            var width = null;
-            if(options.width instanceof Widget) {
-                width = Widget.measureMatchingWidth($node, options.width.$node);
-            } else if(options.width != null) {
-                width = options.width;
-            }
+            var width = self._getWidth();
             if(width != null) {
                 $node.width(width);
             }
@@ -62,7 +68,7 @@ define([
             if(params != null && params.position != null) {
                 position = params.position;
             } else if(options.position) {
-                position = options.position;
+                position = self._getPosition();
             }
             if(position != null) {
                 this.place(position);
