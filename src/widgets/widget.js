@@ -407,7 +407,7 @@ define([
                     if (opts.hasOwnProperty(name)) {
                         value = opts[name];
                         if (name.substr(0, 2) === 'on' && $.isFunction(value)) {
-                            $node.on(name.substr(2).toLowerCase(), value);
+                            $node.on(name.substr(2).toLowerCase(), _.bind(value, this));
                         }
                     }
                 }
