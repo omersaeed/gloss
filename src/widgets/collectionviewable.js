@@ -16,6 +16,7 @@ define([
 
             if(typeof collection !== 'undefined') {
                 if (self.disable) {
+                    state._disabledForLoad = true;
                     self.disable();
                 }
                 if (collection) {
@@ -67,6 +68,12 @@ define([
                             !state._loadResolved) {
                             self.set('models',
                                 collectionMap.call(self, collection.currentPage()));
+                            if (state._disabledForLoad) {
+                                state._disabledForLoad = null;
+                                if (self.enable) {
+                                    self.enable();
+                                }
+                            }
                         }
                         state._updateFired = true;
                     });
