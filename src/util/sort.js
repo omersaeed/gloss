@@ -22,6 +22,8 @@ define([
         //     ghi
         //     "def"
         //
+        // also, it's very general purpose (read: slow).
+        //
         userFriendly: function(a, b) {
             if (a == null && b == null) {
                 return 0;
@@ -30,7 +32,8 @@ define([
             } else if (b == null) {
                 return 1;
             }
-            if (!_.isNumber(a) || !_.isNumber(b)) {
+            if (!(_.isDate(a) && _.isDate(b)) &&
+                !(_.isNumber(a) && _.isNumber(b))) {
                 a = normalize(a);
                 b = normalize(b);
             }
