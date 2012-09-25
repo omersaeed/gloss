@@ -94,7 +94,8 @@ define([
             }
         },
         getValue: function() {
-            if (this.$node.hasClass('placeholder')) {
+            if (this.$node.hasClass('placeholder') &&
+                     this._super.apply(this, arguments) === this._placeholder) {
                 return '';
             } else {
                 return this._super.apply(this, arguments);
