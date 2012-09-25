@@ -255,6 +255,34 @@ define([
         });
     });
 
+    asyncTest('unresolved .load() deferred followed by update re-enables widget', function() {
+        Example.models.clear();
+        var g = GridClass(),
+            c = Example.collection();
+
+        c.query.request.ajax = dummyAjax;
+
+        // initially the grid should be enabled
+        equal(g.$node.hasClass('disabled'), false, 'grid initially enabled');
+
+        // this will trigger the initial load, disabling the grid
+        g.set('collection', c);
+
+        equal(g.$node.hasClass('disabled'), true,
+            'grid disabled by initial load');
+
+        // this will change the query and fire off a new load, thereby
+        // orphaning the initial dfd (the dfd from the initial load will never
+        // resolve)
+        c.reset({limit: 5}).load().then(function() {
+            // make sure the collectionviewable re-enabled the grid in spite of
+            // the orphaned dfd
+            equal(g.$node.hasClass('disabled'), false,
+                'grid disabled by initial load');
+            start();
+        });
+    });
+
     start();
 
 });
