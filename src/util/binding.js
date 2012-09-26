@@ -2,10 +2,10 @@ define([
     'vendor/underscore',
     'vendor/t',
     'bedrock/class',
-    'bedrock/settable',
+    'bedrock/assettable',
     './../widgets/widget',
     './../widgets/formwidget'
-], function(_, t, Class, Settable, Widget, FormWidget) {
+], function(_, t, Class, asSettable, Widget, FormWidget) {
     var textContent = document.createElement('span').textContent?
         'textContent' : 'innerText';
 
@@ -94,9 +94,7 @@ define([
     //
     // [formwidget]: https://github.com/siq/gloss/blob/master/src/widgets/formwidget.js
     //
-    return Class.extend({
-        _settableOnChange: '_onOptionsChange',
-
+    var Binding = Class.extend({
         init: function(options) {
             var explicitBindings = options.bindings;
 
@@ -123,7 +121,7 @@ define([
             });
         },
 
-        _onOptionsChange: function(changed, opts) {
+        onOptionChange: function(changed, opts) {
             if (changed.model) {
                 this.get('model').on('change', this._onModelChange);
                 if (this.previous('model')) {
@@ -241,5 +239,9 @@ define([
             }
         }
 
-    }, {mixins: [Settable]});
+    });
+
+    asSettable.call(Binding.prototype, {onChange: 'onOptionChange'});
+
+    return Binding;
 });
