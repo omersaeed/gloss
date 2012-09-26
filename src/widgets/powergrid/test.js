@@ -1,9 +1,11 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
 define([
     'vendor/jquery',
+    'vendor/underscore',
     'mesh/tests/example',
-    './../powergrid'
-], function($, Example, PowerGrid) {
+    './../powergrid',
+    './examplefixtures'
+], function($, _, Example, PowerGrid, ExampleFixtures) {
     var setup = function() {
             Example.models.clear();
         },
@@ -12,9 +14,14 @@ define([
     window.Example = Example;
 
     Example.prototype.__requests__.query.ajax = function(params) {
-        var dfd = $.Deferred();
-        console.log('in there');
-        params.success({}, 200, {});
+        var dfd = $.Deferred(),
+            resources = _.map(ExampleFixtures, function(model) {
+                return _.extend({}, model);
+            });
+        params.success({
+            resources: resources,
+            length: resources.length
+        }, 200, {});
         return dfd;
     };
 
