@@ -4,8 +4,10 @@ define([
     'vendor/underscore',
     'mesh/tests/example',
     './../powergrid',
+    './columns',
+    './column',
     './examplefixtures'
-], function($, _, Example, PowerGrid, ExampleFixtures) {
+], function($, _, Example, PowerGrid, Columns, Column, exampleFixtures) {
     var setup = function() {
             Example.models.clear();
         },
@@ -14,10 +16,17 @@ define([
     window.Example = Example;
 
     Example.prototype.__requests__.query.ajax = function(params) {
-        var dfd = $.Deferred(),
-            resources = _.map(ExampleFixtures, function(model) {
+        var dfd = $.Deferred(), resources = [];
+
+        if (params.limit) {
+            for (var i = 0; i < params.limit; i++) {
+                resources.push(_.extend({}, exampleFixtures[i]));
+            }
+        } else {
+            resources = _.map(exampleFixtures, function(model) {
                 return _.extend({}, model);
             });
+        }
         params.success({
             resources: resources,
             length: resources.length
@@ -25,10 +34,25 @@ define([
         return dfd;
     };
 
-    test('everythings cool', function() {
+    asyncTest('everythings cool', function() {
         setup();
-        var g = PowerGrid({collection: Example.collection()}).appendTo('body');
-        ok(g);
+        var params = {limit: 15},
+            g = PowerGrid({
+                columnsClass: Columns.extend({
+                    columnClasses: [
+                        Column.extend({name: 'text_field'}),
+                        Column.extend({name: 'required_field'}),
+                        Column.extend({name: 'boolean_field'})
+                    ]
+                }),
+                collection: Example.collection(),
+                collectionLoadArgs: params
+            }).appendTo('body');
+
+        g.get('collection').load(params).then(function() {
+            ok(g.get('models').length === params.length);
+            start();
+        });
     });
 
     start();
