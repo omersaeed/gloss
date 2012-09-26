@@ -2,8 +2,8 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'bedrock/class',
-    'bedrock/settable'
-], function ($, _, Class, Settable) {
+    'bedrock/assettable'
+], function ($, _, Class, asSettable) {
 
     var tmpl = function(tmpl) {
         return function(model, gridInstance, prop, nameAttr) {
@@ -14,7 +14,7 @@ define([
         };
     };
 
-    return Class.extend({
+    var CheckBoxColumn = Class.extend({
 
         defaults: {
             name: '_checked',
@@ -88,14 +88,19 @@ define([
             td.innerHTML = this.render(col, colValue, model);
         },
 
-        _settableProperty: null,
-
-        _settableOnChange: function(changed) {
+        onChange: function(changed) {
             if (changed.type) {
                 this.set('tmpl', this.get(this.get('type') + 'Template'));
                 this.set('label', this.get('type') === 'checkbox'?
                         this.render(null, null, {}) : '');
             }
         }
-    }, {mixins: [Settable]});
+    });
+
+    asSettable.call(CheckBoxColumn.prototype, {
+        onChange: 'onChange',
+        propName: null
+    });
+
+    return CheckBoxColumn;
 });
