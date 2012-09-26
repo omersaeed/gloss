@@ -1,3 +1,39 @@
+// this widget (and corresponding styling) assumes the following html
+// structure:
+//
+//     <div class=tabbedframe>
+//
+//       <div class=tabs>
+//         <button>First Tab Title</button>
+//         <button>Second Tab Title</button>
+//         <!-- ... etc ... -->
+//       </div>
+//
+//       <div class=panes>
+//
+//         <div>
+//           <!-- content of first tab -->
+//         </div>
+//
+//         <div>
+//           <!-- content of secon tab -->
+//         </div>
+//
+//         <!-- ... etc ... -->
+//
+//       </div>
+//
+//     </div>
+//
+// a couple things to note:
+//
+//  - the children of the `.tabs` element MUST each have a corresponding
+//    element in `.panes`
+//  - ANY child of `.tabs` is considered a tab, regardless of element type or
+//    class. this is similarly true of `.panes`
+//  - the `.tabs` and `.panes` elements do not need to be direct children of
+//    `.tabbedframe`
+//
 define([
     'vendor/jquery',
     'vendor/underscore',
