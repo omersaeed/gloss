@@ -1,9 +1,9 @@
 define([
     './../view',
-    './collectionviewable',
+    './ascollectionviewable',
     'tmpl!./powergrid/powergrid.mtpl'
-], function(View, CollectionViewable, template) {
-    return View.extend({
+], function(View, asCollectionViewable, template) {
+    var PowerGrid = View.extend({
         defaults: {
         },
 
@@ -18,5 +18,9 @@ define([
                 this.rerender();
             }
         }
-    }, {mixins: [CollectionViewable]});
+    });
+
+    asCollectionViewable.call(PowerGrid.prototype);
+
+    return PowerGrid;
 });

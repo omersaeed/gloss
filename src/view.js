@@ -78,6 +78,18 @@ define([
             this.set($.extend(true, {}, this.defaults, options));
         },
 
+        // this provides a means for detecting when the user clicks outside of
+        // this view:
+        //
+        //     myView.on('pageclick', function() {
+        //         consle.log('clicked somewhere outside of myView');
+        //     });
+        //
+        // this also works for the .one() method. and then you can remove the
+        // handler:
+        //
+        //     myView.off('pageclick');
+        //
         _onPageEvent: function(one, name, callback) {
             var $el = this.$el;
             name = name + (name.indexOf('.') > -1? '' : '.') + '__' + this.id;
