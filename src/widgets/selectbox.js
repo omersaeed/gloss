@@ -77,7 +77,13 @@ define([
             });
 
             self.update();
-            self.on('click', self.toggle);
+            self.on('click', function(evt) {
+                var $tgt = $(evt.target);
+                if ($tgt.hasClass('menu') || $tgt.closest('.menu').length) {
+                    return;
+                }
+                self.toggle();
+            });
             self.on('keydown', self.onKeyEvent);
         },
         _setAutoWidth: function() {
