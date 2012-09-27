@@ -16,17 +16,15 @@ define([
     window.Example = Example;
 
     Example.prototype.__requests__.query.ajax = function(params) {
-        var dfd = $.Deferred(), resources = [];
+        var dfd = $.Deferred(),
+            resources = [],
+            limit = params.limit || exampleFixtures.length,
+            offset = params.offset || 0;
 
-        if (params.limit) {
-            for (var i = 0; i < params.limit; i++) {
-                resources.push(_.extend({}, exampleFixtures[i]));
-            }
-        } else {
-            resources = _.map(exampleFixtures, function(model) {
-                return _.extend({}, model);
-            });
+        for (var i = offset; i < limit; i++) {
+            resources.push(_.extend({}, exampleFixtures[i]));
         }
+
         params.success({
             resources: resources,
             length: resources.length
@@ -36,13 +34,16 @@ define([
 
     asyncTest('everythings cool', function() {
         setup();
-        var params = {limit: 15},
+        var params = {limit: 150, offset: 10},
             g = PowerGrid({
                 columnsClass: Columns.extend({
                     columnClasses: [
                         Column.extend({name: 'text_field'}),
                         Column.extend({name: 'required_field'}),
-                        Column.extend({name: 'boolean_field'})
+                        Column.extend({name: 'boolean_field'}),
+                        Column.extend({name: 'datetime_field'}),
+                        Column.extend({name: 'integer_field'}),
+                        Column.extend({name: 'default_field'})
                     ]
                 }),
                 collection: Example.collection(),
@@ -50,7 +51,7 @@ define([
             }).appendTo('body');
 
         g.get('collection').load(params).then(function() {
-            ok(g.get('models').length === params.length);
+            equal(g.get('models').length, params.limit);
             start();
         });
     });

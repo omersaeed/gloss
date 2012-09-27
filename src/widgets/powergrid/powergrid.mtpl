@@ -1,10 +1,11 @@
 <div class=powergrid>
 
-  <table class=header>
+  <table class="header rows">
+  <!-- <table class=header> -->
     <thead></thead>
-  </table>
+  <!-- </table> -->
 
-  <table class=rows>
+  <!-- <table class=rows> -->
     <tbody></tbody>
   </table>
 

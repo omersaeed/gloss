@@ -8,6 +8,14 @@ define([
                 return cls();
             });
         },
+        renderHeaderTr: function() {
+            var i, l, columns = this.columns, tr = ['<tr>'];
+            for (i = 0, l = columns.length; i < l; i++) {
+                tr.push(columns[i].renderTh());
+            }
+            tr.push('</tr>');
+            return tr.join('');
+        },
         renderTr: function(model) {
             var i, l, columns = this.columns, tr = ['<tr>'];
             for (i = 0, l = columns.length; i < l; i++) {

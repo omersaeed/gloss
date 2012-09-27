@@ -3,7 +3,11 @@ define([
 ], function(Class) {
     return Class.extend({
         renderTd: function(model) {
-            return '<td>' + (model.get(this.name) || '') + '</td>';
+            var v = model.get(this.name);
+            return '<td>' + (v == null? '' : v.toString()) + '</td>';
+        },
+        renderTh: function() {
+            return '<td>' + (this.name || '') + '</td>';
         }
     });
 });
