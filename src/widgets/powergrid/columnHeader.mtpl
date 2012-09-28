@@ -1,0 +1,9 @@
+<th class="col-<%=this.name%> <%=this.sortable? 'sortable' : ''%>">
+  <%=this.label%>
+  <% if (this.sortable && this.grid.get('sort.column') === this) { %>
+    <span class=sort-arrow>
+      <%= /asc/i.test(this.grid.get('sort.direction'))?
+        '&#x25b2;' : '&#x25bc;' %>
+    </span>
+  <% } %>
+</th>

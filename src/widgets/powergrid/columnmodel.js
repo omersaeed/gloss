@@ -9,7 +9,7 @@ define([
             _.extend(self, options);
 
             if (! self.grid) {
-                throw Error('ColumnModel class (column model) must be instantiated with grid instance');
+                throw Error('Column class (column model) must be instantiated with grid instance');
             }
 
             self.columns = _.map(self.columnClasses || [], function(cls) {

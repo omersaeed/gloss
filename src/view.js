@@ -75,7 +75,7 @@ define([
 
             this.el.id = 'view' + viewCount;
 
-            this.set($.extend(true, {}, this.defaults, options));
+            this.set($.extend(true, {}, this.defaults, options), {silent: true});
         },
 
         // this provides a means for detecting when the user clicks outside of
