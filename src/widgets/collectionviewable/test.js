@@ -283,6 +283,38 @@ define([
         });
     });
 
+    asyncTest('initializing widget with both collection and load args', function() {
+        Example.models.clear();
+        var g,
+            GridClass2 = GridClass.extend({
+                create: function() {
+                    this.loadCount = 0;
+                    this._super.apply(this, arguments);
+                },
+                updateWidget: function(updated) {
+                    if (updated.models) {
+                        this.loadCount++;
+                    }
+                    this._super.apply(this, arguments);
+                }
+            }),
+            c = Example.collection();
+
+        c.query.request.ajax = dummyAjax;
+
+        g = GridClass2(null, {
+            collection: Example.collection(),
+            collectionLoadArgs: {limit: 7}
+        });
+
+        c.load().done(function() {
+            setTimeout(function() {
+                equal(g.loadCount, 1);
+                start();
+            }, 50);
+        });
+    });
+
     start();
 
 });

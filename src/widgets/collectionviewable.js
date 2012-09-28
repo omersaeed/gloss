@@ -78,8 +78,7 @@ define([
                         state._updateFired = true;
                     });
                 }
-            }
-            if (updated.collectionLoadArgs && options.collectionLoadArgs) {
+            } else if (updated.collectionLoadArgs && options.collectionLoadArgs) {
                 self._updateCollection();
             }
         }
