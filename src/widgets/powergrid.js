@@ -1,5 +1,4 @@
 // TODO:
-//  - sortable columns
 //  - grid row selection
 //       - multi-selection
 //  - settable column widths
@@ -104,7 +103,8 @@ define([
                             return c.name === colName;
                         }), {silent: true});
                 }
-                alreadySorted = !this._sort({silent: true});
+                this._sort({silent: true});
+                alreadySorted = true;
                 rerenderHeader = rerender = true;
             }
             if (updated.models) {
