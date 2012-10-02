@@ -1,9 +1,9 @@
 define([
     'vendor/underscore',
     'bedrock/class',
-    'tmpl!./columnHeader.mtpl',
-    'tmpl!./column.mtpl'
-], function(_, Class, columnHeaderTemplate, columnTemplate) {
+    'tmpl!./th.mtpl',
+    'tmpl!./td.mtpl'
+], function(_, Class, thTemplate, tdTemplate) {
     return Class.extend({
         init: function(options) {
             var self = this;
@@ -25,7 +25,7 @@ define([
             });
         },
 
-        renderTd: columnTemplate,
-        renderTh: columnHeaderTemplate
+        renderTd: tdTemplate,
+        renderTh: thTemplate
     });
 });

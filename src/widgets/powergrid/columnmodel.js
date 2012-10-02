@@ -1,7 +1,8 @@
 define([
     'vendor/underscore',
-    'bedrock/class'
-], function(_, Class) {
+    'bedrock/class',
+    'tmpl!./tr.mtpl'
+], function(_, Class, trTemplate) {
     return Class.extend({
         init: function(options) {
             var self = this;
@@ -24,13 +25,6 @@ define([
             tr.push('</tr>');
             return tr.join('');
         },
-        renderTr: function(model) {
-            var i, l, columns = this.columns, tr = ['<tr>'];
-            for (i = 0, l = columns.length; i < l; i++) {
-                tr.push(columns[i].renderTd(model));
-            }
-            tr.push('</tr>');
-            return tr.join('');
-        }
+        renderTr: trTemplate
     });
 });
