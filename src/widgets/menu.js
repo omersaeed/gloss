@@ -26,10 +26,31 @@ define([
             if(this.options.updateDisplay){
                 this.hide();
             }
+            if (entry.disabled) return;
             this.triggerHandler('select', entry);
             if(entry.onselect){
                 entry.onselect(entry);
             }
+        },
+        disableEntry: function(entry) {
+            var self = this,
+                $entry;
+
+            if (!entry) return;
+            entry.disabled = true;
+            $entry = self.$entries.find('li[value=' + entry.value + ']');
+            if($entry.length < 1) return;
+            $entry.attr('disabled', true);
+        },
+        enableEntry: function(entry) {
+            var self = this,
+                $entry;
+
+            if (!entry) return;
+            delete entry.disabled;
+            $entry = self.$entries.find('li[value=' + entry.value + ']');
+            if($entry.length < 1) return;
+            $entry.removeAttr('disabled');
         },
         _constructMenu: function() {
             var self = this, entries = this.options.entries;
@@ -46,6 +67,12 @@ define([
                 }
                 if (entry.title) {
                     $node.attr('title', entry.title);
+                }
+                if (entry.value) {
+                    $node.attr('value', entry.value);
+                }
+                if (entry.disabled) {
+                    $node.attr('disabled', true);
                 }
                 self.$entries.append($node);
             });
