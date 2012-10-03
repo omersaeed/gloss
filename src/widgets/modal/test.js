@@ -50,5 +50,29 @@ define([
         m.open();
     });
 
+    function getSelection() {
+        return (!!document.getSelection) ? document.getSelection() :
+               (!!window.getSelection)   ? window.getSelection() :
+               document.selection.createRange().text;
+    }
+    test('modal with selectable textarea', function () {
+        var tmpl = '<div>' +
+                        '<textarea>Some Text</textarea>' +
+                    '</div>',
+            m = Modal(tmpl, {
+            title: 'Test Modal',
+            width: 200,
+            height: 200,
+            closeBtn: true
+        }).appendTo('#qunit-fixture');
+
+        ok(m);
+
+        m.open();
+        $textarea = $('textarea');
+        $textarea.select();
+        ok(getSelection().toString() === $textarea.text(), "can't select text in textarea");
+    });
+
     start();
 });

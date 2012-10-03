@@ -171,11 +171,6 @@ define([
                     self.startDrag(evt);
                 });
             }
-            if (typeof self.node.onselectstart !== 'undefined') {
-                self.node.onselectstart = function() {
-                    return false;
-                };
-            }
         },
         startDrag: function(evt) {
             window.sd = new Date();
