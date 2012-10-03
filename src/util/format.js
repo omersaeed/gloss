@@ -9,12 +9,12 @@ define([
         options = $.extend({}, defaults, options || {});
         bytes = parseInt(bytes, 10);
         units = {
-            10: options.units === 'short'? ' bytes' :  ' Bytes',
-            20: options.units === 'short'? ' KB' : ' Kilobytes',
-            30: options.units === 'short'? ' MB' : ' Megabytes',
-            40: options.units === 'short'? ' GB' : ' Gigabytes',
-            50: options.units === 'short'? ' TB' : ' Terabytes',
-            60: options.units === 'short'? ' PB' : ' Petabytes'
+            10: options.units === 'short'? ' bytes' :  (options.units === 'long'? ' Bytes' : ''),
+            20: options.units === 'short'? ' KB' : (options.units === 'long'? ' Kilobytes' : ''),
+            30: options.units === 'short'? ' MB' : (options.units === 'long'? ' Megabytes' : ''),
+            40: options.units === 'short'? ' GB' : (options.units === 'long'? ' Gigabytes' : ''),
+            50: options.units === 'short'? ' TB' : (options.units === 'long'? ' Terabytes' : ''),
+            60: options.units === 'short'? ' PB' : (options.units === 'long'? ' Petabytes' : '')
         };
 
         for (i in units)
@@ -50,10 +50,10 @@ define([
         }
 
         return factor * parseInt(s, 10);
-    }
+    };
 
-    var percent = function(num) {
-        return (num * 100).toFixed(1) + '%';
+    var percent = function(num, decimals) {
+        return (num * 100).toFixed(decimals || 0) + '%';
     };
 
     var number = function(number, decimals, decimalPoint, thousandsSep) {
