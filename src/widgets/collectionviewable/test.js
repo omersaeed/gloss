@@ -6,11 +6,12 @@ define([
     './../grid',
     './../grid/row',
     './../collectionviewable',
+    './../form',
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Widget, Grid, Row, CollectionViewable, Mock,
+], function($, _, Widget, Grid, Row, CollectionViewable, Form, Mock,
     TargetVolumeProfile, Example, tvpFixture) {
 
     var RowClass = Row.extend({
@@ -314,7 +315,78 @@ define([
             }, 50);
         });
     });
+    
+    var dummyAjaxForSelectBox = function(params) {
+        var num = params.data.limit? params.data.limit : 10;
 
+        setTimeout(function() {
+            var split, ret = _.reduce(_.range(num), function(memo, i) {
+                memo.resources.push({id:i , name: 'item ' + i});
+                if (num < 10) {
+                    _.last(memo.resources).foo = 'bar';
+                }
+                return memo;
+            }, {total: num, resources: []});
+            params.success(ret, 200, {});
+        }, 50);
+    }, MyForm = Form.extend({
+        nodeTemplate: "<form>" +
+        "<select name=example_id></select>" +
+        "</form>",
+        
+        defaults: {
+            modelClass: Example,
+            collection: null,
+            bindings: [
+                {   
+                    widget: 'example_id', 
+                    field: 'example_id'
+                }
+            ],
+            widgetize: true,
+        },
+
+        create: function() {
+            var self = this;
+            self._super();
+            self.getWidget('example_id').set('collection', self.options.collection);
+        },
+
+        updateWidget: function(updated) {
+            if (updated.collection) {
+                this.getWidget('example_id').set('collection', this.options.collection);
+            }
+        }
+    });
+    
+    asyncTest('initializing form with collection, should not remove previous event handlers on that collection', function() {
+        Example.models.clear();
+        var c1 = Example.collection(),
+            w,
+            firedEventCount = 0;
+
+        c1.query.request.ajax = dummyAjaxForSelectBox;
+        c1.load();
+        c1.on('update', function(evt) {
+            firedEventCount++;
+        });
+
+        // this will trigger the initial load, disabling the grid
+        w = MyForm(undefined, {
+            collection: c1
+        });
+        
+        c1.on('update', function(evt) {
+            firedEventCount++;
+        });
+        c1.load().then(function() {
+            setTimeout(function() {
+                equal(firedEventCount, 2);
+                start();
+            }, 50);
+        });
+    });
+    
     start();
 
 });
