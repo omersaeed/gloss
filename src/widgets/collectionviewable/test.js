@@ -191,7 +191,7 @@ define([
         collection.query.request.ajax = outOfOrderAjax;
 
         // this will trigger the first load call, which will never resolve, and
-        // therefore 
+        // therefore
         grid = CountingGridClass(undefined, {collection: collection});
 
         collection.reset({limit: 5});
@@ -315,78 +315,44 @@ define([
             }, 50);
         });
     });
-    
-    var dummyAjaxForSelectBox = function(params) {
-        var num = params.data.limit? params.data.limit : 10;
 
-        setTimeout(function() {
-            var split, ret = _.reduce(_.range(num), function(memo, i) {
-                memo.resources.push({id:i , name: 'item ' + i});
-                if (num < 10) {
-                    _.last(memo.resources).foo = 'bar';
-                }
-                return memo;
-            }, {total: num, resources: []});
-            params.success(ret, 200, {});
-        }, 50);
-    }, MyForm = Form.extend({
-        nodeTemplate: "<form>" +
-        "<select name=example_id></select>" +
-        "</form>",
-        
-        defaults: {
-            modelClass: Example,
-            collection: null,
-            bindings: [
-                {   
-                    widget: 'example_id', 
-                    field: 'example_id'
-                }
-            ],
-            widgetize: true,
-        },
-
-        create: function() {
-            var self = this;
-            self._super();
-            self.getWidget('example_id').set('collection', self.options.collection);
-        },
-
-        updateWidget: function(updated) {
-            if (updated.collection) {
-                this.getWidget('example_id').set('collection', this.options.collection);
-            }
-        }
-    });
-    
     asyncTest('initializing form with collection, should not remove previous event handlers on that collection', function() {
         Example.models.clear();
-        var c1 = Example.collection(),
-            w,
-            firedEventCount = 0;
+        var g, c = Example.collection(), count = 0;
 
-        c1.query.request.ajax = dummyAjaxForSelectBox;
-        c1.load();
-        c1.on('update', function(evt) {
-            firedEventCount++;
-        });
+        c.query.request.ajax = dummyAjax;
 
-        // this will trigger the initial load, disabling the grid
-        w = MyForm(undefined, {
-            collection: c1
-        });
-        
-        c1.on('update', function(evt) {
-            firedEventCount++;
-        });
-        c1.load().then(function() {
+        c.on('update', function() { count++; });
+
+        g = GridClass(null, {collection: c});
+
+        c.load().then(function() {
+
+            // we need to call setTimeout here since the 'update' event is
+            // triggered *after* the deferred is resolved. doing the deferred
+            // then the timeout ensures:
+            // 1. that the data is done loading
+            // 2. that all of the residual actions (i.e. event triggering) have
+            //    completed
             setTimeout(function() {
-                equal(firedEventCount, 2);
-                start();
-            }, 50);
+
+                equal(count, 1,
+                    'update handler should have fired from first load');
+                g.set('collection', null);
+                c.load({reload: true}).then(function() {
+
+                    // once again, need to add timeout so event is triggered
+                    setTimeout(function() {
+
+                        equal(count, 2,
+                            'update handler should still be attached');
+                        start();
+                    }, 15);
+                });
+            }, 15);
         });
     });
-    
+
     start();
 
 });
