@@ -1,4 +1,5 @@
-<th class="col-<%=this.name%> <%=this.sortable? 'sortable' : ''%>">
+<th class="col-<%=this.name%> <%=this.sortable? 'sortable' : ''%> <%=this.resizable? 'resizable' : ''%>">
+  <span class=resize>&nbsp;</span>
   <%=this.label%>
   <% if (this.sortable && this.grid.get('sort.column') === this) { %>
     <span class=sort-arrow>

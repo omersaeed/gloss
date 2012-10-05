@@ -5,3 +5,15 @@ tr.selected {
 .powergrid.selectable table tbody {
   cursor: default;
 }
+
+.powergrid table thead th .resize {
+  float: right;
+  width: 8px;
+  margin-right: -8px;
+  margin-top: -2px;
+  margin-bottom: -6px;
+}
+
+.powergrid table thead th .resize:hover {
+  cursor: col-resize;
+}

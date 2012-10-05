@@ -215,7 +215,7 @@ define([
     asyncTest('selecting multiple rows', function() {
         setup({
             gridOptions: {selectable: 'multi'},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g, options) {
             g.select(g.get('collection').where({text_field: 'item 3'}));
             var $selected = g.$el.find('.selected');
@@ -282,6 +282,29 @@ define([
             equal(trim($selected.find('td.col-text_field').eq(1).text()),
                 'item 5', 'correct row selected');
 
+            start();
+        });
+    });
+
+    module('resizing');
+
+    var resizable = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(
+                colModelClass.prototype.columnClasses,
+                function(columnClass) {
+                    return columnClass.extend({resizable: true});
+                })
+        });
+    };
+
+    asyncTest('resizable columns have resize handle el', function() {
+        setup({
+            appendTo: 'body',
+            columnModelClass: resizable(BasicColumnModel)
+        }).then(function(g) {
+            equal(g.$el.find('th .resize').length,
+                BasicColumnModel.prototype.columnClasses.length);
             start();
         });
     });
