@@ -210,12 +210,12 @@ define([
         unselect: function(model) {
             var models = this.get('models'),
                 a = this.get('selectedAttr'),
-                unselectModels = model && _.isArray(model)? model : [model],
+                unselect = model? _.isArray(model)? model : [model] : null,
                 changed = [];
 
             _.each(models, function(m) {
                 if (m.get(a)) {
-                    if (!unselectModels || _.indexOf(unselectModels, m) >= 0) {
+                    if (!unselect || _.indexOf(unselect, m) >= 0) {
                         changed.push(m);
                         m.del(a, {silent: true});
                     }
