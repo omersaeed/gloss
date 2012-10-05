@@ -6,11 +6,12 @@ define([
     './../grid',
     './../grid/row',
     './../collectionviewable',
+    './../form',
     './../../data/mock',
     './../../test/api/v1/targetvolumeprofile',
     'mesh/tests/example',
     'text!./../../test/api/v1/test/fixtures/targetvolumeprofile.json'
-], function($, _, Widget, Grid, Row, CollectionViewable, Mock,
+], function($, _, Widget, Grid, Row, CollectionViewable, Form, Mock,
     TargetVolumeProfile, Example, tvpFixture) {
 
     var RowClass = Row.extend({
@@ -190,7 +191,7 @@ define([
         collection.query.request.ajax = outOfOrderAjax;
 
         // this will trigger the first load call, which will never resolve, and
-        // therefore 
+        // therefore
         grid = CountingGridClass(undefined, {collection: collection});
 
         collection.reset({limit: 5});
@@ -312,6 +313,43 @@ define([
                 equal(g.loadCount, 1);
                 start();
             }, 50);
+        });
+    });
+
+    asyncTest('initializing form with collection, should not remove previous event handlers on that collection', function() {
+        Example.models.clear();
+        var g, c = Example.collection(), count = 0;
+
+        c.query.request.ajax = dummyAjax;
+
+        c.on('update', function() { count++; });
+
+        g = GridClass(null, {collection: c});
+
+        c.load().then(function() {
+
+            // we need to call setTimeout here since the 'update' event is
+            // triggered *after* the deferred is resolved. doing the deferred
+            // then the timeout ensures:
+            // 1. that the data is done loading
+            // 2. that all of the residual actions (i.e. event triggering) have
+            //    completed
+            setTimeout(function() {
+
+                equal(count, 1,
+                    'update handler should have fired from first load');
+                g.set('collection', null);
+                c.load({reload: true}).then(function() {
+
+                    // once again, need to add timeout so event is triggered
+                    setTimeout(function() {
+
+                        equal(count, 2,
+                            'update handler should still be attached');
+                        start();
+                    }, 15);
+                });
+            }, 15);
         });
     });
 
