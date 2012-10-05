@@ -17,3 +17,7 @@ tr.selected {
 .powergrid table thead th .resize:hover {
   cursor: col-resize;
 }
+
+.powergrid.fixed-width table {
+  table-layout: fixed;
+}

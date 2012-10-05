@@ -152,6 +152,32 @@ define([
                 }), opts);
         },
 
+        _setColumnWidth: function(column, width) {
+            var self = this, columnModel = self.get('columnModel');
+
+            if (_.isString(column)) {
+                column = _.find(columnModel.columns, function(c) {
+                    return c.name === column;
+                });
+            }
+
+            if (!self._fixedLayout) {
+                self.$thead.find('th').each(function(i, el) {
+                    var $el = $(el);
+
+                    // you can't actually set outer width... need to come up w/
+                    // something for this...
+                    $el.outerWidth(
+                        columnModel.columns[i].width = $el.outerWidth());
+                });
+                self.$el.addClass('fixed-width');
+                self._fixedLayout = true;
+            }
+
+            column.width = width;
+            self.$thead.find('th.col-'+column.name).outerWidth(width);
+        },
+
         _trFromModel: function(model) {
             return this.$tbody.children('tr').eq(
                 _.indexOf(this.get('models'), model));
