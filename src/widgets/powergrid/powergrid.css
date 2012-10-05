@@ -1,2 +1,7 @@
 tr.selected {
   background-color: gray;
+}
+
+.powergrid.selectable table tbody {
+  cursor: default;
+}

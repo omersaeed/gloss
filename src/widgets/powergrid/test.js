@@ -161,7 +161,7 @@ define([
             equal(g._renderRowCount, 1, 'only one row was rerendered');
             equal(g._renderCount, 1, 'grid wasnt rerendered');
 
-            g.$el.find(':contains(item 2)').trigger('click');
+            g.$el.find('td:contains(item 2)').trigger('click');
             equal(g.$el.find('.selected').length, 1, 'click triggers selection');
             equal(trim(g.$el.find('.selected td.col-text_field').text()),
                 'item 2', 'correct row selected');
@@ -192,7 +192,7 @@ define([
     asyncTest('unselecting a single row', function() {
         setup({
             gridOptions: {selectable: true},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g, options) {
             g.select(g.get('collection').where({text_field: 'item 2'}));
 
@@ -207,6 +207,80 @@ define([
             equal($selected.length, 0, 'no rows selected');
             ok(g.get('collection').where(g.get('selectedAttr'), true) == null,
                 'no models have been selected');
+
+            start();
+        });
+    });
+
+    asyncTest('selecting multiple rows', function() {
+        setup({
+            gridOptions: {selectable: 'multi'},
+            appendTo: 'body'
+        }).then(function(g, options) {
+            g.select(g.get('collection').where({text_field: 'item 3'}));
+            var $selected = g.$el.find('.selected');
+            equal($selected.length, 1, 'only one is selected');
+            equal(trim($selected.find('td.col-text_field').text()),
+                'item 3', 'correct row selected');
+
+            g.select(g.get('collection').where({text_field: 'item 6'}),
+                {dontUnselectOthers: true});
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 2, 'two are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 3', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(1).text()),
+                'item 6', 'correct row selected');
+
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 3, 'three are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 2', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(1).text()),
+                'item 3', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(2).text()),
+                'item 6', 'correct row selected');
+
+            g.$el.find('td:contains(item 5)').trigger('click');
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 1, 'three are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 5', 'correct row selected');
+
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {shiftKey: true}));
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 4, 'three are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 2', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(1).text()),
+                'item 3', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(2).text()),
+                'item 4', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(3).text()),
+                'item 5', 'correct row selected');
+
+            g.$el.find('td:contains(item 4)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 3, 'three are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 2', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(1).text()),
+                'item 3', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(2).text()),
+                'item 5', 'correct row selected');
+
+            g.$el.find('td:contains(item 3)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            $selected = g.$el.find('.selected');
+            equal($selected.length, 2, 'three are selected');
+            equal(trim($selected.find('td.col-text_field').eq(0).text()),
+                'item 2', 'correct row selected');
+            equal(trim($selected.find('td.col-text_field').eq(1).text()),
+                'item 5', 'correct row selected');
 
             start();
         });

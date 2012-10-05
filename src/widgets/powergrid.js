@@ -1,6 +1,4 @@
 // TODO:
-//  - grid row selection
-//       - multi-selection
 //  - settable column widths
 //       - setting column widths via CSS
 //       - setting via column model config
@@ -22,13 +20,16 @@ define([
     'css!./powergrid/powergrid.css'
 ], function($, _, View, asCollectionViewable, ColumnModel, sort, template) {
 
-    var EmptyColumnModel = ColumnModel.extend({});
+    var EmptyColumnModel, PowerGrid,
+        mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
 
-    var PowerGrid = View.extend({
+    EmptyColumnModel = ColumnModel.extend({});
+
+    PowerGrid = View.extend({
         defaults: {
             columnsClass: EmptyColumnModel,
 
-            // coule be true, false, or 'multi'
+            // could be true, false, or 'multi'
             selectable: false,
 
             // this is the attribute set on the model corresponding to which
@@ -65,6 +66,7 @@ define([
             }
 
             if ((selectable = this.get('selectable'))) {
+                this.$el.addClass('selectable');
                 var method = /multi/i.test(selectable)?
                     '_onMultiselectableRowClick' : '_onSelectableRowClick';
                 this.on('click', 'tbody tr', _.bind(this[method], this));
@@ -85,9 +87,21 @@ define([
             this.rerender(model);
         },
 
+        _onMultiselectableRowClick: function(evt) {
+            var clickedModel = this._modelFromTr(evt.currentTarget);
+            if (clickedModel.get(this.get('selectedAttr'))) {
+                this.unselect(clickedModel);
+            } else {
+                this.select(clickedModel, {
+                    dontUnselectOthers: evt[mod] || evt.shiftKey,
+                    selectTo: evt.shiftKey
+                });
+            }
+        },
+
         _onSelectableRowClick: function(evt) {
-            var selectedModel = this._modelFromTr(evt.currentTarget);
-            this.select(selectedModel);
+            var clickedModel = this._modelFromTr(evt.currentTarget);
+            this.select(clickedModel);
         },
 
         _rerender: function() {
@@ -155,35 +169,57 @@ define([
             return this;
         },
 
-        select: function(model) {
-            var models = this.get('models'), a = this.get('selectedAttr');
+        select: function(model, opts) {
+            var indices, self = this, changed = [],
+                models = this.get('models'),
+                a = this.get('selectedAttr'),
+                selected = function(m) { return m.get(a); };
 
-            if (!/multi/i.test(this.get('selectable'))) {
+            opts = opts || {};
+
+            if (!opts.dontUnselectOthers) {
                 _.each(models, function(m) {
                     if (m !== model && m.get(a)) {
-                        m.del(a);
+                        changed.push(m.del(a, {silent: true}));
                     }
                 });
             }
 
-            model.set(a, true);
+            if (opts.selectTo && _.any(models, selected)) {
+                indices = [
+                    _.indexOf(_.map(models, selected), true),
+                    _.lastIndexOf(_.map(models, selected), true),
+                    _.indexOf(models, model)
+                ];
+                _.each(_.range(_.min(indices), _.max(indices)), function(i) {
+                    changed.push(models[i].set(a, true, {silent: true}));
+                });
+            }
 
-            return this;
+            changed.push(model.set(a, true, {silent: true}));
+
+            if (changed.length > 2) {
+                self.rerender();
+            } else if (changed.length > 0) {
+                _.each(changed, function(m) { self.rerender(m); });
+            }
+
+            return self;
         },
 
         unselect: function(model) {
             var models = this.get('models'),
                 a = this.get('selectedAttr'),
-                unselectModels = _.isArray(model)? [model] : model,
+                unselectModels = model && _.isArray(model)? model : [model],
                 changed = [];
 
             _.each(models, function(m) {
                 if (m.get(a)) {
                     if (!unselectModels || _.indexOf(unselectModels, m) >= 0) {
                         changed.push(m);
+                        m.del(a, {silent: true});
                     }
                 }
-                m.del(a, {silent: true});
             });
 
             if (changed.length > 1) {
