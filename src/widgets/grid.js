@@ -4,30 +4,13 @@ define([
     'bedrock/class',
     'gloss/util/styleUtils',
     'gloss/util/sort',
-    './widget',
     './statefulwidget',
     './grid/row',
-    './draggable',
     './tooltip',
+    './grid/resizehandle',
     'css!./grid/grid.css'
-], function($, _, Class, StyleUtils, sort, Widget, StatefulWidget, Row,
-    Draggable, ToolTip, CssUtils) {
-
-    var ResizeHandle = Widget.extend({
-        defaults: {
-            draggable: {dimensions: {x: true, y: false}}
-        },
-        nodeTemplate: '<span class=resize-handle></span>',
-        create: function() {
-            this.$node.on('mousedown', function(evt) {
-                evt.preventDefault();
-                return false;
-            }).on('click', function(evt) {
-                evt.preventDefault();
-                return false;
-            });
-        }
-    }, {mixins: [Draggable]});
+], function($, _, Class, StyleUtils, sort, StatefulWidget, Row,
+    ToolTip, ResizeHandle, CssUtils) {
 
     return StatefulWidget.extend({
         defaults: {
