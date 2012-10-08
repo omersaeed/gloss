@@ -37,7 +37,9 @@ define([
             }, options.gridOptions)).appendTo(options.appendTo);
 
             g.get('collection').load(options.params).then(function() {
-                dfd.resolve(g, options);
+                $(function() {
+                    dfd.resolve(g, options);
+                });
             });
 
             return dfd;
@@ -300,11 +302,43 @@ define([
 
     asyncTest('resizable columns have resize handle el', function() {
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             columnModelClass: resizable(BasicColumnModel)
         }).then(function(g) {
             equal(g.$el.find('th .resize').length,
                 BasicColumnModel.prototype.columnClasses.length);
+            start();
+        });
+    });
+
+    asyncTest('_setColumnWidth works', function() {
+        setup({
+            appendTo: 'body',
+            columnModelClass: resizable(BasicColumnModel)
+        }).then(function(g) {
+            var startingWidths = g.$el.find('thead th').map(function(i, el) {
+                    return $(el).outerWidth();
+                }),
+                newWidths = startingWidths.slice(0);
+            newWidths[1] = 400;
+            g._setColumnWidth('required_field', newWidths[1]);
+            g.$el.find('thead th').each(function(i, el) {
+                var col = g.get('columnModel').columns[i];
+                equal(col.width, newWidths[i],
+                    'column object width for '+col.name+' matches expected');
+                equal($(el).outerWidth(), newWidths[i],
+                    'element width for '+col.name+' matches expected');
+            });
+
+            newWidths[4] = 50;
+            g._setColumnWidth('integer_field', newWidths[4]);
+            g.$el.find('thead th').each(function(i, el) {
+                var col = g.get('columnModel').columns[i];
+                equal(col.width, newWidths[i],
+                    'column object width for '+col.name+' matches expected');
+                equal($(el).outerWidth(), newWidths[i],
+                    'element width for '+col.name+' matches expected');
+            });
             start();
         });
     });

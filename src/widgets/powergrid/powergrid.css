@@ -6,23 +6,20 @@ tr.selected {
   cursor: default;
 }
 
+.powergrid table thead th {
+  position: relative;
+}
+
 .powergrid table thead th .resize {
-  float: right;
   width: 8px;
-  margin-right: -8px;
-  margin-top: -2px;
-  margin-bottom: -6px;
   background-color: gray;
+  position: absolute;
+  right: -4px;
+  top: 0px;
+  bottom: 0px;
+  z-index: 1;
 }
 
 .powergrid table thead th .resize:hover {
   cursor: col-resize;
-}
-
-.powergrid table {
-  width: 100%;
-}
-.powergrid.fixed-width table {
-  table-layout: fixed;
-  width: auto;
 }

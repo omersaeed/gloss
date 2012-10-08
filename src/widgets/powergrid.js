@@ -154,13 +154,21 @@ define([
         },
 
         _setColumnWidth: function(column, width) {
-            var self = this, columnModel = self.get('columnModel'),
+            var naturalWidths, self = this,
+                columnModel = self.get('columnModel'),
+                $table = self.$el.find('table'),
                 outerWidth = function($el, width) {
-                    $el.width(width - _.reduce(['margin', 'border', 'padding'],
-                        function(m, p) {
-                            return m + parseInt(
-                                $el.css(p+'-left') + $el.css(p+'-right'), 10);
-                        }, 0));
+                    var actualWidth = width - _.reduce([
+                            'margin-left', 'border-left-width', 'padding-left',
+                            'border-right-width', 'margin-right', 'padding-right'
+                        ], function(memo, p) {
+                            return memo + parseInt($el.css(p), 10);
+                        }, 0);
+                    $el.css({
+                        width:    actualWidth,
+                        minWidth: actualWidth,
+                        maxWidth: actualWidth
+                    });
                 };
 
             if (_.isString(column)) {
@@ -170,13 +178,14 @@ define([
             }
 
             if (!self._fixedLayout) {
+                naturalWidths = self.$thead.find('th').map(function(i, el) {
+                    return columnModel.columns[i].width = $(el).outerWidth();
+                });
+                self.$thead.find('th').each(function(i, el) {
+                    outerWidth($(el), naturalWidths[i]);
+                });
                 self.$el.addClass('fixed-width');
                 self._fixedLayout = true;
-                self.$thead.find('th').each(function(i, el) {
-                    var $el = $(el);
-                    columnModel.columns[i].width = $el.outerWidth();
-                    outerWidth($el, columnModel.columns[i].width);
-                });
             }
 
             column.width = width;
