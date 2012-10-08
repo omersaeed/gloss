@@ -6,6 +6,8 @@
 //       - resizeable via DnD
 //  - hide/show column
 //  - static header
+//  - keyboard navigation
+//  - lining up numbers based on decimal point
 //  - edit row
 //  - re-render only one row?
 //       - maybe just add support for responding to collection 'change' events?
