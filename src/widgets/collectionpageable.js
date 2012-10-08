@@ -133,11 +133,12 @@ define([
             state = self._collectionViewableState;
 
             if (updated.collection && typeof collection !== 'undefined') {
-                if(!collection) {
+                if (!collection) {
                     return;
                 }
                 // Add listener on the collection to handle further updates
                 collection.on('update', function(evtName, theCollection) {
+                    if (!self.options.collection) return;
                     if ((state._loadResolved && state._updateFired) ||
                         !state._loadResolved) {
                         self.refresh();
