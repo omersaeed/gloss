@@ -143,6 +143,11 @@ define([
             if (evt.keyCode === 27) {
                 this.close();
             }
+        }, 
+        updateWidget: function(updated) {
+            if (updated.title) {
+                this.$header.text(this.options.title);
+            }
         }
     }, {mixins: [Draggable]});
 
