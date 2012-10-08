@@ -7,10 +7,9 @@
 //  - hide/show column
 //  - static header
 //  - keyboard navigation
+//  - handling data that's not backed by a collection
 //  - lining up numbers based on decimal point
 //  - edit row
-//  - re-render only one row?
-//       - maybe just add support for responding to collection 'change' events?
 define([
     'vendor/jquery',
     'vendor/underscore',
@@ -155,7 +154,14 @@ define([
         },
 
         _setColumnWidth: function(column, width) {
-            var self = this, columnModel = self.get('columnModel');
+            var self = this, columnModel = self.get('columnModel'),
+                outerWidth = function($el, width) {
+                    $el.width(width - _.reduce(['margin', 'border', 'padding'],
+                        function(m, p) {
+                            return m + parseInt(
+                                $el.css(p+'-left') + $el.css(p+'-right'), 10);
+                        }, 0));
+                };
 
             if (_.isString(column)) {
                 column = _.find(columnModel.columns, function(c) {
@@ -164,20 +170,17 @@ define([
             }
 
             if (!self._fixedLayout) {
-                self.$thead.find('th').each(function(i, el) {
-                    var $el = $(el);
-
-                    // you can't actually set outer width... need to come up w/
-                    // something for this...
-                    $el.outerWidth(
-                        columnModel.columns[i].width = $el.outerWidth());
-                });
                 self.$el.addClass('fixed-width');
                 self._fixedLayout = true;
+                self.$thead.find('th').each(function(i, el) {
+                    var $el = $(el);
+                    columnModel.columns[i].width = $el.outerWidth();
+                    outerWidth($el, columnModel.columns[i].width);
+                });
             }
 
             column.width = width;
-            self.$thead.find('th.col-'+column.name).outerWidth(width);
+            outerWidth(self.$thead.find('th.col-'+column.name), width);
         },
 
         _trFromModel: function(model) {

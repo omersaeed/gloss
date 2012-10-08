@@ -12,12 +12,17 @@ tr.selected {
   margin-right: -8px;
   margin-top: -2px;
   margin-bottom: -6px;
+  background-color: gray;
 }
 
 .powergrid table thead th .resize:hover {
   cursor: col-resize;
 }
 
+.powergrid table {
+  width: 100%;
+}
 .powergrid.fixed-width table {
   table-layout: fixed;
+  width: auto;
 }
