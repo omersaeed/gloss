@@ -322,7 +322,7 @@ define([
         });
     });
 
-    asyncTest('_setColumnWidth works', function() {
+    asyncTest('setting column width works', function() {
         setup({
             appendTo: 'body',
             columnModelClass: resizable(BasicColumnModel)
@@ -330,25 +330,26 @@ define([
             var startingWidths = g.$el.find('thead th').map(function(i, el) {
                     return $(el).outerWidth();
                 }),
-                newWidths = startingWidths.slice(0);
+                newWidths = startingWidths.slice(0),
+                columns = g.get('columnModel').columns;
             newWidths[1] = 400;
-            g._setColumnWidth('required_field', newWidths[1]);
+            columns[1].set('width', newWidths[1]);
             g.$el.find('thead th').each(function(i, el) {
                 var col = g.get('columnModel').columns[i];
-                equal(col.width, newWidths[i],
-                    'column object width for '+col.name+' matches expected');
+                equal(col.get('width'), newWidths[i],
+                    'column object width for '+col.get('name')+' matches expected');
                 equal($(el).outerWidth(), newWidths[i],
-                    'element width for '+col.name+' matches expected');
+                    'element width for '+col.get('name')+' matches expected');
             });
 
             newWidths[4] = 50;
-            g._setColumnWidth('integer_field', newWidths[4]);
+            columns[4].set('width', newWidths[4]);
             g.$el.find('thead th').each(function(i, el) {
                 var col = g.get('columnModel').columns[i];
-                equal(col.width, newWidths[i],
-                    'column object width for '+col.name+' matches expected');
+                equal(col.get('width'), newWidths[i],
+                    'column object width for '+col.get('name')+' matches expected');
                 equal($(el).outerWidth(), newWidths[i],
-                    'element width for '+col.name+' matches expected');
+                    'element width for '+col.get('name')+' matches expected');
             });
             start();
         });

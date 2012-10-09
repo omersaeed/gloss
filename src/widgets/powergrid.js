@@ -170,45 +170,6 @@ define([
                 }), opts);
         },
 
-        _setColumnWidth: function(column, width) {
-            var naturalWidths, self = this,
-                columnModel = self.get('columnModel'),
-                $table = self.$el.find('table'),
-                outerWidth = function($el, width) {
-                    var actualWidth = width - _.reduce([
-                            'margin-left', 'border-left-width', 'padding-left',
-                            'border-right-width', 'margin-right', 'padding-right'
-                        ], function(memo, p) {
-                            return memo + parseInt($el.css(p), 10);
-                        }, 0);
-                    $el.css({
-                        width:    actualWidth,
-                        minWidth: actualWidth,
-                        maxWidth: actualWidth
-                    });
-                };
-
-            if (_.isString(column)) {
-                column = _.find(columnModel.columns, function(c) {
-                    return c.get('name') === column;
-                });
-            }
-
-            if (!self._fixedLayout) {
-                naturalWidths = columnModel.$el.find('th').map( function(i, el) {
-                    return columnModel.columns[i].width = $(el).outerWidth();
-                });
-                columnModel.$el.find('th').each(function(i, el) {
-                    outerWidth($(el), naturalWidths[i]);
-                });
-                self.$el.addClass('fixed-width');
-                self._fixedLayout = true;
-            }
-
-            column.width = width;
-            outerWidth(columnModel.$el.find('th.col-'+column.name), width);
-        },
-
         _trFromModel: function(model) {
             return this.$tbody.children('tr').eq(
                 _.indexOf(this.get('models'), model));
@@ -284,7 +245,8 @@ define([
         },
 
         update: function(updated) {
-            var colName, rerender, sort;
+            var colName, rerender, sort, naturalWidths,
+                columnModel = this.get('columnModel');
 
             rerender = sort = false;
 
@@ -295,6 +257,17 @@ define([
             if (updated.collection) {
                 this.get('collection')
                     .on('change', _.bind(this._onModelChange, this));
+            }
+            if (updated.fixedLayout && !this._settingInitialWidth) {
+                this._settingInitialWidth = true;
+                naturalWidths = _.map(columnModel.columns, function(c) {
+                    return c.get('width');
+                });
+                _.each(naturalWidths, function(w, i) {
+                    columnModel.columns[i].set('width', w);
+                });
+                this.$el.addClass('fixed-width');
+                this._settingInitialWidth = false;
             }
 
             if (sort) {
