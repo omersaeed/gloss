@@ -1,8 +1,6 @@
 // TODO:
 //  - settable column widths
 //       - setting column widths via CSS
-//       - setting via column model config
-//       - re-setting widths
 //       - resizeable via DnD
 //  - hide/show column
 //  - static header

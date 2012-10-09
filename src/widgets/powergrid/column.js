@@ -1,9 +1,10 @@
 define([
     'vendor/underscore',
     './../../view',
+    './../grid/resizehandle',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function(_, View, thTemplate, tdTemplate) {
+], function(_, View, ResizeHandle, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
         var actualWidth = width - _.reduce([
                 'margin-left', 'border-left-width', 'padding-left',
@@ -28,15 +29,39 @@ define([
                 throw Error('column must be initialized with grid instance');
             }
 
-            grid.on('click', 'th.sortable.col-' + self.get('name'), function() {
+            self.on('click', function() {
                 var cur = self.get('sort');
+                if (!self.get('sortable')) {
+                    return;
+                }
                 self.set('sort', /asc/i.test(cur)? 'descending' : 'ascending');
             });
+            self._instantiateResizeHandle();
+        },
+
+        _instantiateResizeHandle: function() {
+            this.resize = ResizeHandle(this.$el.find('.resize'))
+                .on('dragend', _.bind(this._onResize, this));
+        },
+
+        _onResize: function(evt, cursorPos) {
+            var diff = cursorPos.clientX - this.$el.position().left;
+            if (diff > 0) {
+                this.set('width', diff);
+            }
+            if (this.resize.node.style.removeProperty) {
+                this.resize.node.style.removeProperty('left');
+            }
         },
 
         get: function(key) {
             return key === 'width'?
                 this.$el.outerWidth() : this._super.apply(this, arguments);
+        },
+
+        render: function() {
+            this._super.apply(this, arguments);
+            this._instantiateResizeHandle();
         },
 
         renderTd: tdTemplate,
