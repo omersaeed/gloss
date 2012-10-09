@@ -4,9 +4,14 @@
        sort = this.get('sort'),
        resizable = this.get('resizable'),
        grid = this.get('grid'); %>
-<th class="col-<%=name%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%>">
-  <span class=resize>&nbsp;</span>
+<th class="<%=this.cssClass()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%>">
+
+  <% if (resizable) { %>
+    <span class=resize>&nbsp;</span>
+  <% } %>
+
   <%=label != null? label : name%>
+
   <% if (sortable && sort) { %>
     <span class=sort-arrow>
       <%= /asc/i.test(sort)? '&#x25b2;' : '&#x25bc;' %>

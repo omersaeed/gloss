@@ -1,8 +1,4 @@
 // TODO:
-//  - settable column widths
-//       - setting column widths via CSS
-//       - resizeable via DnD
-//  - hide/show column
 //  - static header
 //  - keyboard navigation
 //  - handling data that's not backed by a collection
@@ -249,8 +245,7 @@ define([
             rerender = sort = false;
 
             if (updated.models) {
-                rerender = true;
-                sort = true;
+                rerender = sort = true;
             }
             if (updated.collection) {
                 this.get('collection')

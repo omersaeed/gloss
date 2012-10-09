@@ -2,9 +2,10 @@ define([
     'vendor/underscore',
     './../../view',
     './../grid/resizehandle',
+    './../../util/styleUtils',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function(_, View, ResizeHandle, thTemplate, tdTemplate) {
+], function(_, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
         var actualWidth = width - _.reduce([
                 'margin-left', 'border-left-width', 'padding-left',
@@ -39,9 +40,29 @@ define([
             self._instantiateResizeHandle();
         },
 
+        _hiddenColumnClass: function() {
+            return 'hide-' + this.cssClass();
+        },
+
+        _addHiddenColumnCss: function() {
+            var ss, rule;
+            if (this._hiddenColumnCssAdded) {
+                return;
+            }
+            this._hiddenColumnCssAdded = true;
+            ss = _.last(document.styleSheets);
+            StyleUtils.addStyleRules([[[
+                '#', this.get('grid').el.id, '.',
+                this._hiddenColumnClass(), ' .',
+                this.cssClass()
+            ].join(''), ['display', 'none']]]);
+        },
+
         _instantiateResizeHandle: function() {
-            this.resize = ResizeHandle(this.$el.find('.resize'))
-                .on('dragend', _.bind(this._onResize, this));
+            if (this.get('resizable')) {
+                this.resize = ResizeHandle(this.$el.find('.resize'))
+                    .on('dragend', _.bind(this._onResize, this));
+            }
         },
 
         _onResize: function(evt, cursorPos) {
@@ -54,9 +75,19 @@ define([
             }
         },
 
+        cssClass: function() {
+            return 'col-' + this.get('name');
+        },
+
         get: function(key) {
             return key === 'width'?
                 this.$el.outerWidth() : this._super.apply(this, arguments);
+        },
+
+        hide: function() {
+            this._addHiddenColumnCss();
+            this.get('grid').$el.addClass(this._hiddenColumnClass());
+            return this;
         },
 
         render: function() {
@@ -65,6 +96,11 @@ define([
         },
 
         renderTd: tdTemplate,
+
+        show: function() {
+            this.get('grid').$el.removeClass(this._hiddenColumnClass());
+            return this;
+        },
 
         update: function(updated) {
             var newWidth;

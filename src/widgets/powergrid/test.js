@@ -306,15 +306,14 @@ define([
             columnClasses: _.map(
                 colModelClass.prototype.columnClasses,
                 function(columnClass) {
-                    return columnClass.extend({resizable: true});
+                    return columnClass.extend({defaults: {resizable: true}});
                 })
         });
     };
 
     asyncTest('resizable columns have resize handle el', function() {
         setup({
-            appendTo: '#qunit-fixture',
-            columnModelClass: resizable(BasicColumnModel)
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
         }).then(function(g) {
             equal(g.$el.find('th .resize').length,
                 BasicColumnModel.prototype.columnClasses.length);
@@ -324,8 +323,7 @@ define([
 
     asyncTest('setting column width works', function() {
         setup({
-            appendTo: 'body',
-            columnModelClass: resizable(BasicColumnModel)
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
         }).then(function(g) {
             var startingWidths = g.$el.find('thead th').map(function(i, el) {
                     return $(el).outerWidth();
@@ -351,6 +349,33 @@ define([
                 equal($(el).outerWidth(), newWidths[i],
                     'element width for '+col.get('name')+' matches expected');
             });
+            start();
+        });
+    });
+
+    module('hiding columns');
+
+    asyncTest('hiding column works', function() {
+        setup({appendTo: 'body'}).then(function(g) {
+            equal(g.$el.find('.col-required_field:visible').length,
+                g.get('models').length+1,
+                'required_field cells and header visible');
+            equal(g.$el.find('.col-required_field:visible').length, 16,
+                'required_field cells and header visible');
+
+            g.get('columnModel').columns[1].hide();
+
+            equal(g.$el.find('.col-required_field:visible').length, 0,
+                'required_field cells and header are hidden');
+
+            g.get('columnModel').columns[1].show();
+
+            equal(g.$el.find('.col-required_field:visible').length,
+                g.get('models').length+1,
+                'required_field cells and header visible');
+            equal(g.$el.find('.col-required_field:visible').length, 16,
+                'required_field cells and header visible');
+
             start();
         });
     });
