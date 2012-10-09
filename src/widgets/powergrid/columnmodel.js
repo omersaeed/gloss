@@ -6,7 +6,7 @@ define([
     return View.extend({
         template: '<thead><tr></tr></thead>',
         init: function() {
-            var self = this, grid;
+            var self = this, grid, $tr;
 
             self._super.apply(this, arguments);
 
@@ -14,8 +14,9 @@ define([
                 throw Error('ColumnModel class must be instantiated with grid instance');
             }
 
+            $tr = self.$el.find('tr');
             self.columns = _.map(self.columnClasses || [], function(cls) {
-                return cls({grid: grid}).appendTo(self.$el.find('tr'));
+                return cls({grid: grid}).appendTo($tr);
             });
         },
         renderTr: trTemplate
