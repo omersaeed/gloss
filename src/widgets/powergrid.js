@@ -55,10 +55,12 @@ define([
 
             this.$tbody = this.$el.find('table.rows tbody');
 
-            this.$thead = this.$el.find('table.header thead');
+            this.on('columnchange', _.bind(this._onColumnChange, this));
 
-            this.set('columnModel',
-                this.get('columnModelClass')({grid: this}), {silent: true});
+            this.set('columnModel', this.get('columnModelClass')({
+                $el: this.$el.find('table.header thead'),
+                grid: this
+            }), {silent: true});
 
             if (this.get('selectedAttr') == null) {
                 this.set({
@@ -81,6 +83,18 @@ define([
 
         _modelFromTr: function(tr) {
             return this.get('models')[this.$tbody.children('tr').index(tr)];
+        },
+
+        _onColumnChange: function(evt, data) {
+            var column = data.column, updated = data.updated;
+            if (updated.sort && column.get('sort')) {
+                _.each(this.get('columnModel').columns, function(c) {
+                    if (c !== column && c.get('sort')) {
+                        c.del('sort');
+                    }
+                });
+                this._sort({});
+            }
         },
 
         _onModelChange: function(eventName, coll, model, changed) {
@@ -136,20 +150,23 @@ define([
             $(currentRow).remove();
             this._renderRowCount++;
             console.log('rerendered row for',
-                    model.get(this.get('columnModel').columns[0].name));
+                    model.get(this.get('columnModel').columns[0].get('name')));
         },
 
         _sort: function(opts) {
-            var ascending, self = this, column = self.get('sort.column');
-            if (!column.sortable || !self.get('models')) {
+            var ascending, self = this,
+                column = _.find(self.get('columnModel').columns, function(c) {
+                    return c.get('sort');
+                });
+            if (!column || !column.get('sortable') || !self.get('models')) {
                 return;
             }
-            ascending = self.get('sort.direction').search(/asc/i),
+            ascending = /asc/i.test(column.get('sort'));
             self.set('models',
                 // copy the models array then sort it
                 self.get('models').slice(0).sort(function(a, b) {
                     return (ascending? 1 : -1) * sort.userFriendly(
-                        a.get(column.name), b.get(column.name));
+                        a.get(column.get('name')), b.get(column.get('name')));
                 }), opts);
         },
 
@@ -173,15 +190,15 @@ define([
 
             if (_.isString(column)) {
                 column = _.find(columnModel.columns, function(c) {
-                    return c.name === column;
+                    return c.get('name') === column;
                 });
             }
 
             if (!self._fixedLayout) {
-                naturalWidths = self.$thead.find('th').map(function(i, el) {
+                naturalWidths = columnModel.$el.find('th').map( function(i, el) {
                     return columnModel.columns[i].width = $(el).outerWidth();
                 });
-                self.$thead.find('th').each(function(i, el) {
+                columnModel.$el.find('th').each(function(i, el) {
                     outerWidth($(el), naturalWidths[i]);
                 });
                 self.$el.addClass('fixed-width');
@@ -189,18 +206,13 @@ define([
             }
 
             column.width = width;
-            outerWidth(self.$thead.find('th.col-'+column.name), width);
+            outerWidth(columnModel.$el.find('th.col-'+column.name), width);
         },
 
         _trFromModel: function(model) {
             return this.$tbody.children('tr').eq(
                 _.indexOf(this.get('models'), model));
 
-        },
-
-        rerenderHeader: function() {
-            this.$thead.html(this.get('columnModel').renderHeaderTr());
-            return this;
         },
 
         rerender: function() {
@@ -272,29 +284,13 @@ define([
         },
 
         update: function(updated) {
-            var colName, rerenderHeader, rerender, sort;
+            var colName, rerender, sort;
 
-            rerenderHeader = rerender = sort = false;
+            rerender = sort = false;
 
-            if (updated.columnModel) {
-                rerenderHeader = rerender = true;
-            }
-            if (this.get('columnModel') &&
-                updated.sort || updated['sort.direction'] || updated['sort.column']) {
-                if (_.isString(this.get('sort.column'))) {
-                    colName = this.get('sort.column');
-                    this.set('sort.column',
-                        _.find(this.get('columnModel').columns, function(c) {
-                            return c.name === colName;
-                        }), {silent: true});
-                }
-                rerenderHeader = rerender = sort = true;
-            }
             if (updated.models) {
                 rerender = true;
-                if (this.get('sort.column')) {
-                    sort = true;
-                }
+                sort = true;
             }
             if (updated.collection) {
                 this.get('collection')
@@ -303,9 +299,6 @@ define([
 
             if (sort) {
                 this._sort({silent: true});
-            }
-            if (rerenderHeader) {
-                this.rerenderHeader();
             }
             if (rerender) {
                 this.rerender();

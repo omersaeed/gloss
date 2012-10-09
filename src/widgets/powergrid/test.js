@@ -10,12 +10,12 @@ define([
 ], function($, _, Example, PowerGrid, ColumnModel, Column, exampleFixtures) {
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
-                Column.extend({name: 'text_field'}),
-                Column.extend({name: 'required_field'}),
-                Column.extend({name: 'boolean_field'}),
-                Column.extend({name: 'datetime_field'}),
-                Column.extend({name: 'integer_field'}),
-                Column.extend({name: 'default_field'})
+                Column.extend({defaults: {name: 'text_field'}}),
+                Column.extend({defaults: {name: 'required_field'}}),
+                Column.extend({defaults: {name: 'boolean_field'}}),
+                Column.extend({defaults: {name: 'datetime_field'}}),
+                Column.extend({defaults: {name: 'integer_field'}}),
+                Column.extend({defaults: {name: 'default_field'}})
             ]
         }),
         setup = function(options) {
@@ -89,14 +89,19 @@ define([
     };
 
     var sortedOn = function(g, colName, order) {
-        equal(g.get('sort.column').name, colName, 'sort.column set correctly');
+        var sortCol = function() {
+            return _.find(g.get('columnModel').columns, function(c) {
+                return c.get('sort');
+            });
+        };
+        equal(sortCol().get('name'), colName, 'sort.column set correctly');
 
         orderMatches(
             g.$el.find('td.col-'+colName).map(function(i, el) {
                 return $(el).text();
             }), order);
 
-        equal(g.$thead.find('th.col-'+colName+' span.sort-arrow').length, 1,
+        equal(g.$el.find('th.col-'+colName+' span.sort-arrow').length, 1,
                 'sort arrow appears');
 
     };
@@ -106,17 +111,21 @@ define([
             columnClasses: _.map(
                 colModelClass.prototype.columnClasses,
                 function(columnClass) {
-                    return columnClass.extend({sortable: true});
+                    return columnClass.extend({defaults: {sortable: true}});
                 })
         });
     };
 
     asyncTest('grid is initially sorted and responds to re-sorting', function() {
+        var ColModel = sortable(BasicColumnModel);
+
+        ColModel.prototype.columnClasses[0] =
+            ColModel.prototype.columnClasses[0].extend({
+                defaults: {sort: 'ascending'}
+            });
+
         setup({
-            gridOptions: {
-                columnModelClass: sortable(BasicColumnModel),
-                sort: {column: 'text_field', direction: 'ascending'}
-            },
+            gridOptions: {columnModelClass: ColModel},
             appendTo: '#qunit-fixture'
         }).then(function(g, options) {
             var expectedText =
@@ -127,23 +136,25 @@ define([
                     990, 795, 789, 779, 764, 582, 516, 439, 252, 247, 228, 221,
                     159, 112, 13];
 
-            sortedOn(g, 'text_field', expectedText);
+            sortedOn(g, 'text_field', expectedText.slice(0).reverse());
 
             equal(g._renderCount, 1, 'instantiation only renders once');
 
-            g.$thead.find('th.col-text_field').trigger('click');
+            g.$el.find('th.col-text_field').trigger('click');
 
-            sortedOn(g, 'text_field', expectedText.slice(0).reverse());
-            equal(g._renderCount, 2, 'changing sort only rerenders once');
+            sortedOn(g, 'text_field', expectedText);
+            equal(g._renderCount, 2,
+                'changing sort only rerenders once (first check)');
 
-            g.$thead.find('th.col-integer_field').trigger('click');
-
-            sortedOn(g, 'integer_field', expectedInt);
-            equal(g._renderCount, 3, 'changing sort only rerenders once');
-
-            g.$thead.find('th.col-integer_field').trigger('click');
+            g.$el.find('th.col-integer_field').trigger('click');
 
             sortedOn(g, 'integer_field', expectedInt.slice(0).reverse());
+            equal(g._renderCount, 3,
+                    'changing sort only rerenders once (second check)');
+
+            g.$el.find('th.col-integer_field').trigger('click');
+
+            sortedOn(g, 'integer_field', expectedInt);
 
             start();
         });
@@ -177,11 +188,11 @@ define([
             gridOptions: {
                 selectable: true,
                 columnModelClass: sortable(BasicColumnModel)
-            },
-            appendTo: '#qunit-fixture'
+            }
         }).then(function(g, options) {
             g.select(g.get('collection').where({text_field: 'item 2'}));
-            g.$thead.find('th.col-integer_field').trigger('click');
+            g.$el.find('th.col-integer_field').trigger('click');
+            g.$el.find('th.col-integer_field').trigger('click');
             var $selected = g.$el.find('.selected');
             equal($selected.length, 1, 'only one is selected');
             equal(trim($selected.find('td.col-text_field').text()),

@@ -1,29 +1,22 @@
 define([
     'vendor/underscore',
-    'bedrock/class',
+    './../../view',
     'tmpl!./tr.mtpl'
-], function(_, Class, trTemplate) {
-    return Class.extend({
-        init: function(options) {
-            var self = this;
+], function(_, View, trTemplate) {
+    return View.extend({
+        template: '<thead><tr></tr></thead>',
+        init: function() {
+            var self = this, grid;
 
-            _.extend(self, options);
+            self._super.apply(this, arguments);
 
-            if (! self.grid) {
-                throw Error('Column class (column model) must be instantiated with grid instance');
+            if (! (grid = self.get('grid'))) {
+                throw Error('ColumnModel class must be instantiated with grid instance');
             }
 
             self.columns = _.map(self.columnClasses || [], function(cls) {
-                return cls({grid: self.grid});
+                return cls({grid: grid}).appendTo(self.$el.find('tr'));
             });
-        },
-        renderHeaderTr: function() {
-            var i, l, columns = this.columns, tr = ['<tr>'];
-            for (i = 0, l = columns.length; i < l; i++) {
-                tr.push(columns[i].renderTh());
-            }
-            tr.push('</tr>');
-            return tr.join('');
         },
         renderTr: trTemplate
     });

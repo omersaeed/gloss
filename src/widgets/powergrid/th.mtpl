@@ -1,10 +1,15 @@
-<th class="col-<%=this.name%> <%=this.sortable? 'sortable' : ''%> <%=this.resizable? 'resizable' : ''%>">
+<% var name = this.get('name'),
+       label = this.get('label'),
+       sortable = this.get('sortable'),
+       sort = this.get('sort'),
+       resizable = this.get('resizable'),
+       grid = this.get('grid'); %>
+<th class="col-<%=name%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%>">
   <span class=resize>&nbsp;</span>
-  <%=this.label%>
-  <% if (this.sortable && this.grid.get('sort.column') === this) { %>
+  <%=label != null? label : name%>
+  <% if (sortable && sort) { %>
     <span class=sort-arrow>
-      <%= /asc/i.test(this.grid.get('sort.direction'))?
-        '&#x25b2;' : '&#x25bc;' %>
+      <%= /asc/i.test(sort)? '&#x25b2;' : '&#x25bc;' %>
     </span>
   <% } %>
 </th>

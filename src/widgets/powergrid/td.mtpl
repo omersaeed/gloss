@@ -1,4 +1,4 @@
-<% var v = data.get(this.name); %>
-<td class="col-<%=this.name%>">
+<% var name = this.get('name'), v = data.get(name); %>
+<td class="col-<%=this.get('name')%>">
   <%= v == null? '' : v.toString() %>
 </td>

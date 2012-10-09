@@ -1,31 +1,33 @@
 define([
     'vendor/underscore',
-    'bedrock/class',
+    './../../view',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function(_, Class, thTemplate, tdTemplate) {
-    return Class.extend({
-        init: function(options) {
-            var self = this;
+], function(_, View, thTemplate, tdTemplate) {
+    return View.extend({
+        template: thTemplate,
+        init: function() {
+            var self = this, grid;
 
-            _.extend(self, options || {});
-            self.label = self.label || self.name;
+            self._super.apply(this, arguments);
 
-            if (! self.grid) {
+            if (! (grid = self.get('grid'))) {
                 throw Error('column must be initialized with grid instance');
             }
 
-            self.grid.on('click', 'th.sortable.col-' + self.name, function() {
-                var cur = self.grid.get('sort.direction');
-                self.grid.set({
-                    'sort.column': self,
-                    'sort.direction': cur && /asc/i.test(cur)?
-                        'descending' : 'ascending'
-                });
+            grid.on('click', 'th.sortable.col-' + self.get('name'), function() {
+                var cur = self.get('sort');
+                self.set('sort', /asc/i.test(cur)? 'descending' : 'ascending');
             });
         },
 
         renderTd: tdTemplate,
-        renderTh: thTemplate
+
+        update: function(updated) {
+            if (updated.sort) {
+                this.render();
+            }
+            this.trigger('columnchange', {column: this, updated: updated});
+        }
     });
 });

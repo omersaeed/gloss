@@ -1,5 +1,5 @@
-<% var i, l, grid = this.grid, columns = this.columns; %>
-<tr class="<%=data.get(this.grid.get('selectedAttr'))? 'selected' : ''%>">
+<% var i, l, grid = this.get('grid'), columns = this.columns; %>
+<tr class="<%=data.get(grid.get('selectedAttr'))? 'selected' : ''%>">
   <% for (i = 0, l = columns.length; i < l; i++) { %>
     <%=columns[i].renderTd(data);%>
   <% } %>
