@@ -1,24 +1,33 @@
 // TODO:
 //  - static header
 //  - keyboard navigation
-//  - handling data that's not backed by a collection
 //  - lining up numbers based on decimal point
+//  - 'refine' search box
+//  - pager
+//  - checkbox column
+//  - bytes column
+//  - date column
+//  - lookandfeel styling
 //  - edit row
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'mesh/model',
     './../view',
     './ascollectionviewable',
     './powergrid/columnmodel',
     './../util/sort',
     'tmpl!./powergrid/powergrid.mtpl',
     'css!./powergrid/powergrid.css'
-], function($, _, View, asCollectionViewable, ColumnModel, sort, template) {
+], function($, _, model, View, asCollectionViewable, ColumnModel, sort,
+    template) {
 
-    var EmptyColumnModel, PowerGrid,
+    var EmptyColumnModel, PowerGrid, DummyModel,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
 
     EmptyColumnModel = ColumnModel.extend({});
+
+    DummyModel = model.Model.extend({});
 
     PowerGrid = View.extend({
         defaults: {
@@ -246,6 +255,11 @@ define([
 
             if (updated.models) {
                 rerender = sort = true;
+            }
+            if (updated.data) {
+                this.set('models', _.map(this.get('data'), function(d) {
+                    return DummyModel(d);
+                }));
             }
             if (updated.collection) {
                 this.get('collection')

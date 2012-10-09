@@ -356,7 +356,7 @@ define([
     module('hiding columns');
 
     asyncTest('hiding column works', function() {
-        setup({appendTo: 'body'}).then(function(g) {
+        setup().then(function(g) {
             equal(g.$el.find('.col-required_field:visible').length,
                 g.get('models').length+1,
                 'required_field cells and header visible');
@@ -378,6 +378,20 @@ define([
 
             start();
         });
+    });
+
+    module('data thats not backed by a collection');
+
+    test('raw data objects', function() {
+        var g = PowerGrid({columnModelClass: BasicColumnModel})
+            .appendTo('#qunit-fixture');
+
+        g.set('data', _.map(exampleFixtures, function(f) {
+            return $.extend(true, {}, f);
+        }));
+        equal(g.get('models').length, exampleFixtures.length);
+        equal(g.get('models').length, 1000);
+        equal(g.$el.find('tr').length, 1001);
     });
 
     start();
