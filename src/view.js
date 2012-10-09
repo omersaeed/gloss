@@ -56,26 +56,29 @@ define([
         template: '<div></div>',
 
         init: function(options) {
-            var $tmp;
+            var el, $el;
+
             options = _.extend({}, options);
-            this.$el = $(options.$el || options.el);
+            el = options.el;
+            $el = options.$el;
+            delete options.el;
+            delete options.$el;
+
+            this.set($.extend(true, {}, this.defaults, options), {silent: true});
+
+            this.$el = $($el || el);
             if (!this.$el.length) {
                 this.$el = $(this._renderHTML());
             } else if (this.$el.length > 1) {
                 throw Error('views must be initialized with only one DOM el');
             } else if (!this.$el.children().length) {
-                $tmp = $(this._renderHTML());
-                this.$el.html($tmp.html()).attr('class', $tmp.attr('class'));
+                this.render();
             }
             this.el = this.$el[0];
-            delete options.el;
-            delete options.$el;
 
             dbgview['v' + (++viewCount)] = this;
 
             this.el.id = 'view' + viewCount;
-
-            this.set($.extend(true, {}, this.defaults, options), {silent: true});
         },
 
         // this provides a means for detecting when the user clicks outside of
@@ -117,6 +120,11 @@ define([
         hide: function() {
             this.$el.addClass('hidden');
             return this;
+        },
+
+        render: function() {
+            var $tmp = $(this._renderHTML());
+            this.$el.html($tmp.html()).attr('class', $tmp.attr('class'));
         },
 
         show: function() {
