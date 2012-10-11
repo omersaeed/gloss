@@ -430,7 +430,7 @@ define([
     });
 
     asyncTest('search widget correctly sets search params', function() {
-        var appendTo = 'body', cutoff = 500;
+        var appendTo = '#qunit-fixture', cutoff = 500;
         setup({appendTo: appendTo}).then(function(g) {
             var originalLength = g.get('models').length,
                 search = MySearch(null, {collection: g.get('collection')})
@@ -443,7 +443,43 @@ define([
                     ok(m.get('integer_field') > cutoff,
                         'filter worked correctly for '+m.get('text_field'));
                 });
+                ok(g.get('models').length < originalLength);
                 start();
+            });
+        });
+    });
+
+    asyncTest('search widget correctly sets search params', function() {
+        var appendTo = 'body', cutoff1 = 500, cutoff2 = 200;
+        setup({appendTo: appendTo}).then(function(g) {
+            var originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            search.getWidget('q').setValue(cutoff1);
+
+            search.submit().then(function() {
+                var cutoff1Length = g.get('models').length;
+                _.each(g.get('models'), function(m) {
+                    ok(m.get('integer_field') > cutoff1,
+                        'filter worked correctly for '+m.get('text_field'));
+                });
+                ok(g.get('models').length < originalLength);
+                search.getWidget('q').setValue(cutoff2);
+                search.submit().then(function() {
+                    _.each(g.get('models'), function(m) {
+                        ok(m.get('integer_field') > cutoff2,
+                            'filter worked correctly for '+m.get('text_field'));
+                    });
+                    ok(g.get('models').length < originalLength);
+                    ok(g.get('models').length > cutoff1Length);
+
+                    search.getWidget('clear').trigger('click');
+                    setTimeout(function() {
+                        equal(g.get('models').length, originalLength);
+                        start();
+                    }, 50);
+                });
             });
         });
     });

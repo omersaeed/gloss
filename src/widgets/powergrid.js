@@ -1,6 +1,5 @@
 // TODO:
 //  - 'refine' search box, TODO:
-//       - deleting/clearing search field
 //       - adding the 'filtered' class to the grid
 //       - enabling/disabling the 'x'
 //       - enabling/disabling the rest of the inputs
