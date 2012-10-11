@@ -6,8 +6,11 @@ define([
     './../powergrid',
     './columnmodel',
     './column',
+    './powergridsearch',
     './examplefixtures'
-], function($, _, Example, PowerGrid, ColumnModel, Column, exampleFixtures) {
+], function($, _, Example, PowerGrid, ColumnModel, Column, PowerGridSearch,
+    exampleFixtures) {
+
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
                 Column.extend({defaults: {name: 'text_field'}}),
@@ -25,7 +28,8 @@ define([
                 params: {limit: 15},
                 appendTo: '#qunit-fixture',
                 gridClass: PowerGrid,
-                gridOptions: {}
+                gridOptions: {},
+                swapOutRequestPrototype: false
             }, options);
 
             Example.models.clear();
@@ -53,13 +57,21 @@ define([
     window.Example = Example;
 
     Example.prototype.__requests__.query.ajax = function(params) {
-        var dfd = $.Deferred(),
+        var query, dfd = $.Deferred(),
             resources = [],
-            limit = params.limit || exampleFixtures.length,
-            offset = params.offset || 0;
+            limit = params.data.limit || exampleFixtures.length,
+            offset = params.data.offset || 0;
+
+        query = eval('query = ' + (params.data.query || '{}'));
 
         for (var i = offset; i < limit; i++) {
-            resources.push(_.extend({}, exampleFixtures[i]));
+            if (query.integer_field__gt) {
+                if (exampleFixtures[i].integer_field > query.integer_field__gt) {
+                    resources.push(_.extend({}, exampleFixtures[i]));
+                }
+            } else {
+                resources.push(_.extend({}, exampleFixtures[i]));
+            }
         }
 
         params.success({
@@ -392,6 +404,48 @@ define([
         equal(g.get('models').length, exampleFixtures.length);
         equal(g.get('models').length, 1000);
         equal(g.$el.find('tr').length, 1001);
+    });
+
+    module('search widget');
+
+    var MySearch = PowerGridSearch.extend({
+        defaults: {searchParam: 'integer_field__gt'}
+    });
+
+    asyncTest('search widget correctly maintains limit', function() {
+        var appendTo = '#qunit-fixtire';
+        setup({appendTo: appendTo}).then(function(g) {
+            var originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            search.getWidget('q').setValue(500);
+
+            search.submit().then(function() {
+                ok(g.get('models').length <= originalLength,
+                    'original limit was preserved');
+                start();
+            });
+        });
+    });
+
+    asyncTest('search widget correctly sets search params', function() {
+        var appendTo = 'body', cutoff = 500;
+        setup({appendTo: appendTo}).then(function(g) {
+            var originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            search.getWidget('q').setValue(cutoff);
+
+            search.submit().then(function() {
+                _.each(g.get('models'), function(m) {
+                    ok(m.get('integer_field') > cutoff,
+                        'filter worked correctly for '+m.get('text_field'));
+                });
+                start();
+            });
+        });
     });
 
     start();

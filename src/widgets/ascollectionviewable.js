@@ -4,6 +4,8 @@ define([
 ], function(_, CollectionViewable) {
     return function() {
         this._updateCollection = CollectionViewable._updateCollection;
+        this._onCollectionViewableUpdate =
+            CollectionViewable._onCollectionViewableUpdate;
 
         this.update = _.wrap(this.update, function(func) {
             var rest = Array.prototype.slice.call(arguments, 1),

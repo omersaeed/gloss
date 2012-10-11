@@ -1,14 +1,18 @@
 // TODO:
-//  - static header
-//  - keyboard navigation
-//  - lining up numbers based on decimal point
-//  - 'refine' search box
-//  - pager
+//  - 'refine' search box, TODO:
+//       - deleting/clearing search field
+//       - adding the 'filtered' class to the grid
+//       - enabling/disabling the 'x'
+//       - enabling/disabling the rest of the inputs
 //  - checkbox column
 //  - bytes column
 //  - date column
 //  - lookandfeel styling
 //  - edit row
+//  - pager
+//  - static header
+//  - keyboard navigation
+//  - lining up numbers based on decimal point
 define([
     'vendor/jquery',
     'vendor/underscore',
@@ -81,7 +85,10 @@ define([
             // for testing and debugging purposes
             this._renderCount = this._renderRowCount = 0;
 
-            this.update(this.options);
+            this.update(_.reduce(this.options, function(m, v, k) {
+                m[k] = true;
+                return m;
+            }, {}));
         },
 
         _modelFromTr: function(tr) {

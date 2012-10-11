@@ -1,0 +1,9 @@
+<form class=powergridsearch>
+
+  <input type=text name=q placeholder="<%=this.options.placeholder%>" />
+
+  <button type=button name=clear>X</button>
+
+  <button type=submit name=search><%=this.options.searchButtonText%></button>
+
+</form>
