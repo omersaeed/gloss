@@ -74,10 +74,12 @@ define([
             }
         }
 
-        params.success({
-            resources: resources,
-            length: resources.length
-        }, 200, {});
+        setTimeout(function() {
+            params.success({
+                resources: resources,
+                length: resources.length
+            }, 200, {});
+        }, 0);
         return dfd;
     };
 
@@ -429,7 +431,7 @@ define([
         });
     });
 
-    asyncTest('search widget correctly sets search params', function() {
+    asyncTest('correctly sets search params', function() {
         var appendTo = '#qunit-fixture', cutoff = 500;
         setup({appendTo: appendTo}).then(function(g) {
             var originalLength = g.get('models').length,
@@ -449,7 +451,7 @@ define([
         });
     });
 
-    asyncTest('search widget correctly clears search params', function() {
+    asyncTest('correctly clears search params', function() {
         var appendTo = '#qunit-fixture', cutoff1 = 500, cutoff2 = 200;
         setup({appendTo: appendTo}).then(function(g) {
             var originalLength = g.get('models').length,
@@ -467,25 +469,27 @@ define([
                 ok(g.get('models').length < originalLength);
                 search.getWidget('q').setValue(cutoff2);
                 search.submit().then(function() {
-                    _.each(g.get('models'), function(m) {
-                        ok(m.get('integer_field') > cutoff2,
-                            'filter worked correctly for '+m.get('text_field'));
-                    });
-                    ok(g.get('models').length < originalLength);
-                    ok(g.get('models').length > cutoff1Length);
-
-                    search.getWidget('clear').trigger('click');
                     setTimeout(function() {
-                        equal(g.get('models').length, originalLength);
-                        start();
-                    }, 50);
+                        _.each(g.get('models'), function(m) {
+                            ok(m.get('integer_field') > cutoff2,
+                                'filter worked correctly for '+m.get('text_field'));
+                        });
+                        ok(g.get('models').length < originalLength);
+                        ok(g.get('models').length > cutoff1Length);
+
+                        search.getWidget('clear').trigger('click');
+                        setTimeout(function() {
+                            equal(g.get('models').length, originalLength);
+                            start();
+                        }, 15);
+                    }, 15);
                 });
             });
         });
     });
 
-    asyncTest('search widget correctly causes the "filtered" class to be applied', function() {
-        var appendTo = 'body', cutoff = 500;
+    asyncTest('correctly causes the "filtered" class to be applied', function() {
+        var appendTo = '#qunit-fixture', cutoff = 500;
         setup({appendTo: appendTo}).then(function(g) {
             var originalLength = g.get('models').length,
                 search = MySearch(null, {collection: g.get('collection')})
@@ -505,6 +509,27 @@ define([
                     start();
                 }, 50);
             });
+        });
+    });
+
+    asyncTest('disabled while searching', function() {
+        var appendTo = 'body', cutoff = 500;
+        setup({appendTo: appendTo}).then(function(g) {
+            var search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            search.getWidget('q').setValue(cutoff);
+
+            search.submit().then(function() {
+                equal(search.getWidget('q').getState('disabled'),      false);
+                equal(search.getWidget('clear').getState('disabled'),  false);
+                equal(search.getWidget('search').getState('disabled'), false);
+                start();
+            });
+
+            equal(search.getWidget('q').getState('disabled'),      true);
+            equal(search.getWidget('clear').getState('disabled'),  true);
+            equal(search.getWidget('search').getState('disabled'), true);
         });
     });
 

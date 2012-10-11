@@ -1,6 +1,4 @@
 // TODO:
-//  - 'refine' search box, TODO:
-//       - enabling/disabling the rest of the inputs
 //  - checkbox column
 //  - bytes column
 //  - date column

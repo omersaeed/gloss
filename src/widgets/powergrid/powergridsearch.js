@@ -40,14 +40,17 @@ define([
             this.getWidget('clear')[method]();
         },
         submit: function(evt) {
-            var collection = this.options.collection;
+            var self = this, collection = self.options.collection;
             if (evt) {
                 evt.preventDefault();
             }
             if (!collection) {
                 return;
             }
-            return collection.reset(this._makeQueryParams()).load();
+            self.propagate('disable');
+            return collection.reset(self._makeQueryParams()).load().then(
+                function() { self.propagate('enable'); },
+                function() { self.propagate('enable'); });
         }
     }, {mixins: [CollectionViewable]});
 
