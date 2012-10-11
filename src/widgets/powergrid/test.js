@@ -449,8 +449,8 @@ define([
         });
     });
 
-    asyncTest('search widget correctly sets search params', function() {
-        var appendTo = 'body', cutoff1 = 500, cutoff2 = 200;
+    asyncTest('search widget correctly clears search params', function() {
+        var appendTo = '#qunit-fixture', cutoff1 = 500, cutoff2 = 200;
         setup({appendTo: appendTo}).then(function(g) {
             var originalLength = g.get('models').length,
                 search = MySearch(null, {collection: g.get('collection')})
@@ -480,6 +480,30 @@ define([
                         start();
                     }, 50);
                 });
+            });
+        });
+    });
+
+    asyncTest('search widget correctly causes the "filtered" class to be applied', function() {
+        var appendTo = 'body', cutoff = 500;
+        setup({appendTo: appendTo}).then(function(g) {
+            var originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            equal(g.$el.hasClass('filtered'), false);
+
+            search.getWidget('q').setValue(cutoff);
+
+            search.submit().then(function() {
+                equal(g.$el.hasClass('filtered'), true);
+
+                search.getWidget('clear').trigger('click');
+
+                setTimeout(function() {
+                    equal(g.$el.hasClass('filtered'), false);
+                    start();
+                }, 50);
             });
         });
     });

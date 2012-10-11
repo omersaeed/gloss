@@ -1,7 +1,5 @@
 // TODO:
 //  - 'refine' search box, TODO:
-//       - adding the 'filtered' class to the grid
-//       - enabling/disabling the 'x'
 //       - enabling/disabling the rest of the inputs
 //  - checkbox column
 //  - bytes column
@@ -49,7 +47,13 @@ define([
             // something unique to the grid instance at instantiation time.
             //
             // this, of course, doesn't matter if 'selectable' is false
-            selectedAttr: null
+            selectedAttr: null,
+
+            // if this is true, then the grid will check for a non-null 'query'
+            // parameter in its collection's Query object. if it finds it, it
+            // will set the 'filterd' class on the grid's DOM element, which is
+            // used to remind the user that the grid is filtered
+            setFilteredClass: true
         },
 
         template: template,
@@ -254,13 +258,20 @@ define([
         },
 
         update: function(updated) {
-            var colName, rerender, sort, naturalWidths,
+            var colName, rerender, sort, naturalWidths, collection,
                 columnModel = this.get('columnModel');
 
             rerender = sort = false;
 
             if (updated.models) {
                 rerender = sort = true;
+                if (this.get('setFilteredClass') &&
+                        (collection = this.get('collection')) &&
+                        collection.query.params.query != null) {
+                    this.$el.addClass('filtered');
+                } else {
+                    this.$el.removeClass('filtered');
+                }
             }
             if (updated.data) {
                 this.set('models', _.map(this.get('data'), function(d) {
