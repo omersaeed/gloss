@@ -6,10 +6,11 @@ define([
     './../powergrid',
     './columnmodel',
     './column',
+    './column/checkboxcolumn',
     './powergridsearch',
     './examplefixtures'
-], function($, _, Example, PowerGrid, ColumnModel, Column, PowerGridSearch,
-    exampleFixtures) {
+], function($, _, Example, PowerGrid, ColumnModel, Column, CheckBoxColumn,
+    PowerGridSearch, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -513,7 +514,7 @@ define([
     });
 
     asyncTest('disabled while searching', function() {
-        var appendTo = 'body', cutoff = 500;
+        var appendTo = '#qunit-fixture', cutoff = 500;
         setup({appendTo: appendTo}).then(function(g) {
             var search = MySearch(null, {collection: g.get('collection')})
                             .appendTo(appendTo);
@@ -530,6 +531,64 @@ define([
             equal(search.getWidget('q').getState('disabled'),      true);
             equal(search.getWidget('clear').getState('disabled'),  true);
             equal(search.getWidget('search').getState('disabled'), true);
+        });
+    });
+
+    module('checkbox column');
+
+    var withCheckboxColumn = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses:
+                [CheckBoxColumn].concat(colModelClass.prototype.columnClasses)
+        });
+    };
+
+    asyncTest('renders checkboxes', function() {
+        setup({
+            gridOptions: {
+                columnModelClass: withCheckboxColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+            start();
+        });
+    });
+
+    asyncTest('checking a checkbox sets the corresponding model prop', function() {
+        setup({
+            gridOptions: {
+                columnModelClass: withCheckboxColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            ok(!g.get('models')[0].get('_checked'));
+            g.$el.find('tbody [type=checkbox]').first().trigger('click');
+            setTimeout(function() {
+                equal(g.get('models')[0].get('_checked'), true);
+                start();
+            }, 15);
+        });
+    });
+
+    asyncTest('checking header checks all', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withCheckboxColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+            equal(g.$el.find('[type=checkbox]:checked').length, 0);
+            _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+            g.$el.find('thead [type=checkbox]').trigger('click');
+            setTimeout(function() {
+                equal(g.$el.find('[type=checkbox]').length,
+                    g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length,
+                    g.get('models').length+1);
+                _.each(g.get('models'),
+                    function(m) { ok(m.get('_checked')); });
+                start();
+            }, 15);
         });
     });
 

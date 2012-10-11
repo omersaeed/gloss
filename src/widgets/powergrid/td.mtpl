@@ -1,4 +1,4 @@
-<% var name = this.get('name'), v = data.get(name); %>
+<% var v = this.getValue(data); %>
 <td class="<%=this.cssClass()%>">
   <%= v == null? '' : v.toString() %>
 </td>

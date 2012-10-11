@@ -1,5 +1,4 @@
 // TODO:
-//  - checkbox column
 //  - bytes column
 //  - date column
 //  - lookandfeel styling

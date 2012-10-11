@@ -84,6 +84,10 @@ define([
                 this.$el.outerWidth() : this._super.apply(this, arguments);
         },
 
+        getValue: function(model) {
+            return model.get(this.get('name'));
+        },
+
         hide: function() {
             this._addHiddenColumnCss();
             this.get('grid').$el.addClass(this._hiddenColumnClass());
