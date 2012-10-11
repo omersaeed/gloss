@@ -73,11 +73,11 @@ define([
             self._collectionViewableState = self._collectionViewableState || {};
             state = self._collectionViewableState;
 
-            if (!state.updatedCallbackWasBound && self.options.bindAll) {
-                self._onCollectionViewableUpdate =
-                    _.bind(self._onCollectionViewableUpdate, self);
-                state.updatedCallbackWasBound = true;
-            }
+            // if (!state.updatedCallbackWasBound && self.options.bindAll) {
+            //     self._onCollectionViewableUpdate =
+            //         _.bind(self._onCollectionViewableUpdate, self);
+            //     state.updatedCallbackWasBound = true;
+            // }
 
             if (updated.collection) {
 
@@ -91,7 +91,7 @@ define([
                 self._updateCollection();
                 if(collection) {
                     // Add listener on the collection to handle further updates
-                    collection.on('update', self._onCollectionViewableUpdate);
+                    collection.on('update', self._onCollectionViewableUpdate, self);
                 }
             } else if (updated.collectionLoadArgs && options.collectionLoadArgs) {
                 self._updateCollection();
