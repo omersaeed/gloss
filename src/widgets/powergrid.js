@@ -111,7 +111,7 @@ define([
 
         _onMultiselectableRowClick: function(evt) {
             var clickedModel = this._modelFromTr(evt.currentTarget);
-            if (clickedModel.get(this.get('selectedAttr'))) {
+            if (evt[mod] && clickedModel.get(this.get('selectedAttr'))) {
                 this.unselect(clickedModel);
             } else {
                 this.select(clickedModel, {
