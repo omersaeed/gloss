@@ -16,13 +16,15 @@ define([
             return (z < 0? -1*z : z) % total;
         };
     return _.map(_.range(total), function(____, i) {
+        var lastR;
         return {
             id: i+1,
             text_field: 'item ' + i,
             required_field: 'something absolutely necessary ' + i,
             boolean_field: false,
             datetime_field: '2012-08-29T14:10:21Z',
-            integer_field: r(),
+            integer_field: (lastR = r()),
+            float_field: Math.pow(lastR / 300.0, 3),
             default_field: i % 5 === 0? null : 'default ' + i
         };
     });

@@ -8,10 +8,11 @@ define([
     './column',
     './column/checkboxcolumn',
     './column/datecolumn',
+    './column/bytescolumn',
     './powergridsearch',
     './examplefixtures'
 ], function($, _, Example, PowerGrid, ColumnModel, Column, CheckBoxColumn,
-    DateColumn, PowerGridSearch, exampleFixtures) {
+    DateColumn, BytesColumn, PowerGridSearch, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -20,6 +21,7 @@ define([
                 Column.extend({defaults: {name: 'boolean_field'}}),
                 Column.extend({defaults: {name: 'datetime_field'}}),
                 Column.extend({defaults: {name: 'integer_field'}}),
+                Column.extend({defaults: {name: 'float_field'}}),
                 Column.extend({defaults: {name: 'default_field'}})
             ]
         }),
@@ -607,12 +609,35 @@ define([
 
     asyncTest('renders dates correctly', function() {
         setup({
-            appendTo: 'body',
             gridOptions: {
                 columnModelClass: withDateTimeColumn(BasicColumnModel)
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2012-08-29 9:10 AM")').length, 15);
+            start();
+        });
+    });
+
+    module('bytes column');
+
+    var withBytesColumn = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(colModelClass.prototype.columnClasses,
+                function(c) {
+                    return c.prototype.defaults.name === 'float_field'?
+                        BytesColumn.extend({defaults: {name: 'float_field'}}) : c;
+                })
+        });
+    };
+
+    asyncTest('renders bytes correctly', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withBytesColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("532.26 MB")').length, 1);
             start();
         });
     });
