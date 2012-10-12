@@ -107,14 +107,22 @@ define([
         },
 
         update: function(updated) {
-            var newWidth;
+            var newWidth, render = true;
             if (updated.sort) {
-                this.render();
+                render = true;
+                this.$el[this.get('sort')? 'addClass':'removeClass']('sorted');
             }
             if (updated.width) {
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
                 outerWidth(this.$el, newWidth);
+            }
+            if (updated.label) {
+                render = true;
+            }
+
+            if (render) {
+                this.render();
             }
             this.trigger('columnchange', {column: this, updated: updated});
         }
