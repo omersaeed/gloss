@@ -1,4 +1,5 @@
 // TODO:
+//  - powergridsearch styling
 //  - edit row
 //  - pager
 //  - static header
