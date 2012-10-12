@@ -13,13 +13,18 @@ define([
 
         init: function() {
             this._super.apply(this, arguments);
-            this.checkbox = CheckBox()
-                .on('change', _.bind(this._onHeaderChange, this))
-                .appendTo(this.$el);
+            this._postRender();
             this.get('grid').on(
                 'change',
                 'tbody tr .'+this.cssClass()+' [type=checkbox]',
                 _.bind(this._onChange, this));
+        },
+
+        _postRender: function() {
+            this.$el.addClass('checkbox-column');
+            this.checkbox = CheckBox()
+                .on('change', _.bind(this._onHeaderChange, this))
+                .appendTo(this.$el);
         },
 
         _onHeaderChange: function() {
@@ -42,6 +47,11 @@ define([
         getValue: function(model) {
             var chkd = model.get(this.get('prop'))?  'checked' : '';
             return '<input type=checkbox ' + chkd + ' />';
+        },
+
+        render: function() {
+            this._super.apply(this, arguments);
+            this._postRender();
         }
     });
 });
