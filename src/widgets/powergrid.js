@@ -254,7 +254,12 @@ define([
 
         update: function(updated) {
             var colName, rerender, sort, naturalWidths, collection,
-                columnModel = this.get('columnModel');
+                columnModel = this.get('columnModel'),
+                c = function(prop) {
+                    return _.find(columnModel.columns, function(column) {
+                        return column.get('prop');
+                    });
+                };
 
             rerender = sort = false;
 
@@ -287,6 +292,10 @@ define([
                 });
                 this.$el.addClass('fixed-width');
                 this._settingInitialWidth = false;
+            }
+            if (updated.columnModel) {
+                this.$el[c('sortable')? 'addClass':'removeClass']('sortable');
+                this.$el[c('resizable')? 'addClass':'removeClass']('resizable');
             }
 
             if (sort) {
