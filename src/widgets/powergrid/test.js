@@ -7,10 +7,11 @@ define([
     './columnmodel',
     './column',
     './column/checkboxcolumn',
+    './column/datecolumn',
     './powergridsearch',
     './examplefixtures'
 ], function($, _, Example, PowerGrid, ColumnModel, Column, CheckBoxColumn,
-    PowerGridSearch, exampleFixtures) {
+    DateColumn, PowerGridSearch, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -571,7 +572,7 @@ define([
 
     asyncTest('checking header checks all', function() {
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             gridOptions: {
                 columnModelClass: withCheckboxColumn(BasicColumnModel)
             }
@@ -589,6 +590,30 @@ define([
                     function(m) { ok(m.get('_checked')); });
                 start();
             }, 15);
+        });
+    });
+
+    module('date column');
+
+    var withDateTimeColumn = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(colModelClass.prototype.columnClasses,
+                function(c) {
+                    return c.prototype.defaults.name === 'datetime_field'?
+                        DateColumn.extend({defaults: {name: 'datetime_field'}}) : c;
+                })
+        });
+    };
+
+    asyncTest('renders dates correctly', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withDateTimeColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("2012-08-29 9:10 AM")').length, 15);
+            start();
         });
     });
 

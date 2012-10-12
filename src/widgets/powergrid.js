@@ -1,6 +1,5 @@
 // TODO:
 //  - bytes column
-//  - date column
 //  - lookandfeel styling
 //  - edit row
 //  - pager
