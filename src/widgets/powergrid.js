@@ -1,5 +1,4 @@
 // TODO:
-//  - lookandfeel styling
 //  - edit row
 //  - pager
 //  - static header
