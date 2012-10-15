@@ -219,10 +219,13 @@ define([
 
             changed.push(model.set(a, true, {silent: true}));
 
-            if (changed.length > 2) {
-                self.rerender();
-            } else if (changed.length > 0) {
-                _.each(changed, function(m) { self.rerender(m); });
+            if (changed.length > 0) {
+                if (changed.length > 2) {
+                    self.rerender();
+                } else {
+                    _.each(changed, function(m) { self.rerender(m); });
+                }
+                self.trigger('select', [changed]);
             }
 
             return self;

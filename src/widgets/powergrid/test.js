@@ -289,6 +289,32 @@ define([
         });
     });
 
+    asyncTest('"select" event', function() {
+        var last = null,
+            onSelect = function(evt, data) {
+                last = {
+                    evt: evt,
+                    data: data,
+                    args: Array.prototype.slice.call(arguments, 0)
+                };
+            };
+        setup({
+            gridOptions: {selectable: 'multi'},
+            appendTo: 'body'
+        }).then(function(g, options) {
+            var selected;
+
+            g.on('select', onSelect);
+
+            selected = g.get('collection').where({text_field: 'item 3'});
+            g.select(selected);
+            ok(last.data[0] === selected);
+
+            start();
+        });
+
+    });
+
     module('resizing');
 
     var resizable = function(colModelClass) {
