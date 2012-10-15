@@ -257,7 +257,7 @@ define([
                 columnModel = this.get('columnModel'),
                 c = function(prop) {
                     return _.find(columnModel.columns, function(column) {
-                        return column.get('prop');
+                        return column.get(prop);
                     });
                 };
 
