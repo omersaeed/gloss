@@ -6,13 +6,14 @@ define([
     './columnmodel',
     './column',
     './column/checkboxcolumn',
-    './column/datecolumn',
-    './column/bytescolumn',
+    './column/asdatetime',
+    './column/asbytes',
+    './column/asnumber',
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
-], function($, _, PowerGrid, ColumnModel, Column, CheckBoxColumn,
-    DateColumn, BytesColumn, PowerGridSearch, Example, exampleFixtures) {
+], function($, _, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
+    asBytes, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -573,7 +574,7 @@ define([
             columnClasses: _.map(colModelClass.prototype.columnClasses,
                 function(c) {
                     return c.prototype.defaults.name === 'datetime_field'?
-                        DateColumn.extend({defaults: {name: 'datetime_field'}}) : c;
+                        asDateTime(c.extend()) : c;
                 })
         });
     };
@@ -596,7 +597,31 @@ define([
             columnClasses: _.map(colModelClass.prototype.columnClasses,
                 function(c) {
                     return c.prototype.defaults.name === 'float_field'?
-                        BytesColumn.extend({defaults: {name: 'float_field'}}) : c;
+                        asBytes(c.extend()) : c;
+                })
+        });
+    };
+
+    asyncTest('renders bytes correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withBytesColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("532.26 MB")').length, 1);
+            start();
+        });
+    });
+
+    module('number column');
+
+    var withNumberColumn = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(colModelClass.prototype.columnClasses,
+                function(c) {
+                    return c.prototype.defaults.name === 'default_field'?
+                        asNumber(c.extend()) : c;
                 })
         });
     };
@@ -605,10 +630,32 @@ define([
         setup({
             appendTo: 'body',
             gridOptions: {
-                columnModelClass: withBytesColumn(BasicColumnModel)
+                columnModelClass: withNumberColumn(BasicColumnModel)
             }
         }).then(function(g) {
-            equal(g.$el.find('td:contains("532.26 MB")').length, 1);
+            equal(g.$el.find('td:contains("2,007,104")').length, 1);
+            start();
+        });
+    });
+
+    var withNumberColumnAndTwoDecimalPlaces = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(colModelClass.prototype.columnClasses,
+                function(c) {
+                    return c.prototype.defaults.name === 'default_field'?
+                        asNumber(c.extend(), {decimalPlaces: 2}) : c;
+                })
+        });
+    };
+
+    asyncTest('renders bytes correctly', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withNumberColumnAndTwoDecimalPlaces(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("2,007,104.00")').length, 1);
             start();
         });
     });
