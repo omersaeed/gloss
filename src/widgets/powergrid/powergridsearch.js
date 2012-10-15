@@ -15,6 +15,9 @@ define([
         nodeTemplate: template,
         create: function() {
             this._super.apply(this, arguments);
+            if (!this.getWidget('q').getValue()) {
+                this.getWidget('clear').disable();
+            }
             this.on('submit', this.submit);
             this.on('keyup', '[name=q]', this._onKeyup);
             this.on('click', '[name=clear]', this._onClickClear);
@@ -31,18 +34,22 @@ define([
             return $.extend(true, {}, this._getPreviousParams(), p);
         },
         _onClickClear: function() {
-            var clear = this.getWidget('clear').disable();
-            this.getWidget('q').setValue('');
-            this.submit().always(function() {
-                clear.disable();
-            });
+            var clear = this.getWidget('clear'),
+                q = this.getWidget('q').setValue('');
+
+            if (this._filtered) {
+                this.submit().always(function() {
+                    clear.disable();
+                });
+            }
         },
         _onKeyup: function() {
-            var method = this.getWidget('q').getValue()? 'enable' : 'disable';
+            var method = this._filtered || this.getWidget('q').getValue()?
+                'enable' : 'disable';
             this.getWidget('clear')[method]();
         },
         submit: function(evt) {
-            var self = this, collection = self.options.collection;
+            var self = this, collection = self.options.collection, params;
             if (evt) {
                 evt.preventDefault();
             }
@@ -50,7 +57,9 @@ define([
                 return;
             }
             self.propagate('disable');
-            return collection.reset(self._makeQueryParams()).load().then(
+            params = self._makeQueryParams();
+            self._filtered = !!params.query;
+            return collection.reset(params).load().then(
                 function() { self.propagate('enable'); },
                 function() { self.propagate('enable'); });
         }
