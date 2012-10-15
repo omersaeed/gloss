@@ -14,7 +14,11 @@ tr.selected {
   width: 8px;
   background-color: gray;
   position: absolute;
-  right: -4px;
+
+  /* if you make this a negative value, you'll get horizontal scrollbars on the
+   * grid and you'll spend hours trying to figure out why */
+  right: 0px;
+
   top: 0px;
   bottom: 0px;
   z-index: 1;
