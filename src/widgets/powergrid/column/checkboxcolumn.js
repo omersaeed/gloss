@@ -16,12 +16,11 @@ define([
             this._postRender();
             this.get('grid').on(
                 'change',
-                'tbody tr .'+this.cssClass()+' [type=checkbox]',
+                'tbody tr .'+this.columnClass()+' [type=checkbox]',
                 _.bind(this._onChange, this));
         },
 
         _postRender: function() {
-            this.$el.addClass('checkbox-column');
             this.checkbox = CheckBox()
                 .on('change', _.bind(this._onHeaderChange, this))
                 .appendTo(this.$el);
@@ -42,6 +41,10 @@ define([
             if (!checked) {
                 this.checkbox.$node.prop('checked', false);
             }
+        },
+
+        cssClasses: function() {
+            return this._super.apply(this, arguments) + ' checkbox-column';
         },
 
         getValue: function(model) {

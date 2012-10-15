@@ -41,7 +41,7 @@ define([
         },
 
         _hiddenColumnClass: function() {
-            return 'hide-' + this.cssClass();
+            return 'hide-' + this.columnClass();
         },
 
         _addHiddenColumnCss: function() {
@@ -54,7 +54,7 @@ define([
             StyleUtils.addStyleRules([[[
                 '#', this.get('grid').el.id, '.',
                 this._hiddenColumnClass(), ' .',
-                this.cssClass()
+                this.columnClass()
             ].join(''), ['display', 'none']]]);
         },
 
@@ -75,8 +75,17 @@ define([
             }
         },
 
-        cssClass: function() {
+        // the 'columnClass' is something like 'col-name'. it's used as a
+        // generic css identifier. the 'cssClasses' combines both the
+        // 'columnClass' and other styling classes, stuff like 'first', 'last',
+        // or 'number' (in the case of a column that's formatted as a number'
+        columnClass: function() {
             return 'col-' + this.get('name');
+        },
+        cssClasses: function() {
+            return this.columnClass() +
+                (this.get('first')? ' first' : ' ') +
+                (this.get('last')? ' last' : ' ');
         },
 
         get: function(key) {

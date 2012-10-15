@@ -15,8 +15,15 @@ define([
             }
 
             $tr = self.$el.find('tr');
-            self.columns = _.map(self.columnClasses || [], function(cls) {
-                return cls({grid: grid}).appendTo($tr);
+            self.columns = _.map(self.columnClasses || [], function(cls, i) {
+                var opts = {grid: grid};
+                if (i === 0) {
+                    opts.first = true;
+                }
+                if (i === self.columnClasses.length-1) {
+                    opts.last = true;
+                }
+                return cls(opts).appendTo($tr);
             });
         },
         renderTr: trTemplate
