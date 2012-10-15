@@ -289,30 +289,84 @@ define([
         });
     });
 
-    asyncTest('"select" event', function() {
-        var last = null,
-            onSelect = function(evt, data) {
-                last = {
-                    evt: evt,
-                    data: data,
-                    args: Array.prototype.slice.call(arguments, 0)
-                };
-            };
+    // not using this... seems wrong... see powergrid code that triggers select
+    // asyncTest('"select" event', function() {
+    //     var last = null,
+    //         onSelect = function(evt, data) {
+    //             last = {
+    //                 evt: evt,
+    //                 data: data,
+    //                 args: Array.prototype.slice.call(arguments, 0)
+    //             };
+    //         };
+    //     setup({
+    //         gridOptions: {selectable: 'multi'},
+    //         appendTo: 'body'
+    //     }).then(function(g, options) {
+    //         var selected;
+
+    //         g.on('select', onSelect);
+
+    //         selected = g.get('collection').where({text_field: 'item 3'});
+    //         g.select(selected);
+    //         ok(last.data[0] === selected);
+
+    //         start();
+    //     });
+
+    // });
+
+    asyncTest('selection triggers collection change event', function() {
         setup({
             gridOptions: {selectable: 'multi'},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g, options) {
-            var selected;
+            var triggered = [];
 
-            g.on('select', onSelect);
+            g.get('collection').on('change', function(evt) {
+                triggered.push({
+                    evt: evt,
+                    args: Array.prototype.slice.call(arguments, 0)
+                });
+            });
 
-            selected = g.get('collection').where({text_field: 'item 3'});
-            g.select(selected);
-            ok(last.data[0] === selected);
+            equal(triggered.length, 0);
+            g.select(g.get('collection').where({text_field: 'item 3'}));
+            equal(triggered.length, 1);
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            equal(triggered.length, 2);
+            g.select(g.get('collection').where({text_field: 'item 7'}));
+            equal(triggered.length, 3);
+            start();
+        });
+    });
+
+    asyncTest('unselection triggers collection change event', function() {
+        setup({
+            gridOptions: {selectable: 'multi'},
+            appendTo: '#qunit-fixture'
+        }).then(function(g, options) {
+            var triggered = [];
+
+            g.select(g.get('collection').where({text_field: 'item 3'}));
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+
+            equal(triggered.length, 0);
+
+            g.get('collection').on('change', function(evt) {
+                triggered.push({
+                    evt: evt,
+                    args: Array.prototype.slice.call(arguments, 0)
+                });
+            });
+
+            g.unselect();
+            equal(triggered.length, 1);
 
             start();
         });
-
     });
 
     module('resizing');

@@ -186,6 +186,11 @@ define([
 
         rerender: function() {
             var method = arguments.length > 0? '_rerenderRow' : '_rerender';
+
+            if (this._disableRerender) {
+                return;
+            }
+
             this[method].apply(this, arguments);
             return this;
         },
@@ -217,7 +222,9 @@ define([
                 });
             }
 
-            changed.push(model.set(a, true, {silent: true}));
+            this._disableRerender = true;
+            changed.push(model.set(a, true));
+            this._disableRerender = false;
 
             if (changed.length > 0) {
                 if (changed.length > 2) {
@@ -225,31 +232,40 @@ define([
                 } else {
                     _.each(changed, function(m) { self.rerender(m); });
                 }
-                self.trigger('select', [changed]);
+                // i don't think there should be a select event for the same
+                // reason i don't think we should have a grid.getSelected()
+                // sort of method -- the data is the source of truth on what is
+                // or isn't selected... i may come around on this tho...
+                // self.trigger('select', [changed]);
             }
 
             return self;
         },
 
         unselect: function(model) {
-            var models = this.get('models'),
+            var unselectThese, unselectedLength,
+                models = this.get('models'),
                 a = this.get('selectedAttr'),
-                unselect = model? _.isArray(model)? model : [model] : null,
-                changed = [];
+                unselect = model? _.isArray(model)? model : [model] : null;
 
-            _.each(models, function(m) {
+            unselectThese = _.filter(models, function(m) {
                 if (m.get(a)) {
-                    if (!unselect || _.indexOf(unselect, m) >= 0) {
-                        changed.push(m);
-                        m.del(a, {silent: true});
-                    }
+                    return !unselect || _.indexOf(unselect, m) >= 0;
                 }
             });
 
-            if (changed.length > 1) {
+            unselectedLength = unselectThese.length;
+
+            this._disableRerender = true;
+            _.each(unselectThese, function(m, i) {
+                m.del(a, {silent: i !== unselectedLength-1});
+            });
+            this._disableRerender = false;
+
+            if (unselectedLength > 1) {
                 this.rerender();
-            } else if (changed.length === 1) {
-                this.rerender(changed[0]);
+            } else if (unselectedLength === 1) {
+                this.rerender(unselectThese[0]);
             }
 
             return this;
