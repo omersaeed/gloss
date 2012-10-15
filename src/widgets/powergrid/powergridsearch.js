@@ -31,9 +31,11 @@ define([
             return $.extend(true, {}, this._getPreviousParams(), p);
         },
         _onClickClear: function() {
+            var clear = this.getWidget('clear').disable();
             this.getWidget('q').setValue('');
-            this.getWidget('clear').disable();
-            this.submit();
+            this.submit().always(function() {
+                clear.disable();
+            });
         },
         _onKeyup: function() {
             var method = this.getWidget('q').getValue()? 'enable' : 'disable';
