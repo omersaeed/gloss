@@ -369,6 +369,22 @@ define([
         });
     });
 
+    asyncTest('clicking a selected row does not re-render', function() {
+        setup({
+            gridOptions: {selectable: true},
+            appendTo: 'body'
+        }).then(function(g, options) {
+            equal(g._renderRowCount, 0);
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            equal(g._renderRowCount, 1);
+            g.$el.find('td:contains(item 2)').trigger(
+                $.Event('click', {ctrlKey: true, metaKey: true}));
+            equal(g._renderRowCount, 1);
+            start();
+        });
+    });
+
     module('resizing');
 
     var resizable = function(colModelClass) {
@@ -708,7 +724,7 @@ define([
 
     asyncTest('renders bytes correctly', function() {
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             gridOptions: {
                 columnModelClass: withNumberColumn(BasicColumnModel)
             }
@@ -730,7 +746,7 @@ define([
 
     asyncTest('renders bytes correctly', function() {
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             gridOptions: {
                 columnModelClass: withNumberColumnAndTwoDecimalPlaces(BasicColumnModel)
             }

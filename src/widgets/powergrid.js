@@ -124,6 +124,9 @@ define([
 
         _onSelectableRowClick: function(evt) {
             var clickedModel = this._modelFromTr(evt.currentTarget);
+            if (clickedModel.get(this.get('selectedAttr'))) {
+                return;
+            }
             this.select(clickedModel);
         },
 
