@@ -620,7 +620,9 @@ define([
             }
         }
         // check the model props
-        if (!allModelsChecked(models)) return false;
+        if (!allModelsChecked(models)) {
+            return false;
+        }
         return true;
     };
     var noRowsSelected = function(grid) {
@@ -635,7 +637,9 @@ define([
             }
         }
         // check the model props
-        if (!noModelsChecked(models)) return false;
+        if (!noModelsChecked(models)) {
+            return false;
+        }
         return true;
     };
     var allModelsChecked = function(models) {
@@ -952,6 +956,32 @@ define([
             setTimeout(function() {
                 equal(highlightEventCount, 2);
                 equal(grid.$node.find('.highlight').length, 1);
+                start();
+            }, 100);
+        });
+    });
+
+    asyncTest('highlighting a row then unhighlight ', function() {
+        TargetVolumeProfile.models.clear();
+        var grid = Grid(undefined, {rowWidgetClass: RowClass, multiselect: true}),
+            collection = TargetVolumeProfile.collection(),
+            highlightEventCount = 0;
+
+        grid.on('highlight', function(evt) {
+            if (evt.target !== grid.node) {
+                return;
+            }
+            highlightEventCount++;
+        });
+
+        collection.load().done(function(data) {
+            grid.set('models', data.slice(0, 10));
+            grid.highlight(grid.options.rows[0]);
+            grid.highlightMore(grid.options.rows[2]);
+            grid.unhighlight();
+            setTimeout(function() {
+                equal(grid.$node.find('.highlight').length, 0);
+                equal(grid.lastHighlighted(), undefined);
                 start();
             }, 100);
         });
