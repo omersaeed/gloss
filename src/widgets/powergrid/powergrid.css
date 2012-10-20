@@ -1,0 +1,33 @@
+tr.selected {
+  background-color: gray;
+}
+
+.powergrid.selectable table tbody {
+  cursor: default;
+}
+
+.powergrid table thead th {
+  position: relative;
+}
+
+.powergrid table thead th .resize {
+  width: 8px;
+  background-color: gray;
+  position: absolute;
+
+  /* if you make this a negative value, you'll get horizontal scrollbars on the
+   * grid and you'll spend hours trying to figure out why */
+  right: 0px;
+
+  top: 0px;
+  bottom: 0px;
+  z-index: 1;
+}
+
+.powergrid table thead th .resize:hover {
+  cursor: col-resize;
+}
+
+.powergrid.filtered tbody {
+  background-color: #FFFFCD;
+}

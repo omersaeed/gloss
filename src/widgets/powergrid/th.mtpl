@@ -1,0 +1,21 @@
+<% var name = this.get('name'),
+       label = this.get('label'),
+       sortable = this.get('sortable'),
+       sort = this.get('sort'),
+       resizable = this.get('resizable'),
+       grid = this.get('grid'); %>
+<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>">
+  <% if (resizable) { %>
+    <span class=resize>&nbsp;</span>
+  <% } %>
+
+  <div class=label>
+    <%=label != null? label : name%>
+    <% if (sortable) { %>
+    <span class="sort-arrow <%=sort? '' : 'invisible'%>">
+        <%= /asc/i.test(sort)? '&#x25b2;' : '&#x25bc;' %>
+      </span>
+    <% } %>
+  </div>
+
+</th>

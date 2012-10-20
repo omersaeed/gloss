@@ -42,7 +42,14 @@ define([
                     // self._currentDfds.length = 0;
                     remove(self._currentDfds, dfd);
                     self._currentDfd = undefined;
-                    return this.resolve();
+
+                    // seems that if the deferred was the result of $.when,
+                    // 'this' will be an array instead of just a promise
+                    if (_.isArray(this)) {
+                        return $.when.apply($, this);
+                    } else {
+                        return this.resolve();
+                    }
                 },
                 //Filter Failure
                 function(value) {
