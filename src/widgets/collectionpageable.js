@@ -68,13 +68,17 @@ define([
             });
 
             if(self.options.collection) {
-                self.refresh();
+                self.options.collection.load().done(function() {
+                    var state = self._collectionViewableState;
+                    state._updateFired = true;
+                    self.refresh();
+                });
             }
         },
 
         jump: function(page) {
             if(this.page != page && page >= 1 && page <= this.pages) {
-                this.page = parseInt(page);
+                this.page = parseInt(page, 10);
                 this.refresh();
             } else {
                 this.$currentPage.val(this.page);
@@ -84,25 +88,26 @@ define([
 
         refresh: function(reset) {
             var self = this,
-                limit = self.options.pageSize;
+                limit = self.options.pageSize,
+                collection = self.options.collection;
 
             if(!self._init) {
                 return;
             }
             if(reset) {
-                self.reset();
+                self._reset();
             }
-            self._updatePagerBar();
+            self.$currentPage.val(self.page);
             self.offset = limit * (self.page - 1);
-            self.set('collectionLoadArgs', {
-                offset: self.offset,
-                limit: limit
-            });
+
+            collection.query.params.limit = limit;
+            collection.query.params.offset = self.offset;
+            collection.trigger('update', collection);
 
             return this;
         },
 
-        reset: function() {
+        _reset: function() {
             this.offset = 0;
             this.page = 1;
             this.pages = 0;
@@ -110,18 +115,23 @@ define([
         },
 
         _updatePagerBar: function() {
-            var self = this,
+            var self = this;//,
                 options = self.options,
                 collection = options.collection,
-                total = collection.total,
                 limit = self.options.pageSize;
 
-            if(self.total != total) {
-                self.total = total;
-                self.pages = Math.ceil(self.total / limit);
-                self.$totalPages.text(self.pages);
-            }
-            self.$currentPage.val(self.page);
+            
+            collection.load().done(function(models) {
+                var total = models.length;
+                if(self.total != total) {
+                    self.total = total;
+                    self.pages = Math.ceil(self.total / limit);
+                    self.$totalPages.text(self.pages);
+                    if (self.pages < self.page) {
+                        self.jump(1);
+                    }
+                }
+            });
         },
 
         __updateWidget__: function(updated) {
@@ -129,21 +139,17 @@ define([
                 options = self.options,
                 collection = options.collection;
 
-            self._collectionViewableState = self._collectionViewableState || {};
-            state = self._collectionViewableState;
-
             if (updated.collection && typeof collection !== 'undefined') {
                 if (!collection) {
                     return;
                 }
-                // Add listener on the collection to handle further updates
-                collection.on('update', function(evtName, theCollection) {
-                    if (!self.options.collection) return;
-                    if ((state._loadResolved && state._updateFired) ||
-                        !state._loadResolved) {
-                        self.refresh();
-                    }
-                    state._updateFired = true;
+
+                collection.load().done(function() {
+                    self.refresh(true);
+                });
+
+                collection.on('update', function() {
+                    self._updatePagerBar();
                 });
             }
         }
