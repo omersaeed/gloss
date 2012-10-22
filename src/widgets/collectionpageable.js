@@ -100,6 +100,7 @@ define([
             self.$currentPage.val(self.page);
             self.offset = limit * (self.page - 1);
 
+            if (!collection) return;
             collection.query.params.limit = limit;
             collection.query.params.offset = self.offset;
             collection.trigger('update', collection);
@@ -115,12 +116,12 @@ define([
         },
 
         _updatePagerBar: function() {
-            var self = this;//,
+            var self = this,
                 options = self.options,
                 collection = options.collection,
                 limit = self.options.pageSize;
 
-            
+            if (!collection) return;
             collection.load().done(function(models) {
                 var total = models.length;
                 if(self.total != total) {
