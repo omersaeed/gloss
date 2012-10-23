@@ -7,12 +7,17 @@ define([
     return Column.extend({
         defaults: {
             label: '',
+            type: 'checkbox',
             name: 'checkbox_column',
-            prop: '_checked'
+            prop: null
         },
 
         init: function() {
             this._super.apply(this, arguments);
+            if (this.get('prop') == null) {
+                this.set({prop: '_' + this.el.id + '_checked'},
+                    {silent: true});
+            }
             this._postRender();
             this.get('grid').on(
                 'change',
@@ -20,10 +25,12 @@ define([
                 _.bind(this._onChange, this));
         },
 
-        _postRender: function() {
-            this.checkbox = CheckBox()
-                .on('change', _.bind(this._onHeaderChange, this))
-                .appendTo(this.$el);
+        _getName: function() {
+            return this.get('type') === 'radio'?  '_'+this.el.id+'_name' : '';
+        },
+
+        _isDisabled: function(model) {
+            return false;
         },
 
         _onHeaderChange: function() {
@@ -43,18 +50,38 @@ define([
             }
         },
 
+        _postRender: function() {
+            if (this.get('type') === 'checkbox') {
+                this.checkbox = CheckBox()
+                    .on('change', _.bind(this._onHeaderChange, this))
+                    .appendTo(this.$el);
+            }
+        },
+
         cssClasses: function() {
             return this._super.apply(this, arguments) + ' checkbox-column';
         },
 
         getValue: function(model) {
-            var chkd = model.get(this.get('prop'))?  'checked' : '';
-            return '<input type=checkbox ' + chkd + ' />';
+            var chkd = model.get(this.get('prop'))?  'checked' : '',
+                disabld = this._isDisabled(model)? 'disabled' : '';
+            return [
+                '<input type="', this.get('type'), '" name="',
+                    this._getName(), '" ', chkd, ' ', disabld, ' />'
+            ].join('');
         },
 
         render: function() {
             this._super.apply(this, arguments);
             this._postRender();
+        },
+
+        update: function(updated) {
+            if (updated.type) {
+                this.render();
+                this.get('grid').rerender();
+            }
         }
+
     });
 });
