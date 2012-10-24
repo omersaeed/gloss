@@ -215,6 +215,18 @@ define([
         });
     });
 
+    asyncTest('getting single selected model', function() {
+        setup({
+            gridOptions: {selectable: true},
+            appendTo: '#qunit-fixture'
+        }).then(function(g, options) {
+            ok(g.selected() == null);
+            g.select(g.get('collection').where({text_field: 'item 2'}));
+            equal(g.selected().get('text_field'), 'item 2');
+            start();
+        });
+    });
+
     asyncTest('selecting multiple rows', function() {
         setup({
             gridOptions: {selectable: 'multi'},
@@ -285,6 +297,25 @@ define([
             equal(trim($selected.find('td.col-text_field').eq(1).text()),
                 'item 5', 'correct row selected');
 
+            start();
+        });
+    });
+
+    asyncTest('getting multiple selected models', function() {
+        setup({
+            gridOptions: {selectable: 'multi'},
+            appendTo: '#qunit-fixture'
+        }).then(function(g, options) {
+            deepEqual(g.selected(), []);
+            g.select(g.get('collection').where({text_field: 'item 2'}));
+            g.select(g.get('collection').where({text_field: 'item 7'}), {
+                dontUnselectOthers: true
+            });
+            deepEqual(
+                _.map(g.selected(), function(m) {
+                    return m.get('text_field');
+                }),
+                ['item 2', 'item 7']);
             start();
         });
     });

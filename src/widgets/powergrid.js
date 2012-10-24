@@ -295,7 +295,7 @@ define([
             if (updated.models) {
                 rerender = sort = true;
                 isFiltered = this._isFiltered();
-                this.$el[isFiltered? 'addClass' : 'removeClass']('filterd');
+                this.$el[isFiltered? 'addClass' : 'removeClass']('filtered');
             }
             if (updated.data) {
                 this.set('models', _.map(this.get('data'), function(d) {
