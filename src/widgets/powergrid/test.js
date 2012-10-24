@@ -669,7 +669,7 @@ define([
             gridOptions: {
                 columnModelClass: withCheckboxColumn(BasicColumnModel)
             },
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g) {
             equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
             equal(g.$el.find('[type=checkbox]').length, 16);

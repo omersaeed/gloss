@@ -21,7 +21,7 @@ define([
             this._postRender();
             this.get('grid').on(
                 'change',
-                'tbody tr .'+this.columnClass()+' [type=checkbox]',
+                'tbody tr .'+this.columnClass()+' input',
                 _.bind(this._onChange, this));
         },
 
