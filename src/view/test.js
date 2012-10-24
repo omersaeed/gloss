@@ -130,5 +130,14 @@ define([
         }, 0);
     });
 
+    test('creating view maintains existing classes', function() {
+        var $el = $('<div class=foo></div>'),
+            MyView = View.extend({template: '<div class=bar></div>'}),
+            v = MyView({$el: $el});
+
+        equal(v.$el.hasClass('foo'), true, 'view didnt blow away foo class');
+        equal(v.$el.hasClass('bar'), true, 'view added bar class');
+    });
+
     start();
 });
