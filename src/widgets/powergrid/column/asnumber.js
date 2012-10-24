@@ -20,10 +20,8 @@ define([
                 func.apply(this, Array.prototype.slice.call(arguments, 1));
         });
 
-        this.getValue = function(model) {
-            return format.number(
-                model.get(this.get('name')),
-                this.get('decimalPlaces'));
+        this.formatValue = function(value, model) {
+            return format.number(value, this.get('decimalPlaces'));
         };
     };
 });

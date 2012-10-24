@@ -63,11 +63,15 @@ define([
         },
 
         getValue: function(model) {
-            var chkd = model.get(this.get('prop'))?  'checked' : '',
-                disabld = this._isDisabled(model)? 'disabled' : '';
+            return model.get(this.get('prop'));
+        },
+
+        formatValue: function(value, model) {
+            var disabld = this._isDisabled(model)? 'disabled' : '',
+                checked = value? 'checked' : '';
             return [
                 '<input type="', this.get('type'), '" name="',
-                    this._getName(), '" ', chkd, ' ', disabld, ' />'
+                    this._getName(), '" ', checked, ' ', disabld, ' />'
             ].join('');
         },
 

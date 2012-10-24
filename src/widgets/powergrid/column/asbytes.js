@@ -24,9 +24,9 @@ define([
                 func.apply(this, Array.prototype.slice.call(arguments, 1));
         });
 
-        this.getValue = function(model) {
+        this.formatValue = function(value, model) {
             var factor = this.get('assumeGb')? 1.0e9 : 1.0;
-            return format.bytes(model.get(this.get('name')) * factor);
+            return format.bytes(value * factor);
         };
     };
 

@@ -10,8 +10,8 @@ define([
                 Array.prototype.slice.call(arguments, 1));
             return options;
         }
-        this.getValue = function(model) {
-            return moment(model.get(this.get('name'))).format(fmt);
+        this.formatValue = function(value, model) {
+            return moment(value).format(fmt);
         };
     };
 });
