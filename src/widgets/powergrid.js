@@ -243,6 +243,15 @@ define([
             return self;
         },
 
+        selected: function() {
+            var models = this.get('models'), attr = this.get('selectedAttr');
+            if (this.get('selectable') === 'multi') {
+                return _.filter(models, function(m) { return m.get(attr); });
+            } else if (this.get('selectable')) {
+                return _.find(models, function(m) { return m.get(attr); });
+            }
+        },
+
         unselect: function(model) {
             var unselectThese, unselectedLength,
                 models = this.get('models'),
