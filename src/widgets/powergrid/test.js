@@ -609,8 +609,9 @@ define([
 
     var withCheckboxColumn = function(colModelClass) {
         return colModelClass.extend({
-            columnClasses:
-                [CheckBoxColumn].concat(colModelClass.prototype.columnClasses)
+            columnClasses: [
+                CheckBoxColumn.extend({defaults: {prop: '_checked'}})
+            ].concat(colModelClass.prototype.columnClasses)
         });
     };
 
@@ -660,6 +661,22 @@ define([
                     function(m) { ok(m.get('_checked')); });
                 start();
             }, 15);
+        });
+    });
+
+    asyncTest('changing checkbox column type', function() {
+        setup({
+            gridOptions: {
+                columnModelClass: withCheckboxColumn(BasicColumnModel)
+            },
+            appendTo: 'body'
+        }).then(function(g) {
+            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+            equal(g.$el.find('[type=checkbox]').length, 16);
+            g.get('columnModel').columns[0].set('type', 'radio');
+            equal(g.$el.find('[type=checkbox]').length, 0);
+            equal(g.$el.find('[type=radio]').length, g.get('models').length);
+            start();
         });
     });
 

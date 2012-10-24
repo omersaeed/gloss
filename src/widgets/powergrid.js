@@ -1,5 +1,4 @@
 // TODO:
-//  - powergridsearch styling
 //  - edit row
 //  - pager
 //  - static header
@@ -106,7 +105,7 @@ define([
         },
 
         _onModelChange: function(eventName, coll, model, changed) {
-            console.log(this.el.id+' changing '+model.get("text_field"));
+            // console.log(this.el.id+' changing '+model.get("text_field"));
             this.rerender(model);
         },
 
@@ -148,11 +147,11 @@ define([
             this.$tbody.html(rows.join(''));
 
             this._renderCount++;
-            console.log([
-                    'render time for',
-                    this.get('models').length+':',
-                    Date.now() - start
-                ].join(' '));
+            // console.log([
+            //         'render time for',
+            //         this.get('models').length+':',
+            //         Date.now() - start
+            //     ].join(' '));
         },
 
         _rerenderRow: function(model) {
@@ -160,8 +159,8 @@ define([
             $(this.get('columnModel').renderTr(model)).insertAfter(currentRow);
             $(currentRow).remove();
             this._renderRowCount++;
-            console.log('rerendered row for',
-                    model.get(this.get('columnModel').columns[0].get('name')));
+            // console.log('rerendered row for',
+            //         model.get(this.get('columnModel').columns[0].get('name')));
         },
 
         _sort: function(opts) {
