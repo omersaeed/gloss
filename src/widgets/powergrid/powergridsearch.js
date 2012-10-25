@@ -42,6 +42,7 @@ define([
                     clear.disable();
                 });
             }
+            this.getWidget('clear').disable();
         },
         _onKeyup: function() {
             var method = this._filtered || this.getWidget('q').getValue()?
