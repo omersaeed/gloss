@@ -80,7 +80,7 @@ define([
         // 'columnClass' and other styling classes, stuff like 'first', 'last',
         // or 'number' (in the case of a column that's formatted as a number'
         columnClass: function() {
-            return 'col-' + this.get('name');
+            return 'col-' + this.get('name').replace(/\./g, '__');
         },
         cssClasses: function() {
             return this.columnClass() +

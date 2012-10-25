@@ -268,6 +268,16 @@ define([
                         this._drag.$el.addClass('dragged');
                     }
                     this._drag.$el.removeClass('dragging');
+                    // romoving the draggin classes changes the position from absolute
+                    // to fixed which makes element jump if you have a scrolling window
+                    // i.e. the document.width > window.innerHeight
+                    var xyArgs = {
+                        left: parseInt(this._drag.$el.css('left'), 10) -
+                                $(window).scrollLeft() + 'px',
+                        top: parseInt(this._drag.$el.css('top'), 10) -
+                                $(window).scrollTop() + 'px'
+                    };
+                    this._drag.$el.css(xyArgs);
                 }
 
                 if (this._drag.scroll) {
