@@ -88,6 +88,10 @@ define([
                 (this.get('last')? ' last' : ' ');
         },
 
+        formatValue: function(value, model) {
+            return value;
+        },
+
         get: function(key) {
             return key === 'width'?
                 this.$el.outerWidth() : this._super.apply(this, arguments);
@@ -95,6 +99,10 @@ define([
 
         getValue: function(model) {
             return model.get(this.get('name'));
+        },
+
+        getSortValue: function(model) {
+            return this.getValue(model);
         },
 
         hide: function() {

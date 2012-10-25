@@ -175,7 +175,7 @@ define([
                 // copy the models array then sort it
                 self.get('models').slice(0).sort(function(a, b) {
                     return (ascending? 1 : -1) * sort.userFriendly(
-                        a.get(column.get('name')), b.get(column.get('name')));
+                        column.getSortValue(a), column.getSortValue(b));
                 }), opts);
         },
 
