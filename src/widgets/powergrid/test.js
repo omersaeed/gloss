@@ -511,6 +511,20 @@ define([
         equal(g.$el.find('tr').length, 1001);
     });
 
+    test('reset to same IDs and make sure manager doesnt blow up', function() {
+        var g = PowerGrid({columnModelClass: BasicColumnModel})
+            .appendTo('#qunit-fixture');
+
+        g.set('data', _.map(exampleFixtures, function(f) {
+            return $.extend(true, {}, f);
+        }));
+        equal(g.get('models').length, exampleFixtures.length);
+        g.set('data', _.map(exampleFixtures, function(f) {
+            return $.extend(true, {}, f);
+        }));
+        equal(g.get('models').length, exampleFixtures.length);
+    });
+
     module('search widget');
 
     var MySearch = PowerGridSearch.extend({
