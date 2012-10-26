@@ -22,12 +22,8 @@ define([
 
     EmptyColumnModel = ColumnModel.extend({});
 
-    DummyModel = model.Model.extend({});
-
     PowerGrid = View.extend({
         defaults: {
-            columnsClass: EmptyColumnModel,
-
             // could be true, false, or 'multi'
             selectable: false,
 
@@ -283,7 +279,7 @@ define([
 
         update: function(updated) {
             var colName, rerender, sort, naturalWidths, collection, isFiltered,
-                columnModel = this.get('columnModel'),
+                DummyModel, columnModel = this.get('columnModel'),
                 c = function(prop) {
                     return _.find(columnModel.columns, function(column) {
                         return column.get(prop);
@@ -298,8 +294,12 @@ define([
                 this.$el[isFiltered? 'addClass' : 'removeClass']('filtered');
             }
             if (updated.data) {
+                if (!(DummyModel = this.get('DummyModel'))) {
+                    this.set('DummyModel', DummyModel = model.Model.extend({}),
+                            {silent: true});
+                }
                 this.set('models', _.map(this.get('data'), function(d) {
-                    return DummyModel(d);
+                    return DummyModel.models.instantiate(d);
                 }));
             }
             if (updated.collection) {
