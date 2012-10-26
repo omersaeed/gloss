@@ -34,11 +34,21 @@ define([
         },
 
         _onHeaderChange: function() {
-            var prop = this.get('prop'), v = this.checkbox.getValue();
-            _.each(this.get('grid').get('models'), function(model) {
-                model.set(prop, v, {silent: true});
-            });
-            this.get('grid').rerender();
+            var prop = this.get('prop'), v = this.checkbox.getValue(),
+                grid = this.get('grid'),
+                modelLength = grid.get('models').length;
+            
+            // fire one change event if there's a collection other wise trigger each model
+            if (grid.get('collection')) {
+                _.each(grid.get('models'), function(model, i) {
+                    model.set(prop, v, {silent: i !== modelLength-1});
+                });
+            } else {
+                _.each(grid.get('models'), function(model) {
+                    model.set(prop, v);
+                });
+            }
+            grid.rerender();
         },
 
         _onChange: function(evt) {
