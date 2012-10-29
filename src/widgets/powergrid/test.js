@@ -725,6 +725,42 @@ define([
         });
     });
 
+    asyncTest('selecting all checkboxes does not change disabled ones', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: BasicColumnModel.extend({
+                    columnClasses: [
+                        CheckBoxColumn.extend({
+                            defaults: {prop: '_checked'},
+                            _isDisabled: function(model) {
+                                return model.get('default_field') < 100;
+                            }
+                        })
+                    ].concat(BasicColumnModel.prototype.columnClasses)
+                })
+            }
+        }).then(function(g) {
+            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+            equal(g.$el.find('[type=checkbox]:checked').length, 0);
+            _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+            g.$el.find('thead [type=checkbox]').trigger('click');
+            setTimeout(function() {
+                equal(g.$el.find('[type=checkbox]').length,
+                    g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length, 13);
+                _.each(g.get('models'), function(m) {
+                    if (m.get('default_field') < 100) {
+                        ok(!m.get('_checked'));
+                    } else {
+                        ok(m.get('_checked'));
+                    }
+                });
+                start();
+            }, 15);
+        });
+    });
+
     module('date column');
 
     var withDateTimeColumn = function(colModelClass) {

@@ -34,20 +34,19 @@ define([
         },
 
         _onHeaderChange: function() {
-            var prop = this.get('prop'), v = this.checkbox.getValue(),
-                grid = this.get('grid'),
-                modelLength = grid.get('models').length;
-            
-            // fire one change event if there's a collection other wise trigger each model
-            if (grid.get('collection')) {
-                _.each(grid.get('models'), function(model, i) {
-                    model.set(prop, v, {silent: i !== modelLength-1});
-                });
-            } else {
-                _.each(grid.get('models'), function(model) {
-                    model.set(prop, v);
-                });
-            }
+            var self = this,
+                prop = self.get('prop'), v = self.checkbox.getValue(),
+                grid = self.get('grid'),
+                modelLength = grid.get('models').length,
+                silentTilLast = grid.get('collection');
+
+            _.each(grid.get('models'), function(model, i) {
+                if (!self._isDisabled(model)) {
+                    model.set(prop, v, silentTilLast?
+                        {silent: i !== modelLength-1} : undefined);
+                }
+            });
+
             grid.rerender();
         },
 
