@@ -136,7 +136,7 @@ define([
                 columns = this.get('columnModel'),
                 models = this.get('models');
 
-            var start = Date.now();
+            var start = (new Date()).valueOf();
 
             if (!columns || !models) {
                 return;
@@ -152,7 +152,7 @@ define([
             // console.log([
             //         'render time for',
             //         this.get('models').length+':',
-            //         Date.now() - start
+            //         (new Date()).valueOf() - start
             //     ].join(' '));
         },
 
