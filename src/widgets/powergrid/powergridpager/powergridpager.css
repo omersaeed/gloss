@@ -1,0 +1,50 @@
+.power-grid-pager {
+  border: 1px solid #BBB;
+  border-left: 3px solid #57A7EB;
+  border-top: none;
+}
+
+.power-grid-pager .controls {
+  background-color: #ddd;
+  margin: 0;
+  padding: 4px 8px;
+}
+
+.power-grid-pager .controls li {
+  display: inline;
+  border-right: 1px solid #bbb;
+  margin-right: 2px;
+  padding-right: 2px;
+}
+.power-grid-pager .controls li.last {
+  border-right: none;
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.power-grid-pager .controls button {
+  position: relative;
+  border: 0 !important;
+  cursor: pointer;
+  height: 16px !important;
+  overflow: visible;
+  vertical-align: middle;
+  width: 16px !important;
+}
+
+.power-grid-pager .controls .first-page {
+  background: transparent url(first-page.png) no-repeat left;
+}
+.power-grid-pager .controls .prev-page {
+  background: transparent url(prev-page.png) no-repeat left;
+}
+.power-grid-pager .controls .next-page {
+  background: transparent url(next-page.png) no-repeat left;
+}
+.power-grid-pager .controls .last-page {
+  background: transparent url(last-page.png) no-repeat left;
+}
+
+.power-grid-pager .controls input[type=text] {
+  width: 30px;
+}
