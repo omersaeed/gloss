@@ -1,6 +1,6 @@
 define([
     'vendor/spin',
-    'gloss/widgets/widget'
+    './widget'
 ], function (Spinner, Widget) {
     return Widget.extend({
         defaults:{
