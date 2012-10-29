@@ -175,7 +175,7 @@ define([
                     if (_.isFunction(child[method])) {
                         child[method].apply(child, rest);
                     } else {
-                        child.propagate.apply(child, arguments);
+                        child.propagate.apply(child, [method].concat(rest));
                     }
                 }
             });

@@ -1,0 +1,24 @@
+<div>
+
+  <div class=datepicker name=created></div>
+
+  <div class=togglegroup name=chooser>
+    <button value=val0>Value 0</button>
+    <button value=val1>Value 1</button>
+  </div>
+
+  <div>
+    <span>
+      <input type=text name=query></input>
+    </span>
+  </div>
+
+  <div class=preview>
+    <input type=checkbox name=selected />
+  </div>
+
+  <div class=disablesquashingview>
+    <input type=checkbox name=wont-be-disabled />
+  </div>
+
+</div>

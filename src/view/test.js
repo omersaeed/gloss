@@ -195,6 +195,14 @@ define([
         v.propagate('disable');
         equal(widgets.created.$node.hasClass('disabled'), true,
             'datepicker is disabled');
+        equal(widgets.chooser.$node.hasClass('disabled'), true,
+            'togglegroup is disabled');
+        equal(widgets.query.$node.is(':disabled'), true,
+            'query is disabled');
+        equal(widgets.selected.$node.is(':disabled'), true,
+            'selected is disabled');
+        equal(widgets.wontbedisabled.$node.is(':disabled'), false,
+            'wontbedisabled is NOT disabled');
     });
 
     start();
