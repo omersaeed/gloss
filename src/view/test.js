@@ -139,5 +139,15 @@ define([
         equal(v.$el.hasClass('bar'), true, 'view added bar class');
     });
 
+    test('calling render does not add duplicate class names', function() {
+        var $el = $('<div class=foo></div>'),
+            MyView = View.extend({template: '<div class=bar></div>'}),
+            v = MyView({$el: $el});
+
+        equal(v.$el.attr('class'), 'foo bar');
+        v.render();
+        equal(v.$el.attr('class'), 'foo bar');
+    });
+
     start();
 });

@@ -125,8 +125,7 @@ define([
         render: function() {
             var $tmp = $(this._renderHTML()),
                 origClass = this.$el.attr('class');
-            this.$el.html($tmp.html())
-                    .attr('class', origClass + ' ' + $tmp.attr('class'));
+            this.$el.html($tmp.html()).addClass($tmp.attr('class'));
         },
 
         show: function() {
