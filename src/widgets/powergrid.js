@@ -11,11 +11,12 @@ define([
     './../view',
     './ascollectionviewable',
     './powergrid/columnmodel',
+    './spinner',
     './../util/sort',
     'tmpl!./powergrid/powergrid.mtpl',
     'css!./powergrid/powergrid.css'
-], function($, _, model, View, asCollectionViewable, ColumnModel, sort,
-    template) {
+], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
+    sort, template) {
 
     var EmptyColumnModel, PowerGrid, DummyModel,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
@@ -71,6 +72,9 @@ define([
                     '_onMultiselectableRowClick' : '_onSelectableRowClick';
                 this.on('click', 'tbody tr', this[method]);
             }
+
+            this.spinner = Spinner(null, {target: this.$el.find('.rows')[0]})
+                                .appendTo(this.$el);
 
             // for testing and debugging purposes
             this._renderCount = this._renderRowCount = 0;
@@ -182,6 +186,16 @@ define([
             return this.$tbody.children('tr').eq(
                 _.indexOf(this.get('models'), model));
 
+        },
+
+        disable: function() {
+            this.$el.addClass('disabled');
+            return this.propagate('disable');
+        },
+
+        enable: function() {
+            this.$el.removeClass('disabled');
+            return this.propagate('enable');
         },
 
         rerender: function() {

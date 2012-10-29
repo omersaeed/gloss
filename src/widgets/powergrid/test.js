@@ -43,7 +43,11 @@ define([
                 columnModelClass: BasicColumnModel,
                 collection: Example.collection(),
                 collectionLoadArgs: options.params
-            }, options.gridOptions)).appendTo(options.appendTo);
+            }, options.gridOptions));
+
+            if (options.appendTo) {
+                g.appendTo(options.appendTo);
+            }
 
             g.get('collection').load(options.params).then(function() {
                 $(function() {
@@ -850,6 +854,32 @@ define([
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2,007,104.00")').length, 1);
+            start();
+        });
+    });
+
+    module('spinner');
+
+    asyncTest('spinner shows up', function() {
+        setup({
+            appendTo: null,
+            gridOptions: {
+                selectable: 'multi',
+                columnModelClass: resizable(BasicColumnModel)
+            }
+        }).then(function(g) {
+            // disable/enable before inserting in the dom, just to make sure
+            g.disable().enable().disable().enable();
+            g.appendTo('body').disable();
+            equal(g.spinner.spinner.el instanceof HTMLElement, true,
+                'spinner instantiated');
+            equal($(g.spinner.spinner.el).is(':visible'), true,
+                'spinner visible');
+            var $table = g.$el.find('.rows');
+            equal($(g.spinner.spinner.el).position().left > $table.position().left,
+                true, 'spinner is roughly horizontally inside table');
+            equal($(g.spinner.spinner.el).position().top > $table.position().top,
+                true, 'spinner is roughly vertically inside table');
             start();
         });
     });
