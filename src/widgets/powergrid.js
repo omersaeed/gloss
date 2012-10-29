@@ -49,7 +49,10 @@ define([
 
             this.$tbody = this.$el.find('table.rows tbody');
 
-            this.on('columnchange', _.bind(this._onColumnChange, this));
+            _.bindAll(this, '_onColumnChange', '_onModelChange',
+                    '_onMultiselectableRowClick', '_onSelectableRowClick');
+
+            this.on('columnchange', this._onColumnChange);
 
             this.set('columnModel', this.get('columnModelClass')({
                 $el: this.$el.find('table.header thead'),
@@ -66,7 +69,7 @@ define([
                 this.$el.addClass('selectable');
                 var method = /multi/i.test(selectable)?
                     '_onMultiselectableRowClick' : '_onSelectableRowClick';
-                this.on('click', 'tbody tr', _.bind(this[method], this));
+                this.on('click', 'tbody tr', this[method]);
             }
 
             // for testing and debugging purposes
@@ -303,8 +306,14 @@ define([
                 }));
             }
             if (updated.collection) {
-                this.get('collection')
-                    .on('change', _.bind(this._onModelChange, this));
+                if (this.previous('collection')) {
+                    this.previous('collection')
+                        .off('change', this._onModelChange);
+                }
+                if (this.get('collection')) {
+                    this.get('collection')
+                        .on('change', this._onModelChange);
+                }
             }
             if (updated.fixedLayout && !this._settingInitialWidth) {
                 this._settingInitialWidth = true;
