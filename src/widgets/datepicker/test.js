@@ -134,6 +134,13 @@ define([
         equal(dp.options.date.format('YYYY-MM-DD'), '2012-06-13');
     });
 
+    test('disabling', function() {
+        var dp = DatePicker().appendTo('#qunit-fixture');
+        dp.disable();
+        equal(dp.$node.hasClass('disabled'), true);
+        equal(dp.input.$node.is(':disabled'), true);
+    });
+
     asyncTest('clicking a day sets the selected date', function() {
         var dp = DatePicker(undefined, {date: moment('2012-07-13')});
         openDatePicker(dp);

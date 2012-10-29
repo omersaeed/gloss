@@ -24,6 +24,8 @@ define([
 
             self.$node.addClass('datepicker');
 
+            self._super.apply(this, arguments);
+
             self.options._selected = null;
 
             self.menu = BaseMenu(self.$node.find('.datepicker-menu'))
