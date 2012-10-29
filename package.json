@@ -6,7 +6,7 @@
     "Jordan McCoy",
     "Ralph Smith"
   ],
-  "version": "1.0.8",
+  "version": "1.0.9",
   "dependencies": {
     "csi": "git+ssh://git@github.com:siq/csi.git#1.0.0",
     "siq-vendor-js": "git+ssh://git@github.com:siq/siq-vendor-js.git#1.0.0",
