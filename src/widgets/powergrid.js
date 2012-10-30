@@ -18,7 +18,7 @@ define([
 ], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
     sort, template) {
 
-    var EmptyColumnModel, PowerGrid, DummyModel,
+    var EmptyColumnModel, PowerGrid,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
 
     EmptyColumnModel = ColumnModel.extend({});
