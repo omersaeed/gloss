@@ -25,7 +25,8 @@ define([
             datetime_field: '2012-08-29T14:10:21Z',
             integer_field: (lastR = r()),
             float_field: Math.pow(lastR / 300.0, 3),
-            default_field: Math.floor(Math.pow(lastR / 100.0, 7))
+            default_field: Math.floor(Math.pow(lastR / 100.0, 7)),
+            enumeration_field: (i % 3) + 1
         };
     });
 });

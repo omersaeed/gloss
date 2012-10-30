@@ -13,11 +13,11 @@ define([
         }
 
         this.defaults = $.extend({}, this.defaults, {
-            mapping: null,      // enumeration mappings: [
-                                //  {enumerationValue1: '<display Value 1>'},
-                                //  {enumerationValue2: '<display Value 2>'},
+            mapping: null,      // enumeration mappings: {
+                                //  enumerationValue1: '<display Value 1>',
+                                //  enumerationValue2: '<display Value 2>',
                                 //  ...
-                                // ]
+                                // }
             
             // This option will be used to define default mapping to be used 
             // when either model value is null 
