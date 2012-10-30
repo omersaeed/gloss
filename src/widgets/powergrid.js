@@ -190,6 +190,12 @@ define([
 
         },
 
+        col: function(columnName) {
+            return _.find(this.get('columnModel').columns, function(column) {
+                return column.get('name') === columnName;
+            });
+        },
+
         disable: function() {
             this.$el.addClass('disabled');
             if (this.$el.is(':visible')) {
