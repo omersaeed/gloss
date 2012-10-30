@@ -1,15 +1,24 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/t',
     'bedrock/class',
-    'bedrock/assettable'
-], function($, _, Class, asSettable) {
+    'bedrock/assettable',
+    './widgets/widget'
+], function($, _, t, Class, asSettable, Widget) {
     var viewCount = 0,
 
-        // this is used strictly for debugging purposes
+        // this is used strictly for debugging and internal purposes
         dbgview = window.dbgview = function(which) {
             return _.isNumber(which)? dbgview['v'+which] : dbgview[which];
         },
+
+        views = {},
+
+        isWidget = function(el) { return !!Widget.registry.get(el.id); },
+        toWidget = function(el) { return Widget.registry.get(el.id); },
+        isView = function(el) { return !!el.getAttribute('view-name'); },
+        toView = function(el) { return views[el.getAttribute('view-name')]; },
 
         isPageEvent = function(eventName) {
             return (eventName.split('.')[0] in
@@ -56,7 +65,7 @@ define([
         template: '<div></div>',
 
         init: function(options) {
-            var el, $el;
+            var el, $el, viewName;
 
             options = _.extend({}, options);
             el = options.el;
@@ -67,6 +76,11 @@ define([
             this.set($.extend(true, {}, this.defaults, options), {silent: true});
 
             this.$el = $($el || el);
+
+            if ((viewName = this.$el.attr('view-name'))) {
+                throw new Error('can\'t re-instantiate view on el: '+viewName);
+            }
+
             if (!this.$el.length) {
                 this.$el = $(this._renderHTML());
             } else if (this.$el.length > 1) {
@@ -78,7 +92,37 @@ define([
 
             dbgview['v' + (++viewCount)] = this;
 
-            this.el.id = 'view' + viewCount;
+            viewName = 'view' + viewCount;
+            this.$el.attr('view-name', viewName);
+            if (!this.el.id) {
+                this.el.id = viewName;
+            }
+            views[viewName] = this;
+        },
+
+        _childWidgetsAndViews: function() {
+            var children = [],
+                traverse = function(el) {
+                    var i, l, child, childNodes = el.childNodes, result = [];
+                    for (i = 0, l = childNodes.length; i < l; i++) {
+                        child = childNodes[i];
+                        if (child.nodeType === 1) {
+                            result.push({el: child});
+                        }
+                    }
+                    return result;
+                };
+            t.dfs(traverse(this.el), function(node) {
+                var id = node.el.id;
+                if (isWidget(node.el)) {
+                    children.push(toWidget(node.el));
+                } else if (isView(node.el)) {
+                    children.push(toView(node.el));
+                } else {
+                    node.children = traverse(node.el);
+                }
+            });
+            return children;
         },
 
         // this provides a means for detecting when the user clicks outside of
@@ -122,11 +166,26 @@ define([
             return this;
         },
 
+        propagate: function(method) {
+            var rest = Array.prototype.slice.call(arguments, 1);
+            _.each(this._childWidgetsAndViews(), function(child) {
+                if (child instanceof Widget) {
+                    child.invoke(method);
+                } else {
+                    if (_.isFunction(child[method])) {
+                        child[method].apply(child, rest);
+                    } else {
+                        child.propagate.apply(child, [method].concat(rest));
+                    }
+                }
+            });
+            return this;
+        },
+
         render: function() {
             var $tmp = $(this._renderHTML()),
                 origClass = this.$el.attr('class');
-            this.$el.html($tmp.html())
-                    .attr('class', origClass + ' ' + $tmp.attr('class'));
+            this.$el.html($tmp.html()).addClass($tmp.attr('class'));
         },
 
         show: function() {

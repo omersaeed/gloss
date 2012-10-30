@@ -34,11 +34,20 @@ define([
         },
 
         _onHeaderChange: function() {
-            var prop = this.get('prop'), v = this.checkbox.getValue();
-            _.each(this.get('grid').get('models'), function(model) {
-                model.set(prop, v, {silent: true});
+            var self = this,
+                prop = self.get('prop'), v = self.checkbox.getValue(),
+                grid = self.get('grid'),
+                modelLength = grid.get('models').length,
+                silentTilLast = grid.get('collection');
+
+            _.each(grid.get('models'), function(model, i) {
+                if (!self._isDisabled(model)) {
+                    model.set(prop, v, silentTilLast?
+                        {silent: i !== modelLength-1} : undefined);
+                }
             });
-            this.get('grid').rerender();
+
+            grid.rerender();
         },
 
         _onChange: function(evt) {

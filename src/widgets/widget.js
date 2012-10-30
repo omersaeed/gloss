@@ -609,7 +609,7 @@ define([
         }).appendTo('body').show();
         for (var i = 0, l = values.length; i < l; i++) {
             $testnode.html(values[i]);
-            width = $testnode.width();
+            width = $testnode.outerWidth();
             if (width > minimum) {
                 minimum = width;
             }

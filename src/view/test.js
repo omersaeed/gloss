@@ -2,8 +2,14 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
-    './../view'
-], function($, _, View) {
+    './../view',
+    './../widgets/togglegroup',
+    './../widgets/datepicker',
+    './../widgets/textbox',
+    './../widgets/checkbox',
+    'tmpl!./propagation.mtpl'
+], function($, _, View, ToggleGroup, DatePicker, TextBox, CheckBox,
+    propagationTemplate) {
 
     test('instantiating a view', function() {
         var v = View();
@@ -137,6 +143,66 @@ define([
 
         equal(v.$el.hasClass('foo'), true, 'view didnt blow away foo class');
         equal(v.$el.hasClass('bar'), true, 'view added bar class');
+    });
+
+    test('calling render does not add duplicate class names', function() {
+        var $el = $('<div class=foo></div>'),
+            MyView = View.extend({template: '<div class=bar></div>'}),
+            v = MyView({$el: $el});
+
+        equal(v.$el.attr('class'), 'foo bar');
+        v.render();
+        equal(v.$el.attr('class'), 'foo bar');
+    });
+
+    var widgetize = function($el) {
+        var DisableSquashingView = View.extend({ disable: function() {} });
+        return {
+            created: DatePicker($el.find('[name=created]')),
+            chooser: ToggleGroup($el.find('[name=chooser]')),
+            query: TextBox($el.find('[name=query]')),
+            preview: View({$el: $el.find('.preview')}),
+            selected: CheckBox($el.find('[name=selected]')),
+            disablesquashingview: DisableSquashingView({
+                $el: $el.find('.disablesquashingview')
+            }),
+            wontbedisabled: CheckBox($el.find('[name=wont-be-disabled]'))
+        };
+    };
+
+    test('getting child widgets and views works', function() {
+        var $el = $(propagationTemplate()),
+            widgets = widgetize($el),
+            v = View({$el: $el}),
+            children = v._childWidgetsAndViews();
+
+        console.log(children);
+        ok(children[0] === widgets.created, 'datepicker included');
+        ok(children[1] === widgets.chooser, 'togglegroup included');
+        ok(children[2] === widgets.query, 'query included');
+        ok(children[3] === widgets.preview, 'preview included');
+        ok(children[4] === widgets.disablesquashingview,
+            'disablesquashingview included');
+        equal(children.length, _.keys(widgets).length-2);
+    });
+
+    test('propagating disable works', function() {
+        var $el = $(propagationTemplate()),
+            MyView = View.extend({template: propagationTemplate}),
+            v = MyView(),
+            widgets = widgetize(v.$el);
+
+        v.propagate('disable');
+        equal(widgets.created.$node.hasClass('disabled'), true,
+            'datepicker is disabled');
+        equal(widgets.chooser.$node.hasClass('disabled'), true,
+            'togglegroup is disabled');
+        equal(widgets.query.$node.is(':disabled'), true,
+            'query is disabled');
+        equal(widgets.selected.$node.is(':disabled'), true,
+            'selected is disabled');
+        equal(widgets.wontbedisabled.$node.is(':disabled'), false,
+            'wontbedisabled is NOT disabled');
     });
 
     start();

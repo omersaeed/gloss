@@ -11,7 +11,7 @@ define([
             return options;
         }
         this.formatValue = function(value, model) {
-            return moment(value).format(fmt);
+            return value? moment(value).format(fmt) : '';
         };
     };
 });

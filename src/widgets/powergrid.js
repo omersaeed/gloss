@@ -11,23 +11,20 @@ define([
     './../view',
     './ascollectionviewable',
     './powergrid/columnmodel',
+    './spinner',
     './../util/sort',
     'tmpl!./powergrid/powergrid.mtpl',
     'css!./powergrid/powergrid.css'
-], function($, _, model, View, asCollectionViewable, ColumnModel, sort,
-    template) {
+], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
+    sort, template) {
 
     var EmptyColumnModel, PowerGrid, DummyModel,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
 
     EmptyColumnModel = ColumnModel.extend({});
 
-    DummyModel = model.Model.extend({});
-
     PowerGrid = View.extend({
         defaults: {
-            columnsClass: EmptyColumnModel,
-
             // could be true, false, or 'multi'
             selectable: false,
 
@@ -53,7 +50,10 @@ define([
 
             this.$tbody = this.$el.find('table.rows tbody');
 
-            this.on('columnchange', _.bind(this._onColumnChange, this));
+            _.bindAll(this, '_onColumnChange', '_onModelChange',
+                    '_onMultiselectableRowClick', '_onSelectableRowClick');
+
+            this.on('columnchange', this._onColumnChange);
 
             this.set('columnModel', this.get('columnModelClass')({
                 $el: this.$el.find('table.header thead'),
@@ -70,8 +70,13 @@ define([
                 this.$el.addClass('selectable');
                 var method = /multi/i.test(selectable)?
                     '_onMultiselectableRowClick' : '_onSelectableRowClick';
-                this.on('click', 'tbody tr', _.bind(this[method], this));
+                this.on('click', 'tbody tr', this[method]);
             }
+
+            this.spinner = Spinner(null, {
+                deferInstantiation: true,
+                target: this.el
+            }).appendTo(this.$el);
 
             // for testing and debugging purposes
             this._renderCount = this._renderRowCount = 0;
@@ -133,7 +138,7 @@ define([
                 columns = this.get('columnModel'),
                 models = this.get('models');
 
-            var start = Date.now();
+            var start = (new Date()).valueOf();
 
             if (!columns || !models) {
                 return;
@@ -149,7 +154,7 @@ define([
             // console.log([
             //         'render time for',
             //         this.get('models').length+':',
-            //         Date.now() - start
+            //         (new Date()).valueOf() - start
             //     ].join(' '));
         },
 
@@ -183,6 +188,19 @@ define([
             return this.$tbody.children('tr').eq(
                 _.indexOf(this.get('models'), model));
 
+        },
+
+        disable: function() {
+            this.$el.addClass('disabled');
+            if (this.$el.is(':visible')) {
+                this.spinner.instantiate();
+            }
+            return this.propagate('disable');
+        },
+
+        enable: function() {
+            this.$el.removeClass('disabled');
+            return this.propagate('enable');
         },
 
         rerender: function() {
@@ -283,7 +301,7 @@ define([
 
         update: function(updated) {
             var colName, rerender, sort, naturalWidths, collection, isFiltered,
-                columnModel = this.get('columnModel'),
+                DummyModel, columnModel = this.get('columnModel'),
                 c = function(prop) {
                     return _.find(columnModel.columns, function(column) {
                         return column.get(prop);
@@ -298,13 +316,23 @@ define([
                 this.$el[isFiltered? 'addClass' : 'removeClass']('filtered');
             }
             if (updated.data) {
+                if (!(DummyModel = this.get('DummyModel'))) {
+                    this.set('DummyModel', DummyModel = model.Model.extend({}),
+                            {silent: true});
+                }
                 this.set('models', _.map(this.get('data'), function(d) {
-                    return DummyModel(d);
+                    return DummyModel.models.instantiate(d);
                 }));
             }
             if (updated.collection) {
-                this.get('collection')
-                    .on('change', _.bind(this._onModelChange, this));
+                if (this.previous('collection')) {
+                    this.previous('collection')
+                        .off('change', this._onModelChange);
+                }
+                if (this.get('collection')) {
+                    this.get('collection')
+                        .on('change', this._onModelChange);
+                }
             }
             if (updated.fixedLayout && !this._settingInitialWidth) {
                 this._settingInitialWidth = true;

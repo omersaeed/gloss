@@ -8,6 +8,7 @@
 .selectbox .content {
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
   display: block;
   margin-right: 4em;
   margin-top: -1px;

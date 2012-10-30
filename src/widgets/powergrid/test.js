@@ -43,7 +43,11 @@ define([
                 columnModelClass: BasicColumnModel,
                 collection: Example.collection(),
                 collectionLoadArgs: options.params
-            }, options.gridOptions)).appendTo(options.appendTo);
+            }, options.gridOptions));
+
+            if (options.appendTo) {
+                g.appendTo(options.appendTo);
+            }
 
             g.get('collection').load(options.params).then(function() {
                 $(function() {
@@ -511,6 +515,20 @@ define([
         equal(g.$el.find('tr').length, 1001);
     });
 
+    test('reset to same IDs and make sure manager doesnt blow up', function() {
+        var g = PowerGrid({columnModelClass: BasicColumnModel})
+            .appendTo('#qunit-fixture');
+
+        g.set('data', _.map(exampleFixtures, function(f) {
+            return $.extend(true, {}, f);
+        }));
+        equal(g.get('models').length, exampleFixtures.length);
+        g.set('data', _.map(exampleFixtures, function(f) {
+            return $.extend(true, {}, f);
+        }));
+        equal(g.get('models').length, exampleFixtures.length);
+    });
+
     module('search widget');
 
     var MySearch = PowerGridSearch.extend({
@@ -711,6 +729,42 @@ define([
         });
     });
 
+    asyncTest('selecting all checkboxes does not change disabled ones', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: BasicColumnModel.extend({
+                    columnClasses: [
+                        CheckBoxColumn.extend({
+                            defaults: {prop: '_checked'},
+                            _isDisabled: function(model) {
+                                return model.get('default_field') < 100;
+                            }
+                        })
+                    ].concat(BasicColumnModel.prototype.columnClasses)
+                })
+            }
+        }).then(function(g) {
+            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+            equal(g.$el.find('[type=checkbox]:checked').length, 0);
+            _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+            g.$el.find('thead [type=checkbox]').trigger('click');
+            setTimeout(function() {
+                equal(g.$el.find('[type=checkbox]').length,
+                    g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length, 13);
+                _.each(g.get('models'), function(m) {
+                    if (m.get('default_field') < 100) {
+                        ok(!m.get('_checked'));
+                    } else {
+                        ok(m.get('_checked'));
+                    }
+                });
+                start();
+            }, 15);
+        });
+    });
+
     module('date column');
 
     var withDateTimeColumn = function(colModelClass) {
@@ -800,6 +854,32 @@ define([
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2,007,104.00")').length, 1);
+            start();
+        });
+    });
+
+    module('spinner');
+
+    asyncTest('spinner shows up', function() {
+        setup({
+            appendTo: null,
+            gridOptions: {
+                selectable: 'multi',
+                columnModelClass: resizable(BasicColumnModel)
+            }
+        }).then(function(g) {
+            // disable/enable before inserting in the dom, just to make sure
+            g.disable().enable().disable().enable();
+            g.appendTo('body').disable();
+            equal(g.spinner.spinner.el.nodeType === 1, true,
+                'spinner instantiated');
+            equal($(g.spinner.spinner.el).is(':visible'), true,
+                'spinner visible');
+            var $table = g.$el.find('.rows');
+            equal($(g.spinner.spinner.el).position().left > $table.position().left,
+                true, 'spinner is roughly horizontally inside table');
+            equal($(g.spinner.spinner.el).position().top > $table.position().top,
+                true, 'spinner is roughly vertically inside table');
             start();
         });
     });

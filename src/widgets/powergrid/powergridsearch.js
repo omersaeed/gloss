@@ -38,9 +38,7 @@ define([
                 q = this.getWidget('q').setValue('');
 
             if (this._filtered) {
-                this.submit().always(function() {
-                    clear.disable();
-                });
+                this.submit();
             }
         },
         _onKeyup: function() {
@@ -49,7 +47,7 @@ define([
             this.getWidget('clear')[method]();
         },
         submit: function(evt) {
-            var self = this, collection = self.options.collection, params;
+            var params, self = this, collection = self.options.collection;
             if (evt) {
                 evt.preventDefault();
             }
@@ -59,9 +57,12 @@ define([
             self.propagate('disable');
             params = self._makeQueryParams();
             self._filtered = !!params.query;
-            return collection.reset(params).load().then(
-                function() { self.propagate('enable'); },
-                function() { self.propagate('enable'); });
+            return collection.reset(params).load().always(function() {
+                self.propagate('enable');
+                if (!self.getWidget('q').getValue()) {
+                    self.getWidget('clear').disable();
+                }
+            });
         }
     }, {mixins: [CollectionViewable]});
 
