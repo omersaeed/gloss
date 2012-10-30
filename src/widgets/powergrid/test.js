@@ -81,6 +81,15 @@ define([
         });
     });
 
+    asyncTest('unsetting the collection sets removes the models', function() {
+        setup().then(function(g, options) {
+            equal(g.get('models').length, options.params.limit);
+            g.set('collection', undefined);
+            equal(g.get('models').length, 0);
+            start();
+        });
+    });
+
     module('sorting');
 
     var orderMatches = function(actual, expected) {
