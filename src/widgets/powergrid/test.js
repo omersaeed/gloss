@@ -8,12 +8,13 @@ define([
     './column/checkboxcolumn',
     './column/asdatetime',
     './column/asbytes',
+    './column/asenumeration',
     './column/asnumber',
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
 ], function($, _, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
-    asBytes, asNumber, PowerGridSearch, Example, exampleFixtures) {
+    asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -23,7 +24,8 @@ define([
                 Column.extend({defaults: {name: 'datetime_field'}}),
                 Column.extend({defaults: {name: 'integer_field'}}),
                 Column.extend({defaults: {name: 'float_field'}}),
-                Column.extend({defaults: {name: 'default_field'}})
+                Column.extend({defaults: {name: 'default_field'}}),
+                Column.extend({defaults: {name: 'enumeration_field'}})
             ]
         }),
         setup = function(options) {
@@ -854,6 +856,33 @@ define([
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2,007,104.00")').length, 1);
+            start();
+        });
+    });
+
+    module('enumeration column');
+
+    var mapping = { 1:'One', 2: 'Two', 3:'Three'}, 
+        withEnumerationColumn = function(colModelClass) {
+            return colModelClass.extend({
+                columnClasses: _.map(colModelClass.prototype.columnClasses,
+                    function(c) {
+                        return c.prototype.defaults.name === 'enumeration_field'?
+                                asEnumeration(c.extend(), {mapping: mapping}) : c;
+                    })
+            });
+        };
+
+    asyncTest('renders enumeration column correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withEnumerationColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("One")').length, 5);
+            equal(g.$el.find('td:contains("Two")').length, 5);
+            equal(g.$el.find('td:contains("Three")').length, 5);
             start();
         });
     });
