@@ -21,7 +21,8 @@ define([
         });
 
         this.formatValue = function(value, model) {
-            return format.number(value, this.get('decimalPlaces'));
+            return value != null?
+                format.number(value, this.get('decimalPlaces')) : '';
         };
     };
 });

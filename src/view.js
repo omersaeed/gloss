@@ -106,7 +106,7 @@ define([
                     var i, l, child, childNodes = el.childNodes, result = [];
                     for (i = 0, l = childNodes.length; i < l; i++) {
                         child = childNodes[i];
-                        if (child instanceof HTMLElement) {
+                        if (child.nodeType === 1) {
                             result.push({el: child});
                         }
                     }

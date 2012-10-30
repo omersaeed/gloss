@@ -8,12 +8,13 @@ define([
     './column/checkboxcolumn',
     './column/asdatetime',
     './column/asbytes',
+    './column/asenumeration',
     './column/asnumber',
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
 ], function($, _, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
-    asBytes, asNumber, PowerGridSearch, Example, exampleFixtures) {
+    asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -23,7 +24,8 @@ define([
                 Column.extend({defaults: {name: 'datetime_field'}}),
                 Column.extend({defaults: {name: 'integer_field'}}),
                 Column.extend({defaults: {name: 'float_field'}}),
-                Column.extend({defaults: {name: 'default_field'}})
+                Column.extend({defaults: {name: 'default_field'}}),
+                Column.extend({defaults: {name: 'enumeration_field'}})
             ]
         }),
         setup = function(options) {
@@ -416,7 +418,7 @@ define([
     asyncTest('clicking a selected row does not re-render', function() {
         setup({
             gridOptions: {selectable: true},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g, options) {
             equal(g._renderRowCount, 0);
             g.$el.find('td:contains(item 2)').trigger(
@@ -821,6 +823,22 @@ define([
         });
     });
 
+    asyncTest('renders null bytes correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withBytesColumn(BasicColumnModel),
+                collectionMap: function(models) {
+                    models[0].set('float_field', null);
+                    return models;
+                }
+            }
+        }).then(function(g) {
+            equal(trim(g.$el.find('tr:eq(1) td:eq(5)').text()), '');
+            start();
+        });
+    });
+
     module('number column');
 
     var withNumberColumn = function(colModelClass) {
@@ -833,7 +851,7 @@ define([
         });
     };
 
-    asyncTest('renders bytes correctly', function() {
+    asyncTest('renders numbers correctly', function() {
         setup({
             appendTo: '#qunit-fixture',
             gridOptions: {
@@ -841,6 +859,22 @@ define([
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2,007,104")').length, 1);
+            start();
+        });
+    });
+
+    asyncTest('renders null values correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withNumberColumn(BasicColumnModel),
+                collectionMap: function(models) {
+                    models[0].set('default_field', null);
+                    return models;
+                }
+            }
+        }).then(function(g) {
+            equal(trim(g.$el.find('tr:eq(1) td:eq(6)').text()), '');
             start();
         });
     });
@@ -867,6 +901,33 @@ define([
         });
     });
 
+    module('enumeration column');
+
+    var mapping = { 1:'One', 2: 'Two', 3:'Three'}, 
+        withEnumerationColumn = function(colModelClass) {
+            return colModelClass.extend({
+                columnClasses: _.map(colModelClass.prototype.columnClasses,
+                    function(c) {
+                        return c.prototype.defaults.name === 'enumeration_field'?
+                                asEnumeration(c.extend(), {mapping: mapping}) : c;
+                    })
+            });
+        };
+
+    asyncTest('renders enumeration column correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withEnumerationColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            equal(g.$el.find('td:contains("One")').length, 5);
+            equal(g.$el.find('td:contains("Two")').length, 5);
+            equal(g.$el.find('td:contains("Three")').length, 5);
+            start();
+        });
+    });
+
     module('spinner');
 
     asyncTest('spinner shows up', function() {
@@ -880,7 +941,7 @@ define([
             // disable/enable before inserting in the dom, just to make sure
             g.disable().enable().disable().enable();
             g.appendTo('body').disable();
-            equal(g.spinner.spinner.el instanceof HTMLElement, true,
+            equal(g.spinner.spinner.el.nodeType === 1, true,
                 'spinner instantiated');
             equal($(g.spinner.spinner.el).is(':visible'), true,
                 'spinner visible');

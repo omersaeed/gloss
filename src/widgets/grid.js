@@ -509,6 +509,7 @@ define([
                 }
             }
             this._highlighted = [];
+            this._lastHighlighted = undefined;
             this.trigger('unhighlight');
             return this;
         },
