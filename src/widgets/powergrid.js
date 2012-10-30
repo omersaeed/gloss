@@ -328,6 +328,9 @@ define([
                     this.get('collection')
                         .on('change', this._onModelChange);
                 }
+                if (this.previous('collection') && !this.get('collection')) {
+                    this.set('models', []);
+                }
             }
             if (updated.fixedLayout && !this._settingInitialWidth) {
                 this._settingInitialWidth = true;
