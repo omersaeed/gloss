@@ -1,4 +1,9 @@
 /*global test, asyncTest, ok, equal, deepEqual, start, module, strictEqual, notStrictEqual, raises*/
+
+// things that are hard to test:
+//  - correct placement of the spinner
+//  - double clicking multi-select rows
+
 define([
     'vendor/jquery',
     'vendor/underscore',
@@ -941,6 +946,59 @@ define([
                 true, 'spinner is roughly horizontally inside table');
             equal($(g.spinner.spinner.el).position().top > $table.position().top,
                 true, 'spinner is roughly vertically inside table');
+            start();
+        });
+    });
+
+    module('all the marbles');
+
+    var MarblesColumn = Column.extend({
+        defaults: {sortable: true, resizable: true},
+        init: function() {
+            this._super.apply(this, arguments);
+            this.set('label', this.get('name')
+                .replace(/_/g, ' ')
+                .replace(/^(.)/, function($1) {
+                    return $1.toUpperCase();
+                }));
+        }
+    });
+
+    asyncTest('everything together', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                selectable: 'multi',
+                columnModelClass: ColumnModel.extend({
+                    columnClasses: [
+                        CheckBoxColumn.extend({
+                            _isDisabled: function(model) {
+                                return !model.get('required_field');
+                            }
+                        }),
+                        MarblesColumn.extend({defaults: {name: 'text_field', sort: 'ascending'}}),
+                        MarblesColumn.extend({defaults: {name: 'required_field'}}),
+                        MarblesColumn.extend({defaults: {name: 'boolean_field'}}),
+                        asDateTime(MarblesColumn.extend({defaults: {name: 'datetime_field'}})),
+                        MarblesColumn.extend({defaults: {name: 'integer_field'}}),
+                        asBytes(MarblesColumn.extend({defaults: {name: 'float_field'}})),
+                        asNumber(MarblesColumn.extend({defaults: {name: 'default_field'}})),
+                        MarblesColumn.extend({defaults: {name: 'enumeration_field'}})
+                    ]
+                })
+            }
+        }).then(function(g) {
+            g.on('dblclick', function(evt) {
+                var $el = evt.target.tagName.toLowerCase() === 'tr'?
+                    $(evt.target) : $(evt.target).closest('tr'),
+                    model = g._modelFromTr($el[0]);
+                if (model) {
+                    console.log('double click',model.get('name'));
+                } else {
+                    console.log('double click -- no model');
+                }
+            });
+            ok(true);
             start();
         });
     });
