@@ -814,6 +814,22 @@ define([
         });
     });
 
+    asyncTest('renders null bytes correctly', function() {
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withBytesColumn(BasicColumnModel),
+                collectionMap: function(models) {
+                    models[0].set('float_field', null);
+                    return models;
+                }
+            }
+        }).then(function(g) {
+            equal(trim(g.$el.find('tr:eq(1) td:eq(5)').text()), '');
+            start();
+        });
+    });
+
     module('number column');
 
     var withNumberColumn = function(colModelClass) {

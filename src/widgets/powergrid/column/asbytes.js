@@ -26,7 +26,7 @@ define([
 
         this.formatValue = function(value, model) {
             var factor = this.get('assumeGb')? 1.0e9 : 1.0;
-            return format.bytes(value * factor);
+            return value == null? '' : format.bytes(value * factor);
         };
     };
 
