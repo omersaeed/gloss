@@ -409,7 +409,7 @@ define([
     asyncTest('clicking a selected row does not re-render', function() {
         setup({
             gridOptions: {selectable: true},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture'
         }).then(function(g, options) {
             equal(g._renderRowCount, 0);
             g.$el.find('td:contains(item 2)').trigger(
@@ -816,7 +816,7 @@ define([
 
     asyncTest('renders null bytes correctly', function() {
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             gridOptions: {
                 columnModelClass: withBytesColumn(BasicColumnModel),
                 collectionMap: function(models) {
@@ -842,7 +842,7 @@ define([
         });
     };
 
-    asyncTest('renders bytes correctly', function() {
+    asyncTest('renders numbers correctly', function() {
         setup({
             appendTo: '#qunit-fixture',
             gridOptions: {
@@ -850,6 +850,22 @@ define([
             }
         }).then(function(g) {
             equal(g.$el.find('td:contains("2,007,104")').length, 1);
+            start();
+        });
+    });
+
+    asyncTest('renders null values correctly', function() {
+        setup({
+            appendTo: '#qunit-fixture',
+            gridOptions: {
+                columnModelClass: withNumberColumn(BasicColumnModel),
+                collectionMap: function(models) {
+                    models[0].set('default_field', null);
+                    return models;
+                }
+            }
+        }).then(function(g) {
+            equal(trim(g.$el.find('tr:eq(1) td:eq(6)').text()), '');
             start();
         });
     });
