@@ -999,10 +999,8 @@ define([
                 })
             }
         }).then(function(g) {
-            g.on('dblclick', function(evt) {
-                var $el = evt.target.tagName.toLowerCase() === 'tr'?
-                    $(evt.target) : $(evt.target).closest('tr'),
-                    model = g._modelFromTr($el[0]);
+            g.on('dblclick', 'tbody tr', function(evt) {
+                var model = g._modelFromTr(evt.currentTarget);
                 if (model) {
                     console.log('double click',model.get('text_field'));
                 } else {
