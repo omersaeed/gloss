@@ -184,7 +184,7 @@ define([
             equal(g._renderRowCount, 1, 'only one row was rerendered');
             equal(g._renderCount, 1, 'grid wasnt rerendered');
 
-            g.$el.find('td:contains(item 2)').trigger('click');
+            g.$el.find('td:contains(item 2)').trigger(g.get('selectableEvent'));
             equal(g.$el.find('.selected').length, 1, 'click triggers selection');
             equal(trim(g.$el.find('.selected td.col-text_field').text()),
                 'item 2', 'correct row selected');
@@ -268,7 +268,7 @@ define([
                 'item 6', 'correct row selected');
 
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             $selected = g.$el.find('.selected');
             equal($selected.length, 3, 'three are selected');
             equal(trim($selected.find('td.col-text_field').eq(0).text()),
@@ -278,14 +278,14 @@ define([
             equal(trim($selected.find('td.col-text_field').eq(2).text()),
                 'item 6', 'correct row selected');
 
-            g.$el.find('td:contains(item 5)').trigger('click');
+            g.$el.find('td:contains(item 5)').trigger(g.get('selectableEvent'));
             $selected = g.$el.find('.selected');
             equal($selected.length, 1, 'three are selected');
             equal(trim($selected.find('td.col-text_field').eq(0).text()),
                 'item 5', 'correct row selected');
 
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {shiftKey: true}));
+                $.Event(g.get('selectableEvent'), {shiftKey: true}));
             $selected = g.$el.find('.selected');
             equal($selected.length, 4, 'three are selected');
             equal(trim($selected.find('td.col-text_field').eq(0).text()),
@@ -298,7 +298,7 @@ define([
                 'item 5', 'correct row selected');
 
             g.$el.find('td:contains(item 4)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             $selected = g.$el.find('.selected');
             equal($selected.length, 3, 'three are selected');
             equal(trim($selected.find('td.col-text_field').eq(0).text()),
@@ -309,7 +309,7 @@ define([
                 'item 5', 'correct row selected');
 
             g.$el.find('td:contains(item 3)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             $selected = g.$el.find('.selected');
             equal($selected.length, 2, 'three are selected');
             equal(trim($selected.find('td.col-text_field').eq(0).text()),
@@ -385,7 +385,7 @@ define([
             g.select(g.get('collection').where({text_field: 'item 3'}));
             equal(triggered.length, 1);
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             equal(triggered.length, 2);
             g.select(g.get('collection').where({text_field: 'item 7'}));
             equal(triggered.length, 3);
@@ -402,7 +402,7 @@ define([
 
             g.select(g.get('collection').where({text_field: 'item 3'}));
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
 
             equal(triggered.length, 0);
 
@@ -427,10 +427,10 @@ define([
         }).then(function(g, options) {
             equal(g._renderRowCount, 0);
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             equal(g._renderRowCount, 1);
             g.$el.find('td:contains(item 2)').trigger(
-                $.Event('click', {ctrlKey: true, metaKey: true}));
+                $.Event(g.get('selectableEvent'), {ctrlKey: true, metaKey: true}));
             equal(g._renderRowCount, 1);
             start();
         });
@@ -716,6 +716,8 @@ define([
             equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
             equal(g.$el.find('[type=checkbox]:checked').length, 0);
             _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+            // gecko and trident don't seem to register the click, so change
+            // events never fire and this test fails in those browsers
             g.$el.find('thead [type=checkbox]').trigger('click');
             setTimeout(function() {
                 equal(g.$el.find('[type=checkbox]').length,
@@ -725,7 +727,7 @@ define([
                 _.each(g.get('models'),
                     function(m) { ok(m.get('_checked')); });
                 start();
-            }, 15);
+            }, 50);
         });
     });
 
@@ -1002,7 +1004,7 @@ define([
                     $(evt.target) : $(evt.target).closest('tr'),
                     model = g._modelFromTr($el[0]);
                 if (model) {
-                    console.log('double click',model.get('name'));
+                    console.log('double click',model.get('text_field'));
                 } else {
                     console.log('double click -- no model');
                 }

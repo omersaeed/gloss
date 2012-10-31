@@ -28,6 +28,9 @@ define([
             // could be true, false, or 'multi'
             selectable: false,
 
+            // things seem less buggy when we do mouseup as opposed to click
+            selectableEvent: 'mouseup',
+
             // this is the attribute set on the model corresponding to which
             // grid row is selected. so if you want to know which model is
             // selected in a grid, you can do something like:
@@ -70,7 +73,7 @@ define([
                 this.$el.addClass('selectable');
                 var method = /multi/i.test(selectable)?
                     '_onMultiselectableRowClick' : '_onSelectableRowClick';
-                this.on('click', 'tbody tr', this[method]);
+                this.on(this.get('selectableEvent'), 'tbody tr', this[method]);
             }
 
             this.spinner = Spinner(null, {
@@ -163,8 +166,7 @@ define([
             $(this.get('columnModel').renderTr(model)).insertAfter(currentRow);
             $(currentRow).remove();
             this._renderRowCount++;
-            // console.log('rerendered row for',
-            //         model.get(this.get('columnModel').columns[0].get('name')));
+            // console.log('rerendered row for', model.get('text_field'));
         },
 
         _sort: function(opts) {
@@ -221,17 +223,18 @@ define([
         },
 
         select: function(model, opts) {
-            var indices, self = this, changed = [],
-                models = this.get('models'),
-                a = this.get('selectedAttr'),
+            var indices, self = this, changes = [],
+                a = self.get('selectedAttr'),
+                models = self.get('models'),
                 selected = function(m) { return m.get(a); };
 
             opts = opts || {};
 
+            // first just get a list of all the changes that need to happen
             if (!opts.dontUnselectOthers) {
                 _.each(models, function(m) {
                     if (m !== model && m.get(a)) {
-                        changed.push(m.del(a, {silent: true}));
+                        changes.push({model: m, action: 'del'});
                     }
                 });
             }
@@ -243,19 +246,39 @@ define([
                     _.indexOf(models, model)
                 ];
                 _.each(_.range(_.min(indices), _.max(indices)), function(i) {
-                    changed.push(models[i].set(a, true, {silent: true}));
+                    if (models[i] !== model && !models[i].get(a)) {
+                        changes.push({model: models[i], action: 'set'});
+                    }
                 });
             }
 
-            this._disableRerender = true;
-            changed.push(model.set(a, true));
-            this._disableRerender = false;
+            if (!model.get(a)) {
+                changes.push({model: model, action: 'set'});
+            }
 
-            if (changed.length > 0) {
-                if (changed.length > 2) {
+            // now we actually make the changes, silently for everything but
+            // the last change (so no more than one change event is triggered)
+            self._disableRerender = true;
+            _.each(changes, function(change, i) {
+                var args = [a];
+                if (change.action === 'set') {
+                    args.push(true);
+                }
+                if (i < changes.length-1) {
+                    args.push({silent: true});
+                }
+                change.model[change.action].apply(change.model, args);
+            });
+            self._disableRerender = false;
+
+            // now, if needed, re-render (some portion of) the grid
+            if (changes.length > 0) {
+                if (changes.length > 2) {
                     self.rerender();
                 } else {
-                    _.each(changed, function(m) { self.rerender(m); });
+                    _.each(changes, function(change) {
+                        self.rerender(change.model);
+                    });
                 }
                 // i don't think there should be a select event for the same
                 // reason i don't think we should have a grid.getSelected()

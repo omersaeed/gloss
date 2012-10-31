@@ -14,15 +14,17 @@ define([
 
         init: function() {
             this._super.apply(this, arguments);
+            var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
             if (this.get('prop') == null) {
                 this.set({prop: '_' + this.el.id + '_checked'},
                     {silent: true});
             }
             this._postRender();
-            this.get('grid').on(
-                'change',
-                'tbody tr .'+this.columnClass()+' input',
-                _.bind(this._onChange, this));
+            this.get('grid')
+                .on('change', delegateSelector, _.bind(this._onChange, this))
+                .on('mouseup', delegateSelector, function(evt) {
+                    evt.stopPropagation();
+                });
         },
 
         _getName: function() {
@@ -51,11 +53,19 @@ define([
         },
 
         _onChange: function(evt) {
-            var $target = $(evt.target), checked;
-            this.get('grid')._modelFromTr($target.closest('tr'))
-                .set(this.get('prop'), (checked = $target.is(':checked')));
+            var checked, self = this,
+                $target = $(evt.target),
+                model = self.get('grid')._modelFromTr($target.closest('tr'));
+            if (self.get('type') === 'radio') {
+                _.each(self.get('grid').get('models'), function(m) {
+                    if (m !== model) {
+                        m.del(self.get('prop'));
+                    }
+                });
+            }
+            model.set(self.get('prop'), (checked = $target.is(':checked')));
             if (!checked) {
-                this.checkbox.$node.prop('checked', false);
+                self.checkbox.$node.prop('checked', false);
             }
         },
 
