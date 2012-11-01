@@ -39,16 +39,20 @@ define([
             var self = this,
                 prop = self.get('prop'), v = self.checkbox.getValue(),
                 grid = self.get('grid'),
-                modelLength = grid.get('models').length,
-                silentTilLast = grid.get('collection');
+                silentTilLast = grid.get('collection'),
+                changes;
 
-            _.each(grid.get('models'), function(model, i) {
+            changes = _.filter(grid.get('models'), function(model, i) {
+                var changed = false;
                 if (!self._isDisabled(model)) {
-                    model.set(prop, v, {silent: true});
+                    changed = (model.get(prop) !== v);
                 }
+                return changed;
             });
-            grid.get('models')[modelLength-1].set(prop, !v, {silent: true});
-            grid.get('models')[modelLength-1].set(prop, v);
+            _.each(changes, function(model, i) {
+                model.set(prop, v, silentTilLast?
+-                        {silent: i !== changes.length-1} : undefined);
+            });
 
             grid.rerender();
         },
