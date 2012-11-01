@@ -362,7 +362,7 @@ define([
                     this.get('collection')
                         .on('change', this._onModelChange);
                 }
-                if (!this.get('collection')) {
+                if (this.previous('collection') && !this.get('collection')) {
                     this.set('models', []);
                 }
             }
