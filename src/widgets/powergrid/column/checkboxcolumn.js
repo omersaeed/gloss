@@ -44,10 +44,11 @@ define([
 
             _.each(grid.get('models'), function(model, i) {
                 if (!self._isDisabled(model)) {
-                    model.set(prop, v, silentTilLast?
-                        {silent: i !== modelLength-1} : undefined);
+                    model.set(prop, v, {silent: true});
                 }
             });
+            grid.get('models')[modelLength-1].set(prop, !v, {silent: true});
+            grid.get('models')[modelLength-1].set(prop, v);
 
             grid.rerender();
         },
