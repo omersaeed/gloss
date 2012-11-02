@@ -6,3 +6,7 @@ src/widgets/treegrid/test-*.js
 src/widgets/treegrid/test-*.css
 src/widgets/widgetgroup/test-*.js
 src/widgets/widgetgroup/test-*.css
+
+*.pydevproject
+*.project
+*.iml

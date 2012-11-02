@@ -328,6 +328,12 @@ define([
             return this;
         },
 
+        show: function() {
+            var self = this;
+            self._super.apply(this, arguments);
+            this.spinner.instantiate();
+        },
+
         update: function(updated) {
             var colName, rerender, sort, naturalWidths, collection, isFiltered,
                 DummyModel, columnModel = this.get('columnModel'),
