@@ -706,6 +706,36 @@ define([
         });
     });
 
+    asyncTest('changing model prop sets the corresponding checkbox', function() {
+        // for this case we want to make sure the header is unchecked too
+        setup({
+            appendTo: 'body',
+            gridOptions: {
+                columnModelClass: withCheckboxColumn(BasicColumnModel)
+            }
+        }).then(function(g) {
+            // first set everything to checked
+            // gecko and trident don't seem to register the click, so change
+            // events never fire and this test fails in those browsers
+            g.$el.find('thead [type=checkbox]').trigger('click');
+            setTimeout(function() {
+                equal(g.$el.find('[type=checkbox]').length,
+                    g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length,
+                    g.get('models').length+1);
+                _.each(g.get('models'),
+                    function(m) { ok(m.get('_checked')); });
+                g.get('models')[0].set('_checked', false);
+                setTimeout(function() {
+                    equal(g.get('models')[0].get('_checked'), false);
+                    equal(g.$el.find('thead [type=checkbox]:checked').length, 0,
+                            'header is unchecked when models change');
+                    start();
+                }, 15);
+            }, 50);
+        });
+    });
+
     asyncTest('checking header checks all', function() {
         setup({
             appendTo: '#qunit-fixture',

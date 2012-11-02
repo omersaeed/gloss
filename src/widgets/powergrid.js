@@ -388,6 +388,7 @@ define([
             if (rerender) {
                 this.rerender();
             }
+            this.trigger('propertychange', {grid: this, updated: updated});
         }
     });
 
