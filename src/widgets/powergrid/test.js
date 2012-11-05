@@ -709,7 +709,7 @@ define([
     asyncTest('changing model prop sets the corresponding checkbox', function() {
         // for this case we want to make sure the header is unchecked too
         setup({
-            appendTo: 'body',
+            appendTo: '#qunit-fixture',
             gridOptions: {
                 columnModelClass: withCheckboxColumn(BasicColumnModel)
             }

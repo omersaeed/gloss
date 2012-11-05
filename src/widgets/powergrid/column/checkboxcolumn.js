@@ -17,7 +17,7 @@ define([
             var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
             
             _.bindAll(this, '_onChange', '_onHeaderChange',
-                        '_onModelChange', '_onGridPropertyChange');
+                        '_onModelChange', '_onGridPropertyChange', '_unCheckHeader');
 
             if (this.get('prop') == null) {
                 this.set({prop: '_' + this.el.id + '_checked'},
@@ -57,14 +57,25 @@ define([
         _onModelChange: function(eventName, coll, model, changed) {
             var grid = this.get('grid'),
                 models = grid.get('models'),
-                $thCheckbox = grid.$el.find('thead [type=checkbox]:checked'),
-                uncheckHeader;
+                collection = grid.get('collection'),
+                $thCheckbox = grid.$el.find('thead [type=checkbox]:checked');
 
             if (this._updateFromHeader) {
                 this._updateFromHeader = false;
                 return;
             }
             
+            if (models.length > 0) {
+                this._unCheckHeader(models);
+            } else if (collection) {
+                collection.load().done(this._unCheckHeader);
+            }
+        },
+
+        _unCheckHeader: function(models) {
+            var $thCheckbox = this.get('grid').$el.find('thead [type=checkbox]:checked'),
+                uncheckHeader;
+
             uncheckHeader = _.any(models, function(m) {
                 return !m.get('_checked');
             });
@@ -80,7 +91,6 @@ define([
                 silentTilLast = grid.get('collection'),
                 changes;
 
-            self._updateFromHeader = true;
             changes = _.filter(grid.get('models'), function(model, i) {
                 var changed = false;
                 if (!self._isDisabled(model)) {
@@ -88,6 +98,8 @@ define([
                 }
                 return changed;
             });
+
+            self._updateFromHeader = (changes.length > 0);
             _.each(changes, function(model, i) {
                 model.set(prop, v, silentTilLast?
                         {silent: i !== changes.length-1} : undefined);
