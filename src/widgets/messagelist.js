@@ -26,13 +26,23 @@ define([
                         .slideDown('fast');
                 }
             }
+            this._clearing = false;
             return this;
         },
-        clear: function() {
+        clear: function(options) {
             var self = this;
-            self.$node.find('div').slideUp('fast', function() {
+            options = options || {animate: true};
+            if (options.animate) {
+                self._clearing = true;
+                self.$node.find('div').slideUp('fast', function() {
+                    if (self._clearing) {
+                        self.$node.hide().empty();
+                        self._clearing = false;
+                    }
+                });
+            } else {
                 self.$node.hide().empty();
-            });
+            }
             self.shown = false;
             return self;
         }
