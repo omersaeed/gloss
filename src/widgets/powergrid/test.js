@@ -3,6 +3,13 @@
 // things that are hard to test:
 //  - correct placement of the spinner
 //  - double clicking multi-select rows
+//
+// fun facts about these tests:
+//  - we can't test a bunch of the checkbox column stuff in any browser other
+//    than webkit b/c it's the only one that allows you to check a checkbox by
+//    triggering a click event
+//  - setting a th width below the content width in IE doesn't work, so one of
+//    the unit tests for column resizing doesn't work in IE
 
 define([
     'vendor/jquery',

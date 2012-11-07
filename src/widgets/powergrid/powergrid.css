@@ -6,6 +6,15 @@ tr.selected {
   cursor: default;
 }
 
+/* these are necessary for IE to correctly calculate column widths, column
+ * resizing breaks without them */
+.powergrid table thead th {
+  border-left-width: 0px;
+  border-right-width: 0px;
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
 .powergrid table thead th .wrapper {
   position: relative;
 }
