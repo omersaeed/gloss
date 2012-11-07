@@ -394,10 +394,11 @@ define([
             if (rerender) {
                 this.rerender();
             }
+            this.trigger('propchange', updated);
         }
     });
 
-    asCollectionViewable.call(PowerGrid.prototype, {eventName: 'propchange'});
+    asCollectionViewable.call(PowerGrid.prototype);
 
     return PowerGrid;
 });
