@@ -506,6 +506,33 @@ define([
         });
     });
 
+    asyncTest('resize handle positioned correctly', function() {
+        setup({
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)},
+            appendTo: 'body'
+        }).then(function(g) {
+            var thPos = g.$el.find('th:first').offset(),
+                thSize = {
+                    width: g.$el.find('th:first').width(),
+                    height: g.$el.find('th:first').height()
+                },
+                resizePos = g.$el.find('.resize:first').offset(),
+                resizeSize = {
+                    width: g.$el.find('.resize:first').width(),
+                    height: g.$el.find('.resize:first').height()
+                },
+                close = function(a, b) {
+                    return Math.abs(a-b) < 5;
+                };
+
+            equal(g.$el.closest('body').length, 1, 'ensure grid is positioned');
+            equal(close(thPos.top, resizePos.top), true);
+            equal(close(thPos.left+thSize.width, resizePos.left+resizeSize.width), true);
+
+            start();
+        });
+    });
+
     module('hiding columns');
 
     asyncTest('hiding column works', function() {

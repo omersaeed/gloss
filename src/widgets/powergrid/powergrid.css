@@ -6,7 +6,7 @@ tr.selected {
   cursor: default;
 }
 
-.powergrid table thead th {
+.powergrid table thead th .wrapper {
   position: relative;
 }
 
