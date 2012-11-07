@@ -90,6 +90,22 @@ define([
         });
     });
 
+    module('internals');
+
+    asyncTest('_modelFromTr correctly handles tr thats not in grid', function() {
+        setup().then(function(g, options) {
+            equal(g._modelFromTr($('<tr>')[0]), undefined);
+            start();
+        });
+    });
+
+    asyncTest('_trFromModel correctly handles model thats part of grid', function() {
+        setup().then(function(g, options) {
+            equal(g._trFromModel({}), undefined);
+            start();
+        });
+    });
+
     module('sorting');
 
     var orderMatches = function(actual, expected) {
