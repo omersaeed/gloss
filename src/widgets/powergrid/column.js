@@ -111,6 +111,18 @@ define([
             return this;
         },
 
+        isVisible: function() {
+            return !this.get('grid').$el.hasClass(this._hiddenColumnClass());
+        },
+
+        toggle: function() {
+            if (this.isVisible()) {
+                this.hide();
+            } else {
+                this.show();
+            }
+        },
+
         render: function() {
             this._super.apply(this, arguments);
             this._instantiateResizeHandle();
