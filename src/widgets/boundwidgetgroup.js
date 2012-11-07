@@ -180,7 +180,9 @@ define([
                     messageList.append('invalid', xhr.statusText); // empty 500
                 } else {
                     // don't know how we could get here...
-                    messageList.append('invalid', 'there was an error');
+                    messageList.append('invalid',
+                            (strings.errors && strings.errors.invalid) ||
+                            'there was an error');
                 }
             }
         },

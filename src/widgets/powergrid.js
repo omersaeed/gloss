@@ -394,11 +394,10 @@ define([
             if (rerender) {
                 this.rerender();
             }
-            this.trigger('propertychange', {grid: this, updated: updated});
         }
     });
 
-    asCollectionViewable.call(PowerGrid.prototype);
+    asCollectionViewable.call(PowerGrid.prototype, {eventName: 'propchange'});
 
     return PowerGrid;
 });

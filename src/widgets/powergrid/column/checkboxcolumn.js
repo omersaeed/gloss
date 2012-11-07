@@ -17,7 +17,7 @@ define([
             var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
             
             _.bindAll(this, '_onChange', '_onHeaderChange',
-                        '_onModelChange', '_onGridPropertyChange', '_unCheckHeader');
+                        '_onModelChange', '_onPropChange', '_unCheckHeader');
 
             if (this.get('prop') == null) {
                 this.set({prop: '_' + this.el.id + '_checked'},
@@ -29,7 +29,7 @@ define([
                 .on('mouseup', delegateSelector, function(evt) {
                     evt.stopPropagation();
                 })
-                .on('propertychange', this._onGridPropertyChange);
+                .on('propchange', this._onPropChange);
         },
 
         _getName: function() {
@@ -40,8 +40,8 @@ define([
             return false;
         },
 
-        _onGridPropertyChange: function(evt, data) {
-            var grid = data.grid, updated = data.updated;
+        _onPropChange: function(evt, updated) {
+            var grid = this.get('grid');
             if (updated.collection) {
                 if (grid.previous('collection')) {
                     grid.previous('collection')
