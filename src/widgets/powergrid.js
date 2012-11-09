@@ -96,7 +96,8 @@ define([
         },
 
         _modelFromTr: function(tr) {
-            return this.get('models')[this.$tbody.children('tr').index(tr)];
+            var idx = this.$tbody.children('tr').index(tr);
+            return idx >= 0? this.get('models')[idx] : null;
         },
 
         _onColumnChange: function(evt, data) {
@@ -187,9 +188,8 @@ define([
         },
 
         _trFromModel: function(model) {
-            return this.$tbody.children('tr').eq(
-                _.indexOf(this.get('models'), model));
-
+            var idx = _.indexOf(this.get('models'), model);
+            return idx >= 0? this.$tbody.children('tr').eq(idx) : null;
         },
 
         col: function(columnName) {
@@ -394,7 +394,7 @@ define([
             if (rerender) {
                 this.rerender();
             }
-            this.trigger('propertychange', {grid: this, updated: updated});
+            this.trigger('propchange', updated);
         }
     });
 

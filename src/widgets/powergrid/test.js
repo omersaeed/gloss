@@ -3,6 +3,13 @@
 // things that are hard to test:
 //  - correct placement of the spinner
 //  - double clicking multi-select rows
+//
+// fun facts about these tests:
+//  - we can't test a bunch of the checkbox column stuff in any browser other
+//    than webkit b/c it's the only one that allows you to check a checkbox by
+//    triggering a click event
+//  - setting a th width below the content width in IE doesn't work, so one of
+//    the unit tests for column resizing doesn't work in IE
 
 define([
     'vendor/jquery',
@@ -86,6 +93,22 @@ define([
             equal(g.get('models').length, options.params.limit);
             g.set('collection', undefined);
             equal(g.get('models').length, 0);
+            start();
+        });
+    });
+
+    module('internals');
+
+    asyncTest('_modelFromTr correctly handles tr thats not in grid', function() {
+        setup().then(function(g, options) {
+            equal(g._modelFromTr($('<tr>')[0]), undefined);
+            start();
+        });
+    });
+
+    asyncTest('_trFromModel correctly handles model thats part of grid', function() {
+        setup().then(function(g, options) {
+            equal(g._trFromModel({}), undefined);
             start();
         });
     });
@@ -486,6 +509,33 @@ define([
                 equal($(el).outerWidth(), newWidths[i],
                     'element width for '+col.get('name')+' matches expected');
             });
+            start();
+        });
+    });
+
+    asyncTest('resize handle positioned correctly', function() {
+        setup({
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)},
+            appendTo: 'body'
+        }).then(function(g) {
+            var thPos = g.$el.find('th:first').offset(),
+                thSize = {
+                    width: g.$el.find('th:first').width(),
+                    height: g.$el.find('th:first').height()
+                },
+                resizePos = g.$el.find('.resize:first').offset(),
+                resizeSize = {
+                    width: g.$el.find('.resize:first').width(),
+                    height: g.$el.find('.resize:first').height()
+                },
+                close = function(a, b) {
+                    return Math.abs(a-b) < 5;
+                };
+
+            equal(g.$el.closest('body').length, 1, 'ensure grid is positioned');
+            equal(close(thPos.top, resizePos.top), true);
+            equal(close(thPos.left+thSize.width, resizePos.left+resizeSize.width), true);
+
             start();
         });
     });
