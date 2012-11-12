@@ -13,18 +13,26 @@ define([], function() {
             flattenedErrors = (typeof flattenedErrors === "undefined") ? {} : flattenedErrors;
             if(structuralErrors) {
                 if($.isArray(structuralErrors)) {
-                    $.each(structuralErrors, function(field, errors) {
-                        self.flattenErrors(errors, flattenedErrors, parentFieldName);
-                    });
+                    // Case to cater for UI errors where structural errors has a field error in the array
+                    if (structuralErrors[0].errors) {
+                        self.flattenErrors(structuralErrors[0].errors, flattenedErrors, parentFieldName);
+                    } else {
+                        $.each(structuralErrors, function(field, errors) {
+                            self.flattenErrors(errors, flattenedErrors, parentFieldName);
+                        });
+                    }
                 } else {
                     $.each(structuralErrors, function(field, errors) {
-                        // We do not want to nest into fields that
                         var contextField = field;
                         if ($.isArray(errors)) {
                             if (parentFieldName) {
                                 contextField = parentFieldName + '.' + contextField;
                             }
-                            flattenedErrors[contextField] = errors;
+                            if (errors[0].errors) {
+                                self.flattenErrors(errors[0].errors, flattenedErrors, contextField);
+                            } else {
+                                flattenedErrors[contextField] = errors;
+                            }
                         } else {
                             self.flattenErrors(errors, flattenedErrors, contextField);
                         }
