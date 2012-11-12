@@ -27,7 +27,7 @@ define([
             return $.extend(true, {}, this.options.collection.query.params);
         },
         _makeQueryParams: function() {
-            var p = {query: null}, value = this.getWidget('q').getValue();
+            var p = {query: null}, value = this.getWidget('q').getValue().trim();
             if (value) {
                 (p.query = {})[this.options.searchParam] = value;
             }
