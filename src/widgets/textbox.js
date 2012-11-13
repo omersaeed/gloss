@@ -75,8 +75,11 @@ define([
             self.$node.removeAttr('placeholder');
             self.options.placeholderFallback = true;
             self.$node.on('keydown', function(evt) {
+                // For key codes visit: http://www.javascripter.net/faq/keycodes.htm
                 if ((evt.which >= 48 && evt.which <= 57 ||
-                        evt.which >= 65 && evt.which <= 90) &&
+                        evt.which >= 65 && evt.which <= 90 ||
+                        evt.which >= 186 && evt.which <= 192 ||
+                        evt.which >= 219 && evt.which <= 222) &&
                         self.$node.hasClass('placeholder')) {
                     self.$node.val('').removeClass('placeholder');
                 }
