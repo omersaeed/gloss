@@ -4,5 +4,7 @@
     <div class=message-text></div>
     <div style='clear: both;' />
   </div>
-  <div class=buttons></div>
+  <div class=footer>
+	  <div class=buttons></div>
+  </div>
 </div>

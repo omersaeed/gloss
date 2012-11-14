@@ -12,11 +12,14 @@ define([
         defaults: {
             okBtn: '', // provide a label to have an ok button in the lower right corner
             cancelBtn: '', // provide a label to have a cancel button in the lower right corner
+            optionBtn: '',
             body: '', // Message Body
             okBtnEvent: 'ok', // to rename the button event, provide a name here
             cancelBtnEvent: 'cancel', // to rename the button event, provide a name here
+            optionBtnEvent: 'option',
             okBtnClass: 'ok', // to rename the OK button class, provide a name here
             cancelBtnClass: 'cancel', // to rename Cancel button class, provide a name here
+            optionBtnClass: 'option',
             style: '' // provide a style here. the style will be directly applied to the messagebox icon class if provided.
         },
 
@@ -34,6 +37,13 @@ define([
                         self.options.okBtn+'</button>').appendTo(self.$node.find('.buttons')))
                     .on('click', self.ok);
             }
+
+            if (self.options.optionBtn !== '') {
+                Button($('<button class="'+self.options.optionBtnClass+'">'+
+                        self.options.optionBtn+'</button>').appendTo(self.$node.find('.buttons')))
+                    .on('click', self.option);
+            }
+
             if (self.options.style !== '') {
                 self.$node.find('.message-icon').addClass(self.options.style);
                 self.$node.find('.message-text').addClass('message-body-with-icon');
@@ -44,6 +54,14 @@ define([
         ok: function() {
             var self = this, evt;
             self.trigger(evt = $.Event(self.options.okBtnEvent));
+            if (!evt.isDefaultPrevented()) {
+                self.close();
+            }
+        },
+
+        option: function() {
+            var self = this, evt;
+            self.trigger(evt = $.Event(self.options.optionBtnEvent));
             if (!evt.isDefaultPrevented()) {
                 self.close();
             }

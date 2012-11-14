@@ -68,13 +68,17 @@ define([
             body: 'Test Message Box With Both Buttons and a message that is really long but absolutely meaningless. Trying to make it longer is of little to no use as well. ',
             okBtn: 'Ok',
             cancelBtn: 'Cancel',
+            optionBtn: 'Option',
             okBtnEvent: 'OkBtnAlias',
             cancelBtnEvent: 'CancelBtnAlias',
+            optionBtnEvent: 'OptionBtnAlias',
             style: 'error'
         }).on('OkBtnAlias', function() {
-            alert('Ok Pressed')
+            alert('Ok Pressed');
         }).on('CancelBtnAlias', function() {
-            alert('Cancel Pressed')
+            alert('Cancel Pressed');
+        }).on('OptionBtnAlias', function() {
+            alert('Option Pressed');
         }).appendTo('body');
 
         ok(m);
