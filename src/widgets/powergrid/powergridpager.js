@@ -117,6 +117,7 @@ define([
                     self.jump(1);
                 }
             }
+            self._initPagerBar = true;
         },
 
         _onCollectionUpdate: function() {
@@ -139,8 +140,11 @@ define([
                     return;
                 }
 
-                collection.load().done(function() {
+                collection.load().done(function(models) {
                     self.refresh(true);
+                    if (!self._initPagerBar) {
+                        self._updatePagerBar(models);
+                    }
                 });
                 collection.on('update', self._onCollectionUpdate);
             }
