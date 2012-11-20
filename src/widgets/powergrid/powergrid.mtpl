@@ -1,5 +1,6 @@
 <div class=powergrid>
 
+  <div class=spinner-overlay></div>
   <table class="header rows">
   <!-- <table class=header> -->
     <thead></thead>
