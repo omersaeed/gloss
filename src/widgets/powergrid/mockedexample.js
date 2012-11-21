@@ -28,7 +28,7 @@ define([
         setTimeout(function() {
             params.success({
                 resources: resources,
-                length: resources.length
+                total: exampleFixtures.length
             }, 200, {});
         }, 0);
         return dfd;
