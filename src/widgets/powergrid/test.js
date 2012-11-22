@@ -1033,9 +1033,9 @@ define([
             equal($(g.spinner.spinner.el).is(':visible'), true,
                 'spinner visible');
             var $table = g.$el.find('.rows');
-            equal($(g.spinner.spinner.el).position().left > $table.position().left,
+            equal($(g.spinner.spinner.el).parent().position().left > $table.position().left,
                 true, 'spinner is roughly horizontally inside table');
-            equal($(g.spinner.spinner.el).position().top > $table.position().top,
+            equal($(g.spinner.spinner.el).parent().position().top > $table.position().top,
                 true, 'spinner is roughly vertically inside table');
             start();
         });
