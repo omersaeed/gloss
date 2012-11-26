@@ -1,18 +1,31 @@
-<div class=power-grid-pager>
+<% 
+  var pageSizes = this.options.pageSizes,
+      pageSize = this.options.pageSize,
+      total = this.options.total,
+      page = this.options.page,
+      pages = this.options.pages;
+%>
+<form class=power-grid-pager>
   <ul class=controls>
     <li>
-      <select class=page-size-selector></select>
+      <select class=page-size-selector>
+        <% for(i=0; i < pageSizes.length; i++) { 
+            var selected = (pageSizes[i] === pageSize) ? 'selected' : '';
+        %>
+          <option value=<%=pageSizes[i]%> <%=selected%>><%=pageSizes[i]%></option>
+        <% } %>
+      </select>
     </li>
     <li>
-      <button class=first-page></button>
-      <button class=prev-page></button>
+      <button type=button class=first-page></button>
+      <button type=button class=prev-page></button>
     </li>
     <li class=current-page>
-      Page <input type=text> of <span class=total-pages></span>
+      Page <input type=text value=<%=page%>> of <span class=total-pages><%=pages%></span>
     </li>
     <li class=last>
-      <button class=next-page></button>
-      <button class=last-page></button>
+      <button type=button class=next-page></button>
+      <button type=button class=last-page></button>
     </li>
   </ul>
-</div>
+</form>

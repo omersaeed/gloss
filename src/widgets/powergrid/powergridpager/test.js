@@ -35,7 +35,7 @@ define([
 
             Example.models.clear();
 
-            p = window.p = PowerGridPager(undefined, {
+            p = window.p = PowerGridPager({
                 collection: collection
             }).appendTo(options.appendTo);
             g = window.g = options.gridClass($.extend({
@@ -64,7 +64,7 @@ define([
         }).then(function(g, p, options) {
             p.appendTo(appendTo);
             ok(g);
-            equal(g.get('models').length, p.options.pageSize);
+            equal(g.get('models').length, p.get('pageSize'));
             start();
         });
     });
@@ -74,11 +74,13 @@ define([
             gridOptions: {selectable: true}
         }).then(function(grid, pager, options) {
             ok(grid);
-            pager.$node.find('.next-page').click();
+            pager.$el.find('.next-page').click();
 
             setTimeout(function() {
-                equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                equal(parseInt(pager.$currentPage.val(), 10), 2);
+                var $currentPage = pager.$el.find('.current-page input');
+                equal(grid.get('models').length, pager.get('pageSize'));
+                equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                equal(parseInt($currentPage.val(), 10), 2);
                 start();
             }, 100);
         });
@@ -89,11 +91,13 @@ define([
             gridOptions: {selectable: true}
         }).then(function(grid, pager, options) {
             ok(grid);
-            pager.$node.find('.last-page').click();
+            pager.$el.find('.last-page').click();
 
             setTimeout(function() {
-                equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                equal(parseInt(pager.$currentPage.val(), 10), 40);
+                var $currentPage = pager.$el.find('.current-page input');
+                equal(grid.get('models').length, pager.get('pageSize'));
+                equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                equal(parseInt($currentPage.val(), 10), 40);
                 start();
             }, 100);
         });
@@ -104,15 +108,20 @@ define([
             gridOptions: {selectable: true}
         }).then(function(grid, pager, options) {
             ok(grid);
-            pager.$node.find('.last-page').click();
+            pager.$el.find('.last-page').click();
 
             setTimeout(function() {
-                equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                equal(parseInt(pager.$currentPage.val(), 10), 40);
-                pager.$node.find('.prev-page').click();
+                var $currentPage = pager.$el.find('.current-page input');
+                equal(grid.get('models').length, pager.get('pageSize'));
+                equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                equal(parseInt($currentPage.val(), 10), 40);
+
+                pager.$el.find('.prev-page').click();
                 setTimeout(function() {
-                    equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                    equal(parseInt(pager.$currentPage.val(), 10), 39);
+                    var $currentPage = pager.$el.find('.current-page input');
+                    equal(grid.get('models').length, pager.get('pageSize'));
+                    equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                    equal(parseInt($currentPage.val(), 10), 39);
                     start();
                 }, 100);
             }, 100);
@@ -124,11 +133,13 @@ define([
             gridOptions: {selectable: true}
         }).then(function(grid, pager, options) {
             ok(grid);
-            pager.$node.find('.first-page').click();
+            pager.$el.find('.first-page').click();
 
             setTimeout(function() {
-                equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                equal(parseInt(pager.$currentPage.val(), 10), 1);
+                var $currentPage = pager.$el.find('.current-page input');
+                equal(grid.get('models').length, pager.get('pageSize'));
+                equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                equal(parseInt($currentPage.val(), 10), 1);
                 start();
             }, 100);
         });
@@ -145,23 +156,27 @@ define([
             gridOptions: {selectable: true}
         }).then(function(grid, pager, options) {
             ok(grid);
-            pager.$pageSize.val(75);
-            pager.$pageSize.trigger('change');
+            pager.set('pageSize', 75);
 
             setTimeout(function() {
-                equal(parseInt(pager.$currentPage.val(), 10), pager.page);
-                pager.$node.find('.last-page').click();
+                var $currentPage = pager.$el.find('.current-page input');
+                equal(parseInt($currentPage.val(), 10), pager.get('page'));
+                pager.$el.find('.last-page').click();
                 setTimeout(function() {
-                    equal(parseInt(pager.$currentPage.val(), 10), 14);
-                    equal(pager.options.collection.currentPage().length, 25);
-                    pager.$node.find('.prev-page').click();
+                    var $currentPage = pager.$el.find('.current-page input');
+                    equal(parseInt($currentPage.val(), 10), 14);
+                    equal(pager.get('collection').currentPage().length, 25);
+                    equal(grid.get('models').length, 25);
+                    pager.$el.find('.prev-page').click();
                     setTimeout(function() {
-                        equal(pager.options.pageSize, 75);
-                        equal(pager.options.collection.currentPage().length,
-                                pager.options.pageSize);
-                        pager.$node.find('.next-page').click();
+                        equal(pager.get('pageSize'), 75);
+                        equal(pager.get('collection').currentPage().length,
+                                pager.get('pageSize'));
+                        equal(grid.get('models').length, pager.get('pageSize'));
+                        pager.$el.find('.next-page').click();
                         setTimeout(function() {
-                            equal(pager.options.collection.currentPage().length, 25);
+                            equal(pager.get('collection').currentPage().length, 25);
+                            equal(grid.get('models').length, 25);
                             start();
                         }, 100);
                     }, 100);
