@@ -14,6 +14,7 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
+    'vendor/moment',
     './../powergrid',
     './columnmodel',
     './column',
@@ -25,7 +26,7 @@ define([
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
-], function($, _, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
+], function($, _, moment, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
     asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
@@ -881,7 +882,9 @@ define([
                 columnModelClass: withDateTimeColumn(BasicColumnModel)
             }
         }).then(function(g) {
-            equal(g.$el.find('td:contains("2012-08-29 9:10 AM")').length, 15);
+            equal(g.$el.find('td:contains("' +
+                    moment('2012-08-29T14:10:21Z').format('YYYY-MM-DD h:mm A') +
+                    '")').length, 15);
             start();
         });
     });
