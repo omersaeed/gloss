@@ -1030,7 +1030,7 @@ define([
             g.appendTo('body').disable();
             equal(g.spinner.spinner.el.nodeType === 1, true,
                 'spinner instantiated');
-            equal($(g.spinner.spinner.el).is(':visible'), true,
+            equal($(g.spinner.spinner.el).css('display'), 'block',
                 'spinner visible');
             var $table = g.$el.find('.rows');
             equal($(g.spinner.spinner.el).parent().position().left > $table.position().left,
