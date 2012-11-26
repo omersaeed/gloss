@@ -40,3 +40,15 @@ tr.selected {
 .powergrid.filtered tbody {
   background-color: #FFFFCD;
 }
+
+.powergrid .grid-canvas {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.powergrid .grid-canvas .spinner-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}

@@ -76,10 +76,10 @@ define([
                 this.on(this.get('selectableEvent'), 'tbody tr', this[method]);
             }
 
+            this.spinnerOverlay = this.$el.find('.spinner-overlay');
             this.spinner = Spinner(null, {
-                deferInstantiation: true,
-                target: this.el
-            }).appendTo(this.$el);
+                target: this.spinnerOverlay[0]
+            }).appendTo(this.spinnerOverlay);
 
             // for testing and debugging purposes
             this._renderCount = this._renderRowCount = 0;
@@ -200,9 +200,6 @@ define([
 
         disable: function() {
             this.$el.addClass('disabled');
-            if (this.$el.is(':visible')) {
-                this.spinner.instantiate();
-            }
             return this.propagate('disable');
         },
 
