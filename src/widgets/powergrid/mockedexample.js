@@ -15,7 +15,7 @@ define([
 
         query = eval('query = ' + (params.data.query || '{}'));
 
-        for (var i = offset; i < limit; i++) {
+        for (var i = offset; i < offset+limit; i++) {
             if (query.integer_field__gt) {
                 if (exampleFixtures[i].integer_field > query.integer_field__gt) {
                     resources.push(_.extend({}, exampleFixtures[i]));
