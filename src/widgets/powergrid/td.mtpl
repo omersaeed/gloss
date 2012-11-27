@@ -1,4 +1,4 @@
 <% var v = this.formatValue(this.getValue(data), data); %>
-<td class="<%=this.cssClasses(data)%>">
+<td class="<%=this.cssClasses(data)%>" style="width: <%=this.get('width')%>px">
   <%= v == null? '' : v.toString() %>
 </td>

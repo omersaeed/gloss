@@ -517,7 +517,7 @@ define([
     asyncTest('resize handle positioned correctly', function() {
         setup({
             gridOptions: {columnModelClass: resizable(BasicColumnModel)},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture' //'body'
         }).then(function(g) {
             var thPos = g.$el.find('th:first').offset(),
                 thSize = {
@@ -1032,7 +1032,8 @@ define([
         }).then(function(g) {
             // disable/enable before inserting in the dom, just to make sure
             g.disable().enable().disable().enable();
-            g.appendTo('body').disable();
+            // g.appendTo('body').disable();
+            g.appendTo('#qunit-fixture').disable();
             equal(g.spinner.spinner.el.nodeType === 1, true,
                 'spinner instantiated');
             equal($(g.spinner.spinner.el).css('display'), 'block',
@@ -1063,6 +1064,7 @@ define([
     asyncTest('everything together', function() {
         setup({
             appendTo: 'body',
+            params: {limit: 100},
             gridOptions: {
                 selectable: 'multi',
                 columnModelClass: ColumnModel.extend({
