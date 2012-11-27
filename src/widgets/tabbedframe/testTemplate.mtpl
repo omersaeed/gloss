@@ -1,0 +1,21 @@
+<div class=tabbedframe>
+
+  <ul class=tabs>
+    <li>Tab 1</li>
+    <li>Tab 2 Long Title</li>
+    <li>Tab 3</li>
+  </ul>
+
+  <div class=panes>
+    <div>
+      first tab content
+    </div>
+    <div>
+      second tab content
+    </div>
+    <div>
+      third tab content
+    </div>
+  </div>
+
+</div>

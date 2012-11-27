@@ -83,8 +83,10 @@ define([
             });
 
             self.idx = null;
+            self._setTabsWidths();
             self.open(self.options.initialPane);
         },
+
         _enable: function(which) {
             var self = this;
             _.each(_.range(self.length), function(i) {
@@ -98,6 +100,32 @@ define([
                 }
             });
             return this;
+        },
+
+        // measure the max width of all tabs in the selected state, and make
+        // them all that equal width
+        _setTabsWidths: function() {
+            var self = this, widths = [], width;
+            if (!this.$node.is(':visible')) {
+                return;
+            }
+            _.each(_.range(self.length), function(i) {
+                var tab = self.tabs[i],
+                    $el = tab.button.addClass('invisible'),
+                    selected = tab.idx === self.idx;
+                widths.push($el.removeClass('selected').outerWidth());
+                widths.push($el.addClass('selected').outerWidth());
+                $el.removeClass('invisible')
+                    [selected? 'addClass' : 'removeClass']('selected');
+            });
+            width = _.max(widths);
+            _.each(_.range(self.length), function(i) {
+                // we have to add 4px b/c outerWidth seems to round-down on the
+                // widths, and as a result we can lose up to 4 (just under 4 to
+                // be exact) pixels on the width calculation. i think.
+                self.tabs[i].button.css({width: width+4});
+            });
+            self._tabsWidthsSet = true;
         },
 
         // 'which' is an object that has a true/false value for each of the tab
@@ -146,6 +174,9 @@ define([
             }
             this.open(max.idx);
             this.showHeight = max.height;
+            if (!this._tabsWidthsSet) {
+                this._setTabsWidths();
+            }
         },
         show: function() {
             if (this.showHeight != null) {
@@ -153,6 +184,9 @@ define([
             }
             this.$panes.removeClass('invisible');
             this.open(this.showIdx == null? this.idx : this.showIdx);
+            if (!this._tabsWidthsSet) {
+                this._setTabsWidths();
+            }
         }
     });
 });

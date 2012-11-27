@@ -1,0 +1,6 @@
+body .tabbedframe .tabs button {
+  font-weight: normal;
+}
+body .tabbedframe .tabs button.selected {
+  font-weight: bold;
+}
