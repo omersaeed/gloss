@@ -54,7 +54,7 @@ define([
             if(options.render) {
                 options.render(this, target);
             }
-            
+
             position = $.extend({}, options.position);
             if(target != null) {
                 position.of = target;
@@ -111,7 +111,7 @@ define([
                 if(event.target === self._currentTarget) {
                     return;
                 }
-            }            
+            }
             if(self.options.preDelay > 0) {
                 self._preDelayed = true;
                 setTimeout(function() {
