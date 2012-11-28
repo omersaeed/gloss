@@ -1,7 +1,12 @@
 <%
 	var v = this.formatValue(this.getValue(data), data),
-		width = this.$el.css('width');
+		width = this.$el.css('width'),
+		style = [
+			'width: ' + width,
+			'max-width: ' + width,
+			'min-width: ' + width
+		].join(';');
 %>
-<td class="<%=this.cssClasses(data)%>" style="width: <%=width%>; max-width: <%=width%>; min-width: <%=width%>;">
+<td class="<%=this.cssClasses(data)%>" style="<%=style%>">
   <%= v == null? '' : v.toString() %>
 </td>
