@@ -948,7 +948,9 @@ define([
                 columnModelClass: withNumberColumn(BasicColumnModel)
             }
         }).then(function(g) {
-            equal(g.$el.find('td:contains("2,007,104")').length, 1);
+            var $el = g.$el.find('td:contains("2,007,104")');
+            equal($el.length, 1);
+            equal(trim($el.text()), "2,007,104");
             start();
         });
     });
@@ -979,7 +981,7 @@ define([
         });
     };
 
-    asyncTest('renders bytes correctly', function() {
+    asyncTest('renders two decimal palces correctly', function() {
         setup({
             appendTo: '#qunit-fixture',
             gridOptions: {

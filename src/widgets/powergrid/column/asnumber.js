@@ -1,9 +1,10 @@
 define([
     'vendor/jquery',
     'vendor/underscore',
-    './../../../util/format'
-], function($, _, format) {
-    return function asNumber(options) {
+    './../../../util/format',
+    'tmpl!./asnumber.mtpl'
+], function($, _, format, template) {
+    function asNumber(options) {
         if (options && options.prototype && options.extend) {
             asNumber.apply(options.prototype,
                 Array.prototype.slice.call(arguments, 1));
@@ -20,9 +21,20 @@ define([
                 func.apply(this, Array.prototype.slice.call(arguments, 1));
         });
 
-        this.formatValue = function(value, model) {
-            return value != null?
-                format.number(value, this.get('decimalPlaces')) : '';
-        };
+        this.formatValue = asNumber.format;
+    }
+
+    asNumber.format = function(value, model) {
+        var places = this.get('decimalPlaces'),
+            formatted = (value != null?  format.number(value, places) : '')
+                .split(".");
+        return template({
+            value: value,
+            integer: formatted[0],
+            decimal: formatted[1] || '',
+            places: this.get('decimalPlaces')
+        });
     };
+
+    return asNumber;
 });
