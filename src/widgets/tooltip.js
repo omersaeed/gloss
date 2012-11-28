@@ -7,7 +7,12 @@ define([
     return Widget.extend({
         defaults: {
             animation: null,
-            position: {my: 'left top', at: 'left bottom'},
+            position: {
+                my: 'left top',
+                at: 'left bottom',
+                of: 'cursor',
+                offset: '12 20'
+            },
             postDelay: 500,
             preDelay: 0,
             width: null,
@@ -55,9 +60,13 @@ define([
                 options.render(this, target);
             }
 
-            position = $.extend({}, options.position);
-            if(target != null) {
-                position.of = target;
+            if (!_.isString(options.position)) {
+                position = $.extend({}, options.position);
+                if (/cursor|mouse/.test(position.of) && params.evt) {
+                    position.of = params.evt;
+                } else if (target != null) {
+                    position.of = target;
+                }
             }
             this.place(position);
 
@@ -115,10 +124,10 @@ define([
             if(self.options.preDelay > 0) {
                 self._preDelayed = true;
                 setTimeout(function() {
-                    self.show({delayed: true, target: target});
+                    self.show({delayed: true, target: target, evt: event});
                 }, self.options.preDelay);
             } else {
-                self.show({target: target});
+                self.show({target: target, evt: event});
             }
         }
     });
