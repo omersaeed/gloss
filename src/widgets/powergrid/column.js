@@ -75,6 +75,15 @@ define([
             }
         },
 
+        _setRowWidth: function(width) {
+            var rowSelector = 'tbody tr .col-' + this.get('name');
+            this.get('grid').$el.find(rowSelector).each(function(i, el) {
+                outerWidth($(el), width);
+            });
+            // var el = this.get('grid').$el.find(rowSelector)[0];
+            // outerWidth($(el), width);
+        },
+
         // the 'columnClass' is something like 'col-name'. it's used as a
         // generic css identifier. the 'cssClasses' combines both the
         // 'columnClass' and other styling classes, stuff like 'first', 'last',
@@ -145,6 +154,7 @@ define([
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
                 outerWidth(this.$el, newWidth);
+                this._setRowWidth(newWidth);
             }
             if (updated.label) {
                 render = true;

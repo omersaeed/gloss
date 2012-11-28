@@ -486,30 +486,60 @@ define([
         setup({
             gridOptions: {columnModelClass: resizable(BasicColumnModel)}
         }).then(function(g) {
-            var startingWidths = g.$el.find('thead th').map(function(i, el) {
-                    return $(el).outerWidth();
-                }),
-                newWidths = startingWidths.slice(0),
-                columns = g.get('columnModel').columns;
-            newWidths[1] = 400;
-            columns[1].set('width', newWidths[1]);
-            g.$el.find('thead th').each(function(i, el) {
-                var col = g.get('columnModel').columns[i];
-                equal(col.get('width'), newWidths[i],
-                    'column object width for '+col.get('name')+' matches expected');
-                equal($(el).outerWidth(), newWidths[i],
-                    'element width for '+col.get('name')+' matches expected');
+            //  - setting a th width below the content width in IE doesn't work
+            //  - so skip this for IE
+            //  - IE test
+            var IE, $th, startWidth, endWidth, actualWidth, diffWidth = 20,
+                $table = $('<table><thead><tr><th><div>Label</div></th></tr></thead></table>');
+            $table.appendTo('body');
+            $th = $table.find('th');
+            startWidth = $th.width();
+            actualWidth = $th.width() - diffWidth;
+            $th.css({
+                width:    actualWidth,
+                minWidth: actualWidth,
+                maxWidth: actualWidth
             });
+            endWidth = $th.width();
+            $table.remove();
+            IE = ((startWidth - endWidth) !== diffWidth);
+            //  - end IE test
+            
+            if (IE) {
+                ok(IE, 'skipping this test in IE');
+            } else {
+                var startingWidths = g.$el.find('thead th').map(function(i, el) {
+                        return $(el).outerWidth();
+                    }),
+                    newWidths = startingWidths.slice(0),
+                    columns = g.get('columnModel').columns;
+                newWidths[1] = 400;
+                columns[1].set('width', newWidths[1]);
+                g.$el.find('thead th').each(function(i, el) {
+                    var col = g.get('columnModel').columns[i],
+                        rowSelector = 'tbody tr .col-' + col.get('name');
+                    equal(col.get('width'), newWidths[i],
+                        'column object width for '+col.get('name')+' matches expected');
+                    equal($(el).outerWidth(), newWidths[i],
+                        'element width for '+col.get('name')+' matches expected');
+                    // it's sufficiant to check the widths for the first row
+                    equal($(g.$el.find(rowSelector)[0]).outerWidth(), newWidths[i],
+                        'element width for row cell '+col.get('name')+' matches expected');
+                });
 
-            newWidths[4] = 50;
-            columns[4].set('width', newWidths[4]);
-            g.$el.find('thead th').each(function(i, el) {
-                var col = g.get('columnModel').columns[i];
-                equal(col.get('width'), newWidths[i],
-                    'column object width for '+col.get('name')+' matches expected');
-                equal($(el).outerWidth(), newWidths[i],
-                    'element width for '+col.get('name')+' matches expected');
-            });
+                newWidths[4] = 50;
+                columns[4].set('width', newWidths[4]);
+                g.$el.find('thead th').each(function(i, el) {
+                    var col = g.get('columnModel').columns[i],
+                        rowSelector = 'tbody tr .col-' + col.get('name');
+                    equal(col.get('width'), newWidths[i],
+                        'column object width for '+col.get('name')+' matches expected');
+                    equal($(el).outerWidth(), newWidths[i],
+                        'element width for '+col.get('name')+' matches expected');
+                    equal($(g.$el.find(rowSelector)[0]).outerWidth(), newWidths[i],
+                        'element width for row cell '+col.get('name')+' matches expected');
+                });
+            }
             start();
         });
     });
@@ -1086,6 +1116,7 @@ define([
                 })
             }
         }).then(function(g) {
+            g.$el.height(600);
             g.on('dblclick', 'tbody tr', function(evt) {
                 var model = g._modelFromTr(evt.currentTarget);
                 if (model) {

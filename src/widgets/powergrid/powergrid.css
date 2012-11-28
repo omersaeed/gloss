@@ -53,11 +53,6 @@ tr.selected {
   height: 100%;
 }
 
-.powergrid .rows,
-.powergrid .header {
-  width: 100%;
-}
-
 .powergrid .grid-canvas .spinner-overlay {
   position: absolute;
   top: 50%;
