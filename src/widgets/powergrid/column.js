@@ -11,7 +11,9 @@ define([
                 'margin-left', 'border-left-width', 'padding-left',
                 'border-right-width', 'margin-right', 'padding-right'
             ], function(memo, p) {
-                return memo + parseInt($el.css(p), 10);
+                var value = parseInt($el.css(p), 10);
+                value = isNaN(value) ? 0 : value;
+                return memo + value;
             }, 0);
         $el.css({
             width:    actualWidth,
@@ -77,6 +79,9 @@ define([
 
         _setRowWidth: function(width) {
             var rowSelector = 'tbody tr .col-' + this.get('name');
+            //  - it turns out that webkit doesn't set the width when the content
+            //  - is lager than the td width unless it has max-width and overflow hidden
+            //  - this also allow for the generic styling of the power grid to work (ellipsis)
             this.get('grid').$el.find(rowSelector).each(function(i, el) {
                 outerWidth($(el), width);
             });
