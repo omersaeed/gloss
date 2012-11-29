@@ -216,6 +216,10 @@ define([
             }
 
             this[method].apply(this, arguments);
+            // post render for columns
+            _.each(this.get('columnModel').columns, function(c) {
+                c._postRender();
+            });
             return this;
         },
 

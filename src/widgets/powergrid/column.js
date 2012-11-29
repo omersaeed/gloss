@@ -11,9 +11,7 @@ define([
                 'margin-left', 'border-left-width', 'padding-left',
                 'border-right-width', 'margin-right', 'padding-right'
             ], function(memo, p) {
-                var value = parseInt($el.css(p), 10);
-                value = isNaN(value) ? 0 : value;
-                return memo + value;
+                return memo + parseInt($el.css(p), 10);
             }, 0);
         $el.css({
             width:    actualWidth,
@@ -45,7 +43,7 @@ define([
                 // since height is dependent on other widgets on the
                 // page that treemap is unaware of this is really only
                 // handling the width resizing.
-                self._setRowWidth(self.get('width'));
+                self._setTdCellWidth(self.get('width'));
             }, 50));
         },
 
@@ -84,16 +82,21 @@ define([
             }
         },
 
-        _setRowWidth: function(width) {
-            var rowSelector = 'tbody tr .col-' + this.get('name');
+        _setTdCellWidth: function(width) {
+            var selector = '.col-' + this.get('name');
             //  - it turns out that webkit doesn't set the width when the content
             //  - is lager than the td width unless it has max-width and overflow hidden
             //  - this also allow for the generic styling of the power grid to work (ellipsis)
-            this.get('grid').$el.find(rowSelector).each(function(i, el) {
-                outerWidth($(el), width);
-            });
-            // var el = this.get('grid').$el.find(rowSelector)[0];
-            // outerWidth($(el), width);
+            // this.get('grid').$tbody.find(selector).each(function(i, el) {
+            //     outerWidth($(el), width);
+            // });
+            var $tr = this.get('grid').$tbody.children().first(),
+                $el = $tr.find(selector);
+            outerWidth($el, width);
+        },
+
+        _postRender: function() {
+            this._setTdCellWidth(this.get('width'));
         },
 
         // the 'columnClass' is something like 'col-name'. it's used as a
@@ -166,7 +169,7 @@ define([
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
                 outerWidth(this.$el, newWidth);
-                this._setRowWidth(newWidth);
+                this._setTdCellWidth(newWidth);
             }
             if (updated.label) {
                 render = true;

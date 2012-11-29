@@ -8,11 +8,12 @@ tr.selected {
 
 /* these are necessary for IE to correctly calculate column widths, column
  * resizing breaks without them */
-.powergrid table thead th {
-  border-left-width: 0px;
-  border-right-width: 0px;
-  margin-left: 0px;
-  margin-right: 0px;
+.powergrid table thead th,
+.powergrid table tbody td {
+  border-left-width: 0;
+  border-right-width: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .powergrid table thead th .wrapper {
@@ -52,14 +53,30 @@ tr.selected {
   table-layout: fixed;
 }
 
+.powergrid .header-wrapper {
+  width: auto;
+}
 .powergrid .header {
   position: absolute;
   top: 0;
   background-color: white;
 }
 
+/*.powergrid .rows {
+  display: block;
+  width: auto;
+  height: 100%;
+  padding-top: 34px;
+  box-sizing: border-box;
+  overflow-x: visible;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+}*/
 .powergrid .row-wrapper {
-  overflow: auto;
+  /*overflow: auto;*/
+  overflow-x: visible;
+  overflow-y: scroll;
   width: 100%;
   height: 100%;
   /* assumed height of the header */

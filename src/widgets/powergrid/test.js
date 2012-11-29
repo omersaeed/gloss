@@ -1049,8 +1049,7 @@ define([
         }).then(function(g) {
             // disable/enable before inserting in the dom, just to make sure
             g.disable().enable().disable().enable();
-            // g.appendTo('body').disable();
-            g.appendTo('#qunit-fixture').disable();
+            g.appendTo('body').disable();
             equal(g.spinner.spinner.el.nodeType === 1, true,
                 'spinner instantiated');
             equal($(g.spinner.spinner.el).css('display'), 'block',
