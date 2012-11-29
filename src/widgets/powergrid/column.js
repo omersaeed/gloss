@@ -40,6 +40,13 @@ define([
                 self.set('sort', /asc/i.test(cur)? 'descending' : 'ascending');
             });
             self._instantiateResizeHandle();
+
+            $(window).resize(_.debounce(function() {
+                // since height is dependent on other widgets on the
+                // page that treemap is unaware of this is really only
+                // handling the width resizing.
+                self._setRowWidth(self.get('width'));
+            }, 50));
         },
 
         _hiddenColumnClass: function() {

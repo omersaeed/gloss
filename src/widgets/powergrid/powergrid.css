@@ -47,14 +47,18 @@ tr.selected {
   height: 100%;
 }
 
+/* this is used to get overflow to work in IE */
+.powergrid table {
+  table-layout: fixed;
+}
+
 .powergrid .header {
   position: absolute;
   top: 0;
   background-color: white;
 }
 
-.powergrid .rows {
-  display: block;
+.powergrid .row-wrapper {
   overflow: auto;
   width: 100%;
   height: 100%;
