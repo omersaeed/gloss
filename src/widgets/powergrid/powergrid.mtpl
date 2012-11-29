@@ -8,11 +8,9 @@
       <thead></thead>
     </table>
 
-    <div class=row-wrapper>
-      <table class=rows>
-        <tbody></tbody>
-      </table>
-    </div>
+    <table class=rows>
+      <tbody></tbody>
+    </table>
 
   </div>
 
