@@ -40,9 +40,6 @@ define([
             self._instantiateResizeHandle();
 
             $(window).resize(_.debounce(function() {
-                // since height is dependent on other widgets on the
-                // page that treemap is unaware of this is really only
-                // handling the width resizing.
                 self._setTdCellWidth(self.get('width'));
             }, 50));
         },

@@ -53,35 +53,24 @@ tr.selected {
   table-layout: fixed;
 }
 
-.powergrid .header-wrapper {
-  width: auto;
-}
 .powergrid .header {
   position: absolute;
   top: 0;
   background-color: white;
+  z-index: 10;
 }
 
-/*.powergrid .rows {
-  display: block;
-  width: auto;
-  height: 100%;
-  padding-top: 34px;
-  box-sizing: border-box;
-  overflow-x: visible;
-  overflow-y: scroll;
+.powergrid .row-wrapper {
   position: absolute;
   top: 0;
-}*/
-.powergrid .row-wrapper {
-  /*overflow: auto;*/
-  overflow-x: visible;
+  overflow-x: auto;
   overflow-y: scroll;
-  width: 100%;
+  width: auto;
   height: 100%;
   /* assumed height of the header */
   padding-top: 34px;
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 
 .powergrid .grid-canvas .spinner-overlay {

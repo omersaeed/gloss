@@ -4,11 +4,9 @@
 
     <div class=spinner-overlay></div>
 
-    <!-- <div class=header-wrapper> -->
-      <table class=header>
-        <thead></thead>
-      </table>
-    <!-- </div> -->
+    <table class=header>
+      <thead></thead>
+    </table>
 
     <div class=row-wrapper>
       <table class=rows>
