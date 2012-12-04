@@ -7,12 +7,16 @@ define([
     'tmpl!./td.mtpl'
 ], function(_, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
-        var actualWidth = width - _.reduce([
+        var minWidth = 30,
+            actualWidth = width - _.reduce([
                 'margin-left', 'border-left-width', 'padding-left',
                 'border-right-width', 'margin-right', 'padding-right'
             ], function(memo, p) {
                 return memo + parseInt($el.css(p), 10);
             }, 0);
+        if (actualWidth < minWidth) {
+            actualWidth = minWidth;
+        }
         $el.css({
             width:    actualWidth,
             minWidth: actualWidth,
@@ -70,7 +74,7 @@ define([
         },
 
         _onResize: function(evt, cursorPos) {
-            var diff = cursorPos.clientX - this.$el.position().left;
+            var diff = (cursorPos.clientX + $(window).scrollLeft()) - this.$el.position().left;
             if (diff > 0) {
                 this.set('width', diff);
             }

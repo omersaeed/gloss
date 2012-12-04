@@ -88,6 +88,17 @@ define([
                 m[k] = true;
                 return m;
             }, {}));
+
+            var $header = this.$el.find('.header-wrapper'),
+                $rows = this.$el.find('.row-wrapper');
+            $rows.on('scroll', function(evt) {
+                var left = parseInt($header.css('left'), 10) || 0;
+                if (left !== $rows.scrollLeft()) {
+                    $header.css({
+                        left: -$rows.scrollLeft() + 'px'
+                    });
+                }
+            });
         },
 
         _isFiltered: function() {
@@ -394,6 +405,11 @@ define([
             }
             if (rerender) {
                 this.rerender();
+                var $header = this.$el.find('.header-wrapper'),
+                    $rows = this.$el.find('.row-wrapper');
+                if ($rows.height() !== (this.$el.height() - $header.height())) {
+                    $rows.height(this.$el.height() - $header.height());
+                }
             }
             this.trigger('propchange', updated);
         }
