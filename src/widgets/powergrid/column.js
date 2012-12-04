@@ -7,7 +7,7 @@ define([
     'tmpl!./td.mtpl'
 ], function(_, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
-        var minWidth = 30,
+        var minWidth = 10,
             actualWidth = width - _.reduce([
                 'margin-left', 'border-left-width', 'padding-left',
                 'border-right-width', 'margin-right', 'padding-right'
@@ -85,9 +85,6 @@ define([
 
         _setTdCellWidth: function(width) {
             var selector = '.col-' + this.get('name');
-            //  - it turns out that webkit doesn't set the width when the content
-            //  - is lager than the td width unless it has max-width and overflow hidden
-            //  - this also allow for the generic styling of the power grid to work (ellipsis)
             // this.get('grid').$tbody.find(selector).each(function(i, el) {
             //     outerWidth($(el), width);
             // });

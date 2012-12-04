@@ -10,6 +10,13 @@
 //    triggering a click event
 //  - setting a th width below the content width in IE doesn't work, so one of
 //    the unit tests for column resizing doesn't work in IE
+//
+// things to watch for (visual tests)
+//  * the last grid on the page can be used for these tests *
+//  - resizing is a rather brittle thing after making changes visually
+//    check that a column can be resized
+//  - fixed header should be visually tested to make sure it doesn't
+//    when scrolling
 
 define([
     'vendor/jquery',
@@ -507,8 +514,10 @@ define([
                     equal($(el).outerWidth(), newWidths[i],
                         'element width for '+col.get('name')+' matches expected');
                     //  - it's sufficiant to check the widths for the first row
-                    equal($(rowEl).outerWidth(), newWidths[i],
-                        'element width for row cell '+col.get('name')+' matches expected');
+                    //  - if you want to test this then you'll need to override the _setTdCellWidth
+                    //  - function in the column class to set the width on every cell
+                    // equal($(rowEl).outerWidth(), newWidths[i],
+                    //     'element width for row cell '+col.get('name')+' matches expected');
                 });
 
                 newWidths[4] = 50;
@@ -521,8 +530,8 @@ define([
                         'column object width for '+col.get('name')+' matches expected');
                     equal($(el).outerWidth(), newWidths[i],
                         'element width for '+col.get('name')+' matches expected');
-                    equal($(rowEl).outerWidth(), newWidths[i],
-                        'element width for row cell '+col.get('name')+' matches expected');
+                    // equal($(rowEl).outerWidth(), newWidths[i],
+                    //     'element width for row cell '+col.get('name')+' matches expected');
                 });
             }
             start();
@@ -1103,6 +1112,7 @@ define([
             }
         }).then(function(g) {
             g.$el.height(600);
+            g.$el.width(800);
             g.on('dblclick', 'tbody tr', function(evt) {
                 var model = g._modelFromTr(evt.currentTarget);
                 if (model) {
