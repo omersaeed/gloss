@@ -7,12 +7,16 @@ define([
     'tmpl!./td.mtpl'
 ], function(_, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
-        var actualWidth = width - _.reduce([
+        var minWidth = 10,
+            actualWidth = width - _.reduce([
                 'margin-left', 'border-left-width', 'padding-left',
                 'border-right-width', 'margin-right', 'padding-right'
             ], function(memo, p) {
                 return memo + parseInt($el.css(p), 10);
             }, 0);
+        if (actualWidth < minWidth) {
+            actualWidth = minWidth;
+        }
         $el.css({
             width:    actualWidth,
             minWidth: actualWidth,
@@ -38,6 +42,10 @@ define([
                 self.set('sort', /asc/i.test(cur)? 'descending' : 'ascending');
             });
             self._instantiateResizeHandle();
+
+            $(window).resize(_.debounce(function() {
+                self._setTdCellWidth(self.get('width'));
+            }, 50));
         },
 
         _hiddenColumnClass: function() {
@@ -66,13 +74,24 @@ define([
         },
 
         _onResize: function(evt, cursorPos) {
-            var diff = cursorPos.clientX - this.$el.position().left;
+            var diff = (cursorPos.clientX + $(window).scrollLeft()) - this.$el.position().left;
             if (diff > 0) {
                 this.set('width', diff);
             }
             if (this.resize.node.style.removeProperty) {
                 this.resize.node.style.removeProperty('left');
             }
+        },
+
+        _setTdCellWidth: function(width) {
+            var selector = '.col-' + this.get('name'),
+                $tr = this.get('grid').$tbody.children().first(),
+                $el = $tr.find(selector);
+            outerWidth($el, width);
+        },
+
+        _postRender: function() {
+            this._setTdCellWidth(this.get('width'));
         },
 
         // the 'columnClass' is something like 'col-name'. it's used as a
@@ -145,6 +164,7 @@ define([
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
                 outerWidth(this.$el, newWidth);
+                this._setTdCellWidth(newWidth);
             }
             if (updated.label) {
                 render = true;

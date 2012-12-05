@@ -23,7 +23,7 @@ define([
                 this.set({prop: '_' + this.el.id + '_checked'},
                     {silent: true});
             }
-            this._postRender();
+            this._postRenderCheckbox();
             this.get('grid')
                 .on('change', delegateSelector, this._onChange)
                 .on('mouseup', delegateSelector, function(evt) {
@@ -125,7 +125,7 @@ define([
             }
         },
 
-        _postRender: function() {
+        _postRenderCheckbox: function() {
             if (this.get('type') === 'checkbox') {
                 this.checkbox = CheckBox()
                     .on('change', this._onHeaderChange)
@@ -152,7 +152,7 @@ define([
 
         render: function() {
             this._super.apply(this, arguments);
-            this._postRender();
+            this._postRenderCheckbox();
         },
 
         update: function(updated) {

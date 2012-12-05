@@ -1,15 +1,21 @@
 <div class=powergrid>
 
   <div class=grid-canvas>
-    <div class=spinner-overlay></div>
-    <table class="header rows">
-    <!-- <table class=header> -->
-      <thead></thead>
-    <!-- </table> -->
 
-    <!-- <table class=rows> -->
-      <tbody></tbody>
-    </table>
+    <div class=spinner-overlay></div>
+
+    <div class=header-wrapper>
+      <table class=header>
+        <thead></thead>
+      </table>
+    </div>
+
+    <div class=row-wrapper>
+      <table class=rows>
+        <tbody></tbody>
+      </table>
+    </div>
+
   </div>
 
 </div>

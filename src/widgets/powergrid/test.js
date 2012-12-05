@@ -10,6 +10,14 @@
 //    triggering a click event
 //  - setting a th width below the content width in IE doesn't work, so one of
 //    the unit tests for column resizing doesn't work in IE
+//
+// things to watch for (visual tests)
+//  * the last grid on the page can be used for these tests *
+//  - resizing is a rather brittle thing after making changes visually
+//    check that a column can be resized
+//  - fixed header should be visually tested to make sure it doesn't move
+//    when scrolling. If this gets broken it's probaby because someone
+//    was playing with the base css.
 
 define([
     'vendor/jquery',
@@ -494,21 +502,30 @@ define([
             newWidths[1] = 400;
             columns[1].set('width', newWidths[1]);
             g.$el.find('thead th').each(function(i, el) {
-                var col = g.get('columnModel').columns[i];
+                var col = g.get('columnModel').columns[i],
+                    rowSelector = 'tbody tr .col-' + col.get('name'),
+                    rowEl = g.$el.find(rowSelector)[0];
                 equal(col.get('width'), newWidths[i],
                     'column object width for '+col.get('name')+' matches expected');
                 equal($(el).outerWidth(), newWidths[i],
                     'element width for '+col.get('name')+' matches expected');
+                //  - it's sufficiant to check the widths for the first row
+                equal($(rowEl).outerWidth(), newWidths[i],
+                    'element width for row cell '+col.get('name')+' matches expected');
             });
 
             newWidths[4] = 50;
             columns[4].set('width', newWidths[4]);
             g.$el.find('thead th').each(function(i, el) {
-                var col = g.get('columnModel').columns[i];
+                var col = g.get('columnModel').columns[i],
+                    rowSelector = 'tbody tr .col-' + col.get('name'),
+                    rowEl = g.$el.find(rowSelector)[0];
                 equal(col.get('width'), newWidths[i],
                     'column object width for '+col.get('name')+' matches expected');
                 equal($(el).outerWidth(), newWidths[i],
                     'element width for '+col.get('name')+' matches expected');
+                equal($(rowEl).outerWidth(), newWidths[i],
+                    'element width for row cell '+col.get('name')+' matches expected');
             });
             start();
         });
@@ -517,7 +534,7 @@ define([
     asyncTest('resize handle positioned correctly', function() {
         setup({
             gridOptions: {columnModelClass: resizable(BasicColumnModel)},
-            appendTo: 'body'
+            appendTo: '#qunit-fixture' //'body'
         }).then(function(g) {
             var thPos = g.$el.find('th:first').offset(),
                 thSize = {
@@ -721,148 +738,150 @@ define([
         });
     });
 
-    module('checkbox column');
+    if ($.browser.webkit) {
+        module('checkbox column');
 
-    var withCheckboxColumn = function(colModelClass) {
-        return colModelClass.extend({
-            columnClasses: [
-                CheckBoxColumn.extend({defaults: {prop: '_checked'}})
-            ].concat(colModelClass.prototype.columnClasses)
-        });
-    };
+        var withCheckboxColumn = function(colModelClass) {
+            return colModelClass.extend({
+                columnClasses: [
+                    CheckBoxColumn.extend({defaults: {prop: '_checked'}})
+                ].concat(colModelClass.prototype.columnClasses)
+            });
+        };
 
-    asyncTest('renders checkboxes', function() {
-        setup({
-            gridOptions: {
-                columnModelClass: withCheckboxColumn(BasicColumnModel)
-            }
-        }).then(function(g) {
-            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
-            start();
-        });
-    });
-
-    asyncTest('checking a checkbox sets the corresponding model prop', function() {
-        setup({
-            gridOptions: {
-                columnModelClass: withCheckboxColumn(BasicColumnModel)
-            }
-        }).then(function(g) {
-            ok(!g.get('models')[0].get('_checked'));
-            g.$el.find('tbody [type=checkbox]').first().trigger('click');
-            setTimeout(function() {
-                equal(g.get('models')[0].get('_checked'), true);
+        asyncTest('renders checkboxes', function() {
+            setup({
+                gridOptions: {
+                    columnModelClass: withCheckboxColumn(BasicColumnModel)
+                }
+            }).then(function(g) {
+                equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
                 start();
-            }, 15);
+            });
         });
-    });
 
-    asyncTest('changing model prop sets the corresponding checkbox', function() {
-        // for this case we want to make sure the header is unchecked too
-        setup({
-            appendTo: '#qunit-fixture',
-            gridOptions: {
-                columnModelClass: withCheckboxColumn(BasicColumnModel)
-            }
-        }).then(function(g) {
-            // first set everything to checked
-            // gecko and trident don't seem to register the click, so change
-            // events never fire and this test fails in those browsers
-            g.$el.find('thead [type=checkbox]').trigger('click');
-            setTimeout(function() {
-                equal(g.$el.find('[type=checkbox]').length,
-                    g.get('models').length+1);
-                equal(g.$el.find('[type=checkbox]:checked').length,
-                    g.get('models').length+1);
-                _.each(g.get('models'),
-                    function(m) { ok(m.get('_checked')); });
-                g.get('models')[0].set('_checked', false);
+        asyncTest('checking a checkbox sets the corresponding model prop', function() {
+            setup({
+                gridOptions: {
+                    columnModelClass: withCheckboxColumn(BasicColumnModel)
+                }
+            }).then(function(g) {
+                ok(!g.get('models')[0].get('_checked'));
+                g.$el.find('tbody [type=checkbox]').first().trigger('click');
                 setTimeout(function() {
-                    equal(g.get('models')[0].get('_checked'), false);
-                    equal(g.$el.find('thead [type=checkbox]:checked').length, 0,
-                            'header is unchecked when models change');
+                    equal(g.get('models')[0].get('_checked'), true);
                     start();
                 }, 15);
-            }, 50);
+            });
         });
-    });
 
-    asyncTest('checking header checks all', function() {
-        setup({
-            appendTo: '#qunit-fixture',
-            gridOptions: {
-                columnModelClass: withCheckboxColumn(BasicColumnModel)
-            }
-        }).then(function(g) {
-            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
-            equal(g.$el.find('[type=checkbox]:checked').length, 0);
-            _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
-            // gecko and trident don't seem to register the click, so change
-            // events never fire and this test fails in those browsers
-            g.$el.find('thead [type=checkbox]').trigger('click');
-            setTimeout(function() {
-                equal(g.$el.find('[type=checkbox]').length,
-                    g.get('models').length+1);
-                equal(g.$el.find('[type=checkbox]:checked').length,
-                    g.get('models').length+1);
-                _.each(g.get('models'),
-                    function(m) { ok(m.get('_checked')); });
+        asyncTest('changing model prop sets the corresponding checkbox', function() {
+            // for this case we want to make sure the header is unchecked too
+            setup({
+                appendTo: '#qunit-fixture',
+                gridOptions: {
+                    columnModelClass: withCheckboxColumn(BasicColumnModel)
+                }
+            }).then(function(g) {
+                // first set everything to checked
+                // gecko and trident don't seem to register the click, so change
+                // events never fire and this test fails in those browsers
+                g.$el.find('thead [type=checkbox]').trigger('click');
+                setTimeout(function() {
+                    equal(g.$el.find('[type=checkbox]').length,
+                        g.get('models').length+1);
+                    equal(g.$el.find('[type=checkbox]:checked').length,
+                        g.get('models').length+1);
+                    _.each(g.get('models'),
+                        function(m) { ok(m.get('_checked')); });
+                    g.get('models')[0].set('_checked', false);
+                    setTimeout(function() {
+                        equal(g.get('models')[0].get('_checked'), false);
+                        equal(g.$el.find('thead [type=checkbox]:checked').length, 0,
+                                'header is unchecked when models change');
+                        start();
+                    }, 15);
+                }, 50);
+            });
+        });
+
+        asyncTest('checking header checks all', function() {
+            setup({
+                appendTo: '#qunit-fixture',
+                gridOptions: {
+                    columnModelClass: withCheckboxColumn(BasicColumnModel)
+                }
+            }).then(function(g) {
+                equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length, 0);
+                _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+                // gecko and trident don't seem to register the click, so change
+                // events never fire and this test fails in those browsers
+                g.$el.find('thead [type=checkbox]').trigger('click');
+                setTimeout(function() {
+                    equal(g.$el.find('[type=checkbox]').length,
+                        g.get('models').length+1);
+                    equal(g.$el.find('[type=checkbox]:checked').length,
+                        g.get('models').length+1);
+                    _.each(g.get('models'),
+                        function(m) { ok(m.get('_checked')); });
+                    start();
+                }, 50);
+            });
+        });
+
+        asyncTest('changing checkbox column type', function() {
+            setup({
+                gridOptions: {
+                    columnModelClass: withCheckboxColumn(BasicColumnModel)
+                },
+                appendTo: '#qunit-fixture'
+            }).then(function(g) {
+                equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]').length, 16);
+                g.get('columnModel').columns[0].set('type', 'radio');
+                equal(g.$el.find('[type=checkbox]').length, 0);
+                equal(g.$el.find('[type=radio]').length, g.get('models').length);
                 start();
-            }, 50);
+            });
         });
-    });
 
-    asyncTest('changing checkbox column type', function() {
-        setup({
-            gridOptions: {
-                columnModelClass: withCheckboxColumn(BasicColumnModel)
-            },
-            appendTo: '#qunit-fixture'
-        }).then(function(g) {
-            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
-            equal(g.$el.find('[type=checkbox]').length, 16);
-            g.get('columnModel').columns[0].set('type', 'radio');
-            equal(g.$el.find('[type=checkbox]').length, 0);
-            equal(g.$el.find('[type=radio]').length, g.get('models').length);
-            start();
+        asyncTest('selecting all checkboxes does not change disabled ones', function() {
+            setup({
+                appendTo: '#qunit-fixture',
+                gridOptions: {
+                    columnModelClass: BasicColumnModel.extend({
+                        columnClasses: [
+                            CheckBoxColumn.extend({
+                                defaults: {prop: '_checked'},
+                                _isDisabled: function(model) {
+                                    return model.get('default_field') < 100;
+                                }
+                            })
+                        ].concat(BasicColumnModel.prototype.columnClasses)
+                    })
+                }
+            }).then(function(g) {
+                equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
+                equal(g.$el.find('[type=checkbox]:checked').length, 0);
+                _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
+                g.$el.find('thead [type=checkbox]').trigger('click');
+                setTimeout(function() {
+                    equal(g.$el.find('[type=checkbox]').length,
+                        g.get('models').length+1);
+                    equal(g.$el.find('[type=checkbox]:checked').length, 13);
+                    _.each(g.get('models'), function(m) {
+                        if (m.get('default_field') < 100) {
+                            ok(!m.get('_checked'));
+                        } else {
+                            ok(m.get('_checked'));
+                        }
+                    });
+                    start();
+                }, 15);
+            });
         });
-    });
-
-    asyncTest('selecting all checkboxes does not change disabled ones', function() {
-        setup({
-            appendTo: '#qunit-fixture',
-            gridOptions: {
-                columnModelClass: BasicColumnModel.extend({
-                    columnClasses: [
-                        CheckBoxColumn.extend({
-                            defaults: {prop: '_checked'},
-                            _isDisabled: function(model) {
-                                return model.get('default_field') < 100;
-                            }
-                        })
-                    ].concat(BasicColumnModel.prototype.columnClasses)
-                })
-            }
-        }).then(function(g) {
-            equal(g.$el.find('[type=checkbox]').length, g.get('models').length+1);
-            equal(g.$el.find('[type=checkbox]:checked').length, 0);
-            _.each(g.get('models'), function(m) { ok(!m.get('_checked')); });
-            g.$el.find('thead [type=checkbox]').trigger('click');
-            setTimeout(function() {
-                equal(g.$el.find('[type=checkbox]').length,
-                    g.get('models').length+1);
-                equal(g.$el.find('[type=checkbox]:checked').length, 13);
-                _.each(g.get('models'), function(m) {
-                    if (m.get('default_field') < 100) {
-                        ok(!m.get('_checked'));
-                    } else {
-                        ok(m.get('_checked'));
-                    }
-                });
-                start();
-            }, 15);
-        });
-    });
+    }
 
     module('date column');
 
@@ -1024,7 +1043,7 @@ define([
 
     asyncTest('spinner shows up', function() {
         setup({
-            appendTo: null,
+            appendTo: 'body',
             gridOptions: {
                 selectable: 'multi',
                 columnModelClass: resizable(BasicColumnModel)
@@ -1063,6 +1082,7 @@ define([
     asyncTest('everything together', function() {
         setup({
             appendTo: 'body',
+            params: {limit: 300},
             gridOptions: {
                 selectable: 'multi',
                 columnModelClass: ColumnModel.extend({
@@ -1084,6 +1104,10 @@ define([
                 })
             }
         }).then(function(g) {
+            // set height and widths for visual resize testing
+            g.$el.height(400);
+            g.$el.width(800);
+            g._setRowTableHeight();
             g.on('dblclick', 'tbody tr', function(evt) {
                 var model = g._modelFromTr(evt.currentTarget);
                 if (model) {
