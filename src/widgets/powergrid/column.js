@@ -75,7 +75,7 @@ define([
         },
 
         _onResize: function(evt, cursorPos) {
-            var diff = (cursorPos.clientX + $(window).scrollLeft()) - this.$el.position().left;
+            var diff = (cursorPos.clientX + $(window).scrollLeft()) - this.$el.offset().left;
             if (diff > 0) {
                 this.set('width', diff);
             }
