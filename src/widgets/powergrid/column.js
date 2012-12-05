@@ -1,11 +1,12 @@
 define([
+    'vendor/jquery',
     'vendor/underscore',
     './../../view',
     './../grid/resizehandle',
     './../../util/styleUtils',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function(_, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
+], function($, _, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
         var minWidth = 10,
             actualWidth = width - _.reduce([
