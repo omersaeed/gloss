@@ -84,11 +84,8 @@ define([
         },
 
         _setTdCellWidth: function(width) {
-            var selector = '.col-' + this.get('name');
-            // this.get('grid').$tbody.find(selector).each(function(i, el) {
-            //     outerWidth($(el), width);
-            // });
-            var $tr = this.get('grid').$tbody.children().first(),
+            var selector = '.col-' + this.get('name'),
+                $tr = this.get('grid').$tbody.children().first(),
                 $el = $tr.find(selector);
             outerWidth($el, width);
         },

@@ -101,6 +101,14 @@ define([
             });
         },
 
+        _setRowTableHeight: function() {
+            var $header = this.$el.find('.header-wrapper'),
+                $rows = this.$el.find('.row-wrapper');
+            if ($rows.height() !== (this.$el.height() - $header.height())) {
+                $rows.height(this.$el.height() - $header.height());
+            }
+        },
+
         _isFiltered: function() {
             var collection = this.get('collection');
             return collection && collection.query.params.query != null;
@@ -405,11 +413,7 @@ define([
             }
             if (rerender) {
                 this.rerender();
-                var $header = this.$el.find('.header-wrapper'),
-                    $rows = this.$el.find('.row-wrapper');
-                if ($rows.height() !== (this.$el.height() - $header.height())) {
-                    $rows.height(this.$el.height() - $header.height());
-                }
+                this._setRowTableHeight();
             }
             this.trigger('propchange', updated);
         }

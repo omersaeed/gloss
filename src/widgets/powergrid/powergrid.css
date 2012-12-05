@@ -49,34 +49,45 @@ tr.selected {
   overflow: hidden;
 }
 
-/* this is used to get overflow to work in IE */
 .powergrid table {
+  width: 100%;
+  /* this is used to get overflow to work in IE */
   table-layout: fixed;
 }
 
 .powergrid .header-wrapper {
   position: relative;
-  /*top: 0;*/
   width: auto;
   min-width: 100%;
   background-color: white;
-  /*z-index: 1;*/
 }
 
 .powergrid .row-wrapper {
-  /*position: absolute;
-  top: 0;*/
   height: 100%;
   width: 100%;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   overflow: auto;
-  /* assumed height of the header */
-  /*padding-top: 34px;*/
 }
 
 .powergrid .grid-canvas .spinner-overlay {
   position: absolute;
   top: 50%;
   left: 50%;
+}
+
+/* overflow styling */
+.powergrid table tr td,
+.powergrid table tr td > div,
+.powergrid table tr th .label {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/*  checkbox column styling 
+    this is in the base css to standardize the behavior ... duh
+*/
+.col-checkbox_column {
+  width: 19px;
 }
