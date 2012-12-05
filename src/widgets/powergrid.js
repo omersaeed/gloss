@@ -1,7 +1,6 @@
 // TODO:
 //  - edit row
 //  - pager
-//  - static header
 //  - keyboard navigation
 //  - lining up numbers based on decimal point
 define([
