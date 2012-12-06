@@ -587,17 +587,20 @@ define([
             //  - we don't check the individual columns now becasue the will not be equal
             equal($headerTable.width(), $rowsTable.width(), 'header and row tables are the same width');
 
-            $container.show();
-            /* equal width of a grid that is now visible */
-            equal($header.width(), $rows.width(), 'header and row divs are the same width');
-            equal($headerTable.width(), $rowsTable.width(), 'header and row tables are the same width');
-            $headerTable.find('thead th').each(function(i, el) {
-                var col = g.get('columnModel').columns[i],
-                    rowSelector = 'tbody tr .col-' + col.get('name'),
-                    rowEl = g.$el.find(rowSelector)[0];
-                equal($(rowEl).width(), $(el).width(),
-                    'element width for row cell '+col.get('name')+' matches expected');
-            });
+            if ($.browser.webkit) {
+                $container.show();
+                /* equal width of a grid that is now visible */
+                equal($header.width(), $rows.width(), 'header and row divs are the same width');
+                equal($headerTable.width(), $rowsTable.width(), 'header and row tables are the same width');
+            
+                $headerTable.find('thead th').each(function(i, el) {
+                    var col = g.get('columnModel').columns[i],
+                        rowSelector = 'tbody tr .col-' + col.get('name'),
+                        rowEl = g.$el.find(rowSelector)[0];
+                    equal($(rowEl).width(), $(el).width(),
+                        'element width for row cell '+col.get('name')+' matches expected');
+                });
+            }
 
             start();
         });
