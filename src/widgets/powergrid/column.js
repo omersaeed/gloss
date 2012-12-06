@@ -88,7 +88,16 @@ define([
             var selector = '.col-' + this.get('name'),
                 $tr = this.get('grid').$tbody.children().first(),
                 $el = $tr.find(selector);
-            outerWidth($el, width);
+
+            // special case when the grid is not visible
+            if (this.$el.width() === 0) {
+                $el.css({
+                    minWidth: '100%',
+                    maxWidth: '100%'
+                });
+            } else {
+                outerWidth($el, width);
+            }
         },
 
         _postRender: function() {

@@ -1107,6 +1107,8 @@ define([
             // set height and widths for visual resize testing
             g.$el.height(400);
             g.$el.width(800);
+            // rerender so the height and width changes are pickued up
+            g.rerender();
             g._setRowTableHeight();
             g.on('dblclick', 'tbody tr', function(evt) {
                 var model = g._modelFromTr(evt.currentTarget);
