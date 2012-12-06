@@ -558,6 +558,51 @@ define([
         });
     });
 
+    asyncTest('header and row divs/tables are the same size', function() {
+        var models = [],
+            $container = $('<div class=container></div>'),
+            g = PowerGrid({
+                columnModelClass: resizable(BasicColumnModel),
+                collection: Example.collection()
+            });
+
+        $container.appendTo('#qunit-fixture').hide();
+        g.appendTo($container);
+        // set height and widths for visual resize testing
+        g.$el.height(400);
+        g.$el.width(800);
+        // rerender so the height and width changes are pickued up
+        g.rerender();
+        g._setRowTableHeight();
+
+        Example.models.clear();
+        g.set('collection', Example.collection());
+        g.get('collection').load().then(function(data) {
+            var $header = g.$el.find('.header-wrapper'),
+                $rows = g.$el.find('.row-wrapper'),
+                $headerTable = $header.find('table.header'),
+                $rowsTable = $rows.find('table.rows');
+
+            /* equal width of a grid that is not visible */
+            //  - we don't check the individual columns now becasue the will not be equal
+            equal($headerTable.width(), $rowsTable.width(), 'header and row tables are the same width');
+
+            $container.show();
+            /* equal width of a grid that is now visible */
+            equal($header.width(), $rows.width(), 'header and row divs are the same width');
+            equal($headerTable.width(), $rowsTable.width(), 'header and row tables are the same width');
+            $headerTable.find('thead th').each(function(i, el) {
+                var col = g.get('columnModel').columns[i],
+                    rowSelector = 'tbody tr .col-' + col.get('name'),
+                    rowEl = g.$el.find(rowSelector)[0];
+                equal($(rowEl).width(), $(el).width(),
+                    'element width for row cell '+col.get('name')+' matches expected');
+            });
+
+            start();
+        });
+    });
+
     module('hiding columns');
 
     asyncTest('hiding column works', function() {
