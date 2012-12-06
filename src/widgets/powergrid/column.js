@@ -85,7 +85,7 @@ define([
         },
 
         _setTdCellWidth: function(width) {
-            var selector = '.col-' + this.get('name'),
+            var selector = '.' + this.columnClass(),
                 $tr = this.get('grid').$tbody.children().first(),
                 $el = $tr.find(selector);
 
