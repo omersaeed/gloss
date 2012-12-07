@@ -525,7 +525,7 @@ define([
             columns[1].set('width', newWidths[1]);
             g.$el.find('thead th').each(function(i, el) {
                 var col = g.get('columnModel').columns[i],
-                    rowSelector = 'tbody tr .col-' + col.get('name'),
+                    rowSelector = 'tbody tr .' + col.columnClass(),
                     rowEl = g.$el.find(rowSelector)[0];
                 equal(col.get('width'), newWidths[i],
                     'column object width for '+col.get('name')+' matches expected');
@@ -540,7 +540,7 @@ define([
             columns[4].set('width', newWidths[4]);
             g.$el.find('thead th').each(function(i, el) {
                 var col = g.get('columnModel').columns[i],
-                    rowSelector = 'tbody tr .col-' + col.get('name'),
+                    rowSelector = 'tbody tr .' + col.columnClass(),
                     rowEl = g.$el.find(rowSelector)[0];
                 equal(col.get('width'), newWidths[i],
                     'column object width for '+col.get('name')+' matches expected');
@@ -575,6 +575,55 @@ define([
             equal(g.$el.closest('body').length, 1, 'ensure grid is positioned');
             equal(close(thPos.top, resizePos.top), true);
             equal(close(thPos.left+thSize.width, resizePos.left+resizeSize.width), true);
+
+            start();
+        });
+    });
+
+    asyncTest("columns with '.' in the classname resize properly", function() {
+        var DotClassesColumnModel = ColumnModel.extend({
+                columnClasses: [
+                    Column.extend({defaults: {name: 'text_field'}}),
+                    Column.extend({defaults: {name: 'required_field'}}),
+                    Column.extend({defaults: {name: 'boolean_field'}}),
+                    Column.extend({
+                        defaults: {name: 'datetime.field'},
+                        getValue: function(model) {
+                            return model.get(this.get('name').replace(/\./g, '_'));
+                        }
+                    }),
+                    Column.extend({
+                        defaults: {name: 'integer.field'},
+                        getValue: function(model) {
+                            return model.get(this.get('name').replace(/\./g, '_'));
+                        }
+                    }),
+                    Column.extend({defaults: {name: 'float_field'}}),
+                    Column.extend({defaults: {name: 'default_field'}}),
+                    Column.extend({defaults: {name: 'enumeration_field'}})
+                ]
+            });
+        setup({
+            gridOptions: {columnModelClass: resizable(DotClassesColumnModel)},
+            appendTo: '#qunit-fixture'
+        }).then(function(g) {
+            var columns = g.get('columnModel').columns,
+                dateTimeCol = _.find(columns, function(col) {
+                    if (col.get('name') === 'datetime.field') {
+                        return col;
+                    }
+                });
+
+            dateTimeCol.set('width', 300);
+
+            g.$el.find('thead th').each(function(i, el) {
+                var col = g.get('columnModel').columns[i],
+                    rowSelector = 'tbody tr .' + col.columnClass(),
+                    rowEl = g.$el.find(rowSelector)[0];
+
+                equal($(rowEl).outerWidth(), col.get('width'),
+                    'row column width matches header column width for '+col.get('name'));
+            });
 
             start();
         });
@@ -625,7 +674,7 @@ define([
             
                 $headerTable.find('thead th').each(function(i, el) {
                     var col = g.get('columnModel').columns[i],
-                        rowSelector = 'tbody tr .col-' + col.get('name'),
+                        rowSelector = 'tbody tr .' + col.columnClass(),
                         rowEl = g.$el.find(rowSelector)[0],
                         numberOfColumns = g.get('columnModel').columns.length,
                         rowCellWidth, headerCellWidth;
