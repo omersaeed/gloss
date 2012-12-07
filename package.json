@@ -6,15 +6,27 @@
     "Jordan McCoy",
     "Ralph Smith"
   ],
-  "version": "1.0.34",
+  "version": "1.0.37",
   "dependencies": {
-    "csi": "git+ssh://git@github.com:siq/csi.git#1.0.4",
-    "siq-vendor-js": "git+ssh://git@github.com:siq/siq-vendor-js.git#1.0.4",
-    "bedrockjs": "git+ssh://git@github.com:siq/bedrockjs.git#1.0.5",
-    "siq-mesh": "git+ssh://git@github.com:siq/mesh.git#1.0.12"
+    "csi": "git+ssh://git@github.com:siq/csi.git#1.0.6",
+    "siq-vendor-js": "git+ssh://git@github.com:siq/siq-vendor-js.git#1.0.6",
+    "bedrockjs": "git+ssh://git@github.com:siq/bedrockjs.git#1.0.7",
+    "siq-mesh": "git+ssh://git@github.com:siq/mesh.git#1.0.15"
   },
   "csi": {
-    "name": "gloss"
+    "name": "gloss",
+    "testIgnore": [
+      {
+        "path": "powergrid/test",
+        "module": "resizing",
+        "test": "header and row divs/tables are the same size|setting column width works"
+      },
+      {
+        "path": "treegrid/test",
+        "module": "drag n drop treegrid",
+        "test": "drag to node"
+      }
+    ]
   },
   "devDependencies": {},
   "optionalDependencies": {},
