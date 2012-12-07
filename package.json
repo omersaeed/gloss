@@ -14,7 +14,19 @@
     "siq-mesh": "git+ssh://git@github.com:siq/mesh.git#1.0.13"
   },
   "csi": {
-    "name": "gloss"
+    "name": "gloss",
+    "testIgnore": [
+        {
+            "path": "powergrid/test",
+            "module": "resizing",
+            "test": "header and row divs/tables are the same size|setting column width works"
+        },
+        {
+            "path": "treegrid/test",
+            "module": "drag n drop treegrid",
+            "test": "drag to node"
+        }
+    ]
   },
   "devDependencies": {},
   "optionalDependencies": {},
