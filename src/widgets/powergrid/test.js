@@ -607,7 +607,7 @@ define([
                 rowTableWidth, headerTableWidth;
 
             //  - with the currently logic it's only really a problem for IE9 which will still
-            //  - fail however the other browser will not fail properly either so no sense
+            //  - fail however other browsers still will not fail properly either so no sense
             //  - running them for this test
             if ($.browser.webkit) {
                 $container.show();

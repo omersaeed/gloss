@@ -19,7 +19,7 @@
       {
         "path": "powergrid/test",
         "module": "resizing",
-        "test": "header and row divs/tables are the same size|setting column width works"
+        "test": "header and rows are the same size for grid that is initially hidden|setting column width works"
       },
       {
         "path": "treegrid/test",
