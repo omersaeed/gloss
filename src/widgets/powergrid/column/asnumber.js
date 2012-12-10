@@ -13,7 +13,9 @@ define([
 
         this.defaults = $.extend({}, this.defaults, {
             // leave as null for no decimals
-            decimalPlaces: null
+            decimalPlaces: null,
+            decimalPoint: '.',
+            thousandsSep: ','
         }, options);
 
         this.cssClasses = _.wrap(this.cssClasses, function(func) {
@@ -26,8 +28,10 @@ define([
 
     asNumber.format = function(value, model) {
         var places = this.get('decimalPlaces'),
-            formatted = (value != null?  format.number(value, places) : '')
-                .split(".");
+            decimalPoint = this.get('decimalPoint'),
+            thousandsSep = this.get('thousandsSep'),
+            formatted = (value != null?  format.number(value, places, decimalPoint, thousandsSep) : '')
+                .split(decimalPoint);
         return template({
             value: value,
             integer: formatted[0],
