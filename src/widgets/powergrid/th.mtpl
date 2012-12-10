@@ -3,8 +3,14 @@
        sortable = this.get('sortable'),
        sort = this.get('sort'),
        resizable = this.get('resizable'),
-       grid = this.get('grid'); %>
-<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>">
+       grid = this.get('grid'),
+       showTitle = true,
+       title = label != null? label : name;
+  if (this.get('type') === 'checkbox' || this.get('type') === 'radio') {
+    showTitle = false;
+  }
+%>
+<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>" title="<%=(showTitle) ? title : ''%>">
   <% /* the div.wrapper is necessary for firefox to correctly position the
       * resize handle */ %>
   <div class=wrapper>

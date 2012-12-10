@@ -1,4 +1,8 @@
-<% var v = this.formatValue(this.getValue(data), data);%>
-<td class="<%=this.cssClasses(data)%>">
+<% var v = this.formatValue(this.getValue(data), data), showTitle = true;
+	if (this.get('type') === 'checkbox' || this.get('type') === 'radio') {
+		showTitle = false;
+	}
+%>
+<td class="<%=this.cssClasses(data)%>" title="<%=(showTitle) ? v.toString() : ''%>">
   <%= v == null? '' : v.toString() %>
 </td>
