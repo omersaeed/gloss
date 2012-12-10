@@ -26,6 +26,9 @@ define([
     };
     return View.extend({
         template: thTemplate,
+        defaults: {
+            showTitle: true     // show value when hovering over cell element
+        },
         init: function() {
             var self = this, grid;
 

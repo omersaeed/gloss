@@ -9,7 +9,8 @@ define([
             label: '',
             type: 'checkbox',
             name: 'checkbox_column',
-            prop: null
+            prop: null,
+            showTitle: false
         },
 
         init: function() {
