@@ -1,4 +1,6 @@
-<% var v = this.formatValue(this.getValue(data), data), showTitle = this.get('showTitle'); %>
-<td class="<%=this.cssClasses(data)%>" title="<%=(showTitle) ? v.toString() : ''%>">
-  <%= v == null? '' : v.toString() %>
+<% var v = this.formatValue(this.getValue(data), data), showTitle = this.get('showTitle'),
+	   value = (v == null)? '' : v.toString();
+%>
+<td class="<%=this.cssClasses(data)%>" title="<%=(showTitle) ? value : ''%>">
+  <%= value %>
 </td>

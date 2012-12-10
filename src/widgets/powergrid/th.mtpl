@@ -5,9 +5,9 @@
        resizable = this.get('resizable'),
        grid = this.get('grid'),
        showTitle = this.get('showTitle'),
-       title = label != null? label : name;
+       label = label != null? label : name;
 %>
-<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>" title="<%=(showTitle) ? title : ''%>">
+<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>" title="<%=(showTitle) ? label : ''%>">
   <% /* the div.wrapper is necessary for firefox to correctly position the
       * resize handle */ %>
   <div class=wrapper>
@@ -16,7 +16,7 @@
     <% } %>
 
     <div class=label>
-      <%=label != null? label : name%>
+      <%=label%>
       <% if (sortable) { %>
       <span class="sort-arrow <%=sort? '' : 'invisible'%>">
           <%= /asc/i.test(sort)? '&#x25b2;' : '&#x25bc;' %>
