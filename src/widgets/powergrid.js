@@ -117,32 +117,19 @@ define([
                     infiniteScrollLimit = self.get('infiniteScrollLimit'),
                     collection = self.get('collection');
 
-                //  - only valid if there is a collection
-                if (!collection) {
-                    return;
-                }
-
-                //  - already loaded all the data
-                if (self.get('models').length === self._getTotal()) { //&&
-                    //whatever key is being used to determine that a colleciton total is true) {
-                    return;
-                }
-
-                //  - if currenlty loading then do nothing
-                if (scrollLoadDfd && scrollLoadDfd.state() === 'pending') {
-                    // console.log('load pending');
+                if (!collection || !self.get('infiniteScroll') || //  - only valid if there is a collection and infiniteScroll is set
+                    self.get('models').length === self._getTotal() || //  - already loaded all the data
+                    scrollLoadDfd && scrollLoadDfd.state() === 'pending') {//  - if currenlty loading then do nothing
                     return;
                 }
                 
                 //  - check if reached bottom of table for loading more data
-                if ((scrollBottom === 0) /*&& self.get('infiniteScroll')*/) {
+                if (scrollBottom <= 0) {
                     var limit = (collection.query.params.limit || 0) + infiniteScrollLimit;
                     collection.query.params.limit = limit;
 
                     self.scrollLoadSpinner.disable();
                     scrollLoadDfd = collection.load().then(function(models) {
-                        console.log('done loading', self.get('models').length, models.length);
-                        // self.scrollLoadSpinner.enable();
                     });
                 }
             });
@@ -225,6 +212,7 @@ define([
             }
 
             if (this.get('infiniteScroll') && rows.length) {
+                //  - TODO: make this a string value
                 var loadingRowHtml, text = 'Loading ...';
 
                 if (rows.length === this._getTotal()) {
@@ -240,7 +228,6 @@ define([
                 //  - using a template breaks the spinner position. lets revisit this later
                 // rows.push(loadingRowTmpl({
                 //     grid: this,
-                //     //TODO: make this a string value
                 //     text: text
                 // }));
             }
@@ -253,22 +240,6 @@ define([
                 this.scrollLoadSpinner = Spinner(null, {
                     target: $target[0],
                     deferInstantiation: true
-                    // opts: {
-                    //     lines: 13, // The number of lines to draw
-                    //     length: 3, // The length of each line
-                    //     width: 2, // The line thickness
-                    //     radius: 3, // The radius of the inner circle
-                    //     rotate: 0, // The rotation offset
-                    //     color: '#000', // #rgb or #rrggbb
-                    //     speed: 1, // Rounds per second
-                    //     trail: 60, // Afterglow percentage
-                    //     shadow: false, // Whether to render a shadow
-                    //     hwaccel: false, // Whether to use hardware acceleration
-                    //     className: 'micro-spinner', // The CSS class to assign to the spinner
-                    //     zIndex: 2e9, // The z-index (defaults to 2000000000)
-                    //     top: 'auto', // Top position relative to parent in px
-                    //     left: 'auto'
-                    // }
                 }).appendTo($target);
                 this.scrollLoadSpinner.updateOpts({
                     lines: 13, // The number of lines to draw
