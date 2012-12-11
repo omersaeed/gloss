@@ -23,6 +23,8 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'vendor/moment',
+    // 'auxl/test/mock/search',
+    // 'auxl/test/mock/node',
     './../powergrid',
     './columnmodel',
     './column',
@@ -34,8 +36,8 @@ define([
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
-], function($, _, moment, PowerGrid, ColumnModel, Column, CheckBoxColumn, asDateTime,
-    asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
+], function($, _, moment, /*Search, Node,*/ PowerGrid, ColumnModel, Column, CheckBoxColumn,
+    asDateTime, asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [
@@ -1180,6 +1182,60 @@ define([
             start();
         });
     });
+
+    module('infinite scroll');
+
+    asyncTest('scroll to bottom loads more data', function() {
+        setup({
+            // appendTo: 'body',
+            params: {limit: 25},
+            gridOptions: {
+                infiniteScroll: true,
+                infiniteScrollLimit: 300
+            }
+        }).then(function(g, options) {
+            // set height and widths for visual resize testing
+            g.$el.height(400);
+            g.$el.width(800);
+            // rerender so the height and width changes are pickued up
+            g.rerender();
+            g._setRowTableHeight();
+
+            var limit = options.params.limit,
+                modelCount = g.get('models').length,
+                $rowWrapper = g.$el.find('.row-wrapper');
+
+            equal(modelCount, limit, 'number of models is the same as the inital limit');
+
+            $rowWrapper.scrollTop($rowWrapper.height());
+            setTimeout(function() {
+                var newModelCount = g.get('models').length,
+                    newLimit = limit + g.get('infiniteScrollLimit');
+
+                equal(newModelCount, newLimit, 'new number of models has increased to the expectd value');
+                start();
+            }, 200);
+        });
+    });
+
+    // asyncTest('using two layer search api for grid data', function() {
+    //     Search.setMockDelay(500).models.clear();
+    //     Node.models.clear();
+    //     var og = window.og = ObjectGrid().appendTo('#qunit-fixture');
+    //     og.search({interval: 50}).then(function() {
+    //         ok(false, 'search should not have finished');
+    //         start();
+    //     }, function() {
+    //         console.log(arguments);
+    //         ok(false, 'search failed');
+    //         start();
+    //     });
+    //     og.del('search');
+    //     setTimeout(function() {
+    //         ok(true, 'search did not complete');
+    //         start();
+    //     }, 1000);
+    // });
 
     module('spinner');
 

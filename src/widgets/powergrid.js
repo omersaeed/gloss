@@ -13,9 +13,10 @@ define([
     './spinner',
     './../util/sort',
     'tmpl!./powergrid/powergrid.mtpl',
+    // 'tmpl!./powergrid/spinnerTr.mtpl',
     'css!./powergrid/powergrid.css'
 ], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
-    sort, template) {
+    sort, template/*, loadingRowTmpl*/) {
 
     var EmptyColumnModel, PowerGrid,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
@@ -40,13 +41,18 @@ define([
             // something unique to the grid instance at instantiation time.
             //
             // this, of course, doesn't matter if 'selectable' is false
-            selectedAttr: null
+            selectedAttr: null,
+
+            // this attribute tells the grid to load more data when scrolled to
+            // the bottom of the grid
+            infiniteScroll: false,
+            infiniteScrollLimit: 50
         },
 
         template: template,
 
         init: function() {
-            var selectable;
+            var selectable, self = this;
 
             this._super.apply(this, arguments);
 
@@ -89,15 +95,63 @@ define([
             }, {}));
 
             var $header = this.$el.find('.header-wrapper'),
-                $rows = this.$el.find('.row-wrapper');
+                $rows = this.$el.find('.row-wrapper'),
+                $rowTable = this.$el.find('.rows'),
+                scrollLoadDfd;
+            //  - handle horizontal scroll
             $rows.on('scroll', function(evt) {
                 var left = parseInt($header.css('left'), 10) || 0;
+                //  - check for horizontal scroll to align header and rows
                 if (left !== $rows.scrollLeft()) {
                     $header.css({
                         left: -$rows.scrollLeft() + 'px'
                     });
                 }
             });
+            //  - handle vertical scroll for infinite scrolling
+            $rows.on('scroll', function(evt) {
+                var rowTop = $rows.scrollTop(),
+                    rowHeight = $rows.height(),
+                    rowTableHeight = $rowTable.height(),
+                    scrollBottom = rowTableHeight - rowHeight - rowTop,
+                    infiniteScrollLimit = self.get('infiniteScrollLimit'),
+                    collection = self.get('collection');
+
+                //  - only valid if there is a collection
+                if (!collection) {
+                    return;
+                }
+
+                //  - already loaded all the data
+                if (self.get('models').length === self._getTotal()) { //&&
+                    //whatever key is being used to determine that a colleciton total is true) {
+                    return;
+                }
+
+                //  - if currenlty loading then do nothing
+                if (scrollLoadDfd && scrollLoadDfd.state() === 'pending') {
+                    // console.log('load pending');
+                    return;
+                }
+                
+                //  - check if reached bottom of table for loading more data
+                if ((scrollBottom === 0) /*&& self.get('infiniteScroll')*/) {
+                    var limit = (collection.query.params.limit || 0) + infiniteScrollLimit;
+                    collection.query.params.limit = limit;
+
+                    self.scrollLoadSpinner.disable();
+                    scrollLoadDfd = collection.load().then(function(models) {
+                        console.log('done loading', self.get('models').length, models.length);
+                        // self.scrollLoadSpinner.enable();
+                    });
+                }
+            });
+        },
+
+        //  - this function is used to determine if all that objects in a collection have been loaded
+        //  - it should be overriden in the two layer search API case see the tests for an example
+        _getTotal: function() {
+            return (this.get('collection')) ? this.get('collection').total : 0;
         },
 
         _setRowTableHeight: function() {
@@ -170,7 +224,70 @@ define([
                 rows.push(columns.renderTr(models[i]));
             }
 
+            if (this.get('infiniteScroll') && rows.length) {
+                var loadingRowHtml, text = 'Loading ...';
+
+                if (rows.length === this._getTotal()) {
+                    text = 'All objects loaded';
+                }
+                loadingRowHtml = [
+                                    "<tr><td style='height: 26px; text-align: center' colspan=5>",
+                                    "<span class=loading-text style='margin-right: 25px;'>" + text + "</span>",
+                                    "<span class=micro-spinner></span>",
+                                    "</td></tr>"
+                                ].join('');
+                rows.push(loadingRowHtml);
+                //  - using a template breaks the spinner position. lets revisit this later
+                // rows.push(loadingRowTmpl({
+                //     grid: this,
+                //     //TODO: make this a string value
+                //     text: text
+                // }));
+            }
+
             this.$tbody.html(rows.join(''));
+
+            if (this.get('infiniteScroll') && rows.length) {
+                //  - spinner for infinite scroll
+                var $target = this.$tbody.find('.micro-spinner');
+                this.scrollLoadSpinner = Spinner(null, {
+                    target: $target[0],
+                    deferInstantiation: true
+                    // opts: {
+                    //     lines: 13, // The number of lines to draw
+                    //     length: 3, // The length of each line
+                    //     width: 2, // The line thickness
+                    //     radius: 3, // The radius of the inner circle
+                    //     rotate: 0, // The rotation offset
+                    //     color: '#000', // #rgb or #rrggbb
+                    //     speed: 1, // Rounds per second
+                    //     trail: 60, // Afterglow percentage
+                    //     shadow: false, // Whether to render a shadow
+                    //     hwaccel: false, // Whether to use hardware acceleration
+                    //     className: 'micro-spinner', // The CSS class to assign to the spinner
+                    //     zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    //     top: 'auto', // Top position relative to parent in px
+                    //     left: 'auto'
+                    // }
+                }).appendTo($target);
+                this.scrollLoadSpinner.updateOpts({
+                    lines: 13, // The number of lines to draw
+                    length: 3, // The length of each line
+                    width: 2, // The line thickness
+                    radius: 3, // The radius of the inner circle
+                    rotate: 0, // The rotation offset
+                    color: '#000', // #rgb or #rrggbb
+                    speed: 1, // Rounds per second
+                    trail: 60, // Afterglow percentage
+                    shadow: false, // Whether to render a shadow
+                    hwaccel: false, // Whether to use hardware acceleration
+                    className: 'micro-spinner', // The CSS class to assign to the spinner
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    top: 'auto', // Top position relative to parent in px
+                    left: 'auto'
+                });
+                this.scrollLoadSpinner.instantiate();
+            }
 
             this._renderCount++;
             // console.log([

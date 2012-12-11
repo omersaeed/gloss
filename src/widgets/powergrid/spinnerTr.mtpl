@@ -1,0 +1,9 @@
+<% var grid = data.grid, columns = grid.get('columnModel').columns, text = data.text; %>
+<tr>
+	<td style='height: 26px; text-align: center' colspan=<%=columns.length;%>>
+		<span class=loading-text style='margin-right: 25px;'><%=text%></span>
+		<% if (grid.get('models').length === grid._getTotal()) { %>
+			<span class=micro-spinner></span>
+		<% } %>
+	</td>
+</tr>
