@@ -143,9 +143,11 @@ define([
         //      this is responsible for making the value human reaable. if you
         //      want to add markup and stuff, this is the place to do it.
         //  - getTitle
-        //      this populates td's "title" attribute. its arguments are:
-        //           - formattedValue (the return value of formatValue)
-        //           - value (the return value of getValue)
+        //      this populates td's "title" attribute. *if your formatValue
+        //      method returns a string w/ html, you WILL have to override
+        //      this*, its arguments are:
+        //           - the return value of formatValue
+        //           - the return value of getValue
         //           - the row's model
         //  - getSortValue
         //      this is used, as the name implies, for sorting.
