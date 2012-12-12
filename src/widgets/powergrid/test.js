@@ -1201,11 +1201,12 @@ define([
 
             var limit = options.params.limit,
                 modelCount = g.get('models').length,
-                $rowWrapper = g.$el.find('.row-wrapper');
+                $rowWrapper = g.$el.find('.row-wrapper'),
+                $rows = g.$el.find('.rows');
 
             equal(modelCount, limit, 'number of models is the same as the inital limit');
 
-            $rowWrapper.scrollTop($rowWrapper.height());
+            $rowWrapper.scrollTop($rows.height());
             setTimeout(function() {
                 var newModelCount = g.get('models').length,
                     newLimit = limit + g.get('increment');
