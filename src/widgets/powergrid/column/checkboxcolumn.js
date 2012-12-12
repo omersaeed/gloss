@@ -9,14 +9,13 @@ define([
             label: '',
             type: 'checkbox',
             name: 'checkbox_column',
-            prop: null,
-            showTitle: false
+            prop: null
         },
 
         init: function() {
             this._super.apply(this, arguments);
             var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
-            
+
             _.bindAll(this, '_onChange', '_onHeaderChange',
                         '_onModelChange', '_onPropChange', '_unCheckHeader');
 
@@ -65,7 +64,7 @@ define([
                 this._updateFromHeader = false;
                 return;
             }
-            
+
             if (models.length > 0) {
                 this._unCheckHeader(models);
             } else if (collection) {
@@ -136,6 +135,10 @@ define([
 
         cssClasses: function() {
             return this._super.apply(this, arguments) + ' checkbox-column';
+        },
+
+        getTitle: function() {
+            return '';
         },
 
         getValue: function(model) {

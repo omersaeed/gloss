@@ -7,7 +7,7 @@
        showTitle = this.get('showTitle'),
        label = label != null? label : name;
 %>
-<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>" title="<%=(showTitle) ? label : ''%>">
+<th class="<%=this.cssClasses()%> <%=sortable? 'sortable' : ''%> <%=resizable? 'resizable' : ''%> <%=sort? 'sorted' : ''%>" title="<%=label%>">
   <% /* the div.wrapper is necessary for firefox to correctly position the
       * resize handle */ %>
   <div class=wrapper>

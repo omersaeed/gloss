@@ -26,9 +26,9 @@ define([
     };
     return View.extend({
         template: thTemplate,
-        defaults: {
-            showTitle: true     // show value when hovering over cell element
-        },
+        // defaults: {
+        //     showTitle: true     // show value when hovering over cell element
+        // },
         init: function() {
             var self = this, grid;
 
@@ -129,12 +129,38 @@ define([
                 this.$el.outerWidth() : this._super.apply(this, arguments);
         },
 
-        getValue: function(model) {
-            return model.get(this.get('name'));
-        },
-
+        // when using the grid, you will often want to override one or more of
+        // the following values, and they've got a bit of an intricate
+        // interaction:
+        //
+        //  - getValue:
+        //      this is responsible for pulling the value out of the model. if
+        //      your column deals with a value that, for instance is the result
+        //      of combining multiple properties of a model, you'd want to
+        //      override this. if you think you want to return something from
+        //      getValue with html tags, you probably want to override...
+        //  - formatValue
+        //      this is responsible for making the value human reaable. if you
+        //      want to add markup and stuff, this is the place to do it.
+        //  - getTitle
+        //      this populates td's "title" attribute. its arguments are:
+        //           - formattedValue (the return value of formatValue)
+        //           - value (the return value of getValue)
+        //           - the row's model
+        //  - getSortValue
+        //      this is used, as the name implies, for sorting.
+        //
+        // you can look at the implementations to see the default values.
         getSortValue: function(model) {
             return this.getValue(model);
+        },
+
+        getTitle: function(formattedValue, value, model) {
+            return formattedValue;
+        },
+
+        getValue: function(model) {
+            return model.get(this.get('name'));
         },
 
         hide: function() {

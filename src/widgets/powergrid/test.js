@@ -875,6 +875,10 @@ define([
         });
     });
 
+    // we only want to run the 'checkbox column' module if we're in a browser
+    // where triggering a 'click' event on a checkbox subsequently triggers a
+    // 'change' event. since we're lazy and busy, we're just checking for
+    // webkit
     if ($.browser.webkit) {
         module('checkbox column');
 
@@ -888,6 +892,7 @@ define([
 
         asyncTest('renders checkboxes', function() {
             setup({
+                appendTo: 'body',
                 gridOptions: {
                     columnModelClass: withCheckboxColumn(BasicColumnModel)
                 }
@@ -1200,6 +1205,36 @@ define([
                 true, 'spinner is roughly vertically inside table');
             start();
         });
+    });
+
+    module('title tooltips');
+
+    var linkedTextField = function(colModelClass) {
+        return colModelClass.extend({
+            columnClasses: _.map(
+                colModelClass.prototype.columnClasses,
+                function(columnClass, i) {
+                    return i !== 0? columnClass :
+                        columnClass.extend({
+                            formatValue: function(value, model) {
+                                return '<a href="javascript:void(0)>'+value+'</a>';
+                            },
+                            getTitle: function(formatted, value, model) {
+                                return value;
+                            }
+                        });
+                })
+        });
+    };
+
+    asyncTest('html in formatValue doesnt show up in title attribute', function() {
+        setup({
+            gridOptions: {columnModelClass: linkedTextField(BasicColumnModel)}
+        }).then(function(g) {
+            equal(g.$tbody.find('tr:first td:first').attr('title'), 'item 0');
+            start();
+        });
+
     });
 
     module('all the marbles');
