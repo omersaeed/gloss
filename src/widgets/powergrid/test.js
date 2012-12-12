@@ -1189,7 +1189,7 @@ define([
             params: {limit: 25},
             gridOptions: {
                 infiniteScroll: true,
-                infiniteScrollLimit: 300
+                increment: 300
             }
         }).then(function(g, options) {
             // set height and widths for visual resize testing
@@ -1208,7 +1208,7 @@ define([
             $rowWrapper.scrollTop($rowWrapper.height());
             setTimeout(function() {
                 var newModelCount = g.get('models').length,
-                    newLimit = limit + g.get('infiniteScrollLimit');
+                    newLimit = limit + g.get('increment');
 
                 equal(newModelCount, newLimit, 'new number of models has increased to the expectd value');
                 start();

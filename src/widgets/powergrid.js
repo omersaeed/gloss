@@ -46,7 +46,7 @@ define([
             // this attribute tells the grid to load more data when scrolled to
             // the bottom of the grid
             infiniteScroll: false,
-            infiniteScrollLimit: 50
+            increment: 50
         },
 
         template: template,
@@ -114,7 +114,7 @@ define([
                     rowHeight = $rows.height(),
                     rowTableHeight = $rowTable.height(),
                     scrollBottom = rowTableHeight - rowHeight - rowTop,
-                    infiniteScrollLimit = self.get('infiniteScrollLimit'),
+                    increment = self.get('increment'),
                     collection = self.get('collection');
 
                 if (!collection || !self.get('infiniteScroll') || //  - only valid if there is a collection and infiniteScroll is set
@@ -125,7 +125,7 @@ define([
                 
                 //  - check if reached bottom of table for loading more data
                 if (scrollBottom <= 0) {
-                    var limit = (collection.query.params.limit || 0) + infiniteScrollLimit;
+                    var limit = (collection.query.params.limit || 0) + increment;
                     collection.query.params.limit = limit;
 
                     self.scrollLoadSpinner.disable();
