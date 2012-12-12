@@ -216,7 +216,7 @@ define([
                 //  - TODO: make this a string value
                 var loadingRowHtml, text = 'Loading ...';
 
-                if (rows.length === this._isAllDataLoaded()) {
+                if (this._isAllDataLoaded()) {
                     text = 'All objects loaded';
                 }
                 loadingRowHtml = [
