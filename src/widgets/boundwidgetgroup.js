@@ -4,8 +4,9 @@ define([
     'bedrock/class',
     './../core/eventset',
     './widgetgroup',
+    './../util/errorUtils',
     'strings'
-], function($, _, Class, EventSet, WidgetGroup, strings) {
+], function($, _, Class, EventSet, WidgetGroup, ErrorUtils, strings) {
     var isArray = $.isArray, isFunction = _.isFunction, isPlainObject = $.isPlainObject, isString = _.isString;
     return WidgetGroup.extend({
         defaults: {
@@ -145,16 +146,9 @@ define([
         processErrors: function(model, response, xhr) {
             var self = this,
                 messageList = this.options.messageList,
-                globalErrors = response && response[0],
-                structuralErrors = response && response[1],
-                tokensToStrings = function(errors) {
-                    return _.map(errors, function(error) {
-                        return error.message ||
-                            (strings.errors && error.token in strings.errors?
-                                strings.errors[error.token] :
-                                error.token);
-                    });
-                };
+                structuralErrors = response && response[1];
+
+            ErrorUtils.processGlobalErrors(response, xhr, messageList, 'invalid');
             if (structuralErrors) {
                 if (self.options.structuralErrorHandler) {
                     self.options.structuralErrorHandler(self, structuralErrors);
@@ -171,18 +165,6 @@ define([
                             messageList.append('invalid', messages);
                         }
                     });
-                }
-            }
-            if (messageList) {
-                if (globalErrors) {
-                    messageList.append('invalid', tokensToStrings(globalErrors));
-                } else if (xhr && xhr.status === 500) {
-                    messageList.append('invalid', xhr.statusText); // empty 500
-                } else {
-                    // don't know how we could get here...
-                    messageList.append('invalid',
-                            (strings.errors && strings.errors.invalid) ||
-                            'there was an error');
                 }
             }
         },
