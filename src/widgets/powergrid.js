@@ -118,8 +118,8 @@ define([
                     collection = self.get('collection');
 
                 if (!collection || !self.get('infiniteScroll') || //  - only valid if there is a collection and infiniteScroll is set
-                    self.get('models').length === self._getTotal() || //  - already loaded all the data
-                    scrollLoadDfd && scrollLoadDfd.state() === 'pending') {//  - if currenlty loading then do nothing
+                    scrollLoadDfd && scrollLoadDfd.state() === 'pending' || //  - if currenlty loading then do nothing
+                    self._isAllDataLoaded()) {//  - already loaded all the data
                     return;
                 }
                 
@@ -136,17 +136,10 @@ define([
         },
 
         //  - this function is used to determine if all that objects in a collection have been loaded
-        //  - it should be overriden in the two layer search API case see the tests for an example
-        _getTotal: function() {
-            return (this.get('collection')) ? this.get('collection').total : 0;
-        },
-
-        _setRowTableHeight: function() {
-            var $header = this.$el.find('.header-wrapper'),
-                $rows = this.$el.find('.row-wrapper');
-            if ($rows.height() !== (this.$el.height() - $header.height())) {
-                $rows.height(this.$el.height() - $header.height());
-            }
+        //  - it should be overriden in the two layer search API case
+        _isAllDataLoaded: function() {
+            var total = (this.get('collection')) ? this.get('collection').total : 0;
+            return this.get('models').length === total;
         },
 
         _isFiltered: function() {
@@ -196,6 +189,14 @@ define([
             this.select(clickedModel);
         },
 
+        _setRowTableHeight: function() {
+            var $header = this.$el.find('.header-wrapper'),
+                $rows = this.$el.find('.row-wrapper');
+            if ($rows.height() !== (this.$el.height() - $header.height())) {
+                $rows.height(this.$el.height() - $header.height());
+            }
+        },
+
         _rerender: function() {
             var i, l, rows = [],
                 columns = this.get('columnModel'),
@@ -215,7 +216,7 @@ define([
                 //  - TODO: make this a string value
                 var loadingRowHtml, text = 'Loading ...';
 
-                if (rows.length === this._getTotal()) {
+                if (rows.length === this._isAllDataLoaded()) {
                     text = 'All objects loaded';
                 }
                 loadingRowHtml = [
