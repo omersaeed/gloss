@@ -47,6 +47,7 @@ define([
             if(self.spinner) {
                 self.spinner.stop();
             }
+            return this;
         },
         disable: function() {
             var self = this;
@@ -59,6 +60,7 @@ define([
                     self.spinner.spin(self.options.target);
                 }
             }
+            return this;
         },
         updateWidget:function (updated) {
             var self = this;
