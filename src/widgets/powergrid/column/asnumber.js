@@ -24,6 +24,13 @@ define([
         });
 
         this.formatValue = asNumber.format;
+
+        this.getTitle = function(formatted, value) {
+            return value == null? '' :
+                format.number(value, this.get('decimalPlaces',
+                                     this.get('decimalPoint'),
+                                     this.get('thousandsSep')));
+        };
     }
 
     asNumber.format = function(value, model) {
