@@ -13,10 +13,10 @@ define([
     './spinner',
     './../util/sort',
     'tmpl!./powergrid/powergrid.mtpl',
-    // 'tmpl!./powergrid/spinnerTr.mtpl',
+    'tmpl!./powergrid/spinnerTr.mtpl',
     'css!./powergrid/powergrid.css'
 ], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
-    sort, template/*, loadingRowTmpl*/) {
+    sort, template, loadingRowTmpl) {
 
     var EmptyColumnModel, PowerGrid,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
@@ -213,24 +213,10 @@ define([
             }
 
             if (this.get('infiniteScroll') && rows.length) {
-                //  - TODO: make this a string value
-                var loadingRowHtml, text = 'Loading ...';
-
-                if (this._isAllDataLoaded()) {
-                    text = 'All objects loaded';
-                }
-                loadingRowHtml = [
-                                    "<tr><td style='height: 26px; text-align: center' colspan=5>",
-                                    "<span class=loading-text style='margin-right: 25px;'>" + text + "</span>",
-                                    "<span class=micro-spinner style='display: inline-block; vertical-align: middle;'></span>",
-                                    "</td></tr>"
-                                ].join('');
-                rows.push(loadingRowHtml);
-                //  - using a template breaks the spinner position. lets revisit this later
-                // rows.push(loadingRowTmpl({
-                //     grid: this,
-                //     text: text
-                // }));
+                rows.push(loadingRowTmpl({
+                    grid: this,
+                    text: (this._isAllDataLoaded()) ? 'All objects loaded' : 'Loading ...'
+                }));
             }
 
             this.$tbody.html(rows.join(''));

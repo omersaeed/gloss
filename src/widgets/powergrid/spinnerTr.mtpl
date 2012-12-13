@@ -2,8 +2,8 @@
 <tr>
 	<td style='height: 26px; text-align: center' colspan=<%=columns.length;%>>
 		<span class=loading-text style='margin-right: 25px;'><%=text%></span>
-		<% if (grid.get('models').length === grid._getTotal()) { %>
-			<span class=micro-spinner></span>
+		<% if (!grid._isAllDataLoaded()) { %>
+			<span class=micro-spinner style='display: inline-block; vertical-align: middle;'></span>
 		<% } %>
 	</td>
 </tr>
