@@ -222,7 +222,7 @@ define([
                 loadingRowHtml = [
                                     "<tr><td style='height: 26px; text-align: center' colspan=5>",
                                     "<span class=loading-text style='margin-right: 25px;'>" + text + "</span>",
-                                    "<span class=micro-spinner></span>",
+                                    "<span class=micro-spinner style='display: inline-block; vertical-align: middle;'></span>",
                                     "</td></tr>"
                                 ].join('');
                 rows.push(loadingRowHtml);
