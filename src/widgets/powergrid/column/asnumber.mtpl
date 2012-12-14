@@ -1,8 +1,8 @@
-<% if (data.value != null) { %>
-    <span class=integer><%= data.integer %></span><%
+<% if (data.value != null) {
+    %><span class=integer><%= data.integer %></span><%
 
   if (data.places) {
     %>.<%
-    %><span class="decimal<%=data.places || ''%>"><%= data.decimal %></span>
-  <% } %>
-<% } %>
+    %><span class="decimal<%=data.places || ''%>"><%= data.decimal %></span><%
+  }
+} %>
