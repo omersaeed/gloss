@@ -1,9 +1,10 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './../widgetgroup',
     './../collectionviewable',
     'tmpl!./powergridsearch.mtpl'
-], function($, WidgetGroup, CollectionViewable, template) {
+], function($, _, WidgetGroup, CollectionViewable, template) {
     var PowerGridSearch = WidgetGroup.extend({
         defaults: {
             placeholder: 'Enter terms to search...',
@@ -27,11 +28,25 @@ define([
             return $.extend(true, {}, this.options.collection.query.params);
         },
         _makeQueryParams: function() {
-            var p = {query: null}, value = this.getWidget('q').getValue().trim();
+            var p = {query: {}},
+                value = this.getWidget('q').getValue().trim(),
+                previousParams = this._getPreviousParams(),
+                result = {};
+
             if (value) {
-                (p.query = {})[this.options.searchParam] = value;
+                p.query[this.options.searchParam] = value;
             }
-            return $.extend(true, {}, this._getPreviousParams(), p);
+
+            // to check if the previous params had a query parameter then remove search param from it
+            if (previousParams.query && _.has(previousParams.query, this.options.searchParam)) {
+                previousParams.query = _.omit(previousParams.query, this.options.searchParam);
+            }
+
+            result = $.extend(true, result, previousParams, p);
+
+            // If query parameter is empty then delete it
+            result.query = _.isEmpty(result.query) ? null : result.query;
+            return result;
         },
         _onClickClear: function() {
             var clear = this.getWidget('clear'),

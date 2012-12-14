@@ -875,6 +875,50 @@ define([
         });
     });
 
+    test('testing _makeQueryParams for pre-filtered collection', function() {
+        var cutoff = 500,
+            collection = Example.collection({query : {'required_field':'123'}}),
+            search = MySearch(undefined, {collection: collection}).appendTo('#qunit-fixture'),
+            queryParams;
+
+        // first apply a filter and make sure previous filter and new filter both are present
+        search.getWidget('q').setValue(cutoff);
+        queryParams = search._makeQueryParams();
+
+        ok (queryParams.query !== null);
+        equal(_.isEmpty(queryParams.query), false);
+        ok(_.has(queryParams.query, 'required_field'));
+        ok(_.has(queryParams.query, 'integer_field__gt'));
+
+
+        // Now clear filter and make sure previous filter remains but new filter gets removed
+        search.getWidget('q').setValue('');
+        queryParams = search._makeQueryParams();
+        equal(_.isEmpty(queryParams.query), false);
+        ok(_.has(queryParams.query, 'required_field'));
+        equal(_.has(queryParams.query, 'integer_field__gt'), false);
+    });
+
+    test('testing _makeQueryParams for clear search scenario', function() {
+        var cutoff = 500,
+            collection = Example.collection(),
+            search = MySearch(undefined, {collection: collection}).appendTo('#qunit-fixture'),
+            queryParams;
+
+        // first apply a filter and make sure previous filter is part of the params
+        search.getWidget('q').setValue(cutoff);
+        queryParams = search._makeQueryParams();
+
+        ok (queryParams.query !== null);
+        equal(_.isEmpty(queryParams.query), false);
+        ok(_.has(queryParams.query, 'integer_field__gt'));
+
+        // Now clear filter and make sure query element is null
+        search.getWidget('q').setValue('');
+        queryParams = search._makeQueryParams();
+        ok (queryParams.query == null);
+    });
+
     // we only want to run the 'checkbox column' module if we're in a browser
     // where triggering a 'click' event on a checkbox subsequently triggers a
     // 'change' event. since we're lazy and busy, we're just checking for
