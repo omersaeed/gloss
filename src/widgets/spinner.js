@@ -25,7 +25,6 @@ define([
         },
         nodeTemplate: '<div></div>',
         spinner: null,
-        customOpts: null,
         visible: false,
         create:function () {
             var self = this;
@@ -34,11 +33,6 @@ define([
             if(!self.options.deferInstantiation) {
                 self.instantiate();
             }
-        },
-        
-        updateOpts: function(params) {
-            var self = this;
-            self.customOpts = params;
         },
         
         enable: function() {
@@ -71,11 +65,7 @@ define([
             // Instantiate only once and also when needed to ensure that the spinner gets rendered correctly.
             var self = this;
             if(!self.spinner) {
-                if(self.customOpts) {
-                    self.spinner = new Spinner(self.customOpts);
-                } else {
-                    self.spinner = new Spinner(self.options.opts);
-                }
+                self.spinner = new Spinner(self.options.opts);
             }
             
             // Contextually user may have enabled / disabled widgets so apply the setting now.
