@@ -23,7 +23,7 @@ define([
             width: null
         },
         create: function() {
-            var self = this, options = self.options, $replacement;
+            var self = this, options = self.options, $replacement, disabled;
             this._super();
 
             self.entry = null;
@@ -43,6 +43,8 @@ define([
                 });
             }
 
+            disabled = self.$node.is(':disabled');
+
             if (self.node.tagName.toLowerCase() === 'select') {
                 self.$node.replaceWith($replacement = $('<div></div>'));
                 $replacement
@@ -53,6 +55,9 @@ define([
                 self.$node.empty();
             }
             self.$node.addClass('selectbox');
+            if (disabled) {
+                self.disable();
+            }
 
             if (self.$node.attr('tabindex') == null) {
                 self.$node.attr('tabindex', 0);

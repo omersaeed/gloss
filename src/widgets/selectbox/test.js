@@ -6,8 +6,10 @@ define([
     './../../data/mock',
     './../../test/api/v1/targetvolume',
     'text!./../../test/api/v1/test/fixtures/targetvolume.json',
-    'text!./selectbox.html'
-], function($, SelectBox, Form, Mock, TargetVolume, targetvolume_json, html) {
+    'text!./selectbox.html',
+    'text!./disabledselectbox.html'
+], function($, SelectBox, Form, Mock, TargetVolume, targetvolume_json, html,
+    disabledhtml) {
 
     module("Select Box");
 
@@ -106,6 +108,12 @@ define([
                 start();
             });
         }, 50);
+    });
+
+    asyncTest('select box from disabled select element is still effin disabled', function() {
+        var sb = SelectBox($(disabledhtml).appendTo('#qunit-fixture'));
+        ok(sb.getState('disabled'), 'selectbox widget is disabled');
+        start();
     });
 
     start();
