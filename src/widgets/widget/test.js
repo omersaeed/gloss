@@ -46,6 +46,49 @@ define([
         equal(c.options.bar, 'default bar value for C');
     });
 
+    //  - instantiating multiple instances of the same widget with different defaults extends
+    //  - the defaults properly
+    test('creating multiple instances of a widget with new defaults', function() {
+        var A, a1, a2, a3,
+            aOpts = {
+                className: 'widget-a1',
+                length: 10,
+                lines: 10,
+                radius: 15,
+                width: 5
+            },
+            a2Opts = {
+                className: 'widget-a2',
+                length: 3,
+                lines: 13,
+                radius: 3,
+                width: 2
+            };
+            
+        A = Widget.extend({
+            defaults: {
+                name: 'default name value for A',
+                opts: aOpts
+            }
+        });
+        a1 = A();
+        a2 = A(null, {
+            name: 'non-default name value for A - a2',
+            opts: a2Opts
+        });
+        a3 = A(null, {name: 'non-default name value for A - a3'});
+
+        //  - make sure defaults didn't get overwritten
+        ok(!_.isEqual(aOpts, a2Opts), 'aOpts and a2Opts are different');
+
+        ok(_.isEqual(a1.options.opts, aOpts), 'a1 and aOpts are equal');
+        ok(_.isEqual(a2.options.opts, a2Opts), 'a2 and a2Opts are equal');
+        ok(!_.isEqual(a1.options.opts, a2.options.opts), 'a1 and a2 opts are different');
+        ok(_.isEqual(a3.options.opts, aOpts), 'a3 and aOpts are equal');
+        ok(_.isEqual(a3.options.opts, a1.options.opts), 'a3 and a1 opts are equal');
+        ok(!_.isEqual(a3.options, a1.options), 'a3 and a1 options are different');
+    });
+
     test('mixins', function() {
         var Mixable = {
                 defaults: {
