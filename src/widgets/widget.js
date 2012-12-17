@@ -5,29 +5,10 @@ define([
     'bedrock/class',
     'css!./../style/base.css'
 ], function($, ui, _, Class) {
-    var isArray = _.isArray, isPlainObject = $.isPlainObject, slice = Array.prototype.slice;
+    var isArray = _.isArray, slice = Array.prototype.slice;
 
     var inBody = function($node) {
         return $node.parents('body').length > 0;
-    };
-
-    var recursiveMerge = function(original) {
-        var addition, name, value;
-        for (var i = 1, l = arguments.length; i < l; i++) {
-            addition = arguments[i];
-            if (addition != null) {
-                for (name in addition) {
-                    if (addition.hasOwnProperty(name)) {
-                        value = addition[name];
-                        if (isPlainObject(original[name]) && isPlainObject(value)) {
-                            value = recursiveMerge(original[name], value);
-                        }
-                        original[name] = value;
-                    }
-                }
-            }
-        }
-        return original;
     };
 
     var Registry = Class.extend({
@@ -350,7 +331,7 @@ define([
         __new__: function(constructor, base, prototype, mixins) {
             var defaults, i, mixin;
             if (base.prototype.defaults != null && prototype.defaults != null) {
-                prototype.defaults = recursiveMerge({}, base.prototype.defaults, prototype.defaults);
+                prototype.defaults = $.extend(true, {}, base.prototype.defaults, prototype.defaults);
             }
             if (mixins) {
                 for (i = mixins.length-1; i >= 0; i--) {
@@ -368,11 +349,11 @@ define([
                                 _.keys(base.prototype.defaults)),
                             overriddenKeys = _.intersection(addedKeys, _.keys(mixin.defaults));
 
-                        recursiveMerge(intermediate, prototype.defaults, mixin.defaults);
+                        $.extend(true, intermediate, prototype.defaults, mixin.defaults);
                         for (var k in overriddenKeys) {
                             if (overriddenKeys.hasOwnProperty(k)) {
-                                if (isPlainObject(prototype.defaults[overriddenKeys[k]])) {
-                                    recursiveMerge(intermediate[overriddenKeys[k]], prototype.defaults[overriddenKeys[k]]);
+                                if ($.isPlainObject(prototype.defaults[overriddenKeys[k]])) {
+                                    $.extend(true, intermediate[overriddenKeys[k]], prototype.defaults[overriddenKeys[k]]);
                                 } else {
                                     intermediate[overriddenKeys[k]] = prototype.defaults[overriddenKeys[k]];
                                 }
@@ -390,7 +371,7 @@ define([
                 _.extend(this, extension);
             }
 
-            this.options = opts = recursiveMerge({}, this.defaults, options);
+            this.options = opts = $.extend(true, {}, this.defaults, options);
 
             this._super.apply(this, arguments);
 
@@ -548,7 +529,7 @@ define([
 
             opts = opts || {};
 
-            recursiveMerge(this.options, params);
+            $.extend(true, this.options, params);
             if (!opts.silent) {
                 this.update(params);
             }
