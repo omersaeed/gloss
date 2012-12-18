@@ -12,8 +12,8 @@ define([
         return $node.parents('body').length > 0;
     };
 
-    //  - recursiveMerge has a reference issue so it should not be used to extend objects
-    //  - that have a reference outside of the scope of it's use
+    //  - jquery does not extend arrays on a deep copy so we are using recursiveMerge
+    //  - http://forum.jquery.com/topic/jquery-extend-modifies-but-not-replaces-array-properties-on-deep-copy
     var recursiveMerge = function(original) {
         var addition, name, value;
         for (var i = 1, l = arguments.length; i < l; i++) {
@@ -23,7 +23,7 @@ define([
                     if (addition.hasOwnProperty(name)) {
                         value = addition[name];
                         if (isPlainObject(original[name]) && isPlainObject(value)) {
-                            value = recursiveMerge(original[name], value);
+                            value = recursiveMerge($extend({}, original[name]), value);
                         }
                         original[name] = value;
                     }
@@ -353,7 +353,7 @@ define([
         __new__: function(constructor, base, prototype, mixins) {
             var defaults, i, mixin;
             if (base.prototype.defaults != null && prototype.defaults != null) {
-                prototype.defaults = $extend(true, {}, base.prototype.defaults, prototype.defaults);
+                prototype.defaults = recursiveMerge({}, base.prototype.defaults, prototype.defaults);
             }
             if (mixins) {
                 for (i = mixins.length-1; i >= 0; i--) {
@@ -371,11 +371,11 @@ define([
                                 _.keys(base.prototype.defaults)),
                             overriddenKeys = _.intersection(addedKeys, _.keys(mixin.defaults));
 
-                        $extend(true, intermediate, prototype.defaults, mixin.defaults);
+                        recursiveMerge(intermediate, prototype.defaults, mixin.defaults);
                         for (var k in overriddenKeys) {
                             if (overriddenKeys.hasOwnProperty(k)) {
                                 if (isPlainObject(prototype.defaults[overriddenKeys[k]])) {
-                                    $extend(true, intermediate[overriddenKeys[k]], prototype.defaults[overriddenKeys[k]]);
+                                    recursiveMerge(intermediate[overriddenKeys[k]], prototype.defaults[overriddenKeys[k]]);
                                 } else {
                                     intermediate[overriddenKeys[k]] = prototype.defaults[overriddenKeys[k]];
                                 }
@@ -393,7 +393,7 @@ define([
                 _.extend(this, extension);
             }
 
-            this.options = opts = $extend(true, {}, this.defaults, options);
+            this.options = opts = recursiveMerge({}, this.defaults, options);
 
             this._super.apply(this, arguments);
 
