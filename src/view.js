@@ -86,6 +86,20 @@ define([
             }
 
             if ($el && $el.children().length) {
+                // this is an anti-pattern. if you're instantiating a view, it
+                // should not be around an existing DOM structure. a single node is
+                // appropriate, but views should just be black boxes, so if
+                // you've got an already formed DOM *tree*, you shouldnt create
+                // a view around it.
+                //
+                // the case where you do want to instantiate UI elements around
+                // an existing DOM structure is for widgets (for example,
+                // creating a ToggleGroup from an existing DOM structure of
+                // <button> elements).
+                //
+                // right now SimpleView leverages this to prevent
+                // double-rendering, but we should just integrate SimpleView
+                // into View.
                 this.el = this.$el[0];
             } else {
                 this.render();
