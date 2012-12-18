@@ -193,7 +193,17 @@ define([
             return this;
         },
 
-        update: function() { }
+        update: function() {
+            return this;
+        },
+
+        updateAll: function() {
+            this.update(_.reduce(this.options, function(memo, val, key) {
+                memo[key] = true;
+                return memo;
+            }, {}));
+            return this;
+        }
     });
 
     // delegate to jqeury for event methods on/one/off/trigger
