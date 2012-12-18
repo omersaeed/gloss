@@ -55,14 +55,16 @@ define([
                 length: 10,
                 lines: 10,
                 radius: 15,
-                width: 5
+                width: 5,
+                arr: ['a', 'test', 'array']
             },
             a2Opts = {
                 className: 'widget-a2',
                 length: 3,
                 lines: 13,
                 radius: 3,
-                width: 2
+                width: 2,
+                arr: []
             };
             
         A = Widget.extend({
