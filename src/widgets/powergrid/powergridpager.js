@@ -1,9 +1,10 @@
 define([
     'vendor/jquery',
+    'vendor/underscore',
     './../../view',
     'tmpl!./powergridpager/powergridpager.mtpl',
     'css!./powergridpager/powergridpager.css'
-], function ($, View, template) {
+], function ($, _, View, template) {
 
     var PowerGridPager = View.extend({
         defaults:{
@@ -32,7 +33,7 @@ define([
             self.on('keydown', '.current-page input', function(event) {
                 var node = $(this),
                     page = node.val();
-                if(event.which == 13) {
+                if(event.which === 13) {
                     node.blur();
                     self.jump(page);
                 }
