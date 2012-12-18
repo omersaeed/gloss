@@ -89,6 +89,25 @@ define([
         ok(!_.isEqual(a3.options, a1.options), 'a3 and a1 options are different');
     });
 
+    test('setting new value for option', function() {
+        var A = Widget.extend({
+                defaults: {
+                    name: 'default name'
+                }
+            }),
+            a = A();
+
+        a.set('name', 'a new name');
+        equal(a.options.name, 'a new name', 'setting the name property to a new value works');
+
+        var arr = ['a', 'new', 'array', 'object'];
+        a.set('arr', arr);
+        ok(_.isEqual(a.options.arr, arr), 'setting a new array property works');
+
+        a.set('arr', []);
+        equal(a.options.arr.length, 0, 'setting the array property to and empty array works');
+    });
+
     test('mixins', function() {
         var Mixable = {
                 defaults: {
