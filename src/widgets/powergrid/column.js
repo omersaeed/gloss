@@ -71,9 +71,13 @@ define([
         },
 
         _instantiateResizeHandle: function() {
+            var $resize;
             if (this.get('resizable')) {
-                this.resize = ResizeHandle(this.$el.find('.resize'))
-                    .on('dragend', _.bind(this._onResize, this));
+                $resize = this.$el.find('.resize');
+                if (!this.resize || $resize[0] !== this.resize.node) {
+                    this.resize = ResizeHandle(this.$el.find('.resize'))
+                        .on('dragend', _.bind(this._onResize, this));
+                }
             }
         },
 

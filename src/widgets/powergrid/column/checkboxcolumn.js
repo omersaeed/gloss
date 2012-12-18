@@ -13,17 +13,19 @@ define([
         },
 
         init: function() {
-            this._super.apply(this, arguments);
-            var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
-
             _.bindAll(this, '_onChange', '_onHeaderChange',
                         '_onModelChange', '_onPropChange', '_unCheckHeader');
+
+            this._super.apply(this, arguments);
+            var delegateSelector = 'tbody tr .'+this.columnClass()+' input';
 
             if (this.get('prop') == null) {
                 this.set({prop: '_' + this.el.id + '_checked'},
                     {silent: true});
             }
-            this._postRenderCheckbox();
+            if (!this.checkbox) {
+                this._postRenderCheckbox();
+            }
             this.get('grid')
                 .on('change', delegateSelector, this._onChange)
                 .on('mouseup', delegateSelector, function(evt) {

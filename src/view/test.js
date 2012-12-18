@@ -157,16 +157,23 @@ define([
 
     var widgetize = function($el) {
         var DisableSquashingView = View.extend({ disable: function() {} });
-        return {
-            created: DatePicker($el.find('[name=created]')),
-            chooser: ToggleGroup($el.find('[name=chooser]')),
-            query: TextBox($el.find('[name=query]')),
-            preview: View({$el: $el.find('.preview')}),
-            selected: CheckBox($el.find('[name=selected]')),
-            disablesquashingview: DisableSquashingView({
+        var created = DatePicker($el.find('[name=created]'));
+        var chooser = ToggleGroup($el.find('[name=chooser]'));
+        var query = TextBox($el.find('[name=query]'));
+        var preview = View({$el: $el.find('.preview')});
+        var selected = CheckBox($el.find('[name=selected]'));
+        var disablesquashingview = DisableSquashingView({
                 $el: $el.find('.disablesquashingview')
-            }),
-            wontbedisabled: CheckBox($el.find('[name=wont-be-disabled]'))
+            });
+        var wontbedisabled = CheckBox($el.find('[name=wont-be-disabled]'));
+        return {
+            created: created,
+            chooser: chooser,
+            query: query,
+            preview: preview,
+            selected: selected,
+            disablesquashingview: disablesquashingview,
+            wontbedisabled: wontbedisabled
         };
     };
 

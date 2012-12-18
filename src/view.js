@@ -68,27 +68,28 @@ define([
             var el, $el, viewName;
 
             options = _.extend({}, options);
-            el = options.el;
-            $el = options.$el;
+            $el = (options.$el || options.el) && $(options.$el || options.el);
             delete options.el;
             delete options.$el;
 
             this.set($.extend(true, {}, this.defaults, options), {silent: true});
 
-            this.$el = $($el || el);
-
-            if ((viewName = this.$el.attr('view-name'))) {
-                throw new Error('can\'t re-instantiate view on el: '+viewName);
+            // this.$el = $($el || el);
+            if ($el) {
+                this.$el = $el;
+                if ((viewName = $el.attr('view-name'))) {
+                    throw new Error('can\'t re-instantiate view on el: '+viewName);
+                }
+                if ($el.length > 1) {
+                    throw Error('views must be initialized with only one DOM el');
+                }
             }
 
-            if (!this.$el.length) {
-                this.$el = $(this._renderHTML());
-            } else if (this.$el.length > 1) {
-                throw Error('views must be initialized with only one DOM el');
-            } else if (!this.$el.children().length) {
+            if ($el && $el.children().length) {
+                this.el = this.$el[0];
+            } else {
                 this.render();
             }
-            this.el = this.$el[0];
 
             dbgview['v' + (++viewCount)] = this;
 
@@ -183,9 +184,15 @@ define([
         },
 
         render: function() {
-            var $tmp = $(this._renderHTML()),
+            var origClass, $tmp = $(this._renderHTML());
+            if (this.$el) {
                 origClass = this.$el.attr('class');
-            this.$el.html($tmp.html()).addClass($tmp.attr('class'));
+                this.$el.html($tmp.html()).addClass($tmp.attr('class'));
+            } else {
+                this.$el = $tmp;
+            }
+            this.el = this.$el[0];
+            return this;
         },
 
         show: function() {

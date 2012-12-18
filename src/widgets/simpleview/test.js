@@ -5,7 +5,7 @@ define([
     './../simpleview'
 ], function($, _, SimpleView) {
 
-    var template = _.template('<div><% this.set("updateRanBeforeRender", this.get("updateRan")); this.set("renderCount", this.get("renderCount")+1); %><span class=expected></span></div>'),
+    var template = _.template('<form class=myview><% this.set("updateRanBeforeRender", this.get("updateRan")); this.set("renderCount", this.get("renderCount")+1); %><span class=expected></span></form>'),
         MyView = SimpleView.extend({
             defaults: {foo: 123, renderCount: 0},
             template: template,
@@ -30,6 +30,10 @@ define([
             ok(view.get('updateRanBeforeRender'), 'update ran before render');
             ok(view.get('defaultsPresent'), 'defaults are present');
             equal(view.$el.find('.expected').length, 1, 'expected span was present');
+            ok(view.$el.hasClass('myview'), 'classname is retained');
+            equal(view.$el[0].tagName.toLowerCase(), 'form', 'view is still a form');
+            ok(view.el.id, 'id has been set');
+            ok(view.$el.attr('view-name'), 'view-name has been set');
         };
 
     module('common patterns');
@@ -45,27 +49,27 @@ define([
     });
 
     test('pass in a detached $element', function() {
-        var $el, view = MyView({$el: ($el = $('<div>'))});
+        var $el, view = MyView({$el: ($el = $('<form>'))});
         tests(view);
         ok(view.el === $el[0], 'element is still there');
     });
 
     test('pass in an attached $element', function() {
         var $el, view = MyView({
-            $el: ($el = $('<div>').appendTo('#qunit-fixture'))
+            $el: ($el = $('<form>').appendTo('#qunit-fixture'))
         });
         tests(view);
         ok(view.el === $el[0], 'element is still there');
     });
 
     test('pass in a detached element', function() {
-        var el, view = MyView({el: (el = $('<div>')[0])});
+        var el, view = MyView({el: (el = $('<form>')[0])});
         tests(view);
         ok(view.el === el, 'element is still there');
     });
 
     test('pass in an attached element', function() {
-        var el, view = MyView({el: (el = $('<div>').appendTo('#qunit-fixture')[0])});
+        var el, view = MyView({el: (el = $('<form>').appendTo('#qunit-fixture')[0])});
         tests(view);
         ok(view.el === el, 'element is still there');
     });
