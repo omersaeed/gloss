@@ -11,6 +11,7 @@ define([
             if (!options.$el && !options.el) {
                 options.$el = $('<div><div></div></div>');
             }
+            this.waitForInitialRender = $.Deferred();
             this._super.apply(this, [options].concat(args));
             if ($el) {
                 this.$el = $el;
@@ -29,6 +30,7 @@ define([
                 this.$el.attr('view-name', viewName);
                 this.el.id = id;
             }
+            this.waitForInitialRender.resolve();
         },
         pauseRender: function() {
             this._pauseRender = true;
