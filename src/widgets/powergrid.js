@@ -118,6 +118,7 @@ define([
 
                 if (!collection || !self.get('infiniteScroll') || //  - only valid if there is a collection and infiniteScroll is set
                     scrollLoadDfd && scrollLoadDfd.state() === 'pending' || //  - if currenlty loading then do nothing
+                    self.get('models').length <= 0 || // - scrolling to load 'more' data only makes sense when there is data to scroll
                     self._isAllDataLoaded()) {//  - already loaded all the data
                     return;
                 }
