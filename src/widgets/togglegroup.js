@@ -50,7 +50,7 @@ define([
 
             self._super();
 
-            if(self.options.items !== null) {
+            if(self.options.items != null) {
                 self.$node.append($(tmpl(self.options.items)));
             }
 

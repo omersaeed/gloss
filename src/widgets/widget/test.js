@@ -46,6 +46,31 @@ define([
         equal(c.options.bar, 'default bar value for C');
     });
 
+    test('options are deeply extended without reference issue', function() {
+        var A, a1, a2, a3,
+            aOpts = {
+                className: 'widget-a1',
+                opt: {
+                    a1: 'widget-a1 deepOpt',
+                    arr: ['an', 'array']
+                }
+            },
+            a2Opts = {
+                className: 'widget-a2',
+                opt: {
+                    a2: 'widget-a2 deepOpt',
+                    arr: []
+                }
+            };
+            
+        A = Widget.extend({
+            defaults: { opts: aOpts }
+        });
+        a1 = A();
+        a2 = A(null, { opts: a2Opts });
+        equal(a1.options.opts.opt.a1, a2.options.opts.opt.a1);
+    });
+
     //  - instantiating multiple instances of the same widget with different defaults extends
     //  - the defaults properly
     test('creating multiple instances of a widget with new defaults', function() {
