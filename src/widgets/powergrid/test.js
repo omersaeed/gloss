@@ -1317,6 +1317,35 @@ define([
 
     });
 
+    module('fixed header');
+
+    // // because of DAQ-553
+    // asyncTest('columns arent hidden', function() {
+    //     var $el = $('<div/>').height(100);
+    //     setup({gridOptions: {$el: $el}, appendTo: null}).then(function(g) {
+    //         var lowestVisible, lowestRow;
+
+    //         g.appendTo('body');
+
+    //         // scroll down, make sure we scroll all the way down by trying a
+    //         // couple different elements
+    //         g.$el.find('.row-wrapper').scrollTop(1000).end()
+    //              .find('.rows').scrollTop(1000);
+
+    //         // get the very bottom visible edge of the grid
+    //         lowestVisible = g.$el.offset().top + g.$el.height();
+    //         lowestRow = g.$el.find('.rows tr:last').offset().top +
+    //                     g.$el.find('.rows tr:last').outerHeight();
+
+    //         ok(lowestRow <= lowestVisible,
+    //             'last row (' + lowestRow +
+    //             ') is higher than the bottom of the grid (' +
+    //             lowestVisible + ')');
+
+    //         start();
+    //     });
+    // });
+
     module('all the marbles');
 
     var MarblesColumn = Column.extend({
