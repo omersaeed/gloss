@@ -194,14 +194,6 @@ define([
             this.select(clickedModel);
         },
 
-        // _setRowTableHeight: function() {
-        //     var $header = this.$el.find('.header-wrapper'),
-        //         $rows = this.$el.find('.row-wrapper');
-        //     if ($rows.height() !== (this.$el.height() - $header.height())) {
-        //         $rows.height(this.$el.height() - $header.height());
-        //     }
-        // },
-
         _rerender: function() {
             var i, l, rows = [],
                 columns = this.get('columnModel'),

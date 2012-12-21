@@ -1372,6 +1372,34 @@ define([
         });
     });
 
+    module('miscellaneous');
+
+    asyncTest('bottom scroll bar not visible when vertical scrollbar appears', function() {
+        setup({
+            params: {limit: 300},
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
+        }).then(function(g) {
+            // set height and widths for visual resize testing
+            g.$el.height(400);
+            g.$el.width(800);
+            // rerender so the height and width changes are pickued up
+            g.rerender();
+
+            var $rows = g.$el.find('.row-inner-wrapper'),
+                $header = g.$el.find('.header-wrapper'),
+                rowScrollHeight = $rows[0].scrollHeight,
+                rowHeight = $rows.height(),
+                rowScrollWidth = $rows[0].scrollWidth,
+                rowWidth = $rows.width() - scrollbar.width();
+
+            ok(rowScrollHeight > rowHeight, 'vertical scrollbar is visible');
+            //  - the +1 is because FF doesn't like this test case
+            ok((rowScrollWidth === rowWidth) || (rowScrollWidth === rowWidth+1), 'horizontal scrollbar is not visible');
+
+            start();
+        });
+    });
+
     module('all the marbles');
 
     var MarblesColumn = Column.extend({
@@ -1425,35 +1453,6 @@ define([
                 }
             });
             ok(true);
-            start();
-        });
-    });
-
-    module('miscellaneous');
-
-    asyncTest('bottom scroll bar not visible when vertical scrollbar appears', function() {
-        setup({
-            params: {limit: 300},
-            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
-        }).then(function(g) {
-            // set height and widths for visual resize testing
-            g.$el.height(400);
-            g.$el.width(800);
-            // rerender so the height and width changes are pickued up
-            g.rerender();
-            g._setRowTableHeight();
-            
-            var $rows = g.$el.find('.row-wrapper'),
-                $header = g.$el.find('.header-wrapper'),
-                rowScrollHeight = $rows[0].scrollHeight,
-                rowHeight = $rows.height(),
-                rowScrollWidth = $rows[0].scrollWidth,
-                rowWidth = $rows.width() - scrollbar.width();
-
-            ok(rowScrollHeight > rowHeight, 'vertical scrollbar is visible');
-            //  - the +1 is because FF doesn't like this test case
-            ok((rowScrollWidth === rowWidth) || (rowScrollWidth === rowWidth+1), 'horizontal scrollbar is not visible');
-
             start();
         });
     });
