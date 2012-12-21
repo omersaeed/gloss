@@ -99,22 +99,23 @@ define([
 
             var $header = this.$el.find('.header-wrapper'),
                 $rows = this.$el.find('.row-wrapper'),
+                $rowInnerWrapper = this.$el.find('.row-inner-wrapper'),
                 $rowTable = this.$el.find('.rows'),
                 scrollLoadDfd;
             //  - handle horizontal scroll
-            $rows.on('scroll', function(evt) {
+            $rowInnerWrapper.on('scroll', function(evt) {
                 var left = parseInt($header.css('left'), 10) || 0;
                 //  - check for horizontal scroll to align header and rows
-                if (left !== $rows.scrollLeft()) {
+                if (left !== $rowInnerWrapper.scrollLeft()) {
                     $header.css({
-                        left: -$rows.scrollLeft() + 'px'
+                        left: -$rowInnerWrapper.scrollLeft() + 'px'
                     });
                 }
             });
             //  - handle vertical scroll for infinite scrolling
-            $rows.on('scroll', function(evt) {
-                var rowTop = $rows.scrollTop(),
-                    rowHeight = $rows.height(),
+            $rowInnerWrapper.on('scroll', function(evt) {
+                var rowTop = $rowInnerWrapper.scrollTop(),
+                    rowHeight = $rowInnerWrapper.height(),
                     rowTableHeight = $rowTable.height(),
                     scrollBottom = rowTableHeight - rowHeight - rowTop,
                     increment = self.get('increment'),
@@ -126,7 +127,7 @@ define([
                     self._isAllDataLoaded()) {//  - already loaded all the data
                     return;
                 }
-                
+
                 //  - check if reached bottom of table for loading more data
                 if (scrollBottom <= 0) {
                     var limit = (collection.query.params.limit || 0) + increment;
@@ -193,13 +194,13 @@ define([
             this.select(clickedModel);
         },
 
-        _setRowTableHeight: function() {
-            var $header = this.$el.find('.header-wrapper'),
-                $rows = this.$el.find('.row-wrapper');
-            if ($rows.height() !== (this.$el.height() - $header.height())) {
-                $rows.height(this.$el.height() - $header.height());
-            }
-        },
+        // _setRowTableHeight: function() {
+        //     var $header = this.$el.find('.header-wrapper'),
+        //         $rows = this.$el.find('.row-wrapper');
+        //     if ($rows.height() !== (this.$el.height() - $header.height())) {
+        //         $rows.height(this.$el.height() - $header.height());
+        //     }
+        // },
 
         _rerender: function() {
             var i, l, rows = [],
@@ -493,7 +494,7 @@ define([
             }
             if (rerender) {
                 this.rerender();
-                this._setRowTableHeight();
+                // this._setRowTableHeight();
             }
             this.trigger('propchange', updated);
         }

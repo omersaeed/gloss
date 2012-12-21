@@ -11,9 +11,11 @@
     </div>
 
     <div class=row-wrapper>
-      <table class=rows>
-        <tbody></tbody>
-      </table>
+      <div class=row-inner-wrapper><%/* semmantic markup ftw! */%>
+        <table class=rows>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
 
   </div>

@@ -645,7 +645,6 @@ define([
         g.$el.width(800);
         // rerender so the height and width changes are pickued up
         g.rerender();
-        g._setRowTableHeight();
 
         Example.models.clear();
         g.set('collection', Example.collection());
@@ -1230,7 +1229,7 @@ define([
 
     asyncTest('scroll to bottom loads more data', function() {
         setup({
-            // appendTo: 'body',
+            appendTo: 'body',
             params: {limit: 25},
             gridOptions: {
                 infiniteScroll: true,
@@ -1242,11 +1241,10 @@ define([
             g.$el.width(800);
             // rerender so the height and width changes are pickued up
             g.rerender();
-            g._setRowTableHeight();
 
             var limit = options.params.limit,
                 modelCount = g.get('models').length,
-                $rowWrapper = g.$el.find('.row-wrapper'),
+                $rowWrapper = g.$el.find('.row-inner-wrapper'),
                 $rows = g.$el.find('.rows');
 
             equal(modelCount, limit, 'number of models is the same as the inital limit');
@@ -1320,13 +1318,10 @@ define([
 
     module('fixed header');
 
-    // // because of DAQ-553
-    // asyncTest('columns arent hidden', function() {
+    // asyncTest('vertical scrollbar not under header', function() {
     //     var $el = $('<div/>').height(100);
-    //     setup({gridOptions: {$el: $el}, appendTo: null}).then(function(g) {
+    //     setup({gridOptions: {$el: $el}, appendTo: 'body'}).then(function(g) {
     //         var lowestVisible, lowestRow;
-
-    //         g.appendTo('body');
 
     //         // scroll down, make sure we scroll all the way down by trying a
     //         // couple different elements
@@ -1346,6 +1341,36 @@ define([
     //         start();
     //     });
     // });
+
+    // because of DAQ-553
+    // this loads more rows then a grid w/ a fixed height can handle, then it
+    // scrolls all the way down, then asserts that the last row is visible
+    asyncTest('columns aren\'t hidden', function() {
+        var $el = $('<div/>').height(100);
+        setup({gridOptions: {$el: $el}, appendTo: null}).then(function(g) {
+            var lowestVisible, lowestRow;
+
+            g.appendTo('#qunit-fixture');
+
+            // we don't actually need a .row-inner-wrapper, of course, but if
+            // we don't have one then this test needs to be modified
+            equal(g.$el.find('.row-inner-wrapper').scrollTop(1000).length,
+                1, 'make sure we\'ve got a .row-inner-wrapper');
+
+            // get the very bottom visible edge of the grid
+            lowestVisible = g.$el.offset().top + g.$el.height();
+            // and the bottom edge of the last row
+            lowestRow = g.$el.find('.rows tr:last').offset().top +
+                        g.$el.find('.rows tr:last').outerHeight();
+
+            ok(lowestRow <= lowestVisible,
+                'last row (' + lowestRow +
+                ') is higher than the bottom of the grid (' +
+                lowestVisible + ')');
+
+            start();
+        });
+    });
 
     module('all the marbles');
 
@@ -1391,7 +1416,6 @@ define([
             g.$el.width(800);
             // rerender so the height and width changes are pickued up
             g.rerender();
-            g._setRowTableHeight();
             g.on('dblclick', 'tbody tr', function(evt) {
                 var model = g._modelFromTr(evt.currentTarget);
                 if (model) {
