@@ -1318,34 +1318,37 @@ define([
 
     module('fixed header');
 
-    // asyncTest('vertical scrollbar not under header', function() {
-    //     var $el = $('<div/>').height(100);
-    //     setup({gridOptions: {$el: $el}, appendTo: 'body'}).then(function(g) {
-    //         var lowestVisible, lowestRow;
+    // when getting the fixed-header to work, in browsers that have scroll bars
+    // that take up space (anything other than webkit on mac right now), it's
+    // easy to make a layout where the top vertical scrollbar for the grid body
+    // gets covered up by the header. this tests tries to make sure that
+    // doesn't happen.
+    asyncTest('vertical scrollbar not under header', function() {
+        var $el = $('<div/>').height(100);
+        setup({gridOptions: {$el: $el}}).then(function(g) {
+            var lowestVisible, lowestRow;
+            var bottomOfHeader  = g.$el.find('.header-wrapper').offset().top +
+                                  g.$el.find('.header-wrapper').outerHeight(),
+                topOfRows       = g.$el.find('.row-inner-wrapper').offset().top;
 
-    //         // scroll down, make sure we scroll all the way down by trying a
-    //         // couple different elements
-    //         g.$el.find('.row-wrapper').scrollTop(1000).end()
-    //              .find('.rows').scrollTop(1000);
+            equal(g.$el.find('.header-wrapper').length, 1,
+                'just a sanity check to make sure the expected layout is present');
+            equal(g.$el.find('.row-inner-wrapper').length, 1,
+                'just a sanity check to make sure the expected layout is present');
 
-    //         // get the very bottom visible edge of the grid
-    //         lowestVisible = g.$el.offset().top + g.$el.height();
-    //         lowestRow = g.$el.find('.rows tr:last').offset().top +
-    //                     g.$el.find('.rows tr:last').outerHeight();
+            ok(bottomOfHeader <= topOfRows,
+                'bottom of header (' + bottomOfHeader +
+                ') is lower than the top of the rows (' +
+                topOfRows + ')');
 
-    //         ok(lowestRow <= lowestVisible,
-    //             'last row (' + lowestRow +
-    //             ') is higher than the bottom of the grid (' +
-    //             lowestVisible + ')');
-
-    //         start();
-    //     });
-    // });
+            start();
+        });
+    });
 
     // because of DAQ-553
     // this loads more rows then a grid w/ a fixed height can handle, then it
     // scrolls all the way down, then asserts that the last row is visible
-    asyncTest('columns aren\'t hidden', function() {
+    asyncTest('rows at the end aren\'t hidden', function() {
         var $el = $('<div/>').height(100);
         setup({gridOptions: {$el: $el}, appendTo: null}).then(function(g) {
             var lowestVisible, lowestRow;
@@ -1368,6 +1371,22 @@ define([
                 ') is higher than the bottom of the grid (' +
                 lowestVisible + ')');
 
+            start();
+        });
+    });
+
+    // since the header is fixed and in a separate table, if the grid body is
+    // wider than the grid, and it is scrolled horizontally, then it will no
+    // longer match up with the header unless the header also scrolls
+    asyncTest('header scrolls horizontally when body scrolls', function() {
+        setup({appendTo: 'body'}).then(function(g) {
+            ok(true);
+            g.get('columnModel').columns[0].set('width', 500);
+            g.$el.find('.row-inner-wrapper').scrollLeft(50);
+            setTimeout(function() {
+                equal(parseInt(g.$el.find('.header-wrapper').css('left'), 10),
+                    -50, 'header scrolled with grid table body');
+            }, 0);
             start();
         });
     });
