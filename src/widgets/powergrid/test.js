@@ -23,6 +23,7 @@ define([
     'vendor/jquery',
     'vendor/underscore',
     'vendor/moment',
+    './../../util/scrollbar',
     './../powergrid',
     './columnmodel',
     './column',
@@ -34,7 +35,7 @@ define([
     './powergridsearch',
     './mockedexample',
     './examplefixtures'
-], function($, _, moment, PowerGrid, ColumnModel, Column, CheckBoxColumn,
+], function($, _, moment, scrollbar, PowerGrid, ColumnModel, Column, CheckBoxColumn,
     asDateTime, asBytes, asEnumeration, asNumber, PowerGridSearch, Example, exampleFixtures) {
 
     var BasicColumnModel = ColumnModel.extend({
@@ -936,7 +937,7 @@ define([
 
         asyncTest('renders checkboxes', function() {
             setup({
-                appendTo: 'body',
+                // appendTo: 'body',
                 gridOptions: {
                     columnModelClass: withCheckboxColumn(BasicColumnModel)
                 }
@@ -1371,6 +1372,35 @@ define([
                 }
             });
             ok(true);
+            start();
+        });
+    });
+
+    module('miscellaneous');
+
+    asyncTest('bottom scroll bar not visible when vertical scrollbar appears', function() {
+        setup({
+            params: {limit: 300},
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
+        }).then(function(g) {
+            // set height and widths for visual resize testing
+            g.$el.height(400);
+            g.$el.width(800);
+            // rerender so the height and width changes are pickued up
+            g.rerender();
+            g._setRowTableHeight();
+            
+            var $rows = g.$el.find('.row-wrapper'),
+                $header = g.$el.find('.header-wrapper'),
+                rowScrollHeight = $rows[0].scrollHeight,
+                rowHeight = $rows.height(),
+                rowScrollWidth = $rows[0].scrollWidth,
+                rowWidth = $rows.width() - scrollbar.width();
+
+            ok(rowScrollHeight > rowHeight, 'vertical scrollbar is visible');
+            //  - the +1 is because FF doesn't like this test case
+            ok((rowScrollWidth === rowWidth) || (rowScrollWidth === rowWidth+1), 'horizontal scrollbar is not visible');
+
             start();
         });
     });

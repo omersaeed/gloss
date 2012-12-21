@@ -58,7 +58,6 @@ tr.selected {
 .powergrid .header-wrapper {
   position: relative;
   width: auto;
-  min-width: 100%;
   background-color: white;
 }
 

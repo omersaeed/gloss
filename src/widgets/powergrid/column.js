@@ -23,6 +23,7 @@ define([
             minWidth: actualWidth,
             maxWidth: actualWidth
         });
+        return actualWidth;
     };
     return View.extend({
         template: thTemplate,
@@ -49,7 +50,7 @@ define([
 
             $(window).resize(_.debounce(function() {
                 self._setTdCellWidth(self.get('width'));
-            }, 50));
+            }, 100));
         },
 
         _hiddenColumnClass: function() {
