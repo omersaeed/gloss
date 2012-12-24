@@ -27,6 +27,11 @@ define([
             }
 
             this._super();
+        },
+
+        getValue: function() {
+            var value = this._super.apply(this, arguments);
+            return value !== '' ? value : null;
         }
     });
 });
