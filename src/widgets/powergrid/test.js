@@ -1229,7 +1229,7 @@ define([
 
     asyncTest('scroll to bottom loads more data', function() {
         setup({
-            // appendTo: 'body',
+            appendTo: 'body',
             params: {limit: 25},
             gridOptions: {
                 infiniteScroll: true,
