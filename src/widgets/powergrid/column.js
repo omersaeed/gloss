@@ -106,7 +106,7 @@ define([
             outerWidth($el, width);
         },
 
-        _setThCellWidth: function() {
+        _setThCellWidth: function(width) {
             var $el = this._getFristTdCell();
 
             if ($el.length < 1 || $el.width() === 0) {
@@ -115,7 +115,7 @@ define([
                     maxWidth: '100%'
                 });
             } else {
-                outerWidth(this.$el, $el.outerWidth());
+                outerWidth(this.$el, width || $el.outerWidth());
             }
         },
 
@@ -220,9 +220,9 @@ define([
             if (updated.width) {
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
-                
+
                 this._setTdCellWidth(newWidth);
-                this._setThCellWidth();
+                this._setThCellWidth(newWidth);
             }
             if (updated.label) {
                 render = true;
