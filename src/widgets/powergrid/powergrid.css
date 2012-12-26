@@ -64,7 +64,8 @@ tr.selected {
 
 .powergrid .row-wrapper {
   height: 100%;
-  width: 100%;
+  min-width: 100%;
+  width: auto;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
 

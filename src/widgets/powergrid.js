@@ -11,15 +11,13 @@ define([
     './powergrid/columnmodel',
     './spinner',
     './../util/sort',
-    './../util/scrollbar',
     'tmpl!./powergrid/powergrid.mtpl',
     'tmpl!./powergrid/spinnerTr.mtpl',
     'css!./powergrid/powergrid.css'
 ], function($, _, model, View, asCollectionViewable, ColumnModel, Spinner,
-    sort, scrollbar, template, loadingRowTmpl) {
+    sort, template, loadingRowTmpl) {
 
-    var scrollBarWidth = scrollbar.width(),
-        EmptyColumnModel, PowerGrid,
+    var EmptyColumnModel, PowerGrid,
         mod = /mac/i.test(navigator.userAgent)? 'metaKey' : 'ctrlKey';
 
     EmptyColumnModel = ColumnModel.extend({});
@@ -58,8 +56,6 @@ define([
             this._super.apply(this, arguments);
 
             this.$tbody = this.$el.find('table.rows tbody');
-            this.$header = this.$el.find('.header-wrapper');
-            this.$rows = this.$el.find('.row-wrapper');
 
             _.bindAll(this, '_onColumnChange', '_onModelChange',
                     '_onMultiselectableRowClick', '_onSelectableRowClick');
@@ -304,10 +300,7 @@ define([
             }
 
             this[method].apply(this, arguments);
-            //  - add padding to header is scrollbar is visible
-            if (this.$rows[0].scrollHeight > this.$rows.height()) {
-                this.$header.css('padding-right', scrollBarWidth+2);
-            }
+            
             // post render for columns
             _.each(this.get('columnModel').columns, function(c) {
                 c._postRender();

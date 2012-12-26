@@ -1229,7 +1229,7 @@ define([
 
     asyncTest('scroll to bottom loads more data', function() {
         setup({
-            appendTo: 'body',
+            // appendTo: 'body',
             params: {limit: 25},
             gridOptions: {
                 infiniteScroll: true,
@@ -1393,31 +1393,30 @@ define([
 
     module('miscellaneous');
 
-    // asyncTest('bottom scroll bar not visible when vertical scrollbar appears', function() {
-    //     setup({
-    //         params: {limit: 300},
-    //         gridOptions: {columnModelClass: resizable(BasicColumnModel)}
-    //     }).then(function(g) {
-    //         // set height and widths for visual resize testing
-    //         g.$el.height(400);
-    //         g.$el.width(800);
-    //         // rerender so the height and width changes are pickued up
-    //         g.rerender();
+    asyncTest('bottom scroll bar not visible when vertical scrollbar appears', function() {
+        setup({
+            params: {limit: 300},
+            gridOptions: {columnModelClass: resizable(BasicColumnModel)}
+        }).then(function(g) {
+            // set height and widths for visual resize testing
+            g.$el.height(400);
+            g.$el.width(800);
+            // rerender so the height and width changes are pickued up
+            g.rerender();
 
-    //         var $rows = g.$el.find('.row-inner-wrapper'),
-    //             $header = g.$el.find('.header-wrapper'),
-    //             rowScrollHeight = $rows[0].scrollHeight,
-    //             rowHeight = $rows.height(),
-    //             rowScrollWidth = $rows[0].scrollWidth,
-    //             rowWidth = $rows.width() - scrollbar.width();
+            var $rows = g.$el.find('.row-inner-wrapper'),
+                $header = g.$el.find('.header-wrapper'),
+                rowScrollHeight = $rows[0].scrollHeight,
+                rowHeight = $rows.height(),
+                rowScrollWidth = $rows[0].scrollWidth,
+                rowWidth = $rows.width() - scrollbar.width();
 
-    //         ok(rowScrollHeight > rowHeight, 'vertical scrollbar is visible');
-    //         //  - the +1 is because FF doesn't like this test case
-    //         ok((rowScrollWidth === rowWidth) || (rowScrollWidth === rowWidth+1), 'horizontal scrollbar is not visible');
+            ok(rowScrollHeight > rowHeight, 'vertical scrollbar is visible');
+            ok(rowScrollWidth === rowWidth, 'horizontal scrollbar is not visible');
 
-    //         start();
-    //     });
-    // });
+            start();
+        });
+    });
 
     module('all the marbles');
 

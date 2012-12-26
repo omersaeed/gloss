@@ -4,9 +4,10 @@ define([
     './../../view',
     './../grid/resizehandle',
     './../../util/styleUtils',
+    './../../util/scrollbar',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function($, _, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
+], function($, _, View, ResizeHandle, StyleUtils, scrollbar, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
         var minWidth = 10,
             actualWidth = width - _.reduce([
@@ -24,12 +25,12 @@ define([
             maxWidth: actualWidth
         });
         return actualWidth;
-    };
+    },
+    scrollBarWidth = scrollbar.width();
+
     return View.extend({
         template: thTemplate,
-        // defaults: {
-        //     showTitle: true     // show value when hovering over cell element
-        // },
+
         init: function() {
             var self = this, grid;
 
@@ -49,8 +50,8 @@ define([
             self._instantiateResizeHandle();
 
             $(window).resize(_.debounce(function() {
-                self._setTdCellWidth(self.get('width'));
-            }, 100));
+                self._setThCellWidth();
+            }, 50));
         },
 
         _hiddenColumnClass: function() {
@@ -69,6 +70,13 @@ define([
                 this._hiddenColumnClass(), ' .',
                 this.columnClass()
             ].join(''), ['display', 'none']]]);
+        },
+
+        _getFristTdCell: function() {
+            var selector = '.' + this.columnClass(),
+                $tr = this.get('grid').$tbody.children().first();
+                
+            return $tr.find(selector);
         },
 
         _instantiateResizeHandle: function() {
@@ -93,23 +101,26 @@ define([
         },
 
         _setTdCellWidth: function(width) {
-            var selector = '.' + this.columnClass(),
-                $tr = this.get('grid').$tbody.children().first(),
-                $el = $tr.find(selector);
+            var $el = this._getFristTdCell();
 
-            // special case when the grid is not visible
-            if (this.$el.width() === 0) {
-                $el.css({
+            outerWidth($el, width);
+        },
+
+        _setThCellWidth: function() {
+            var $el = this._getFristTdCell();
+
+            if ($el.length < 1 || $el.width() === 0) {
+                this.$el.css({
                     minWidth: '100%',
                     maxWidth: '100%'
                 });
             } else {
-                outerWidth($el, width);
+                outerWidth(this.$el, $el.outerWidth());
             }
         },
 
         _postRender: function() {
-            this._setTdCellWidth(this.get('width'));
+            this._setThCellWidth();
         },
 
         // the 'columnClass' is something like 'col-name'. it's used as a
@@ -209,8 +220,9 @@ define([
             if (updated.width) {
                 newWidth = View.prototype.get.call(this, 'width');
                 this.get('grid').set('fixedLayout', true);
-                outerWidth(this.$el, newWidth);
+                
                 this._setTdCellWidth(newWidth);
+                this._setThCellWidth();
             }
             if (updated.label) {
                 render = true;
