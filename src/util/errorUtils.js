@@ -26,10 +26,10 @@ define([
             } else {
                 $.each(structuralErrors, function(field, errors) {
                     var contextField = field;
+                    if (parentFieldName) {
+                        contextField = parentFieldName + '.' + contextField;
+                    }
                     if ($.isArray(errors)) {
-                        if (parentFieldName) {
-                            contextField = parentFieldName + '.' + contextField;
-                        }
                         if (errors[0].errors) {
                             self.flattenErrors(errors[0].errors, flattenedErrors, contextField);
                         } else {
