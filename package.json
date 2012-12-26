@@ -22,6 +22,11 @@
         "test": "header and rows are the same size for grid that is initially hidden|setting column width works"
       },
       {
+        "path": "powergrid/test",
+        "module": "miscellaneous",
+        "test": "bottom scroll bar not visible when vertical scrollbar appears"
+      },
+      {
         "path": "treegrid/test",
         "module": "drag n drop treegrid",
         "test": "drag to node"
