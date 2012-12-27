@@ -109,13 +109,15 @@ define([
         _setThCellWidth: function(width) {
             var $el = this._getFristTdCell();
 
-            if ($el.length < 1 || $el.width() === 0) {
+            width = width || $el.outerWidth();
+
+            if (!width) {
                 this.$el.css({
                     minWidth: '100%',
                     maxWidth: '100%'
                 });
             } else {
-                outerWidth(this.$el, width || $el.outerWidth());
+                outerWidth(this.$el, width);
             }
         },
 
