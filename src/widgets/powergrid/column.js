@@ -111,7 +111,7 @@ define([
 
             width = width || $el.outerWidth();
 
-            if (!width) {
+            if (!width || $el.width() === 0) {
                 this.$el.css({
                     minWidth: '100%',
                     maxWidth: '100%'
