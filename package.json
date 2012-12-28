@@ -6,12 +6,12 @@
     "Jordan McCoy",
     "Ralph Smith"
   ],
-  "version": "1.0.70",
+  "version": "1.0.71",
   "dependencies": {
     "csi": "git+ssh://git@github.com:siq/csi.git#1.0.6",
     "siq-vendor-js": "git+ssh://git@github.com:siq/siq-vendor-js.git#1.0.7",
     "bedrockjs": "git+ssh://git@github.com:siq/bedrockjs.git#1.0.11",
-    "siq-mesh": "git+ssh://git@github.com:siq/mesh.git#1.0.28"
+    "siq-mesh": "git+ssh://git@github.com:siq/mesh.git#1.0.29"
   },
   "csi": {
     "name": "gloss",
