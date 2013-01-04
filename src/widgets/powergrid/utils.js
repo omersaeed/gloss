@@ -27,10 +27,11 @@ define([
                 appendTo: '#qunit-fixture',
                 gridClass: PowerGrid,
                 gridOptions: {},
-                swapOutRequestPrototype: false
+                swapOutRequestPrototype: false,
+                delay: null
             }, options);
 
-            Example.models.clear();
+            Example.mockDelay(options.delay).models.clear();
 
             g = window.g = options.gridClass($.extend({
                 columnModelClass: BasicColumnModel,

@@ -74,11 +74,13 @@ define([
             params = self._makeQueryParams();
             self._filtered = !!params.query;
             collection.reset(params);
-            self.trigger('searchStarted');
+            self.trigger('searchStarted'); // deprecated, use collection event
+            collection.trigger('powerGridSearchStarted');
 
             return collection.load().always(function() {
                 self.propagate('enable');
-                self.trigger('searchCompleted');
+                self.trigger('searchCompleted'); // deprecated, use coll. event
+                collection.trigger('powerGridSearchCompleted');
 
                 if (!self.getWidget('q').getValue()) {
                     self.getWidget('clear').disable();

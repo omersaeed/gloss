@@ -58,7 +58,8 @@ define([
             this.$tbody = this.$el.find('table.rows tbody');
 
             _.bindAll(this, '_onColumnChange', '_onModelChange',
-                    '_onMultiselectableRowClick', '_onSelectableRowClick');
+                    '_onMultiselectableRowClick', '_onSelectableRowClick',
+                    'disable', 'enable');
 
             this.on('columnchange', this._onColumnChange);
 
@@ -304,7 +305,7 @@ define([
             }
 
             this[method].apply(this, arguments);
-            
+
             // post render for columns
             _.each(this.get('columnModel').columns, function(c) {
                 c._postRender();
@@ -452,11 +453,15 @@ define([
             if (updated.collection) {
                 if (this.previous('collection')) {
                     this.previous('collection')
-                        .off('change', this._onModelChange);
+                        .off('change', this._onModelChange)
+                        .off('powerGridSearchStarted', this.disable)
+                        .off('powerGridSearchCompleted', this.enable);
                 }
                 if (this.get('collection')) {
                     this.get('collection')
-                        .on('change', this._onModelChange);
+                        .on('change', this._onModelChange)
+                        .on('powerGridSearchStarted', this.disable)
+                        .on('powerGridSearchCompleted', this.enable);
                 }
                 if (this.previous('collection') && !this.get('collection')) {
                     this.set('models', []);

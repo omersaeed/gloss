@@ -174,5 +174,42 @@ define([
         ok (queryParams.query == null);
     });
 
+    var assertEnabled = function(g, isEnabled, phase) {
+        equal(g.$el.hasClass('disabled'), !isEnabled,
+                'grid .disabled class correctly set ' + phase);
+        equal(!!g.spinner.visible, !isEnabled,
+                'spinner .visible prop correctly set ' + phase);
+    };
+
+    asyncTest('search disables powergrid', function() {
+        var appendTo = 'body', delay = 100;
+        setup({appendTo: appendTo, delay: delay}).then(function(g) {
+            var originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')})
+                            .appendTo(appendTo);
+
+            assertEnabled(g, true, 'before search');
+
+            search.getWidget('q').setValue(500);
+
+            var dfd = search.submit();
+
+            assertEnabled(g, false, 'just after search started');
+
+            setTimeout(function() {
+                assertEnabled(g, false, 'half way through search');
+                equal(dfd.state(), 'pending', 'search is still running');
+                dfd.then(function() {
+                    assertEnabled(g, true, 'after search is complete');
+                    start();
+                });
+            }, delay/2);
+        });
+
+    });
+
+    // TODO: test search disable-ment for failed search
+    // TODO: make sure search disable events dont get fired on old collections
+
     start();
 });

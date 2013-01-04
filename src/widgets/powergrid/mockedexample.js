@@ -4,6 +4,7 @@ define([
     'mesh/tests/example',
     './examplefixtures'
 ], function($, _, Example, exampleFixtures) {
+    var defaultDelay = 0, delay = defaultDelay;
 
     window.Example = Example;
 
@@ -30,8 +31,13 @@ define([
                 resources: resources,
                 total: exampleFixtures.length
             }, 200, {});
-        }, 0);
+        }, delay);
         return dfd;
+    };
+
+    Example.mockDelay = function(newDelay) {
+        delay = newDelay == null? defaultDelay : newDelay;
+        return Example;
     };
 
     return Example;
