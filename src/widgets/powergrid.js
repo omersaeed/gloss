@@ -109,6 +109,10 @@ define([
                 }
             });
             //  - handle vertical scroll for infinite scrolling
+            self.on('click', '.loading-text a.reload', function() {
+                self.scrollLoadSpinner.disable();
+                scrollLoadDfd = self.get('collection').load({reload: true});
+            });
             $rowInnerWrapper.on('scroll', function(evt) {
                 var rowTop = $rowInnerWrapper.scrollTop(),
                     rowHeight = $rowInnerWrapper.height(),
@@ -130,8 +134,7 @@ define([
                     collection.query.params.limit = limit;
 
                     self.scrollLoadSpinner.disable();
-                    scrollLoadDfd = collection.load().then(function(models) {
-                    });
+                    scrollLoadDfd = collection.load().then(function(models) {});
                 }
             });
         },
@@ -208,6 +211,7 @@ define([
             if (this.get('infiniteScroll') && rows.length) {
                 rows.push(loadingRowTmpl({
                     grid: this,
+                    status: this.get('collection').status,
                     text: (this._isAllDataLoaded()) ? 'All objects loaded' : 'Loading ...'
                 }));
             }

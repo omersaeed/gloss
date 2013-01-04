@@ -1,7 +1,13 @@
-<% var grid = data.grid, columns = grid.get('columnModel').columns, text = data.text; %>
+<% var grid = data.grid, columns = grid.get('columnModel').columns, status = data.status, text = data.text; %>
 <tr>
 	<td style='height: 26px; text-align: center' colspan=<%=columns.length;%>>
-		<span class=loading-text style='margin-right: 25px;'><%=text%></span>
+		<span class=loading-text style='margin-right: 25px;'>
+			<% if (status === 'partial') { %>
+				<%='<a class=reload>click to reload</a>'%>
+			<% } else { %>
+				<%=text%>
+			<% } %>
+		</span>
 		<% if (!grid._isAllDataLoaded()) { %>
 			<span class=micro-spinner style='display: inline-block; vertical-align: middle;'></span>
 		<% } %>
