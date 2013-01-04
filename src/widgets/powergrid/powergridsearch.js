@@ -3,7 +3,7 @@ define([
     'vendor/underscore',
     './../widgetgroup',
     './../collectionviewable',
-    'tmpl!./powergridsearch.mtpl'
+    'tmpl!./powergridsearch/powergridsearch.mtpl'
 ], function($, _, WidgetGroup, CollectionViewable, template) {
     var PowerGridSearch = WidgetGroup.extend({
         defaults: {
