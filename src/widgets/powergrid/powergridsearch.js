@@ -70,11 +70,13 @@ define([
                 return;
             }
             self.propagate('disable');
-            self.trigger('searchStarted');
 
             params = self._makeQueryParams();
             self._filtered = !!params.query;
-            return collection.reset(params).load().always(function() {
+            collection.reset(params);
+            self.trigger('searchStarted');
+
+            return collection.load().always(function() {
                 self.propagate('enable');
                 self.trigger('searchCompleted');
 
