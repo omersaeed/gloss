@@ -234,7 +234,40 @@ define([
         });
     });
 
-    // TODO: make sure search disable events dont get fired on old collections
+    asyncTest('changing collection un-registers event handlers', function() {
+        setup().then(function(g) {
+            var delay, originalLength = g.get('models').length,
+                search = MySearch(null, {collection: Example.collection()}),
+                firstCollection = g.get('collection');
+            g.set('collection', search.options.collection);
+            firstCollection.on('powerGridSearchStart', function() {
+                ok(false, 'powerGridSearchStart triggered on old colleciton');
+            }).on('powerGridSearchCompleted', function() {
+                ok(false, 'powerGridSearchCompleted triggered on old colleciton');
+            });
+            g.get('collection').load().then(function() {
+                // set timout to allow collection 'update' to fire
+                setTimeout(function() {
+                    Example.mockDelay(delay = 50).mockFailure(true);
+                    assertEnabled(g, true, 'before search');
+                    search.getWidget('q').setValue(500);
+                    var dfd = search.submit();
+                    assertEnabled(g, false, 'just after search started');
+                    setTimeout(function() {
+                        assertEnabled(g, false, 'half way through search');
+                        equal(dfd.state(), 'pending', 'search is still running');
+                        dfd.then(function() {
+                            ok(false, 'should have failed...');
+                            start();
+                        }, function() {
+                            assertEnabled(g, true, 'after search is complete');
+                            start();
+                        });
+                    }, delay/2);
+                }, 0);
+            });
+        });
+    });
 
     start();
 });
