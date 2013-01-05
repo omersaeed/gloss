@@ -182,33 +182,58 @@ define([
     };
 
     asyncTest('search disables powergrid', function() {
-        var appendTo = 'body', delay = 100;
-        setup({appendTo: appendTo, delay: delay}).then(function(g) {
-            var originalLength = g.get('models').length,
-                search = MySearch(null, {collection: g.get('collection')})
-                            .appendTo(appendTo);
-
-            assertEnabled(g, true, 'before search');
-
-            search.getWidget('q').setValue(500);
-
-            var dfd = search.submit();
-
-            assertEnabled(g, false, 'just after search started');
-
-            setTimeout(function() {
-                assertEnabled(g, false, 'half way through search');
-                equal(dfd.state(), 'pending', 'search is still running');
-                dfd.then(function() {
-                    assertEnabled(g, true, 'after search is complete');
-                    start();
-                });
-            }, delay/2);
+        setup().then(function(g) {
+            var delay, originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')});
+            g.get('collection').load().then(function() {
+                Example.mockDelay(delay = 50);
+                // set timout to allow collection 'update' to fire
+                setTimeout(function() {
+                    assertEnabled(g, true, 'before search');
+                    search.getWidget('q').setValue(500);
+                    var dfd = search.submit();
+                    assertEnabled(g, false, 'just after search started');
+                    setTimeout(function() {
+                        assertEnabled(g, false, 'half way through search');
+                        equal(dfd.state(), 'pending', 'search is still running');
+                        dfd.then(function() {
+                            assertEnabled(g, true, 'after search is complete');
+                            start();
+                        });
+                    }, delay/2);
+                }, 0);
+            });
         });
-
     });
 
-    // TODO: test search disable-ment for failed search
+    asyncTest('failed search disables and re-enables powergrid', function() {
+        setup().then(function(g) {
+            var delay, originalLength = g.get('models').length,
+                search = MySearch(null, {collection: g.get('collection')});
+            g.get('collection').load().then(function() {
+                // set timout to allow collection 'update' to fire
+                setTimeout(function() {
+                    Example.mockDelay(delay = 50).mockFailure(true);
+                    assertEnabled(g, true, 'before search');
+                    search.getWidget('q').setValue(500);
+                    var dfd = search.submit();
+                    assertEnabled(g, false, 'just after search started');
+                    setTimeout(function() {
+                        assertEnabled(g, false, 'half way through search');
+                        equal(dfd.state(), 'pending', 'search is still running');
+                        dfd.then(function() {
+                            ok(false, 'should have failed...');
+                            start();
+                        }, function() {
+                            assertEnabled(g, true, 'after search is complete');
+                            start();
+                        });
+                    }, delay/2);
+                }, 0);
+            });
+        });
+    });
+
     // TODO: make sure search disable events dont get fired on old collections
 
     start();

@@ -28,10 +28,13 @@ define([
                 gridClass: PowerGrid,
                 gridOptions: {},
                 swapOutRequestPrototype: false,
-                delay: null
+                delay: null,
+                fail: false
             }, options);
 
-            Example.mockDelay(options.delay).models.clear();
+            Example.mockDelay(options.delay)
+                .mockFailure(options.fail)
+                .models.clear();
 
             g = window.g = options.gridClass($.extend({
                 columnModelClass: BasicColumnModel,

@@ -4,7 +4,7 @@ define([
     'mesh/tests/example',
     './examplefixtures'
 ], function($, _, Example, exampleFixtures) {
-    var defaultDelay = 0, delay = defaultDelay;
+    var defaultDelay = 0, delay = defaultDelay, fail = false;
 
     window.Example = Example;
 
@@ -27,16 +27,29 @@ define([
         }
 
         setTimeout(function() {
-            params.success({
-                resources: resources,
-                total: exampleFixtures.length
-            }, 200, {});
+            if (fail) {
+                params.error({
+                    getResponseHeader: function() {return '';},
+                    status: 406,
+                    statusText: 'didnt work'
+                });
+            } else {
+                params.success({
+                    resources: resources,
+                    total: exampleFixtures.length
+                }, 200, {});
+            }
         }, delay);
         return dfd;
     };
 
     Example.mockDelay = function(newDelay) {
         delay = newDelay == null? defaultDelay : newDelay;
+        return Example;
+    };
+
+    Example.mockFailure = function(shouldFail) {
+        fail = shouldFail == null? false : shouldFail;
         return Example;
     };
 
