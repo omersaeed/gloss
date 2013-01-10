@@ -9,7 +9,7 @@ define([
 
     return Widget.extend({
         defaults: {
-            draggable: { autoBind: false }, // leave this alone
+            draggable: { autoBind: false, boundedBy: 'window' }, // leave this alone
             backdrop: true, // set to 'transparent' for clear, 'false' to disable
             clickBackdropToClose: false,
             position: 'center', // set to 'undefined' to use CSS positioning
