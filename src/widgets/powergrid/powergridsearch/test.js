@@ -2,7 +2,7 @@
 define([
     'vendor/underscore',
     './../powergridsearch',
-    './../mockedexample',
+    'mesh/tests/mockedexample',
     './../utils'
 ], function(_, PowerGridSearch, Example, utils) {
     var setup = utils.setup;
