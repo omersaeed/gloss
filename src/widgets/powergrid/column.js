@@ -4,10 +4,9 @@ define([
     './../../view',
     './../grid/resizehandle',
     './../../util/styleUtils',
-    './../../util/scrollbar',
     'tmpl!./th.mtpl',
     'tmpl!./td.mtpl'
-], function($, _, View, ResizeHandle, StyleUtils, scrollbar, thTemplate, tdTemplate) {
+], function($, _, View, ResizeHandle, StyleUtils, thTemplate, tdTemplate) {
     var outerWidth = function($el, width) {
         var minWidth = 10,
             actualWidth = width - _.reduce([
@@ -25,8 +24,7 @@ define([
             maxWidth: actualWidth
         });
         return actualWidth;
-    },
-    scrollBarWidth = scrollbar.width();
+    };
 
     return View.extend({
         template: thTemplate,
@@ -39,8 +37,6 @@ define([
             if (! (grid = self.get('grid'))) {
                 throw Error('column must be initialized with grid instance');
             }
-
-            _.bindAll(this, '_onResize');
 
             self.on('click', function() {
                 var cur = self.get('sort');
@@ -93,9 +89,12 @@ define([
         },
 
         _onResize: function(evt, cursorPos) {
-            var diff = cursorPos.clientX + $(window).scrollLeft() - this.$el.offset().left;
+            var diff = cursorPos.clientX + $(window).scrollLeft() - this.$el.offset().left,
+                resizeHandleWidth = this.resize.$node.width();
 
-            diff = diff + (this.get('width') - this.$el.width())/2;
+            diff = diff + (this.get('width') - this.$el.width())/2 +
+                    (this.$el.hasClass('first') ? 0 : resizeHandleWidth);
+
             if (diff > 0) {
                 this.set('width', diff);
             }

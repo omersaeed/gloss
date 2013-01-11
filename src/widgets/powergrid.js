@@ -55,6 +55,12 @@ define([
 
             this._super.apply(this, arguments);
 
+            //  - set inline table width style. we're only doing this here so it can
+            //  - be removed when a column is resized.
+            _.each(this.$el.find('table'), function(el) {
+                $(el).css('width', '100%');
+            });
+
             this.$tbody = this.$el.find('table.rows tbody');
 
             _.bindAll(this, '_onColumnChange', '_onColumnResize', '_onModelChange',
@@ -171,6 +177,9 @@ define([
         },
 
         _onColumnResize: function(evt, data) {
+            _.each(this.$el.find('table'), function(el) {
+                $(el).css('width', '');
+            });
             _.each(this.get('columnModel').columns, function(c) {
                 c._setThCellWidth();
             });

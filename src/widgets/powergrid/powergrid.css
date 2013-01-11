@@ -50,7 +50,6 @@ tr.selected {
 }
 
 .powergrid table {
-  width: 100%;
   /* this is used to get overflow to work in IE */
   table-layout: fixed;
 }
