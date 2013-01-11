@@ -40,6 +40,8 @@ define([
                 throw Error('column must be initialized with grid instance');
             }
 
+            _.bindAll(this, '_onResize');
+
             self.on('click', function() {
                 var cur = self.get('sort');
                 if (!self.get('sortable')) {
@@ -91,13 +93,16 @@ define([
         },
 
         _onResize: function(evt, cursorPos) {
-            var diff = (cursorPos.clientX + $(window).scrollLeft()) - this.$el.offset().left;
+            var diff = cursorPos.clientX + $(window).scrollLeft() - this.$el.offset().left;
+
+            diff = diff + (this.get('width') - this.$el.width())/2;
             if (diff > 0) {
                 this.set('width', diff);
             }
             if (this.resize.node.style.removeProperty) {
                 this.resize.node.style.removeProperty('left');
             }
+            this.trigger('columnresize', {column: this, updated: 'width'});
         },
 
         _setTdCellWidth: function(width) {
@@ -110,19 +115,17 @@ define([
             var $el = this._getFristTdCell();
 
             width = width || $el.outerWidth();
-
-            if (!width || $el.width() === 0) {
-                this.$el.css({
-                    minWidth: '100%',
-                    maxWidth: '100%'
-                });
-            } else {
-                outerWidth(this.$el, width);
-            }
+            outerWidth(this.$el, width);
         },
 
         _postRender: function() {
-            this._setThCellWidth();
+
+            if (!this._firstPostRender) {
+                this._setThCellWidth();
+            } else {
+                this._setTdCellWidth(this.get('width'));
+            }
+            this._firstPostRender = true;
         },
 
         // the 'columnClass' is something like 'col-name'. it's used as a

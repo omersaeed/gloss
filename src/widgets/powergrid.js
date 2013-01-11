@@ -57,11 +57,12 @@ define([
 
             this.$tbody = this.$el.find('table.rows tbody');
 
-            _.bindAll(this, '_onColumnChange', '_onModelChange',
+            _.bindAll(this, '_onColumnChange', '_onColumnResize', '_onModelChange',
                     '_onMultiselectableRowClick', '_onSelectableRowClick',
                     'disable', 'enable');
 
             this.on('columnchange', this._onColumnChange);
+            this.on('columnresize', this._onColumnResize);
 
             this.set('columnModel', this.get('columnModelClass')({
                 $el: this.$el.find('table.header thead'),
@@ -167,6 +168,12 @@ define([
                 });
                 this._sort({});
             }
+        },
+
+        _onColumnResize: function(evt, data) {
+            _.each(this.get('columnModel').columns, function(c) {
+                c._setThCellWidth();
+            });
         },
 
         _onModelChange: function(eventName, coll, model, changed) {
