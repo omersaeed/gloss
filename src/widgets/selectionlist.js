@@ -56,7 +56,7 @@ define([
                 self.$pageSize.val(self.options.pageSize);
                 self.$pageSize.change(function(event) {
                     self.options.pageSize = Number($(this).val());
-                    self.refresh(true);
+                    self.refresh(null, {conditional: true});
                 });
 
                 self.$currentPage.focus(function(event) {
@@ -163,7 +163,7 @@ define([
             return this;
         },
         clear: function() {
-            this.refresh(true);
+            this.refresh(null, {conditional: true});
             return this;
         },
         clearSelections: function() {
@@ -189,7 +189,7 @@ define([
             return this;
         },
         replace: function(items) {
-            this.refresh(true);
+            this.refresh(null, {conditional: true});
             if(items != null) {
                 this.add(items);
             }

@@ -6,8 +6,8 @@ define([
     './../columnmodel',
     './../column',
     './../powergridpager',
-    './../mockedexample',
-    './../examplefixtures'
+    'mesh/tests/mockedexample',
+    'mesh/tests/examplefixtures'
 ], function($, _, PowerGrid, ColumnModel, Column, PowerGridPager,
             Example, exampleFixtures) {
 
@@ -23,7 +23,7 @@ define([
             ]
         }),
         setup = function(options) {
-            var g, dfd = $.Deferred(),
+            var g, p, dfd = $.Deferred(),
                 collection = Example.collection();
 
             options = $.extend(true, {

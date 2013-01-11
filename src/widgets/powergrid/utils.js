@@ -5,7 +5,7 @@ define([
     './../powergrid',
     './columnmodel',
     './column',
-    './mockedexample'
+    'mesh/tests/mockedexample'
 ], function($, _, PowerGrid, ColumnModel, Column, Example) {
     var BasicColumnModel = ColumnModel.extend({
             columnClasses: [

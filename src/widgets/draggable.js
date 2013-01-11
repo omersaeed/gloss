@@ -163,6 +163,7 @@ define([
             if (draggable.autoScroll && !draggable.scroll) {
                 draggable.scroll = {};
             }
+            // also: draggable.boundedBy (only 'window' is supported)
         },
         afterInit: function() {
             var self = this;
@@ -298,7 +299,13 @@ define([
             return this.$node.clone(false, false);
         },
         _dragSetPos: function(evt, offset) {
-            var val = {}, dims = this.options.draggable.dimensions;
+            var val = {}, dims = this.options.draggable.dimensions, elFromPoint;
+            if (this.options.draggable.boundedBy === 'window') {
+                elFromPoint = document.elementFromPoint(evt.clientX, evt.clientY);
+                if (!$(elFromPoint).closest('body').length) {
+                    return;
+                }
+            }
             if (dims.x) {
                 val.left = evt.clientX - (offset? offset.left : 0);
             }

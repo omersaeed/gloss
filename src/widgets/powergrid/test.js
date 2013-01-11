@@ -31,8 +31,8 @@ define([
     './column/asdatetime',
     './column/asbytes',
     './column/asnumber',
-    './mockedexample',
-    './examplefixtures',
+    'mesh/tests/mockedexample',
+    'mesh/tests/examplefixtures',
     './utils'
 ], function($, _, moment, scrollbar, PowerGrid, ColumnModel, Column,
     CheckBoxColumn, asDateTime, asBytes, asNumber, Example, exampleFixtures,
