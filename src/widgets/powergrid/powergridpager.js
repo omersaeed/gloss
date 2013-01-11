@@ -89,10 +89,12 @@ define([
             if (collection && changes) {
                 collection.load().done(function() {
                     var collection = self.get('collection');
-                    self.set({
-                        total: collection.total,
-                        pages: Math.ceil(collection.total / collection.query.params.limit)
-                    });
+                    if (collection.total != null) {
+                        self.set({
+                            total: collection.total,
+                            pages: Math.ceil(collection.total / collection.query.params.limit)
+                        });
+                    }
                 });
             }
         }
