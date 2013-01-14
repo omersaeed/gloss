@@ -50,6 +50,8 @@ tr.selected {
 }
 
 .powergrid table {
+  /* the width is handled in js but this is a sneaky trick so FF willl work when resizing columns */
+  width: 0;
   /* this is used to get overflow to work in IE */
   table-layout: fixed;
 }
