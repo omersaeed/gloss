@@ -60,7 +60,7 @@ define([
                 options.render(this, target);
             }
 
-            if (!_.isString(options.position)) {
+            if (!_.isString(options.position) && params) {
                 position = $.extend({}, options.position);
                 if (/cursor|mouse/.test(position.of) && params.evt) {
                     position.of = params.evt;
