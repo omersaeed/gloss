@@ -103,7 +103,7 @@ define([
 
             var $header = this.$el.find('.header-wrapper'),
                 $rows = this.$el.find('.row-wrapper'),
-                $rowInnerWrapper = this.$el.find('.row-inner-wrapper'),
+                $rowInnerWrapper = self.$rowInnerWrapper = this.$el.find('.row-inner-wrapper'),
                 $rowTable = this.$el.find('.rows'),
                 scrollLoadDfd;
             //  - handle horizontal scroll
@@ -142,6 +142,7 @@ define([
                     collection.query.params.limit = limit;
 
                     self.scrollLoadSpinner.disable();
+                    self.set('scrollTop', $rowInnerWrapper.scrollTop());
                     scrollLoadDfd = collection.load().then(function(models) {});
                 }
             });
@@ -257,6 +258,7 @@ define([
                         left: 'auto'
                     }
                 }).appendTo($target);
+                this._setScrollTop();
             }
 
             this._renderCount++;
@@ -273,6 +275,17 @@ define([
             $(currentRow).remove();
             this._renderRowCount++;
             // console.log('rerendered row for', model.get('text_field'));
+        },
+
+        _setScrollTop: function() {
+            if (!this.get('scrollTop')) {
+                return;
+            }
+
+            if (this.$rowInnerWrapper.is(':visible')) {
+                this.$rowInnerWrapper.scrollTop(this.get('scrollTop'));
+                this.del('scrollTop');
+            }
         },
 
         _sort: function(opts) {
@@ -439,6 +452,7 @@ define([
             var self = this;
             self._super.apply(this, arguments);
             this.spinner.instantiate();
+            this._setScrollTop();
         },
 
         update: function(updated) {
