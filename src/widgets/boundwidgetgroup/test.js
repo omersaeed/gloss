@@ -77,7 +77,8 @@ define([
             MessageList(bwg.$node.find('.messagelist').first()));
 
         bwg.initiateUpdate(function(model) {
-            return model.set('name', bwg.getWidget('name').getValue()).save();
+            model.set('name', bwg.getWidget('name').getValue());
+            return model.save();
         }).done(function() {
             ok(false, 'save should have thrown an error');
             start();
