@@ -39,7 +39,9 @@ define([
         },
 
         updateModel: function() {
-            return this.getModel().set(this.getFieldValues()).save();
+            var model = this.getModel();
+            model.set(this.getFieldValues());
+            return model.save();
         }
     });
 });

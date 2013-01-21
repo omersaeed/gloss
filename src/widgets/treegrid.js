@@ -127,9 +127,10 @@ define([
                 root = tree.root,
                 args = root.options.collectionArgs;
             path = path.slice(0);
-            return root.set('collectionArgs', $.extend(true, args, {
+            root.set('collectionArgs', $.extend(true, args, {
                 query: {path: path, recursive: true}
-            })).load().pipe(function() {
+            }));
+            return root.load().pipe(function() {
                 len = rows.length;
                 i = 0;
                 while (path.length) {

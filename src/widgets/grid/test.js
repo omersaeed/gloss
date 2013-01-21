@@ -1184,6 +1184,7 @@ define([
 
         // give everything the chance to propagate
         setTimeout(function() {
+            var model2000 = Example.models.get(2000);
 
             // when our colleciton is (a) loaded initially and (b) subsequently
             // updated, CollectionViewable calls self.set('models', ...)  --
@@ -1194,7 +1195,8 @@ define([
 
             // add a model to the collection, which will trigger the 'update'
             // event on the collection
-            collection.add(Example.models.get(2000).set('name', 'added model'));
+            model2000.set('name', 'added model');
+            collection.add(model2000);
 
             setTimeout(function() {
 
@@ -1257,6 +1259,7 @@ define([
 
         // give everything the chance to propagate
         setTimeout(function() {
+            var model2000 = Example.models.get(2000);
 
             // when our colleciton is (a) loaded initially and (b) subsequently
             // updated, CollectionViewable calls self.set('models', ...)  --
@@ -1267,7 +1270,8 @@ define([
 
             // add a model to the collection, which will trigger the 'update'
             // event on the collection
-            collection.add(Example.models.get(2000).set('name', 'added model'));
+            model2000.set('name', 'added model');
+            collection.add(model2000);
 
             setTimeout(function() {
 
