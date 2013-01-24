@@ -453,6 +453,10 @@ define([
             self._super.apply(this, arguments);
             this.spinner.instantiate();
             this._setScrollTop();
+            // post render for columns
+            _.each(this.get('columnModel').columns, function(c) {
+                c._setThCellWidth();
+            });
         },
 
         update: function(updated) {

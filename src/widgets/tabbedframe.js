@@ -157,6 +157,7 @@ define([
             }
 
             target.widget().show();
+            target.widget().propagate('show');
             target.button.addClass('selected');
             self.$buttons.not(target.button).attr('disabled', false);
 
