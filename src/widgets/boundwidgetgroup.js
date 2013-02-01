@@ -146,7 +146,8 @@ define([
         processErrors: function(model, response, xhr) {
             var self = this,
                 messageList = this.options.messageList,
-                structuralErrors = response && response[1];
+                structuralErrors = response && response[1],
+                errorStrings = this.options.errorStrings;
 
             ErrorUtils.processGlobalErrors(response, xhr, messageList, 'invalid');
             if (structuralErrors) {
@@ -156,7 +157,16 @@ define([
                     $.each(structuralErrors, function(field, errors) {
                         var widget = self.getWidgetForField(field), messages;
                         if (isArray(errors)) {
-                            messages = _.pluck(errors, 'message');
+                            messages = _.map(errors, function(error) {
+                                //  - prioritize error messages:
+                                //      field_errors from strings token map
+                                //      errors from strings token map
+                                //      error message from server
+                                var fieldErrors = _.compact(_.pluck(errorStrings, field));
+                                return _.compact(_.pluck(fieldErrors, error.token))[0] ||
+                                        _.compact(_.pluck(errorStrings, error.token))[0] ||
+                                        _.compact(_.pluck(errors, 'message'))[0];
+                            });
                         }
                         if (widget != null) {
                             widget.invoke('setStatus', 'invalid', messages);
